@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI中西医健康管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f5f5;min-height:100vh}
+.home{min-height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);padding:40px 20px;display:flex;flex-direction:column;align-items:center}
+.logo{width:100px;height:100px;background:white;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.title{color:white;font-size:28px;font-weight:700;margin-bottom:8px}
+.subtitle{color:rgba(255,255,255,.85);font-size:15px;margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;width:100%;max-width:400px;margin-bottom:40px}
+.card{background:rgba(255,255,255,.2);border-radius:16px;padding:20px 16px;text-align:center;backdrop-filter:blur(10px);cursor:pointer;transition:transform .2s}
+.card:hover{transform:translateY(-4px);background:rgba(255,255,255,.3)}
+.icon{font-size:32px;margin-bottom:8px}
+.name{color:white;font-size:14px;font-weight:600}
+.start-btn{background:white;color:#667eea;border:none;padding:18px 60px;border-radius:30px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.start-btn:hover{transform:scale(1.05)}
+.q-page{min-height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);padding:20px;display:none}
+.pbar{background:rgba(255,255,255,.2);border-radius:10px;height:8px;overflow:hidden}
+.pfill{background:white;height:100%;border-radius:10px;transition:width .3s}
+.ptext{color:white;font-size:12px;text-align:center;display:block;margin:8px 0 16px}
+.qcard{background:white;border-radius:20px;padding:30px 24px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.tag{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:6px 16px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:16px}
+.qtext{font-size:18px;font-weight:600;color:#1a1a2e;display:block;margin-bottom:24px;line-height:1.6}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{background:#f8f9fa;border:2px solid transparent;border-radius:12px;padding:16px 20px;transition:all .2s;cursor:pointer}
+.opt:hover{background:#f0f4ff}
+.opt.on{background:linear-gradient(135deg,#667eea,#764ba2);border-color:white}
+.opt.on .olabel{color:white}
+.olabel{font-size:15px;color:#333}
+.nav{display:flex;gap:12px;margin-top:30px}
+.btn{flex:1;padding:16px;border-radius:12px;font-size:16px;font-weight:600;border:none;cursor:pointer}
+.btn-prev{background:rgba(255,255,255,.2);color:white}
+.btn-next{background:white;color:#667eea}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.tip{color:rgba(255,255,255,.7);font-size:12px;text-align:center;display:block;margin-top:20px}
+.rpage{min-height:100vh;background:#f8f9fa;padding-bottom:40px;display:none}
+.rheader{background:linear-gradient(135deg,#667eea,#764ba2);padding:40px 20px 30px;text-align:center}
+.rtitle{color:white;font-size:22px;font-weight:700}
+.rdate{color:rgba(255,255,255,.8);font-size:13px;display:block;margin-top:8px}
+.rcard{background:white;margin:-20px 16px 16px;border-radius:20px;padding:30px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.badge{background:linear-gradient(135deg,#667eea,#764ba2);display:inline-block;padding:12px 32px;border-radius:30px;margin-bottom:16px}
+.btext{color:white;font-size:24px;font-weight:700}
+.score{color:#667eea;font-size:16px;font-weight:600;display:block;margin-bottom:12px}
+.desc{color:#666;font-size:14px;line-height:1.6}
+.section{background:white;margin:0 16px 16px;border-radius:16px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.shead{display:flex;align-items:center;margin-bottom:16px}
+.sicon{font-size:22px;margin-right:10px}
+.stitle{font-size:17px;font-weight:700;color:#1a1a2e}
+.scontent{font-size:14px;color:#555;line-height:1.8}
+.syms{display:flex;flex-wrap:wrap;gap:10px}
+.sym{background:#f0f4ff;color:#667eea;padding:8px 16px;border-radius:20px;font-size:13px}
+.ablock{margin-bottom:20px}
+.ablock:last-child{margin-bottom:0}
+.atitle{font-size:15px;font-weight:600;color:#1a1a2e;display:block;margin-bottom:12px}
+.ftags{display:flex;flex-wrap:wrap;gap:8px}
+.ftag{padding:8px 14px;border-radius:8px;font-size:13px}
+.ftag.good{background:#e8f5e9;color:#2e7d32}
+.ftag.bad{background:#ffebee;color:#c62828}
+.llist{display:flex;flex-direction:column;gap:10px}
+.litem{display:flex;align-items:flex-start}
+.ldot{color:#667eea;margin-right:8px;font-weight:bold}
+.ltext{font-size:14px;color:#555;flex:1}
+.alist{display:flex;flex-direction:column;gap:12px}
+.aitem{background:#f8f9fa;padding:14px;border-radius:10px}
+.aname{font-size:15px;font-weight:600;color:#667eea;display:block;margin-bottom:4px}
+.adesc{font-size:13px;color:#666}
+.disc{background:#fff8e1;margin:0 16px 20px;border-radius:12px;padding:16px;border-left:4px solid #ffc107}
+.dtitle{font-size:14px;font-weight:600;color:#f57c00;display:block;margin-bottom:8px}
+.dtext{font-size:12px;color:#666;line-height:1.6}
+.actions{display:flex;flex-direction:column;gap:12px;padding:0 16px}
+.abtn{padding:16px;border-radius:12px;font-size:16px;font-weight:600;border:none;cursor:pointer}
+.abtn.share{background:#e8f5e9;color:#2e7d32}
+.abtn.plan{background:linear-gradient(135deg,#667eea,#764ba2);color:white}
+.abtn.home{background:white;color:#667eea;border:2px solid #667eea}
+</style>
+</head>
+<body>
+<div id="home" class="home">
+<div class="logo">🏥</div>
+<h1 class="title">AI中西医健康管理</h1>
+<p class="subtitle">智能问诊 · 体质辨识 · 健康指导</p>
+<div class="grid">
+<div class="card" onclick="startQ()"><div class="icon">📝</div><div class="name">健康问诊</div></div>
+<div class="card"><div class="icon">📊</div><div class="name">体质辨识</div></div>
+<div class="card"><div class="icon">🥗</div><div class="name">饮食管理</div></div>
+<div class="card"><div class="icon">📚</div><div class="name">健康科普</div></div>
+</div>
+<button class="start-btn" onclick="startQ()">开始健康问诊</button>
+</div>
+<div id="qpage" class="q-page">
+<div class="pbar"><div id="pfill" class="pfill" style="width:5.56%"></div></div>
+<span id="ptext" class="ptext">1 / 18</span>
+<div id="qcard" class="qcard"></div>
+<div class="nav">
+<button id="prevBtn" class="btn btn-prev" onclick="prevQ()" disabled>上一题</button>
+<button id="nextBtn" class="btn btn-next" onclick="nextQ()" disabled>下一题</button>
+</div>
+<span class="tip">请根据您近一年的体验和感觉回答</span>
+</div>
+<div id="rpage" class="rpage">
+<div class="rheader"><h1 class="rtitle">体质分析报告</h1><span id="rdate" class="rdate"></span></div>
+<div class="rcard"><div class="badge"><span id="btext" class="btext"></span></div><span id="score" class="score"></span><span id="desc" class="desc"></span></div>
+<div class="section"><div class="shead"><span class="sicon">🩺</span><span class="stitle">典型症状</span></div><div id="syms" class="syms"></div></div>
+<div class="section"><div class="shead"><span class="sicon">📜</span><span class="stitle">中医解读</span></div><p id="tcm" class="scontent"></p></div>
+<div class="section"><div class="shead"><span class="sicon">🔬</span><span class="stitle">现代医学视角</span></div><p id="western" class="scontent"></p></div>
+<div class="section"><div class="shead"><span class="sicon">💡</span><span class="stitle">调理建议</span></div>
+<div class="ablock"><span class="atitle">✅ 宜吃食物</span><div id="diet" class="ftags"></div></div>
+<div class="ablock"><span class="atitle">❌ 忌口食物</span><div id="avoid" class="ftags"></div></div>
+<div class="ablock"><span class="atitle">🌟 生活建议</span><div id="life" class="llist"></div></div>
+<div class="ablock"><span class="atitle">📍 推荐穴位</span><div id="acu" class="alist"></div></div>
+</div>
+<div class="disc"><span class="dtitle">⚠️ 免责声明</span><span class="dtext">本报告基于中医体质辨识理论生成，仅供参考，不构成医疗诊断建议。如有身体不适，请及时就医。</span></div>
+<div class="actions"><button class="abtn share" onclick="alert('开发中')">分享报告</button><button class="abtn plan" onclick="alert('开发中')">查看调理方案</button><button class="abtn home" onclick="goHome()">返回首页</button></div>
+</div>
+<script>
+const qs=[{id:'q1',cat:'气虚质',text:'您容易感到疲乏吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q2',cat:'气虚质',text:'您容易气短、呼吸短促吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q3',cat:'气虚质',text:'您说话声音低弱无力吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q4',cat:'阳虚质',text:'您手脚发凉吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q5',cat:'阳虚质',text:'您胃脘部、背部或腰膝部怕冷吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q6',cat:'阴虚质',text:'您感到手脚心发热吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q7',cat:'阴虚质',text:'您感到眼睛干涩吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q8',cat:'痰湿质',text:'您感到腹部肥满松软吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q9',cat:'痰湿质',text:'您感到身体沉重不轻松或不爽快吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q10',cat:'湿热质',text:'您面部或鼻部有油腻感或者油亮发光吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q11',cat:'湿热质',text:'您容易生痤疮或疮疖吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q12',cat:'血瘀质',text:'您的皮肤在不知不觉中会出现青紫瘀斑吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q13',cat:'血瘀质',text:'您两颧部有细微红丝吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q14',cat:'气郁质',text:'您感到闷闷不乐、情绪低沉吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q15',cat:'气郁质',text:'您容易感到害怕或受到惊吓吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q16',cat:'特禀质',text:'您容易过敏吗？',opts:[{v:1,l:'没有'},{v:2,l:'很少'},{v:3,l:'有时'},{v:4,l:'经常'},{v:5,l:'总是'}]},{id:'q17',cat:'平和质',text:'您精力充沛吗？',opts:[{v:5,l:'没有'},{v:4,l:'很少'},{v:3,l:'有时'},{v:2,l:'经常'},{v:1,l:'总是'}]},{id:'q18',cat:'平和质',text:'您睡眠好吗？',opts:[{v:5,l:'没有'},{v:4,l:'很少'},{v:3,l:'有时'},{v:2,l:'经常'},{v:1,l:'总是'}]}];
+const tdata={'气虚质':{desc:'元气不足，疲乏、气短、自汗',syms:['容易疲劳','气短懒言','声音低弱','容易出汗','容易感冒'],tcm:'肺脾气虚，卫外不固。气虚则脏腑功能减退，表现为疲乏无力、气短懒言。',western:'可能与免疫功能低下、慢性疲劳综合征、亚健康状态相关。',diet:['山药','大枣','黄芪','鸡肉','牛肉'],avoid:['生冷食物','油腻食物','过度节食'],life:['早睡早起','避免过度劳累','适度运动如太极拳','注意保暖'],acu:['足三里：膝盖下3寸，胫骨外侧','气海：肚脐下1.5寸','关元：肚脐下3寸']},'阳虚质':{desc:'阳气不足，畏寒怕冷、手足不温',syms:['怕冷','手足不温','喜热饮食','精神不振','大便稀溏'],tcm:'脾肾阳虚，温煦失职。阳气虚则机体失于温养，表现为畏寒肢冷。',western:'可能与甲状腺功能减退、血液循环不良、基础代谢率低相关。',diet:['羊肉','韭菜','核桃','生姜','桂圆'],avoid:['冷饮冷食','生冷瓜果','过度寒凉药物'],life:['多晒太阳','热水泡脚','避免熬夜','冬季注意保暖'],acu:['命门：第二腰椎棘突下','肾俞：命门旁开1.5寸','关元：肚脐下3寸']},'阴虚质':{desc:'阴液亏少，口燥咽干、手足心热',syms:['手足心热','口燥咽干','皮肤干燥','大便干结','易失眠'],tcm:'肝肾阴虚，津液不足。阴液亏虚则虚热内生，表现为五心烦热。',western:'可能与自主神经功能紊乱、内分泌失调、更年期综合征相关。',diet:['银耳','百合','梨','鸭肉','黑芝麻'],avoid:['辛辣食物','煎炸食物','烟酒','过度温补'],life:['早睡早起','避免熬夜','保持心情舒畅','适度运动'],acu:['三阴交：内踝尖上3寸','太溪：内踝与跟腱之间','涌泉：足底前1/3凹陷处']},'痰湿质':{desc:'痰湿凝聚，形体肥胖、腹部肥满',syms:['形体肥胖','腹部肥满','口黏苔腻','容易困倦','痰多'],tcm:'脾虚湿盛，痰湿内蕴。脾失健运则水湿停聚，形成痰湿。',western:'可能与代谢综合征、肥胖、高血脂、胰岛素抵抗相关。',diet:['薏米','冬瓜','白萝卜','山楂','荷叶茶'],avoid:['肥甘厚味','甜腻食物','过度饮酒','暴饮暴食'],life:['加强运动','避免久坐','控制体重','饮食规律'],acu:['丰隆：外踝尖上8寸','足三里：膝盖下3寸','中脘：肚脐上4寸']},'湿热质':{desc:'湿热内蕴，面垢油光、口苦苔黄腻',syms:['面部油腻','口苦口臭','大便黏滞','易生痤疮','小便黄'],tcm:'湿热蕴结，熏蒸内外。湿热阻滞气机，表现为油腻、口苦、痤疮。',western:'可能与皮脂分泌旺盛、炎症反应、消化系统功能紊乱相关。',diet:['绿豆','苦瓜','黄瓜','芹菜','莲藕'],avoid:['辛辣油腻','烧烤油炸','过度饮酒','甜腻食物'],life:['保持皮肤清洁','避免熬夜','多饮水','适度运动出汗'],acu:['曲池：屈肘横纹外侧端','合谷：手背第1、2掌骨间','阴陵泉：胫骨内侧髁下方']},'血瘀质':{desc:'血行不畅，肤色晦暗、舌质紫黯',syms:['肤色晦暗','易有瘀斑','口唇色暗','易疼痛','记忆力差'],tcm:'气滞血瘀，脉络不畅。血行不畅则瘀阻脉络，表现为色暗、瘀斑。',western:'可能与微循环障碍、血液黏稠度增高、血栓风险相关。',diet:['山楂','黑木耳','洋葱','红糖','玫瑰花'],avoid:['寒凉食物','过度静止','情绪抑郁'],life:['适度运动','保持心情舒畅','避免久坐','可适度饮酒活血'],acu:['血海：膝盖内上方2寸','膈俞：第7胸椎棘突下旁开1.5寸','三阴交：内踝尖上3寸']},'气郁质':{desc:'气机郁滞，神情抑郁、忧虑脆弱',syms:['情绪低落','多愁善感','容易紧张','睡眠不佳','胸胁胀痛'],tcm:'肝气郁结，情志不畅。肝失疏泄则气机郁滞，表现为抑郁、焦虑。',western:'可能与抑郁症、焦虑症、自主神经功能紊乱相关。',diet:['玫瑰花茶','佛手','柑橘','茉莉花茶','小麦'],avoid:['过度思虑','情绪压抑','过度咖啡因'],life:['多参加社交活动','培养兴趣爱好','适度运动','保持规律作息'],acu:['太冲：足背第1、2跖骨间','期门：乳头直下第6肋间隙','内关：腕横纹上2寸']},'特禀质':{desc:'先天失常，生理缺陷、过敏反应',syms:['容易过敏','皮肤易起疹','鼻塞喷嚏','适应能力差','遗传疾病'],tcm:'先天禀赋不足，卫外不固。先天缺陷导致机体对外界适应能力差。',western:'可能与过敏体质、免疫系统异常、遗传性疾病相关。',diet:['清淡饮食','新鲜蔬菜','避免已知过敏原','适量益生菌食物'],avoid:['已知过敏食物','环境过敏原','过度刺激'],life:['避免接触过敏原','保持环境清洁','增强免疫力','规律作息'],acu:['肺俞：第3胸椎棘突下旁开1.5寸','脾俞：第11胸椎棘突下旁开1.5寸','足三里：膝盖下3寸']},'平和质':{desc:'阴阳气血调和，体态适中，面色红润，精力充沛',syms:['精力充沛','面色红润','睡眠良好','二便正常','适应力强'],tcm:'阴阳平衡，脏腑协调。先天禀赋良好，后天调养得当。',western:'健康状态，各项生理指标正常，免疫力良好。',diet:['饮食多样化','五谷为养','五果为助','五畜为益','五菜为充'],avoid:['饮食偏嗜','过度劳累','情绪波动'],life:['保持规律作息','适度运动','心情舒畅','劳逸结合'],acu:['足三里：膝盖下3寸（保健要穴）','关元：肚脐下3寸','涌泉：足底前1/3凹陷处']}};
+let ci=0,ans={};
+function startQ(){document.getElementById('home').style.display='none';document.getElementById('qpage').style.display='block';renderQ();}
+function renderQ(){const q=qs[ci];const pct=((ci+1)/qs.length*100).toFixed(2);document.getElementById('pfill').style.width=pct+'%';document.getElementById('ptext').textContent=(ci+1)+' / '+qs.length;let html='<span class="tag">'+q.cat+'</span><span class="qtext">'+q.text+'</span><div class="opts">';q.opts.forEach(o=>{const on=ans[q.id]===o.v?' on':'';html+='<div class="opt'+on+'" onclick="sel('+o.v+')"><span class="olabel">'+o.l+'</span></div>';});html+='</div>';document.getElementById('qcard').innerHTML=html;document.getElementById('prevBtn').disabled=ci===0;document.getElementById('nextBtn').disabled=!ans[q.id];document.getElementById('nextBtn').textContent=ci===qs.length-1?'查看报告':'下一题';}
+function sel(v){ans[qs[ci].id]=v;renderQ();setTimeout(()=>{if(ci<qs.length-1)nextQ();},300);}
+function nextQ(){if(ci===qs.length-1)submit();else{ci++;renderQ();}}
+function prevQ(){if(ci>0){ci--;renderQ();}}
+function submit(){const scores={};const cnts={};qs.forEach(q=>{if(ans[q.id]){scores[q.cat]=(scores[q.cat]||0)+ans[q.id];cnts[q.cat]=(cnts[q.cat]||0)+1;}});const res={};for(let c in scores)res[c]=Math.round((scores[c]/cnts[c]-1)/4*100);let max=0,primary='平和质';for(let t in res)if(t!=='平和质'&&res[t]>max){max=res[t];primary=t;}if(res['平和质']>=60&&res['平和质']>=max)primary='平和质';showReport(primary,res[primary],res);}
+function showReport(type,score,all){document.getElementById('qpage').style.display='none';document.getElementById('rpage').style.display='block';const d=tdata[type];document.getElementById('rdate').textContent=new Date().toLocaleString();document.getElementById('btext').textContent=type;document.getElementById('score').textContent='得分: '+score+'分';document.getElementById('desc').textContent=d.desc;document.getElementById('syms').innerHTML=d.syms.map(s=>'<span class="sym">'+s+'</span>').join('');document.getElementById('tcm').textContent=d.tcm;document.getElementById('western').textContent=d.western;document.getElementById('diet').innerHTML=d.diet.map(f=>'<span class="ftag good">'+f+'</span>').join('');document.getElementById('avoid').innerHTML=d.avoid.map(f=>'<span class="ftag bad">'+f+'</span>').join('');document.getElementById('life').innerHTML=d.life.map(l=>'<div class="litem"><span class="ldot">•</span><span class="ltext">'+l+'</span></div>').join('');document.getElementById('acu').innerHTML=d.acu.map(a=>{const p=a.split('：');return'<div class="aitem"><span class="aname">'+p[0]+'</span><span class="adesc">'+(p[1]||'')+'</span></div>';}).join('');}
+function goHome(){document.getElementById('rpage').style.display='none';document.getElementById('home').style.display='flex';ci=0;ans={};}
+</script>
+</body>
+</html>
