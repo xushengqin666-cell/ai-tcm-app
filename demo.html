@@ -1068,7 +1068,7 @@ function typeWriter(element, text, speed = 20) {
 
   function type() {
     if (i < text.length) {
-      cursor.insertAdjacentText('beforebegin', text.charAt(i));
+      cursor.insertAdjacentHTML('beforebegin', text.charAt(i));
       i++;
       setTimeout(type, speed + Math.random() * 15);
     } else {
