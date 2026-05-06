@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -1060,22 +1060,58 @@ function addMessage(text, isUser = false) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-function typeWriter(element, text, speed = 20) {
-  let i = 0;
+function typeWriter(element, text, speed = 18) {
+  // Parse HTML: collect plain text segments and HTML tags separately
+  // Only typewriter-effect the text; insert tags as live DOM elements
+  const parts = [];
+  let current = '';
+  let inTag = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '<') { if (current) parts.push({ t: 'text', v: current }); current = ''; inTag = true; current = '<'; }
+    else if (ch === '>' && inTag) { current += '>'; parts.push({ t: 'html', v: current }); current = ''; inTag = false; }
+    else { current += ch; }
+  }
+  if (current) parts.push({ t: inTag ? 'html' : 'text', v: current });
+
   const cursor = document.createElement('span');
   cursor.className = 'cursor';
   element.appendChild(cursor);
 
-  function type() {
-    if (i < text.length) {
-      cursor.insertAdjacentHTML('beforebegin', text.charAt(i));
-      i++;
-      setTimeout(type, speed + Math.random() * 15);
-    } else {
+  let partIdx = 0;
+  let charIdx = 0;
+  let accumulated = '';
+  let timer = null;
+
+  function typePart() {
+    if (partIdx >= parts.length) {
       cursor.remove();
+      return;
+    }
+    const part = parts[partIdx];
+    if (part.t === 'html') {
+      // Insert as live DOM element immediately, no animation
+      cursor.insertAdjacentHTML('beforebegin', part.v);
+      partIdx++;
+      typePart();
+    } else {
+      // Type character by character
+      if (charIdx < part.v.length) {
+        const ch = part.v[charIdx];
+        accumulated += ch;
+        cursor.insertAdjacentText('beforebegin', ch);
+        charIdx++;
+        timer = setTimeout(typePart, speed + Math.random() * 12);
+      } else {
+        // Move to next part
+        partIdx++;
+        charIdx = 0;
+        timer = setTimeout(typePart, speed * 3);
+      }
     }
   }
-  type();
+
+  typePart();
 }
 
 function sendMessage() {
