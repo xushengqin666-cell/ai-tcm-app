@@ -1129,7 +1129,7 @@ function sendMessage() {
     msgDiv.className = 'msg msg-ai';
     msgDiv.appendChild(bubble);
     messagesDiv.appendChild(msgDiv);
-    typeWriter(bubble, response);
+    bubble.innerHTML = response;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }, 300);
 }
