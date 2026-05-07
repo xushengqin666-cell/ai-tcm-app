@@ -811,6 +811,7 @@ function submitFeedback(){const text=document.getElementById('feedbackText').val
             <input type="password" id="adminPassword" placeholder="输入管理员密码" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;width:200px;margin-right:10px;">
             <button onclick="verifyAdmin()" style="padding:10px 20px;background:linear-gradient(90deg,#ffc107,#ff9800);border:none;border-radius:8px;color:#000;cursor:pointer;">验证</button>
             <button onclick="exportFeedbackCSV()" style="padding:10px 20px;background:linear-gradient(90deg,#4caf50,#2e7d32);border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;">📥 导出CSV</button>
+            <button onclick="emailFeedback()" style="padding:10px 20px;background:linear-gradient(90deg,#f44336,#d32f2f);border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;">📧 发送邮件</button>
         </div>
         <div id="feedbackList" style="display:none;">
             <h3 style="margin-bottom:15px;color:#00d2ff;">📋 反馈记录 (<span id="feedbackCount">0</span>条)</h3>
@@ -913,6 +914,18 @@ function exportFeedbackCSV() {
     a.href = URL.createObjectURL(blob);
     a.download = 'feedback_' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
+};
+
+function emailFeedback() {
+    if (feedbackData.length === 0) { alert('暂无反馈'); return; }
+    var summary = '反馈总数: ' + feedbackData.length + '\n\n';
+    feedbackData.forEach(function(f, i) {
+        summary += (i+1) + '. ' + f.time + ' - ' + '⭐'.repeat(f.rating) + '\n';
+        if (f.text) summary += '   ' + f.text + '\n';
+        summary += '\n';
+    });
+    var mailto = 'mailto:xushengqin666@gmail.com?subject=AI健康App用户反馈&body=' + encodeURIComponent(summary);
+    window.location.href = mailto;
 }
 
 // Knowledge Base Admin
