@@ -2,282 +2,202 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0052d9">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AI健康助手">
-<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>AI中西医健康助手</title>
 <style>
-/* ===== 基础重置 ===== */
+/* 极简重置 - 最大化兼容性 */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --primary:#0052d9;--primary-dark:#003bb3;--primary-light:#4d8bd9;
-  --success:#52c41a;--warning:#faad14;--danger:#ff4d4f;--info:#00d2ff;
-  --bg:#f0f2f5;--card:#fff;--text:#1a1a1a;--text2:#555;--text3:#999;
-  --shadow:0 2px 16px rgba(0,0,0,0.08);--shadow-sm:0 1px 4px rgba(0,0,0,0.06);
-  --font:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
-}
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);
-  font-size:17px;line-height:1.6;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:17px;line-height:1.6;overflow:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}
 
-/* ===== 布局 ===== */
-.app-wrap{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;background:var(--bg)}
+/* 全屏容器 */
+.app{width:100%;max-width:480px;height:100%;margin:0 auto;display:flex;flex-direction:column;background:#f0f2f5;position:relative}
 
-/* ===== 顶部 ===== */
-.top-bar{background:linear-gradient(135deg,#0052d9 0%,#0041b3 100%);
-  color:#fff;padding:env(safe-area-inset-top,14px) 14px 0;position:sticky;top:0;z-index:200;
-  box-shadow:0 3px 16px rgba(0,82,217,0.35)}
-.top-inner{padding:12px 0 0}
-.top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.app-brand{display:flex;align-items:center;gap:10px}
-.app-icon{width:46px;height:46px;background:rgba(255,255,255,0.18);border-radius:13px;
-  display:flex;align-items:center;justify-content:center;font-size:24px;backdrop-filter:blur(4px)}
-.app-name{font-size:20px;font-weight:700;letter-spacing:0.3px}
-.app-desc{font-size:12px;opacity:0.75}
-.top-actions{display:flex;gap:8px}
-.top-btn{background:rgba(255,255,255,0.15);border:none;border-radius:10px;
-  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
-  font-size:18px;cursor:pointer;color:#fff;transition:background 0.2s}
-.top-btn:hover{background:rgba(255,255,255,0.28)}
+/* 顶部标题栏 */
+.header{background:linear-gradient(135deg,#0052d9,#0041b3);color:#fff;padding:14px 14px 8px;flex-shrink:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-icon{width:44px;height:44px;background:rgba(255,255,255,0.18);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.header-title{font-size:19px;font-weight:700}
+.header-sub{font-size:12px;opacity:0.75}
+.header-btns{display:flex;gap:8px}
+.header-btn{background:rgba(255,255,255,0.15);border:none;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:#fff}
 
-/* ===== 模式切换 ===== */
-.mode-scroll{overflow-x:auto;scrollbar-width:none;padding:0 10px 10px;
-  display:flex;gap:6px;background:linear-gradient(135deg,#0052d9 0%,#0041b3 100%);padding-top:2px}
-.mode-scroll::-webkit-scrollbar{display:none}
-.mode-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.35);
-  background:transparent;color:rgba(255,255,255,0.82);font-size:15px;font-weight:500;
-  cursor:pointer;transition:all 0.2s;font-family:var(--font);white-space:nowrap}
-.mode-btn.active{background:#fff;color:#0052d9;border-color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+/* 模式标签 */
+.modes{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.modes::-webkit-scrollbar{display:none}
+.mode{font-size:15px;font-weight:500;padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.35);background:transparent;color:rgba(255,255,255,0.82);cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit}
+.mode.on{background:#fff;color:#0052d9;border-color:#fff;font-weight:600}
 
-/* ===== 快速输入 ===== */
-.quick-bar{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;
-  background:rgba(255,255,255,0.06);border-radius:0 0 16px 16px}
-.quick-chip{padding:5px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.28);
-  background:transparent;color:#fff;font-size:13px;cursor:pointer;transition:all 0.18s;
-  font-family:var(--font);white-space:nowrap}
-.quick-chip:hover,.quick-chip:active{background:rgba(255,255,255,0.22)}
+/* 快速按钮 */
+.quick{padding:8px 10px;background:rgba(255,255,255,0.06)}
+.quick-btn{font-size:13px;padding:5px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.28);background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-family:inherit}
 
-/* ===== 对话区 ===== */
-.chat{flex:1;overflow-y:auto;padding:14px 10px 130px;
-  scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+/* 对话区 */
+.chat{flex:1;overflow-y:auto;padding:14px 10px 130px;-webkit-overflow-scrolling:touch}
 .chat::-webkit-scrollbar{width:3px}
 .chat::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:2px}
 
-/* ===== 消息 ===== */
-.msg{display:flex;gap:9px;margin-bottom:14px;animation:msgIn 0.28s ease}
-.msg.user{flex-direction:row-reverse}
-.msg-avatar{width:36px;height:36px;border-radius:11px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:16px}
-.msg.user .msg-avatar{background:linear-gradient(135deg,#0052d9,#003bb3);color:#fff}
-.msg.ai .msg-avatar{background:#fff;border:1.5px solid #e5e7eb;color:#0052d9}
+/* 消息 */
+.msg{display:flex;gap:9px;margin-bottom:14px;animation:msgIn 0.3s ease}
+.msg.me{flex-direction:row-reverse}
+.msg-ava{width:36px;height:36px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px}
+.msg.me .msg-ava{background:linear-gradient(135deg,#0052d9,#0041b3);color:#fff}
+.msg.ai .msg-ava{background:#fff;border:1px solid #e5e7eb;color:#0052d9}
 .msg-body{max-width:80%}
-.msg-content{padding:11px 15px;border-radius:14px;font-size:18px;line-height:1.7;
-  box-shadow:var(--shadow);word-break:break-word}
-.msg.user .msg-content{background:linear-gradient(135deg,#0052d9,#0041b3);color:#fff;
-  border-radius:14px 3px 14px 14px}
-.msg.ai .msg-content{background:#fff;color:var(--text);border-radius:3px 14px 14px 14px}
-.msg-time{font-size:11px;color:var(--text3);margin-top:4px;padding:0 3px}
+.msg-c{padding:11px 15px;border-radius:14px;font-size:18px;line-height:1.7;word-break:break-word}
+.msg.me .msg-c{background:linear-gradient(135deg,#0052d9,#0041b3);color:#fff;border-radius:14px 3px 14px 14px}
+.msg.ai .msg-c{background:#fff;color:#1a1a1a;border-radius:3px 14px 14px 14px;box-shadow:0 1px 8px rgba(0,0,0,0.06)}
+.msg-t{font-size:11px;color:#999;margin-top:4px;padding:0 3px}
 
-/* ===== 医学卡片 ===== */
-.emergency-box{background:#fffbea;border:1.5px solid #ffe58f;border-radius:12px;padding:12px;margin-top:10px}
-.emergency-box h5{color:#d48806;font-size:16px;font-weight:600;margin-bottom:5px}
-.emergency-box p{color:#7c4600;font-size:17px}
-.med-section{background:#f0f5ff;border:1.5px solid #dce8ff;border-radius:12px;padding:12px;margin-top:10px}
-.med-section h4{color:#0052d9;font-size:16px;font-weight:600;margin-bottom:8px}
-.med-section ul{list-style:none;padding:0;margin:0}
-.med-section li{padding:4px 0;font-size:17px;color:#333;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:flex-start;gap:6px}
-.med-section li:last-child{border:none}
-.med-section li::before{content:'•';color:#0052d9;font-weight:700;flex-shrink:0}
-.drug-warn{background:#fff5f5;border:1.5px solid #ffd4d4;border-radius:12px;padding:12px;margin-top:10px}
-.drug-warn h5{color:#e83e3e;font-size:16px;font-weight:600;margin-bottom:5px}
-.drug-warn p{color:#c00;font-size:17px}
-.diet-box{background:#f6ffed;border:1.5px solid #b7eb8f;border-radius:12px;padding:12px;margin-top:10px}
-.diet-box h4{color:#389e0d;font-size:16px;font-weight:600;margin-bottom:6px}
-.herb-box{background:#fef7ff;border:1.5px solid #efdbff;border-radius:12px;padding:12px;margin-top:10px}
-.herb-box h4{color:#722ed1;font-size:16px;font-weight:600;margin-bottom:6px}
-.synergy-box{background:#fff7e6;border:1.5px solid #ffd591;border-radius:12px;padding:12px;margin-top:10px}
-.synergy-box h4{color:#d46b08;font-size:16px;font-weight:600;margin-bottom:6px}
-.drug-warn + p,.herb-box + p,.diet-box + p,.med-section + p{padding:8px 0 0}
-.memory-badge{display:inline-block;background:linear-gradient(90deg,#667eea,#764ba2);
-  color:#fff;padding:3px 10px;border-radius:12px;font-size:13px}
+/* 医学卡片 */
+.emg{background:#fffbea;border:1.5px solid #ffe58f;border-radius:12px;padding:12px;margin-top:10px}
+.emg h5{color:#d48806;font-size:16px;font-weight:700;margin-bottom:5px}
+.emg p{color:#7c4600;font-size:17px}
+.sec{background:#f0f5ff;border:1.5px solid #dce8ff;border-radius:12px;padding:12px;margin-top:10px}
+.sec h4{color:#0052d9;font-size:16px;font-weight:700;margin-bottom:8px}
+.sec ul{list-style:none;padding:0;margin:0}
+.sec li{padding:4px 0;font-size:17px;color:#333;border-bottom:1px solid rgba(0,0,0,0.05)}
+.sec li:last-child{border:none}
+.sec li::before{content:'•';color:#0052d9;font-weight:700;margin-right:6px}
+.eat{background:#f6ffed;border:1.5px solid #b7eb8f;border-radius:12px;padding:12px;margin-top:10px}
+.eat h4{color:#389e0d;font-size:16px;font-weight:700;margin-bottom:6px}
+.herb{background:#fef7ff;border:1.5px solid #efdbff;border-radius:12px;padding:12px;margin-top:10px}
+.herb h4{color:#722ed1;font-size:16px;font-weight:700;margin-bottom:6px}
+.drug{background:#fff7e6;border:1.5px solid #ffd591;border-radius:12px;padding:12px;margin-top:10px}
+.drug h4{color:#d46b08;font-size:16px;font-weight:700;margin-bottom:6px}
+.mem{background:linear-gradient(90deg,#667eea,#764ba2);color:#fff;padding:3px 10px;border-radius:12px;font-size:13px}
 
-/* ===== 底部输入 ===== */
-.input-area{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;
-  background:#fff;border-top:1px solid rgba(0,0,0,0.08);
-  padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));z-index:100}
+/* 底部输入 */
+.input{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid rgba(0,0,0,0.08);padding:8px 12px 12px;z-index:100}
 .input-inner{display:flex;gap:8px;align-items:flex-end}
-.chat-input{flex:1;min-height:48px;max-height:120px;border:1.5px solid #e5e7eb;
-  border-radius:24px;padding:8px 18px;outline:none;font-size:18px;line-height:1.5;
-  resize:none;font-family:var(--font);background:#f8f9fa;transition:border-color 0.2s,background 0.2s}
-.chat-input:focus{border-color:#0052d9;background:#fff;box-shadow:0 0 0 3px rgba(0,82,217,0.08)}
-.send-btn{width:48px;height:48px;border-radius:50%;border:none;
-  background:linear-gradient(135deg,#0052d9,#003bb3);color:#fff;font-size:20px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
-  transition:transform 0.15s;box-shadow:0 3px 10px rgba(0,82,217,0.3)}
-.send-btn:hover{transform:scale(1.07)}
-.send-btn:active{transform:scale(0.93)}
+.txt{flex:1;min-height:46px;max-height:120px;border:1.5px solid #e5e7eb;border-radius:23px;padding:8px 18px;outline:none;font-size:18px;line-height:1.5;resize:none;font-family:inherit;background:#f8f9fa;transition:border-color .2s}
+.txt:focus{border-color:#0052d9;background:#fff}
+.send{width:46px;height:46px;border-radius:50%;border:none;background:linear-gradient(135deg,#0052d9,#0041b3);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px rgba(0,82,217,0.3)}
 
-/* ===== 打字动画 ===== */
-.typing-row{display:flex;gap:9px;margin-bottom:14px;align-items:flex-start}
-.typing-dots{display:flex;gap:4px;padding:14px 18px;background:#fff;border-radius:3px 14px 14px 14px;box-shadow:var(--shadow)}
-.typing-dots span{width:8px;height:8px;background:#0052d9;border-radius:50%;animation:dotBounce 1.4s infinite;opacity:0.5}
+/* 打字动画 */
+.typing{display:flex;gap:9px;margin-bottom:14px}
+.typing-dots{display:flex;gap:4px;padding:14px 18px;background:#fff;border-radius:3px 14px 14px 14px;box-shadow:0 1px 8px rgba(0,0,0,0.06)}
+.typing-dots span{width:8px;height:8px;background:#0052d9;border-radius:50%;animation:db 1.4s infinite;opacity:.5}
 .typing-dots span:nth-child(2){animation-delay:.2s}
 .typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes dotBounce{0%,80%,100%{transform:scale(0.7);opacity:0.4}40%{transform:scale(1);opacity:1}}
+@keyframes db{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1);opacity:1}}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== Toast ===== */
-#toast{position:fixed;top:calc(env(safe-area-inset-top,14px) + 10px);left:50%;
-  transform:translateX(-50%) translateY(-20px);
-  background:rgba(24,24,24,0.88);color:#fff;padding:10px 24px;border-radius:24px;
-  font-size:15px;z-index:9999;white-space:nowrap;opacity:0;
-  transition:opacity 0.3s,transform 0.3s;pointer-events:none;backdrop-filter:blur(8px)}
+/* Toast */
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(24,24,24,.88);color:#fff;padding:10px 24px;border-radius:24px;font-size:15px;z-index:9999;white-space:nowrap;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.ok{background:#52c41a}
 #toast.err{background:#ff4d4f}
-#toast.info{background:#0052d9}
 
-/* ===== 模态框 ===== */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;
-  display:none;align-items:center;justify-content:center;padding:20px;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.modal-bg.open{display:flex}
-.modal-card{background:#fff;border-radius:20px;width:100%;max-width:440px;
-  max-height:88vh;overflow-y:auto;padding:24px;animation:modalIn 0.3s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(0.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* 模态 */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(6px)}
+.modal.on{display:flex}
+.modal-card{background:#fff;border-radius:20px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;padding:24px;animation:mc .3s ease}
+@keyframes mc{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
-/* ===== 反馈模态 ===== */
-.fb-title{font-size:21px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
-.fb-sub{font-size:14px;color:#888;margin-bottom:18px}
+/* 反馈 */
+.fb-t{font-size:21px;font-weight:700;margin-bottom:4px}
+.fb-s{font-size:14px;color:#888;margin-bottom:16px}
 .fb-stars{text-align:center;font-size:44px;margin:14px 0;cursor:pointer;letter-spacing:6px}
-.fb-star{color:#ddd;transition:all 0.15s;display:inline-block}
-.fb-star.active{color:#ffc107;transform:scale(1.18)}
-.fb-star:hover{transform:scale(1.1)}
-.fb-text{width:100%;height:115px;padding:14px;border-radius:12px;
-  border:1.5px solid #e5e7eb;font-size:17px;resize:none;outline:none;
-  font-family:var(--font);line-height:1.6;color:var(--text);background:#f8f9fa;
-  transition:border-color 0.2s;margin-top:12px}
-.fb-text:focus{border-color:#0052d9;background:#fff}
-.fb-submit{width:100%;padding:14px;background:linear-gradient(135deg,#0052d9,#003bb3);
-  border:none;border-radius:12px;color:#fff;font-size:18px;font-weight:600;
-  cursor:pointer;font-family:var(--font);margin-top:12px;
-  transition:transform 0.15s;box-shadow:0 4px 14px rgba(0,82,217,0.3)}
-.fb-submit:active{transform:scale(0.97)}
-.fb-cancel{width:100%;padding:12px;background:#f5f7fa;border:1.5px solid #e5e7eb;
-  border-radius:12px;color:#555;font-size:16px;cursor:pointer;font-family:var(--font);margin-top:8px}
+.fb-star{color:#ddd;display:inline-block;transition:all .15s}
+.fb-star.on{color:#ffc107;transform:scale(1.18)}
+.fb-ta{width:100%;height:110px;padding:14px;border-radius:12px;border:1.5px solid #e5e7eb;font-size:17px;resize:none;outline:none;font-family:inherit;line-height:1.6;background:#f8f9fa;margin-top:12px}
+.fb-ta:focus{border-color:#0052d9;background:#fff}
+.fb-sub{width:100%;padding:14px;background:linear-gradient(135deg,#0052d9,#0041b3);border:none;border-radius:12px;color:#fff;font-size:18px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;box-shadow:0 4px 14px rgba(0,82,217,.3)}
+.fb-can{width:100%;padding:12px;background:#f5f7fa;border:1.5px solid #e5e7eb;border-radius:12px;color:#555;font-size:16px;cursor:pointer;font-family:inherit;margin-top:8px}
 
-/* ===== 管理面板 ===== */
-.admin-title{font-size:21px;font-weight:700;color:#1a1a1a;margin-bottom:16px}
-.admin-stat{background:linear-gradient(135deg,#0052d9,#003bb3);border-radius:14px;
-  padding:20px;text-align:center;color:#fff;margin-bottom:16px}
-.admin-stat h3{font-size:42px;margin:0 0 4px}
-.admin-stat p{font-size:13px;opacity:0.8;margin:0}
-.admin-act{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.adm-btn{padding:14px;border-radius:12px;border:none;color:#fff;font-size:15px;
-  font-weight:600;cursor:pointer;font-family:var(--font);text-align:center;
-  transition:transform 0.15s}
-.adm-btn:active{transform:scale(0.96)}
-.adm-btn.grn{background:linear-gradient(135deg,#52c41a,#389e0d)}
-.adm-btn.red{background:linear-gradient(135deg,#ff4d4f,#d4380d)}
-.adm-btn.orn{background:linear-gradient(135deg,#fa8c16,#d46b08)}
-.adm-btn.blu{background:linear-gradient(135deg,#0052d9,#003bb3)}
-.fb-card{border-radius:12px;padding:14px;margin-bottom:10px;
-  border-left:4px solid var(--primary);background:#f9fafb}
-.fb-card .sc{font-size:18px;margin-bottom:5px}
-.fb-card .txt{font-size:16px;color:#333;margin-bottom:5px;line-height:1.5;word-break:break-word}
-.fb-card .tm{font-size:12px;color:#999}
-.fb-empty{text-align:center;padding:30px;color:#bbb;font-size:15px}
-.token-box{padding:14px;background:#f5f7fa;border-radius:12px;margin-bottom:14px}
-.token-box .lbl{font-size:13px;color:#888;margin-bottom:8px}
-.token-box input{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #e5e7eb;
-  font-size:15px;outline:none;font-family:var(--font);margin-bottom:6px}
-.token-box .hint{font-size:12px;color:#999;margin-bottom:10px}
-.token-box button{padding:8px 18px;background:#0052d9;border:none;border-radius:8px;
-  color:#fff;font-size:14px;cursor:pointer;font-family:var(--font)}
+/* 管理 */
+.adm-t{font-size:21px;font-weight:700;margin-bottom:16px}
+.adm-st{background:linear-gradient(135deg,#0052d9,#0041b3);border-radius:14px;padding:20px;text-align:center;color:#fff;margin-bottom:16px}
+.adm-st h3{font-size:42px;margin:0 0 4px}
+.adm-st p{font-size:13px;opacity:.8;margin:0}
+.adm-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.adm-a{padding:14px;border-radius:12px;border:none;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;text-align:center}
+.adm-a:active{transform:scale(.96)}
+.adm-a.grn{background:linear-gradient(135deg,#52c41a,#389e0d)}
+.adm-a.red{background:linear-gradient(135deg,#ff4d4f,#d4380d)}
+.adm-a.orn{background:linear-gradient(135deg,#fa8c16,#d46b08)}
+.adm-a.blu{background:linear-gradient(135deg,#0052d9,#0041b3)}
+.tok-box{padding:14px;background:#f5f7fa;border-radius:12px;margin-bottom:14px}
+.tok-box .lbl{font-size:13px;color:#888;margin-bottom:8px}
+.tok-box input{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #e5e7eb;font-size:15px;outline:none;font-family:inherit;margin-bottom:6px}
+.tok-box .hint{font-size:12px;color:#999;margin-bottom:10px}
+.tok-box button{padding:8px 18px;background:#0052d9;border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit}
+.fc{border-radius:12px;padding:14px;margin-bottom:10px;border-left:4px solid #0052d9;background:#f9fafb}
+.fc .sc{font-size:18px;margin-bottom:5px}
+.fc .tx{font-size:16px;color:#333;margin-bottom:5px;line-height:1.5;word-break:break-word}
+.fc .tm{font-size:12px;color:#999}
+.femp{text-align:center;padding:30px;color:#bbb;font-size:15px}
 
-/* ===== PWA ===== */
-.pwa-bar{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  background:linear-gradient(135deg,#0052d9,#003bb3);color:#fff;
-  padding:10px 16px;border-radius:24px;font-size:14px;z-index:300;
-  display:none;align-items:center;gap:10px;white-space:nowrap;
-  box-shadow:0 4px 20px rgba(0,82,217,0.45);max-width:calc(100vw - 40px)}
-.pwa-bar.show{display:flex}
-.pwa-bar button{background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.4);
-  border-radius:12px;padding:5px 14px;color:#fff;font-size:13px;cursor:pointer}
+/* PWA条 */
+.pwa-bar{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0052d9,#0041b3);color:#fff;padding:10px 16px;border-radius:24px;font-size:14px;z-index:300;display:none;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,82,217,.45)}
+.pwa-bar.on{display:flex}
+.pwa-bar button{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);border-radius:12px;padding:5px 14px;color:#fff;font-size:13px;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="app-wrap" id="app">
+<div class="app">
 
   <!-- 顶部 -->
-  <div class="top-bar">
-    <div class="top-inner">
-      <div class="top-row">
-        <div class="app-brand">
-          <div class="app-icon">🏥</div>
-          <div>
-            <div class="app-name">AI健康助手</div>
-            <div class="app-desc">中西医结合 · 智能问诊</div>
-          </div>
-        </div>
-        <div class="top-actions">
-          <button class="top-btn" onclick="openFB()" title="意见反馈">💬</button>
-          <button class="top-btn" onclick="openAdmin()" title="管理">⚙️</button>
+  <div class="header">
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="header-icon">🏥</div>
+        <div>
+          <div class="header-title">AI健康助手</div>
+          <div class="header-sub">中西医结合 · 智能问诊</div>
         </div>
       </div>
-      <div class="mode-scroll">
-        <button class="mode-btn active" data-m="consultation">🏥 咨询</button>
-        <button class="mode-btn" data-m="tcm">中医</button>
-        <button class="mode-btn" data-m="diet">饮食</button>
-        <button class="mode-btn" data-m="knowledge">知识</button>
+      <div class="header-btns">
+        <button class="header-btn" onclick="openFB()">💬</button>
+        <button class="header-btn" onclick="openAdmin()">⚙️</button>
       </div>
-      <div class="quick-bar" id="quickBar"></div>
     </div>
+    <div class="modes">
+      <button class="mode on" data-m="c">🏥 咨询</button>
+      <button class="mode" data-m="t">中医</button>
+      <button class="mode" data-m="d">饮食</button>
+      <button class="mode" data-m="k">知识</button>
+    </div>
+    <div class="quick" id="quickBar"></div>
   </div>
 
-  <!-- 对话区 -->
+  <!-- 对话 -->
   <div class="chat" id="chat">
     <div class="msg ai">
-      <div class="msg-avatar">🏥</div>
+      <div class="msg-ava">🏥</div>
       <div class="msg-body">
-        <div class="msg-content">
-          <b>您好！我是AI中西医健康助手</b><br><br>
-          请描述您的症状或健康问题，我会为您提供：<br>
-          · 初步健康分析<br>· 中西医结合建议<br>· 饮食调理方案<br>· 药物注意事项<br>
-          <span style="color:#e83e3e;font-size:15px"><br>⚠️ 如有紧急症状，请立即就医！</span>
-        </div>
-        <div class="msg-time">AI健康助手 · 刚刚</div>
+        <div class="msg-c"><b>您好！我是AI中西医健康助手</b><br><br>请描述您的症状或健康问题，我会为您提供：<br>· 初步健康分析<br>· 中西医结合建议<br>· 饮食调理方案<br>· 药物注意事项<br><br><span style="color:#e83e3e">⚠️ 如有紧急症状，请立即就医！</span></div>
+        <div class="msg-t">AI · 刚刚</div>
       </div>
     </div>
   </div>
 
-  <!-- 输入区 -->
-  <div class="input-area">
+  <!-- 输入 -->
+  <div class="input">
     <div class="input-inner">
-      <textarea class="chat-input" id="userInput" rows="1"
-        placeholder="请描述您的症状或问题..."></textarea>
-      <button class="send-btn" onclick="sendMessage()">➤</button>
+      <textarea class="txt" id="userInput" rows="1" placeholder="请描述您的症状或问题..."></textarea>
+      <button class="send" onclick="sendMsg()">➤</button>
     </div>
   </div>
 
 </div>
 
-<!-- PWA安装条 -->
-<div class="pwa-bar" id="pwaBar">
-  📱 立即安装到手机桌面
-  <button onclick="installPWA()">安装</button>
-</div>
+<!-- PWA -->
+<div class="pwa-bar" id="pwaBar">📱 立即安装到手机桌面 <button onclick="doPWA()">安装</button></div>
 
 <!-- Toast -->
 <div id="toast"></div>
 
-<!-- 反馈模态 -->
-<div class="modal-bg" id="fbModal">
+<!-- 反馈 -->
+<div class="modal" id="fbModal">
   <div class="modal-card">
-    <div class="fb-title">📝 意见反馈</div>
-    <div class="fb-sub">您的反馈会让App变得更好</div>
+    <div class="fb-t">📝 意见反馈</div>
+    <div class="fb-s">您的反馈会让App变得更好</div>
     <div class="fb-stars" id="fbStars">
       <span class="fb-star" data-v="1">★</span>
       <span class="fb-star" data-v="2">★</span>
@@ -285,574 +205,386 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <span class="fb-star" data-v="4">★</span>
       <span class="fb-star" data-v="5">★</span>
     </div>
-    <textarea class="fb-text" id="fbText" placeholder="请写下您的建议或问题...（必填）"></textarea>
-    <button class="fb-submit" onclick="submitFB()">提交反馈</button>
-    <button class="fb-cancel" onclick="closeFB()">取消</button>
+    <textarea class="fb-ta" id="fbText" placeholder="请写下您的建议或问题...（必填）"></textarea>
+    <button class="fb-sub" onclick="doSubmitFB()">提交反馈</button>
+    <button class="fb-can" onclick="closeFB()">取消</button>
   </div>
 </div>
 
-<!-- 管理面板 -->
-<div class="modal-bg" id="adminModal">
+<!-- 管理 -->
+<div class="modal" id="adminModal">
   <div class="modal-card">
-    <div class="admin-title">⚙️ 管理面板</div>
-    <div class="admin-stat">
-      <h3 id="totalFB">0</h3>
-      <p>条反馈记录</p>
+    <div class="adm-t">⚙️ 管理面板</div>
+    <div class="adm-st"><h3 id="totalFB">0</h3><p>条反馈记录</p></div>
+    <div class="adm-g">
+      <button class="adm-a grn" onclick="doExport()">📥 导出CSV</button>
+      <button class="adm-a red" onclick="doPushAll()">📱 推微信</button>
+      <button class="adm-a orn" onclick="doAutoLearn()" style="grid-column:1">🧠 自主学习</button>
+      <button class="adm-a blu" onclick="doSaveKB()" style="grid-column:2">💾 更新库</button>
     </div>
-    <div class="admin-act">
-      <button class="adm-btn grn" onclick="exportCSV()">📥 导出CSV</button>
-      <button class="adm-btn red" onclick="pushAllWechat()">📱 推微信</button>
-      <button class="adm-btn orn" onclick="autoLearn()" style="grid-column:1">🧠 自主学习</button>
-      <button class="adm-btn blu" onclick="saveKBUpdate()" style="grid-column:2">💾 更新库</button>
-    </div>
-    <div class="token-box">
-      <div class="lbl">Pushplus Token（微信推送用）：</div>
+    <div class="tok-box">
+      <div class="lbl">Pushplus Token（微信推送）：</div>
       <input id="ppToken" type="text" placeholder="请输入Pushplus token">
-      <div class="hint">申请地址：pushplus.plus（微信扫码绑定后获取，完全免费）</div>
-      <button onclick="savePPToken()">保存Token</button>
+      <div class="hint">申请：pushplus.plus（微信扫码绑定，完全免费）</div>
+      <button onclick="doSaveToken()">保存Token</button>
     </div>
-    <div id="fbList" class="fb-empty">暂无反馈记录</div>
-    <button class="fb-cancel" style="margin-top:14px" onclick="closeAdmin()">关闭</button>
+    <div id="fbList" class="femp">暂无反馈记录</div>
+    <button class="fb-can" style="margin-top:14px" onclick="closeAdmin()">关闭</button>
   </div>
 </div>
 
 <script>
-// ========== 全局 ==========
-var currentMode = 'consultation';
-var chatHistory = [];
-var userConditions = [];
-var isTyping = false;
-var fbRating = 0;
-var deferredPrompt = null;
+// 全局
+var curMode='c';
+var hist=[];
+var userCond=[];
+var typing=false;
+var fbRating=0;
+var deferredPrompt=null;
 
-// ========== PWA ==========
-window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault(); deferredPrompt = e;
-  setTimeout(function(){ document.getElementById('pwaBar').classList.add('show'); }, 4000);
-});
-async function installPWA(){
-  if(!deferredPrompt){ showToast('请用Chrome/Safari打开，从菜单选"添加到主屏幕"','info'); return; }
-  deferredPrompt.prompt();
-  var r = await deferredPrompt.userChoice;
-  if(r.outcome==='accepted') showToast('安装成功！','ok');
-  deferredPrompt = null;
-  document.getElementById('pwaBar').classList.remove('show');
-}
+// PWA
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;setTimeout(function(){document.getElementById('pwaBar').classList.add('on')},4000)});
+async function doPWA(){if(!deferredPrompt){showT('请用Chrome打开，从菜单选"添加到主屏幕"','err');return}deferredPrompt.prompt();var r=await deferredPrompt.userChoice;if(r.outcome==='accepted')showT('安装成功！','ok');deferredPrompt=null;document.getElementById('pwaBar').classList.remove('on')}
 
-// ========== Toast ==========
-function showToast(msg,type){
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.className='show '+(type||'');
-  setTimeout(function(){t.className=''},2800);
-}
+// Toast
+function showT(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'');setTimeout(function(){t.className=''},2800)}
 
-// ========== 知识库 ==========
-var medicalKnowledge = {"感冒": {"cat": "常见病", "title": "普通感冒/流感", "content": "普通感冒多由病毒引起。症状：鼻塞、流涕、咽痛、轻度发热。<br><b>处理：</b>多休息、补充水分、必要时服用解热镇痛药（对乙酰氨基酚或布洛芬）。<br>若发热>38.5℃持续3天以上，或出现胸闷、呼吸困难，请立即就医。<br><br><b>西医治疗：</b>对乙酰氨基酚（退热）、伪麻黄碱（通鼻）。抗生素对病毒无效，勿滥用。<br><b>中医辅助：</b>金银花、连翘、薄荷——疏风清热。", "emergency": "高热不退（>39℃持续不降）、呼吸困难、意识模糊、剧烈头痛", "diet": "宜：清淡易消化（粥、汤面、蒸蛋）；富含维C水果（橙子、猕猴桃）；温开水。<br>忌：辛辣油腻、生冷食物、浓茶咖啡。", "drugs": "解热镇痛：对乙酰氨基酚、布洛芬<br>通鼻：伪麻黄碱<br>注意：抗生素对病毒无效，勿滥用。抗生素滥用会导致耐药和肠道菌群紊乱。", "synergy": "布洛芬+阿司匹林：增加胃肠道出血风险，不推荐联用。<br>多种复方感冒药不要叠加服用（可能含相同成分，导致过量）。", "food": "布洛芬避免与酒精同服（增加胃损伤风险）。服用感冒药期间避免驾驶和高空作业。", "herbs": "金银花、连翘、薄荷、荆芥——疏风清热"}, "发热": {"cat": "常见病", "title": "发热/发烧", "content": "发热是机体对感染的正常免疫反应，体温>37.3℃为发热。<br><b>处理原则：</b>38.5℃以下：物理降温（温水擦浴、贴退热贴）；38.5℃以上：服用退热药；多饮水。<br>退热是为了缓解不适，不是要把体温降到正常。<br>发热本身不需要抗生素，除非确认细菌感染。", "emergency": "体温>39.5℃持续不降、抽搐、皮疹、意识不清、颈部僵硬", "diet": "宜：流质/半流质（粥、汤、果蔬汁）；清淡少油。<br>忌：高蛋白高脂肪（加重代谢负担）、辛辣刺激、生冷。", "drugs": "退热：对乙酰氨基酚（更安全）、布洛芬（抗炎效果更好）<br>儿童：禁用阿司匹林（瑞氏综合征风险），用对乙酰氨基酚或布洛芬。", "synergy": "多种退热药同时服用可能造成肝损伤，不要叠加。<br>对乙酰氨基酚+酒精：显著增加肝毒性。", "food": "发热期间多喝水（1500-2000ml/天）。避免高糖饮料（增加代谢负担）。可喝淡盐水补充电解质。", "herbs": "柴胡、黄芩、生石膏（高热时）——清热泻火。儿童慎用生石膏。"}, "咳嗽": {"cat": "常见病", "title": "咳嗽", "content": "咳嗽是呼吸道清除异物和分泌物的保护性反射。<br><b>干咳：</b>右美沙芬（中枢镇咳）<br><b>有痰咳嗽：</b>氨溴索、乙酰半胱氨酸（稀释痰液，促排出）<br>咳嗽是身体的保护机制，不要盲目镇咳。若咳嗽>3周、咳血、胸痛，请立即就医。", "emergency": "咳血、呼吸困难、胸痛、咳嗽伴随高热", "diet": "宜：梨、百合、蜂蜜（1岁以上）、白萝卜、银耳；温热流质。<br>忌：甜腻、油炸、寒凉（冰品）、鱼腥发物。甜食会加重痰液生成。", "drugs": "干咳：右美沙芬（孕妇禁用）<br>有痰：氨溴索（餐后服）、乙酰半胱氨酸<br>注意：咳嗽>2周需就医排查病因。", "synergy": "中枢镇咳药（右美沙芬）+抗组胺药：可能引起呼吸抑制，慎用。<br>祛痰药+镇咳药：通常先祛痰再镇咳，顺序很重要。", "food": "蜂蜜（1岁以上儿童）有轻度止咳作用（循证医学证实）。温热蜂蜜水可缓解夜间咳嗽。", "herbs": "川贝、枇杷叶、杏仁（去皮尖）、桔梗——润肺止咳化痰。"}, "高血压": {"cat": "慢病", "title": "高血压", "content": "血压持续≥140/90 mmHg为高血压，是心脑血管疾病的重要危险因素。<br><b>治疗：</b>低盐饮食（<5g/天）、规律运动、体重管理、药物治疗。<br>常用降压药：CCB类（氨氯地平）、ARB类（缬沙坦）、ACEI类（贝那普利）。<br>目标：一般<130/80 mmHg（遵医嘱个体化设定）。", "emergency": "血压>180/120伴头痛、胸痛、视力模糊——高血压危象，立即就医！", "diet": "宜：DASH饮食（蔬果、全谷、低脂奶）、黑木耳、芹菜、山楂（含钾量高的食物）。<br>忌：腌制品、腊肉、酱菜（高钠）；浓茶、咖啡因（过量）。", "drugs": "CCB类：氨氯地平（常用，晨起服）<br>ARB类：缬沙坦（保护肾脏）<br>ACEI类：贝那普利（干咳副作用）<br>禁忌：擅自停药会导致血压反跳，危及生命。", "synergy": "地平类+β受体阻滞剂：可加重心衰。<br>普利类+沙坦类：不推荐联用（高钾血症风险）。<br>地平类+葡萄柚汁：增加血药浓度，服用硝苯地平者禁饮西柚汁。", "food": "西柚汁显著增加地平类药物血药浓度，服用硝苯地平、氨氯地平者禁饮西柚汁。", "herbs": "钩藤、天麻、罗布麻、决明子——平肝潜阳降压。中药降压不能替代正规降压药。"}, "糖尿病": {"cat": "慢病", "title": "糖尿病", "content": "诊断标准：空腹血糖≥7.0 mmol/L 或 餐后2h血糖≥11.1 mmol/L。<br><b>治疗（五驾马车）：</b>饮食控制、运动、药物治疗（二甲双胍/胰岛素等）、血糖监测、健康教育。<br>目标：空腹4.4-7.0 mmol/L，餐后<10 mmol/L，HbA1c<7%。<br>糖尿病本身不可怕，可怕的是并发症——心、脑、肾、眼、足。", "emergency": "低血糖（<3.9 mmol/L）伴昏迷或不能进食、酮症酸中毒（呼气有烂苹果味）", "diet": "宜：低GI食物（燕麦、糙米、荞麦、全麦）、绿叶蔬菜、优质蛋白。<br>忌：精制糖、白米白面、含糖饮料、粥类（升糖极快）。<br>水果在两餐之间吃，每天不超过200g。", "drugs": "二甲双胍：一线用药，随餐服用，减少肝糖输出。<br>胰岛素：需冷藏，遵医嘱调整剂量，餐前注射。<br>注意：勿自行停药！低血糖风险危及生命。", "synergy": "二甲双胍+大量酒精：增加乳酸酸中毒风险。<br>胰岛素+β受体阻滞剂：可能掩盖低血糖的早期症状（心悸、出汗）。<br>磺脲类+酒精：引起双硫仑样反应。", "food": "糖尿病患者慎用\"无糖食品\"——可能含大量碳水化合物，反而升高血糖。学会看食品营养标签。", "herbs": "天花粉、葛根、黄芪、山药——益气养阴、健脾生津。中药不能替代降糖药。"}, "胃炎": {"cat": "常见病", "title": "胃炎/胃部不适", "content": "胃黏膜炎症。症状：上腹痛、胀气、反酸、恶心、嗳气。<br><b>治疗：</b>抑酸药（奥美拉唑）、胃黏膜保护剂（铝碳酸镁）、促动力药（多潘立酮）。<br>建议：规律饮食、细嚼慢咽、避免刺激性食物、根治幽门螺杆菌。", "emergency": "呕血（红色或黑色咖啡渣样物质）、柏油样黑便、剧烈腹痛（急腹症）", "diet": "宜：清淡易消化（粥、馒头、软烂面）、蒸蛋、白面包。<br>忌：辛辣、生冷、油腻、过甜、过酸、咖啡、浓茶、酒精、吸烟。<br>规律进餐，每餐七八分饱，不要暴饮暴食。", "drugs": "抑酸：奥美拉唑（晨起空腹或餐前）、雷贝拉唑<br>护胃：铝碳酸镁（餐后嚼服）、瑞巴派特<br>促动力：多潘立酮（吗丁啉，餐前15-30分钟）", "synergy": "奥美拉唑+氯吡格雷：降低氯吡格雷疗效，增加心血管事件风险——优先换用泮托拉唑。<br>铝碳酸镁+其他口服药：减少其他药物吸收，间隔2小时服用。", "food": "酸奶可在胃黏膜形成保护层。温热牛奶（不加糖）可暂时缓解胃痛，但长期大量喝牛奶反而刺激胃酸分泌。", "herbs": "白芨、海螵蛸、砂仁、陈皮——和胃止痛、制酸。"}, "头痛": {"cat": "常见病", "title": "头痛", "content": "头痛原因众多：紧张性头痛、血管性头痛、偏头痛、鼻窦性头痛、继发性头痛。<br><b>处理：</b>休息、放松、止痛药。若头痛突然剧烈、伴发热/呕吐/视物模糊/偏瘫，请立即就医（排除脑卒中）。<br>偏头痛：常见于女性，有先兆（闪光、暗点），畏光畏声。", "emergency": "突然剧烈头痛（雷击样）、伴意识变化、颈项强直、视物模糊、偏瘫——立即就医！", "diet": "宜：规律进食（避免低血糖导致头痛）、坚果、深海鱼（Omega-3）。<br>忌：酒精（尤其红酒，是偏头痛常见诱因）、腌制肉（亚硝酸盐）、过量咖啡因。", "drugs": "止痛：布洛芬（抗炎型头痛首选）、对乙酰氨基酚（紧张性头痛）<br>偏头痛：曲普坦类（舒马曲普坦、佐米曲普坦）——发作早期服用<br>注意：每月止痛药使用>10天可致\"药物过度使用性头痛\"，形成恶性循环。", "synergy": "止痛药+酒精：显著增加胃肠道和肝脏损伤风险。<br>曲普坦类+麦角类药物：血管痉挛风险，禁止联用。", "food": "脱水是头痛最常见诱因之一，确保每日饮水1500-2000ml。咖啡因戒断也会引起头痛。", "herbs": "川芎、白芷、天麻、菊花——祛风通络止痛。"}, "失眠": {"cat": "常见病", "title": "失眠", "content": "入睡困难、睡眠浅、易醒、早醒，影响白天功能（疲劳、注意力下降）。<br><b>治疗：</b>睡眠卫生（规律作息、睡前1小时避免屏幕）、认知行为治疗（CBT-I，循证金标准）、药物（短期使用）。<br>长期失眠（>3个月）请就医，可能需要专业睡眠医学评估。", "emergency": "", "diet": "宜：温牛奶、酸枣仁粥（睡前2小时）、香蕉（含镁和色氨酸）、燕麦；清淡饮食。<br>忌：咖啡、浓茶（下午2点后禁饮）、酒精（虽促入睡但严重破坏睡眠结构，下半夜易醒）。", "drugs": "苯二氮卓类：艾司唑仑（仅短期，<2周）<br>非苯二氮卓类：佐匹克隆、右佐匹克隆（成瘾性较低）<br>褪黑素：倒时差者、老年失眠者<br>注意：安眠药有成瘾性，遵医嘱使用，逐步停药。", "synergy": "安眠药+酒精：严重呼吸抑制，风险极高，可致死！<br>安眠药+阿片类镇痛药（羟考酮等）：呼吸抑制风险叠加。", "food": "色氨酸食物（牛奶、火鸡、坚果）可促进褪黑素和5-羟色胺合成，有助于入睡。", "herbs": "酸枣仁、柏子仁、远志、合欢皮——养心安神促睡眠。酸枣仁是中医治疗失眠首选药。"}, "痛风": {"cat": "慢病", "title": "痛风", "content": "尿酸代谢紊乱，尿酸盐结晶沉积关节。典型表现：急性单关节炎（常见大脚趾，红肿热痛）。<br><b>治疗：</b>急性期：秋水仙碱（24小时内首选）或NSAIDs；缓解期：降尿酸药（非布司他、别嘌醇）——需长期规律服用，不能只在发作时吃。<br>目标：血尿酸<360μmol/L（含痛风石者<300μmol/L）。", "emergency": "痛风发作伴随高热（>39℃）、关节严重红肿（疑似化脓性关节炎）", "diet": "宜：低嘌呤饮食（低至中量嘌呤食物是安全的）、大量饮水（>2L/天）、樱桃（轻度降尿酸）。<br>忌：动物内脏、海鲜（尤其贝类、甲壳类）、浓肉汤、啤酒和白酒、含果糖饮料（果糖增加尿酸生成）。", "drugs": "急性期：秋水仙碱（首剂1mg，后每2小时0.5mg，直到症状缓解或出现腹泻，最大剂量6mg/24h）<br>NSAIDs：布洛芬（常规剂量）<br>降尿酸：非布司他（40-80mg/天）、别嘌醇（100-300mg/天，肾功能不全者减量）<br>注意：降尿酸药在初期会引发痛风发作，不要停药，可同时预防性服用秋水仙碱。", "synergy": "别嘌醇+巯唑嘌呤：显著增强骨髓抑制，禁忌联用！<br>非布司他+茶碱：茶碱血药浓度升高。", "food": "每日饮水>2L促进尿酸排泄。樱桃（每天10-12颗）有轻度降尿酸和抗炎作用，可作为辅助。", "herbs": "土茯苓、萆薢、薏苡仁、威灵仙——祛湿通络止痛。"}, "体质辨识": {"cat": "中医", "title": "中医九种体质辨识", "content": "<b>平和质</b>：精力充沛，睡眠安，食欲好，适应力强——保持健康生活方式。<br><br><b>气虚质</b>：气短乏力、易感冒、动则汗出——宜补气（人参、黄芪、党参），适度运动（太极拳），充足睡眠，避免过度劳累。<br><br><b>阳虚质</b>：畏寒怕冷、手足冰凉、腰膝酸冷——宜温阳（羊肉、桂圆、肉桂），多晒太阳（后背督脉），睡前泡脚（艾叶+生姜）。<br><br><b>阴虚质</b>：口干咽燥、手足心热、盗汗、便秘——宜滋阴（百合、银耳、麦冬、沙参），避免辛辣，保持睡眠，练习静坐冥想。<br><br><b>痰湿质</b>：体胖痰多、腹部肥满、舌苔厚腻——宜化痰祛湿（陈皮、薏米、冬瓜），增加运动（每天快走30分钟），控制饮食，规律作息。<br><br><b>湿热质</b>：面油腻、口苦、容易长痘、急躁易怒——宜清热利湿（苦瓜、绿豆、荷叶），增加运动出汗，避免熬夜和辛辣。<br><br><b>血瘀质</b>：面色晦暗、舌质紫暗、容易出现瘀斑——宜活血化瘀（三七、丹参、山楂），适度运动（太极拳、八段锦），保暖避寒。<br><br><b>气郁质</b>：情绪抑郁、焦虑不安、胁胀、咽部异物感——宜疏肝解郁（玫瑰花茶、佛手），保持心情舒畅，社交活动，练习深呼吸。<br><br><b>特禀质</b>：容易过敏（鼻炎、荨麻疹、哮喘）——查明过敏原并避免接触，适度运动增强体质，严重者需就医脱敏治疗。", "emergency": "", "diet": "根据体质类型选择食物。气虚宜补，痰湿宜祛，湿热宜清，阴虚宜滋，阳虚宜温。", "drugs": "", "synergy": "", "food": "", "herbs": "九种体质各有对应调理方案，具体用药请咨询中医师进行个性化辨证论治。"}, "高血脂": {"cat": "慢病", "title": "高脂血症", "content": "血脂异常：总胆固醇>5.2或LDL>3.4或TG>1.7 mmol/L。<br><b>治疗：</b>他汀类药物（阿托伐他汀、瑞舒伐他汀）是首选降脂药，可稳定动脉斑块。<br>生活方式：低脂饮食、运动、减重（5-10%体重可显著改善血脂）、戒烟限酒。", "emergency": "", "diet": "宜：燕麦（β-葡聚糖降胆固醇）、深海鱼（Omega-3降甘油三酯）、坚果（每天一小把）、橄榄油、绿茶。<br>忌：动物内脏、肥肉、奶油制品、油炸食品、蛋黄（每周<3个）。", "drugs": "他汀类：阿托伐他汀（晚间服效果更佳）、瑞舒伐他汀<br>贝特类：非诺贝特（高甘油三酯首选）<br>注意：他汀不与西柚同服（增加横纹肌溶解风险）。定期复查血脂和肝功能。", "synergy": "他汀+贝特（吉非贝齐）：显著增加肌病/横纹肌溶解风险——若需联用，优选非诺贝特而非吉非贝齐。<br>他汀+红霉素/克拉霉素：增加他汀血药浓度，增加肌病风险。", "food": "植物甾醇（存在于植物油、坚果中）可竞争性抑制肠道胆固醇吸收，辅助降脂。咖啡（每天1-2杯无糖咖啡）对血脂影响轻微，勿加奶油。", "herbs": "山楂、荷叶、决明子、绞股蓝——活血降脂。中药降脂不能替代他汀类药物。"}, "颈椎病": {"cat": "常见病", "title": "颈椎病", "content": "颈椎退行性病变，多因长期低头玩手机/电脑、不良姿势导致。<br>症状：颈部僵硬疼痛、头晕（椎动脉受压）、手臂麻木、肩背酸痛。<br><b>治疗：</b>物理治疗（牵引、理疗、针灸）、姿势矫正（每小时活动5分钟）、药物治疗（NSAIDs、肌肉松弛剂）。<br>严重神经压迫或脊髓受压需手术。", "emergency": "四肢麻木突然加重、大小便失禁（脊髓型颈椎病，需紧急手术）", "diet": "宜：含钙食物（牛奶、豆制品、芝麻）、富含胶原蛋白（骨汤）。<br>忌：长期低头。咖啡因摄入过多会加重钙流失。", "drugs": "止痛：布洛芬、塞来昔布（选择性COX-2抑制剂，胃肠道更安全）<br>肌肉松弛：乙哌立松<br>营养神经：甲钴胺（甲钴胺是活性维B12，优于普通B12）", "synergy": "", "food": "氨基葡萄糖和硫酸软骨素是软骨合成的原料，对早期颈椎病（软骨退变）可能有帮助，证据级别中等。", "herbs": "葛根（治疗颈椎病要药）、鸡血藤、川芎、桑枝——舒筋活络。"}, "骨质疏松": {"cat": "慢病", "title": "骨质疏松症", "content": "骨密度降低，骨脆性增加，常见于绝经后女性和老年人（65岁以上）。<br><b>治疗：</b>钙剂+维生素D（基础）、抗骨质疏松药（双膦酸盐类）。<br><b>预防：</b>负重运动（走路、跳舞）、充足日照（每天15-30分钟，露出手臂）、防跌倒（浴室扶手）。<br>女性绝经后建议做骨密度检测。", "emergency": "跌倒后剧烈疼痛，疑似骨折", "diet": "宜：高钙食物（牛奶1000-1200mg/天是金标准、豆制品、芝麻、虾皮、深绿色蔬菜）、维生素D（蛋黄、鱼肝油、晒太阳）。<br>忌：过多咖啡因（>3杯咖啡/天）、高钠（加速钙流失）、碳酸饮料。", "drugs": "钙剂：碳酸钙（随餐服，胃酸帮助吸收）或柠檬酸钙（空腹可服，更适合胃酸少的老年人）<br>骨吸收抑制剂：阿仑膦酸钠（晨起空腹服，直立30分钟后才能进食）<br>注意：钙和铁剂应分开服用（间隔2小时以上，否则竞争吸收）。", "synergy": "钙剂+维生素D：是所有抗骨质疏松治疗的基础，必须联用。<br>膦酸盐+钙剂：膦酸盐应空腹服，钙剂应于其他时间服，避免降低吸收。<br>雌激素+钙剂：更年期女性补充雌激素可有效预防骨质疏松，但需评估心血管和乳腺癌风险。", "food": "咖啡和可乐（含磷酸）会减少钙吸收。最佳饮料是白开水、淡茶、低脂牛奶。摄入足够蛋白质（0.8-1g/kg体重/天）有助于维持骨基质。", "herbs": "骨碎补、续断、杜仲、龟板——补肾强骨。中医认为\"肾主骨\"，骨质疏松多属肾虚。"}, "脂肪肝": {"cat": "常见病", "title": "脂肪肝", "content": "肝细胞脂肪沉积>5%，分酒精性（AFLD）和非酒精性（NAFLD/MASLD）。<br><b>治疗：</b>减重（减重5-10%可逆转脂肪肝，是最有效的方法）、戒酒（酒精性）、控制血糖血脂。<br>若转氨酶（ALT/AST）持续升高、肝脏纤维化需进一步评估。", "emergency": "肝区剧痛、黄疸（眼睛和皮肤发黄）", "diet": "宜：地中海饮食（橄榄油、深色蔬菜、全谷、鱼）、绿茶（儿茶素护肝）。<br>忌：酒精、果糖饮料、高糖高脂食品（蛋糕、奶茶）、油炸食品。", "drugs": "二甲双胍（合并糖尿病时，改善代谢）<br>维生素E（400IU/天，对NASH有一定效果，不适用于糖尿病患者）<br>注意：护肝药（易善复等）只能辅助，不可替代生活方式干预。", "synergy": "", "food": "咖啡（每天2-3杯无糖咖啡）可降低肝酶水平、减缓纤维化进展——这是循证医学证实的护肝饮食。", "herbs": "丹参、山楂、葛根、五味子——保肝降脂。"}, "亚健康": {"cat": "中医", "title": "亚健康状态", "content": "介于健康与疾病之间的灰色状态。表现：疲劳乏力、失眠、情绪低落、注意力不集中、各种躯体不适，但检查无器质性病变。<br><b>中医认为：</b>气血不足、肝郁气滞、脾虚湿困是常见原因。<br><b>调理：</b>规律作息、适度运动（每周3次，每次30分钟微微出汗）、情绪管理、必要时就医辨证调理。", "emergency": "", "diet": "宜：均衡营养、彩色蔬果（每天5种颜色以上）、优质蛋白（鸡蛋、牛奶、鱼、豆制品）、五谷杂粮。<br>忌：熬夜（23点后睡伤肝）、久坐不动（每小时站起来活动5分钟）、长期焦虑（可尝试冥想或太极拳）。", "drugs": "无特异性药物，针对症状治疗（失眠用安眠药，焦虑用抗焦虑药）——均需医生处方。请勿自行购买安定等镇静药。", "synergy": "", "food": "枸杞菊花茶养肝明目；山药健脾益气；黑芝麻补肾乌发——适合亚健康人群日常调理。", "herbs": "黄芪、党参、枸杞、菊花——益气养阴、清肝明目，适合亚健康气虚人群日常泡水。"}};
+// 知识库
+var KB={"感冒": {"t": "普通感冒/流感", "c": "普通感冒多由病毒引起。症状：鼻塞、流涕、咽痛、轻度发热。<br><b>处理：</b>多休息、补充水分、必要时服用解热镇痛药（对乙酰氨基酚或布洛芬）。<br>若发热>38.5℃持续3天以上，或出现胸闷、呼吸困难，请立即就医。", "e": "高热不退、呼吸困难、意识模糊", "d": "宜：清淡易消化（粥、汤面、蒸蛋）；富含维C水果（橙子、猕猴桃）；温开水。<br>忌：辛辣油腻、生冷食物、浓茶咖啡。", "dr": "解热镇痛：对乙酰氨基酚、布洛芬<br>注意：抗生素对病毒无效，勿滥用。", "s": "布洛芬+阿司匹林：增加胃肠道出血风险，不推荐联用。", "f": "布洛芬避免与酒精同服。服用感冒药期间避免驾驶。", "h": "金银花、连翘、薄荷、荆芥——疏风清热"}, "发热": {"t": "发热/发烧", "c": "发热是机体对感染的正常免疫反应，体温>37.3℃为发热。<br><b>处理原则：</b>38.5℃以下物理降温；38.5℃以上服用退热药；多饮水。退热是为了缓解不适。", "e": "体温>39.5℃持续不降、抽搐、皮疹、意识不清", "d": "宜：流质/半流质（粥、汤、果蔬汁）；清淡少油。<br>忌：高蛋白高脂肪、辛辣刺激、生冷。", "dr": "退热：对乙酰氨基酚、布洛芬<br>儿童禁用阿司匹林（瑞氏综合征风险）。", "s": "多种退热药同时服用可能造成肝损伤，不要叠加。", "f": "发热期间多喝水（1500-2000ml/天）。", "h": "柴胡、黄芩——清热泻火"}, "咳嗽": {"t": "咳嗽", "c": "咳嗽是呼吸道清除异物和分泌物的保护性反射。<br><b>干咳：</b>右美沙芬<br><b>有痰：</b>氨溴索、乙酰半胱氨酸。<br>若咳嗽>3周、咳血、胸痛，请立即就医。", "e": "咳血、呼吸困难、胸痛", "d": "宜：梨、百合、蜂蜜（1岁以上）、白萝卜；温热流质。<br>忌：甜腻、油炸、寒凉、鱼腥发物。", "dr": "干咳：右美沙芬<br>有痰：氨溴索、乙酰半胱氨酸", "s": "中枢镇咳药+抗组胺药：可能引起呼吸抑制。", "f": "蜂蜜（1岁以上）有轻度止咳作用。", "h": "川贝、枇杷叶、杏仁、桔梗——润肺止咳"}, "高血压": {"t": "高血压", "c": "血压持续≥140/90 mmHg为高血压，是心脑血管疾病的重要危险因素。<br><b>治疗：</b>低盐饮食（<5g/天）、规律运动、药物治疗。<br>目标：一般<130/80 mmHg（遵医嘱）。", "e": "血压>180/120伴头痛、胸痛、视力模糊——立即就医！", "d": "宜：DASH饮食（蔬果、全谷、低脂奶）、芹菜、山楂。<br>忌：腌制品、腊肉、酱菜（高钠）。", "dr": "CCB类：氨氯地平；ARB类：缬沙坦<br>禁忌：擅自停药会导致血压反跳，危及生命。", "s": "地平类+β受体阻滞剂：可加重心衰。<br>地平类+葡萄柚汁：增加血药浓度，禁止同服。", "f": "", "h": "钩藤、天麻、罗布麻——平肝降压"}, "糖尿病": {"t": "糖尿病", "c": "诊断标准：空腹血糖≥7.0或餐后2h血糖≥11.1 mmol/L。<br><b>治疗：</b>饮食控制、运动、药物治疗（二甲双胍/胰岛素等）、血糖监测。<br>目标：空腹4.4-7.0，餐后<10 mmol/L。", "e": "低血糖（<3.9）伴昏迷、酮症酸中毒（呼气有烂苹果味）", "d": "宜：低GI食物（燕麦、糙米、荞麦）、绿叶蔬菜。<br>忌：精制糖、白米白面、含糖饮料、粥类。", "dr": "二甲双胍：一线用药，随餐服用。<br>胰岛素：需冷藏，遵医嘱调整剂量。", "s": "二甲双胍+大量酒精：增加乳酸酸中毒风险。<br>胰岛素+β受体阻滞剂：可能掩盖低血糖症状。", "f": "", "h": "天花粉、葛根、黄芪、山药——益气养阴"}, "胃炎": {"t": "胃炎/胃部不适", "c": "胃黏膜炎症。症状：上腹痛、胀气、反酸、恶心。<br><b>治疗：</b>抑酸药（奥美拉唑）、胃黏膜保护剂（铝碳酸镁）。", "e": "呕血、柏油样黑便、剧烈腹痛", "d": "宜：清淡易消化（粥、馒头、软烂面）、蒸蛋。<br>忌：辛辣、生冷、油腻、过甜、过酸、咖啡、酒精。", "dr": "抑酸：奥美拉唑（晨起空腹）<br>护胃：铝碳酸镁（餐后嚼服）", "s": "奥美拉唑+氯吡格雷：降低氯吡格雷疗效——优先换用泮托拉唑。", "f": "", "h": "白芨、海螵蛸、砂仁、陈皮——和胃止痛"}, "头痛": {"t": "头痛", "c": "头痛原因众多：紧张性、血管性、偏头痛等。<br>处理：休息、放松、止痛药。若头痛突然剧烈伴发热/呕吐/偏瘫，请立即就医。", "e": "突然剧烈头痛（雷击样）、意识变化、颈项强直——立即就医！", "d": "宜：规律进食（避免低血糖）、坚果、深海鱼。<br>忌：酒精（偏头痛常见诱因）、腌制肉。", "dr": "止痛：布洛芬、对乙酰氨基酚<br>偏头痛：曲普坦类（发作早期服）<br>注意：每月止痛药>10天可致药物过度使用性头痛。", "s": "止痛药+酒精：增加胃肠道和肝脏损伤风险。", "f": "脱水是头痛最常见诱因，确保每日饮水1500-2000ml。", "h": "川芎、白芷、天麻、菊花——祛风止痛"}, "失眠": {"t": "失眠", "c": "入睡困难、睡眠浅、易醒、早醒，影响白天功能。<br><b>治疗：</b>睡眠卫生、认知行为治疗、药物（短期）。<br>长期失眠请就医。", "e": "", "d": "宜：温牛奶、酸枣仁粥、香蕉（睡前2小时）。<br>忌：咖啡、浓茶（下午2点后）、酒精（破坏睡眠结构）。", "dr": "非苯二氮卓类：佐匹克隆、右佐匹克隆（成瘾性较低）<br>褪黑素：倒时差者<br>注意：安眠药有成瘾性，遵医嘱使用。", "s": "安眠药+酒精：严重呼吸抑制，风险极高，可致死！", "f": "色氨酸食物（牛奶、火鸡）可促进褪黑素合成。", "h": "酸枣仁、柏子仁、远志、合欢皮——养心安神"}, "痛风": {"t": "痛风", "c": "尿酸代谢紊乱，典型表现：急性单关节炎（常见大脚趾，红肿热痛）。<br><b>治疗：</b>急性期秋水仙碱/NSAIDs；缓解期降尿酸药（非布司他、别嘌醇）——需长期规律服用。", "e": "痛风发作伴随高热、关节严重红肿（疑似化脓性关节炎）", "d": "宜：低嘌呤饮食、大量饮水（>2L/天）、樱桃。<br>忌：动物内脏、海鲜、浓肉汤、啤酒白酒、含果糖饮料。", "dr": "急性期：秋水仙碱（24h内首选）或布洛芬<br>降尿酸：非布司他、别嘌醇（长期）", "s": "别嘌醇+巯唑嘌呤：显著增强骨髓抑制，禁忌联用！", "f": "每日饮水>2L促进尿酸排泄。樱桃有轻度降尿酸作用。", "h": "土茯苓、萆薢、薏苡仁——祛湿通络"}, "体质辨识": {"t": "中医九种体质", "c": "<b>平和质</b>：精力充沛，睡眠安，食欲好——保持健康生活方式。<br><br><b>气虚质</b>：气短乏力、易感冒——宜补气（人参、黄芪），适度运动（太极拳），充足睡眠。<br><br><b>阳虚质</b>：畏寒怕冷、手足冰凉——宜温阳（羊肉、桂圆），多晒太阳，睡前泡脚（艾叶+生姜）。<br><br><b>阴虚质</b>：口干咽燥、手足心热、盗汗——宜滋阴（百合、银耳、麦冬），避免辛辣，充足睡眠。<br><br><b>痰湿质</b>：体胖痰多、腹部肥满——宜化痰祛湿（陈皮、薏米、冬瓜），增加运动，控制饮食。<br><br><b>湿热质</b>：面油腻、口苦、容易长痘——宜清热利湿（苦瓜、绿豆），增加运动出汗，避免熬夜。<br><br><b>血瘀质</b>：面色晦暗、舌质紫暗——宜活血化瘀（三七、丹参），适度运动，保暖避寒。<br><br><b>气郁质</b>：情绪抑郁、焦虑不安——宜疏肝解郁（玫瑰花茶），保持心情舒畅，社交活动。<br><br><b>特禀质</b>：容易过敏——查明过敏原并避免接触，严重者需脱敏治疗。", "e": "", "d": "根据体质类型选择食物。", "dr": "", "s": "", "f": "", "h": "九种体质各有对应调理方案，请咨询中医师个性化辨证。"}, "亚健康": {"t": "亚健康状态", "c": "介于健康与疾病之间的灰色状态。表现：疲劳乏力、失眠、情绪低落、注意力不集中，但检查无器质性病变。<br><b>调理：</b>规律作息、适度运动、均衡营养、必要时就医辨证调理。", "e": "", "d": "宜：均衡营养、彩色蔬果、优质蛋白、五谷杂粮。<br>忌：熬夜（23点后睡伤肝）、久坐不动（每小时站起活动5分钟）。", "dr": "无特异性药物，针对症状治疗。", "s": "", "f": "枸杞菊花茶养肝明目；山药健脾益气。", "h": "黄芪、党参、枸杞、菊花——益气养阴"}};
 
-
-var symptomKeywords = {
-    '发烧':'发热','高烧':'发热','体温高':'发热',
-    '头疼':'头痛','头疼':'头痛','头晕':'头痛',
-    '胃疼':'胃炎','胃痛':'胃炎','胃不舒服':'胃炎','肠胃不适':'胃炎',
-    '咳嗽':'咳嗽','咳痰':'咳嗽','干咳':'咳嗽',
-    '睡不着':'失眠','睡眠不好':'失眠','失眠':'失眠',
-    '高血压':'高血压','血压高':'高血压','高压高':'高血压',
-    '糖尿病':'糖尿病','血糖高':'糖尿病','高血糖':'糖尿病',
-    '血脂高':'高血脂','高血脂':'高血脂','血脂异常':'高血脂',
-    '膝盖疼':'关节痛','关节疼':'关节痛','关节痛':'关节痛',
-    '腰疼':'腰痛','腰酸':'腰痛','腰痛':'腰痛',
-    '颈椎疼':'颈椎病','脖子疼':'颈椎病','脖子僵硬':'颈椎病',
-    '长痘':'皮肤问题','痘痘':'皮肤问题','痤疮':'皮肤问题',
-    '眼睛干':'眼疲劳','眼睛疲劳':'眼疲劳','眼疲劳':'眼疲劳','视力模糊':'眼疲劳',
-    '疲劳':'疲劳','乏力':'疲劳','没精神':'疲劳',
-    '体质':'体质辨识','阳虚':'体质辨识','阴虚':'体质辨识','气虚':'体质辨识','痰湿':'体质辨识','湿热':'体质辨识','血瘀':'体质辨识','气郁':'体质辨识','特禀':'体质辨识','平和':'体质辨识',
-    '亚健康':'亚健康',
-    '感冒':'感冒','流感':'感冒',
-    '痛风':'痛风','尿酸高':'痛风','高尿酸':'痛风',
-    '骨质疏松':'骨质疏松','骨密度低':'骨质疏松',
-    '脂肪肝':'脂肪肝','肝脂肪':'脂肪肝'
-};
-
-
-// 体质详细
-var constitutionDetails = {
-  '气虚':{symptoms:['容易疲乏','气短懒言','动则汗出','容易感冒','声音低弱'],tongue:'舌淡胖，边有齿痕',pulse:'脉弱',
-    diet:['山药','黄芪','大枣','鸡肉','牛肉','糯米'],avoid:['生冷','辛辣','油腻'],
-    lifestyle:['适度运动（太极拳）','充足睡眠','避免过度劳累']},
-  '阳虚':{symptoms:['畏寒肢冷','腰膝酸软','夜尿多','面色苍白'],tongue:'舌淡胖，苔白',pulse:'脉沉细',
-    diet:['羊肉','韭菜','核桃','生姜','肉桂'],avoid:['生冷','冰凉','寒性水果'],
-    lifestyle:['多晒太阳','睡前泡脚','艾灸关元穴']},
-  '阴虚':{symptoms:['口干咽燥','手足心热','盗汗','便秘','失眠多梦'],tongue:'舌红少津',pulse:'脉细数',
-    diet:['银耳','百合','梨','蜂蜜','麦冬','沙参'],avoid:['辛辣','油炸','烟酒','咖啡'],
-    lifestyle:['保证睡眠','避免熬夜','练习静坐冥想']},
-  '痰湿':{symptoms:['体胖痰多','腹部肥满','面部油腻','身重困倦'],tongue:'舌苔厚腻',pulse:'脉滑',
-    diet:['薏苡仁','冬瓜','赤小豆','荷叶','陈皮'],avoid:['甜食','油腻','生冷','酒'],
-    lifestyle:['增加运动','控制饮食','少食多餐']},
-  '湿热':{symptoms:['面油腻','口苦','容易长痘','烦躁易怒','小便黄'],tongue:'舌红苔黄腻',pulse:'脉滑数',
-    diet:['绿豆','苦瓜','冬瓜','芹菜','莲子心'],avoid:['辛辣','油炸','酒精','甜食'],
-    lifestyle:['增加运动出汗','多喝水','避免熬夜']},
-  '血瘀':{symptoms:['疼痛固定','面色晦暗','皮肤青紫','健忘','月经血块'],tongue:'舌质紫暗，有瘀点',pulse:'脉涩',
-    diet:['黑木耳','山楂','桃仁','红花','三七'],avoid:['生冷','油腻','烟酒'],
-    lifestyle:['适度运动','保持温暖','按摩经络']},
-  '气郁':{symptoms:['情绪低落','焦虑不安','胁胀','咽部异物感'],tongue:'舌淡红，苔薄白',pulse:'脉弦',
-    diet:['玫瑰花','佛手','山楂','陈皮','香蕉'],avoid:['辛辣','咖啡因','酒精'],
-    lifestyle:['保持心情舒畅','社交活动','练习深呼吸']},
-  '特禀':{symptoms:['过敏性鼻炎','荨麻疹','哮喘','食物过敏'],tongue:'舌质淡红，苔薄白',pulse:'脉细弱',
-    diet:['富含维C','富含Omega-3','益生菌'],avoid:['已知过敏原','辛辣','发物'],
-    lifestyle:['查明过敏原','避免接触','增强体质']},
-  '平和':{symptoms:['精力充沛','面色润泽','睡眠安','食欲好','适应力强'],tongue:'舌淡红，苔薄白',pulse:'脉从容和缓',
-    diet:['均衡饮食','五谷杂粮','新鲜蔬果'],avoid:['偏食','暴饮暴食'],
-    lifestyle:['规律作息','适度运动','心态平和']}
+// 体质
+var cons={
+  '气虚':{symptoms:['容易疲乏','气短懒言','动则汗出','容易感冒'],tongue:'舌淡胖，边有齿痕',diet:['山药','黄芪','大枣','鸡肉'],avoid:['生冷','辛辣','油腻'],life:['适度运动（太极拳）','充足睡眠','避免过度劳累']},
+  '阳虚':{symptoms:['畏寒肢冷','腰膝酸软','夜尿多','面色苍白'],tongue:'舌淡胖，苔白',diet:['羊肉','韭菜','核桃','生姜'],avoid:['生冷','冰凉'],life:['多晒太阳','睡前泡脚','艾灸关元']},
+  '阴虚':{symptoms:['口干咽燥','手足心热','盗汗','便秘','失眠多梦'],tongue:'舌红少津',diet:['银耳','百合','梨','蜂蜜','麦冬'],avoid:['辛辣','油炸','烟酒','咖啡'],life:['充足睡眠','避免熬夜','静坐冥想']},
+  '痰湿':{symptoms:['体胖痰多','腹部肥满','面部油腻','身重困倦'],tongue:'舌苔厚腻',diet:['薏苡仁','冬瓜','赤小豆','荷叶'],avoid:['甜食','油腻','生冷'],life:['增加运动','控制饮食','规律作息']},
+  '湿热':{symptoms:['面油腻','口苦','容易长痘','烦躁易怒'],tongue:'舌红苔黄腻',diet:['绿豆','苦瓜','冬瓜','芹菜'],avoid:['辛辣','油炸','酒精','甜食'],life:['增加运动出汗','多喝水','避免熬夜']},
+  '平和':{symptoms:['精力充沛','面色润泽','睡眠安','食欲好'],tongue:'舌淡红，苔薄白',diet:['均衡饮食','五谷杂粮','新鲜蔬果'],avoid:['偏食','暴饮暴食'],life:['规律作息','适度运动','心态平和']}
 };
 
 // 饮食方案
-var dietPlans = {
-  '湿气':{foods:['薏米','赤小豆','冬瓜','荷叶','陈皮','茯苓'],avoid:['甜食','油腻','生冷','酒'],recipe:'早餐：薏米红豆粥
-午餐：冬瓜排骨汤+清炒芹菜
-晚餐：清蒸鱼+凉拌苦瓜'},
-  '失眠':{foods:['酸枣仁','百合','莲子','小米','核桃','牛奶'],avoid:['咖啡','茶','辛辣','油炸'],recipe:'早餐：小米粥+核桃包
-晚餐：酸枣仁粥+温牛奶（睡前1小时）'},
-  '养胃':{foods:['山药','小米','南瓜','莲子','红枣'],avoid:['辛辣','生冷','硬食','油炸','咖啡'],recipe:'早餐：小米粥+馒头+蒸蛋
-晚餐：清蒸鱼+软面条'},
-  '血压':{foods:['芹菜','燕麦','香蕉','黑木耳','荞麦'],avoid:['高盐','高脂','动物内脏','酒'],recipe:'早餐：燕麦粥+全麦面包+香蕉
-晚餐：清蒸鸡胸+凉拌木耳'},
-  '减肥':{foods:['鸡胸肉','西兰花','糙米','燕麦','黄瓜','番茄'],avoid:['油炸','甜饮料','零食','高糖'],recipe:'早餐：全麦吐司+水煮蛋+脱脂牛奶
-午餐：鸡胸沙拉+糙米饭'},
-  '补气血':{foods:['红枣','桂圆','当归','乌鸡','菠菜','牛肉'],avoid:['生冷','浓茶','咖啡'],recipe:'早餐：红枣桂圆粥+煮鸡蛋
-午餐：当归羊肉汤+清炒菠菜'},
-  '痛风':{foods:['冬瓜','黄瓜','樱桃','芹菜','低脂牛奶','鸡蛋'],avoid:['动物内脏','海鲜','啤酒','浓肉汤'],recipe:'早餐：小米粥+鸡蛋
-午餐：清炒时蔬+番茄蛋汤'},
-  '糖尿病':{foods:['燕麦','糙米','苦瓜','西兰花','黄瓜'],avoid:['白米饭','白面包','甜食','含糖饮料'],recipe:'早餐：燕麦粥+水煮蛋+黄瓜
-午餐：清蒸鱼+炒西兰花+糙米饭'},
-  '护眼':{foods:['胡萝卜','蓝莓','枸杞','菊花','菠菜','蛋黄'],avoid:['高糖','辛辣','油炸','过量咖啡因'],recipe:'早餐：枸杞粥+胡萝卜饼+牛奶
-晚餐：菊花茶+蓝莓+杂粮饭'}
+var dietPlans={
+  '湿气':{f:['薏米','赤小豆','冬瓜','荷叶','陈皮','茯苓'],a:['甜食','油腻','生冷','酒'],r:'早：薏米红豆粥
+午：冬瓜排骨汤+清炒芹菜
+晚：清蒸鱼+凉拌苦瓜'},
+  '失眠':{f:['酸枣仁','百合','莲子','小米','核桃','牛奶'],a:['咖啡','茶','辛辣','油炸'],r:'早：小米粥+核桃包
+晚：酸枣仁粥+温牛奶（睡前1小时）'},
+  '养胃':{f:['山药','小米','南瓜','莲子','红枣'],a:['辛辣','生冷','油炸','咖啡'],r:'早：小米粥+馒头+蒸蛋
+晚：清蒸鱼+软面条'},
+  '高血压':{f:['芹菜','燕麦','香蕉','黑木耳','荞麦'],a:['高盐','高脂','动物内脏'],r:'早：燕麦粥+全麦面包+香蕉
+午：芹菜炒肉+番茄蛋汤
+晚：清蒸鸡胸+凉拌木耳'},
+  '减肥':{f:['鸡胸肉','西兰花','糙米','燕麦','黄瓜'],a:['油炸','甜饮料','零食','高糖'],r:'早：全麦吐司+水煮蛋+脱脂奶
+午：鸡胸沙拉+糙米饭'},
+  '补气血':{f:['红枣','桂圆','当归','乌鸡','菠菜','牛肉'],a:['生冷','浓茶','咖啡'],r:'早：红枣桂圆粥+煮鸡蛋
+午：当归羊肉汤+清炒菠菜'},
+  '痛风':{f:['冬瓜','黄瓜','樱桃','芹菜','低脂牛奶','鸡蛋'],a:['动物内脏','海鲜','啤酒','浓肉汤'],r:'早：小米粥+鸡蛋
+午：清炒时蔬+番茄蛋汤'},
+  '糖尿病':{f:['燕麦','糙米','苦瓜','西兰花','黄瓜'],a:['白米饭','白面包','甜食','含糖饮料'],r:'早：燕麦粥+水煮蛋+黄瓜
+午：清蒸鱼+炒西兰花+糙米饭'},
 };
 
-// ========== 模式切换 ==========
-document.querySelectorAll('.mode-btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active')});
-    this.classList.add('active');
-    currentMode = this.dataset.m;
-    updateQuickChips();
+// 模式切换
+document.querySelectorAll('.mode').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.mode').forEach(function(x){x.classList.remove('on')});
+    this.classList.add('on');
+    curMode=this.dataset.m;
+    updQuick();
   });
 });
 
-function updateQuickChips(){
-  var chips={
-    consultation:['感冒发烧','咳嗽怎么办','头痛','胃不舒服','血压高','失眠','疲劳','关节疼'],
-    tcm:['我是什么体质','气虚怎么补','湿气重怎么办','阴虚怎么调','阳虚怎么补'],
-    diet:['湿气重吃什么','减肥食谱','降血压饮食','降血糖饮食','养胃食谱'],
-    knowledge:['什么是亚健康','如何提高免疫力','体检主要看什么','中医养生原则']
-  };
-  var arr=chips[currentMode]||[];
-  document.getElementById('quickBar').innerHTML=arr.map(function(t){
-    return '<button class="quick-chip" onclick="sendChip(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</button>';
-  }).join('');
+function updQuick(){
+  var chips={c:['感冒发烧','咳嗽','头痛','胃疼','血压高','失眠','疲劳'],t:['测体质','气虚怎么补','湿气重','阴虚怎么调'],d:['湿气吃什么','减肥食谱','降压饮食','控糖饮食'],k:['亚健康','免疫力','体检看什么','中医养生']};
+  document.getElementById('quickBar').innerHTML=(chips[curMode]||[]).map(function(t){return'<button class="quick-btn" onclick="sendChip(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</button>'}).join('');
 }
-updateQuickChips();
+updQuick();
 
-function sendChip(text){
-  document.getElementById('userInput').value=text;
-  sendMessage();
-}
+function sendChip(text){document.getElementById('userInput').value=text;sendMsg()}
 
-// ========== 输入处理 ==========
-document.getElementById('userInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!e.shiftKey){
-    e.preventDefault();
-    sendMessage();
-  }
-});
+// 回车发送
+document.getElementById('userInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
 
-// ========== 打字效果 ==========
-function typeWriter(el,fullHtml,callback){
+// 打字效果
+function tw(el,html,cb){
   var i=0,buf='',inTag=false;
   el.innerHTML='<span></span>';
   var cs=document.createElement('span');cs.className='tc';el.appendChild(cs);
   function tick(){
-    if(i<fullHtml.length){
-      var c=fullHtml[i];
-      if(c==='<'){inTag=true;buf+=c;}
-      else if(c==='>'){inTag=false;buf+=c;el.innerHTML=fullHtml.substring(0,i+1)+'<span class="tc"></span>';}
-      else if(!inTag){buf+=c;}
-      i++;setTimeout(tick,14);
-    }else{
-      el.innerHTML=fullHtml;
-      if(callback)callback();
-    }
-    document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;
+    if(i<html.length){
+      var c=html[i];
+      if(c==='<'){inTag=true;buf+=c}
+      else if(c==='>'){inTag=false;buf+=c;el.innerHTML=html.substring(0,i+1)+'<span class="tc"></span>'}
+      else if(!inTag){buf+=c}
+      i++;setTimeout(tick,14)
+    }else{el.innerHTML=html;if(cb)cb()}
+    document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight
   }
-  tick();
+  tick()
 }
 
-// ========== 消息显示 ==========
+// 消息添加
 function addMsg(role,html,time){
   var chat=document.getElementById('chat');
-  var div=document.createElement('div');
-  div.className='msg '+role;
-  var av=role==='user'?'👤':'🏥';
-  var tm=time||(role==='ai'?'AI助手 · 刚刚':'');
-  div.innerHTML='<div class="msg-avatar">'+av+'</div><div class="msg-body"><div class="msg-content"></div>'+(tm?'<div class="msg-time">'+tm+'</div>':'')+'</div>';
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
-  return div.querySelector('.msg-content');
+  var div=document.createElement('div');div.className='msg '+(role==='me'?'me':'ai');
+  var av=role==='me'?'👤':'🏥';
+  var tm=time||(role==='ai'?'AI · 刚刚':'');
+  div.innerHTML='<div class="msg-ava">'+av+'</div><div class="msg-body"><div class="msg-c"></div>'+(tm?'<div class="msg-t">'+tm+'</div>':'')+'</div>';
+  chat.appendChild(div);chat.scrollTop=chat.scrollHeight;
+  return div.querySelector('.msg-c')
 }
 
 function showTyping(){
   var chat=document.getElementById('chat');
-  var div=document.createElement('div');div.id='typingEl';div.className='typing-row';
-  div.innerHTML='<div class="msg-avatar">🏥</div><div class="typing-dots"><span></span><span></span><span></span></div>';
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
+  var div=document.createElement('div');div.id='typingEl';div.className='typing';
+  div.innerHTML='<div class="msg-ava">🏥</div><div class="typing-dots"><span></span><span></span><span></span></div>';
+  chat.appendChild(div);chat.scrollTop=chat.scrollHeight
 }
-function hideTyping(){var el=document.getElementById('typingEl');if(el)el.remove();}
+function hideTyping(){var el=document.getElementById('typingEl');if(el)el.remove()}
 
-// ========== 核心：发送消息 ==========
-function sendMessage(){
+// 发送
+function sendMsg(){
   var input=document.getElementById('userInput');
-  var message=input.value.trim();
-  if(!message||isTyping)return;
+  var msg=input.value.trim();
+  if(!msg||typing)return;
   input.value='';
-  chatHistory.push({role:'user',content:message});
-  addMsg('user',message);
+  hist.push({role:'user',content:msg});
+  addMsg('me',msg);
   showTyping();
-  isTyping=true;
+  typing=true;
   setTimeout(function(){
     hideTyping();
-    var response=generateResponse(message);
-    var msgObj=addMsg('ai','');
-    chatHistory.push({role:'ai',content:response});
-    typeWriter(msgObj,response,function(){isTyping=false;});
-  },600+Math.random()*600);
+    var resp=genResp(msg);
+    var el=addMsg('ai','');
+    hist.push({role:'ai',content:resp});
+    tw(el,resp,function(){typing=false});
+  },500+Math.random()*500)
 }
 
-// ========== 响应生成 ==========
-function generateResponse(msg){
+// 关键词匹配
+function findKB(msg){
+  msg=msg.toLowerCase();
+  var keys=Object.keys(KB);
+  for(var i=0;i<keys.length;i++){
+    if(msg.indexOf(keys[i])!==-1)return{key:keys[i],data:KB[keys[i]]}
+  }
+  // 症状词
+  var kw={'发烧':'发热','高烧':'发热','头疼':'头痛','胃疼':'胃炎','胃痛':'胃炎','胃不舒服':'胃炎','睡不着':'失眠','失眠':'失眠','高血压':'高血压','血压高':'高血压','糖尿病':'糖尿病','血糖高':'糖尿病','咳嗽':'咳嗽','感冒':'感冒','痛风':'痛风','体质':'体质辨识','亚健康':'亚健康'};
+  var k=Object.keys(kw);
+  for(var i=0;i<k.length;i++){
+    if(msg.indexOf(k[i])!==-1){var mapped=kw[k[i]];if(mapped&&KB[mapped])return{key:mapped,data:KB[mapped]}}
+  }
+  return null
+}
+
+function buildHTML(result){
+  var d=result.data;
+  var mem=userCond.length>0&&userCond.indexOf(result.key)===-1?' <span class="mem">📋 关联：'+userCond.slice(-2).join('、')+'</span>':'';
+  var html='<b>'+d.t+'</b>'+mem+'<br><br>'+d.c;
+  if(d.e)html+='<div class="emg"><h5>⚠️ 需立即就医</h5><p>'+d.e+'</p></div>';
+  if(d.d)html+='<div class="eat"><h4>🍽️ 饮食建议</h4><p>'+d.d.replace(/\n/g,'<br>')+'</p></div>';
+  if(d.dr)html+='<div class="drug"><h4>💊 用药参考</h4><p>'+d.dr.replace(/\n/g,'<br>')+'</p></div>';
+  if(d.h&&d.h!=='')html+='<div class="herb"><h4>🌿 中医调理</h4><p>'+d.h.replace(/\n/g,'<br>')+'</p></div>';
+  if(d.s&&d.s!=='')html+='<div class="drug"><h4>⚠️ 药物相互作用</h4><p>'+d.s.replace(/\n/g,'<br>')+'</p></div>';
+  return html
+}
+
+function genResp(msg){
   var orig=msg;
   msg=msg.toLowerCase();
 
-  // === 紧急症状 ===
-  var emKW=['高热','呼吸困难','胸痛','剧烈头痛','意识模糊','抽搐','呕血','便血','大出血','昏迷'];
-  for(var i=0;i<emKW.length;i++){
-    if(orig.indexOf(emKW[i])!==-1){
-      return '<div class="emergency-box"><h5>🚨 紧急提醒：检测到"'+emKW[i]+'"</h5><p>这可能是危及生命的症状！请立即：</p><ul><li><strong>拨打120急救</strong></li><li>保持冷静，不要自行驾车</li><li>记录症状出现时间</li><li>不要自行服药</li></ul></div><div class="med-section"><h4>⚠️ 重要提示</h4><p>以上症状需要紧急医疗处理，任何延迟都可能造成严重后果。本系统不能替代急诊医疗服务，请立即就医！</p></div>';
+  // 紧急词
+  var emWords=['高热','呼吸困难','胸痛','剧烈头痛','意识模糊','抽搐','呕血','便血','昏迷'];
+  for(var i=0;i<emWords.length;i++){
+    if(orig.indexOf(emWords[i])!==-1){
+      return '<div class="emg"><h5>🚨 紧急提醒：检测到"'+emWords[i]+'"</h5><p>这可能是危及生命的症状！请立即：</p><ul><li><strong>拨打120急救</strong></li><li>保持冷静，不要自行驾车</li><li>记录症状出现时间</li><li>不要自行服药</li></ul></div><div class="sec"><h4>⚠️ 重要提示</h4><p>以上症状需要紧急医疗处理，任何延迟都可能造成严重后果。本系统不能替代急诊医疗服务，请立即就医！</p></div>'
     }
   }
 
-  if(currentMode==='consultation')return genConsultation(orig,msg);
-  if(currentMode==='tcm')return genTCM(orig,msg);
-  if(currentMode==='diet')return genDiet(orig,msg);
-  if(currentMode==='knowledge')return genKnowledge(orig,msg);
+  // 咨询模式
+  if(curMode==='c'){
+    var cond=findKB(orig);
+    if(cond){
+      if(userCond.indexOf(cond.key)===-1)userCond.push(cond.key);
+      return buildHTML(cond);
+    }
+    if(orig.length>2){
+      return '<b>根据您的描述</b>："'+orig+'"<br><br>暂时没有找到完全匹配的知识库条目。以下是通用建议：<br><br><div class="sec"><h4>📋 建议：</h4><ul><li>如果症状持续或加重，请及时就医</li><li>详细记录：部位、性质、时间</li><li>带上既往检查资料和用药清单就诊</li><li>描述症状可以说：头痛、胃疼、咳嗽等</li></ul></div><div class="herb"><h4>💬 您可以尝试说：</h4><p>"头痛"、"胃疼"、"咳嗽"、"失眠"等</p></div>';
+    }
+    return '<b>您好！</b>请描述您的具体症状。<br><br>例如：<br>· "头痛很厉害"<br>· "胃不舒服吃什么"<br>· "血压高怎么调理"<br>· "咳嗽有痰怎么办"<br>· 输入"体质"测试中医体质辨识';
+  }
+
+  // 中医模式
+  if(curMode==='t'){
+    if(orig.indexOf('体质')!==-1){
+      var h='<b>中医九种体质辨识</b><br><br>';
+      var k=Object.keys(cons);
+      for(var i=0;i<k.length;i++){
+        var c=cons[k[i]];
+        h+='<b>'+k[i]+'质</b>：'+c.symptoms.slice(0,3).join('、')+'<br>';
+        h+='饮食宜：'+c.diet.slice(0,3).join('、')+'；忌：'+c.avoid.slice(0,2).join('、')+'<br><br>';
+      }
+      return h+'<div class="herb"><h4>🌿 调理建议</h4><p>具体用药请咨询中医师进行个性化辨证论治。</p></div>';
+    }
+    if(orig.indexOf('湿气')!==-1){
+      return '<b>湿气重的综合调理</b><br><br><div class="eat"><h4>🍽️ 祛湿明星食材</h4><p>薏米（炒）、赤小豆、冬瓜、荷叶、陈皮、茯苓、山药</p></div><div class="herb"><h4>🌿 祛湿中药</h4><p>茯苓、薏苡仁、白术、陈皮、藿香、佩兰</p></div><div class="sec"><h4>🏃 生活方式</h4><ul><li>多运动出汗（每天30分钟微微出汗）</li><li>避免久坐，每小时站起活动5分钟</li><li>保持环境干燥</li><li>规律作息，23点前睡觉</li></ul></div>';
+    }
+    if(orig.indexOf('气虚')!==-1){
+      return '<b>气虚体质调理</b><br><br><div class="eat"><h4>🍽️ 补气食物</h4><p>山药、黄芪、党参、大枣、鸡肉、牛肉、糯米、桂圆</p></div><div class="herb"><h4>🌿 补气中药</h4><p>黄芪、党参、人参（热性，慎用）、太子参、西洋参</p></div><div class="sec"><h4>🏃 生活建议</h4><ul><li>适度运动（太极拳、八段锦、散步）</li><li>充足睡眠（7-8小时）</li><li>避免过度劳累</li><li>注意保暖，尤其是后背和足部</li></ul></div>';
+    }
+    if(orig.indexOf('阴虚')!==-1){
+      return '<b>阴虚体质调理</b><br><br><div class="eat"><h4>🍽️ 滋阴食物</h4><p>银耳、百合、梨、蜂蜜、麦冬、沙参、玉竹、石斛</p></div><div class="herb"><h4>🌿 滋阴中药</h4><p>麦冬、玉竹、沙参、生地、知母、黄精</p></div><div class="sec"><h4>🏃 生活建议</h4><ul><li>保证充足睡眠（7-8小时）</li><li>避免熬夜（23点前睡）</li><li>练习静坐冥想</li><li>减少辛辣刺激食物</li></ul></div>';
+    }
+    if(orig.indexOf('阳虚')!==-1){
+      return '<b>阳虚体质调理</b><br><br><div class="eat"><h4>🍽️ 温阳食物</h4><p>羊肉、韭菜、核桃、生姜、肉桂、杜仲、桂圆、红糖</p></div><div class="herb"><h4>🌿 温阳中药</h4><p>肉桂、干姜、巴戟天</p></div><div class="sec"><h4>🏃 生活建议</h4><ul><li>多晒太阳（每天15-30分钟，重点晒后背）</li><li>睡前泡脚（艾叶+生姜煮水）</li><li>适度运动（快走、太极拳）</li><li>注意保暖，尤其腰腹和足部</li></ul></div>';
+    }
+    if(orig.indexOf('肝郁')!==-1||orig.indexOf('气郁')!==-1){
+      return '<b>肝郁气滞调理</b><br><br><div class="eat"><h4>🍽️ 疏肝食物</h4><p>玫瑰花茶、佛手茶、山楂、陈皮、香蕉、燕麦</p></div><div class="herb"><h4>🌿 疏肝中药</h4><p>柴胡、香附、郁金、玫瑰花、绿萼梅</p></div><div class="sec"><h4>🏃 生活方式</h4><ul><li>保持心情舒畅，学会情绪管理</li><li>适度运动（太极拳、瑜伽、散步）</li><li>深呼吸练习（每天3次，每次10个深呼吸）</li><li>按摩太冲穴（足背大趾和二趾之间）</li></ul></div>';
+    }
+    return '<b>中医体质调理</b><br><br>请告诉我您想了解哪方面：<br>· "我是什么体质"<br>· "湿气重怎么办"<br>· "气虚怎么补"<br>· "阴虚怎么调"<br>· "阳虚怎么补"<br>· "肝郁气滞"';
+  }
+
+  // 饮食模式
+  if(curMode==='d'){
+    var planKeys=['湿气','失眠','养胃','高血压','减肥','补气血','痛风','糖尿病'];
+    for(var i=0;i<planKeys.length;i++){
+      if(orig.indexOf(planKeys[i])!==-1){
+        var p=dietPlans[planKeys[i]];
+        return '<b>'+planKeys[i]+'饮食方案</b><br><br><div class="eat"><h4>🌟 推荐食物</h4><p>'+p.f.join('、')+'</p></div><div class="sec"><h4>⚠️ 应避免</h4><p>'+p.a.join('、')+'</p></div><div class="herb"><h4>🍽️ 参考食谱</h4><p>'+p.r.replace(/\n/g,'<br>')+'</p></div>';
+      }
+    }
+    return '<b>饮食调理</b><br><br>请告诉我您想调理哪方面：<br>· "湿气重吃什么"<br>· "减肥食谱"<br>· "高血压饮食"<br>· "控糖饮食"<br>· "养胃食谱"<br>· "补气血"<br>· "失眠吃什么"<br>· "痛风饮食"';
+  }
+
+  // 知识模式
+  if(curMode==='k'){
+    if(orig.indexOf('亚健康')!==-1){
+      return '<b>亚健康</b><br><br>介于健康与疾病之间的灰色状态。表现：疲劳乏力、失眠、情绪低落、注意力不集中，但检查无器质性病变。<br><br><div class="sec"><h4>💪 改善建议</h4><ul><li>规律作息：23点前睡，7-8小时睡眠</li><li>适度运动：每周3-5次，每次30分钟微微出汗</li><li>均衡饮食，补充维生素矿物质</li><li>心理调节，必要时寻求专业帮助</li><li>定期体检</li></ul></div><div class="herb"><h4>🌿 中医调理</h4><p>黄芪、党参、枸杞、菊花——益气养阴，适合亚健康气虚人群日常泡水。</p></div>';
+    }
+    if(orig.indexOf('免疫力')!==-1){
+      return '<b>提高免疫力</b><br><br><div class="sec"><h4>🥗 免疫相关营养素</h4><ul><li>蛋白质：免疫细胞基础（鸡蛋、牛奶、鱼、豆制品）</li><li>维C：柑橘、猕猴桃、青椒</li><li>维D：晒太阳（每天15-30分钟）、鱼肝油</li><li>锌：瘦肉、海鲜、豆类、坚果</li></ul></div><div class="sec"><h4>🏃 生活方式</h4><ul><li>保证睡眠</li><li>适度运动</li><li>减少压力</li><li>戒烟限酒</li></ul></div>';
+    }
+    if(orig.indexOf('体检')!==-1){
+      return '<b>体检重点指标</b><br><br><div class="sec"><h4>🩸 必查项目</h4><ul><li>血常规：了解贫血、感染</li><li>尿常规：筛查泌尿系统疾病</li><li>肝肾功能：评估代谢功能</li><li>血脂：心血管风险筛查</li><li>血糖：糖尿病筛查</li><li>心电图：心脏疾病筛查</li><li>腹部B超：肝胆胰脾肾</li></ul></div><div class="sec"><h4>40岁以上加项</h4><ul><li>肿瘤标志物</li><li>甲状腺B超</li><li>颈动脉B超</li><li>骨密度</li></ul></div>';
+    }
+    if(orig.indexOf('中医养生')!==-1){
+      return '<b>中医四季养生</b><br><br><div class="eat"><h4>🍃 四季养生要点</h4><ul><li><b>春（养肝）</b>：早睡早起，多吃绿色蔬菜，适度运动</li><li><b>夏（养心）</b>：晚睡早起，多吃苦味食物，注意防暑</li><li><b>秋（养肺）</b>：早睡早起，多吃润燥食物</li><li><b>冬（养肾）</b>：早睡晚起，多吃温补食物</li></ul></div><div class="herb"><h4>🌿 通用养生</h4><p>规律作息、饮食有节、情志舒畅、适度运动——中医养生四大基石。</p></div>';
+    }
+    return '<b>健康知识库</b><br><br>请告诉我您想了解：<br>· "什么是亚健康"<br>· "如何提高免疫力"<br>· "体检主要看什么"<br>· "中医养生原则"';
+  }
+
   return '请选择一个模式后描述您的症状。';
 }
 
-function findCondition(msg,orig){
-  var keys=Object.keys(medicalKnowledge);
-  for(var i=0;i<keys.length;i++){
-    if(msg.indexOf(keys[i])!==-1||orig.indexOf(keys[i])!==-1)return{key:keys[i],data:medicalKnowledge[keys[i]]};
-  }
-  // 症状关键词
-  var kwKeys=Object.keys(symptomKeywords);
-  for(var i=0;i<kwKeys.length;i++){
-    if(msg.indexOf(kwKeys[i])!==-1){
-      var mapped=symptomKeywords[kwKeys[i]];
-      if(mapped&&medicalKnowledge[mapped])return{key:mapped,data:medicalKnowledge[mapped]};
-    }
-  }
-  return null;
-}
-
-function buildConditionHTML(result){
-  var d=result.data;
-  var memBadge=userConditions.length>0&&userConditions.indexOf(result.key)===-1?
-    '<span class="memory-badge">📋 关联：'+userConditions.slice(-2).join('、')+'</span>':'';
-  var html='<b>'+d.title+'</b>'+memBadge+'<br><br>'+d.content;
-  if(d.emergency)html+='<div class="emergency-box"><h5>⚠️ 需立即就医</h5><p>'+d.emergency+'</p></div>';
-  if(d.diet)html+='<div class="diet-box"><h4>🍽️ 饮食建议</h4><p>'+d.diet.replace(/\n/g,'<br>')+'</p></div>';
-  if(d.drugs)html+='<div class="med-section"><h4>💊 用药参考</h4><p>'+d.drugs.replace(/\n/g,'<br>')+'</p></div>';
-  if(d.herbs)html+='<div class="herb-box"><h4>🌿 中医调理</h4><p>'+d.herbs.replace(/\n/g,'<br>')+'</p></div>';
-  if(d.synergy)html+='<div class="synergy-box"><h4>⚠️ 药物相互作用</h4><p>'+d.synergy.replace(/\n/g,'<br>')+'</p></div>';
-  if(d.food)html+='<div class="med-section"><h4>🍎 饮食注意事项</h4><p>'+d.food.replace(/\n/g,'<br>')+'</p></div>';
-  return html;
-}
-
-function genConsultation(orig,msg){
-  var cond=findCondition(msg,orig);
-  if(cond){
-    if(userConditions.indexOf(cond.key)===-1)userConditions.push(cond.key);
-    return buildConditionHTML(cond);
-  }
-  // 慢病管理
-  if(msg.indexOf('慢病')!==-1||msg.indexOf('慢性')!==-1){
-    return '<b>慢性病管理要点</b><br><br>常见慢性病包括：高血压、糖尿病、冠心病、脑卒中、慢阻肺、痛风、骨质疏松等。<br><br><div class="med-section"><h4>📋 共同管理原则</h4><ul><li>遵医嘱规律服药，不要自行停药</li><li>定期监测相关指标（血压/血糖/尿酸等）</li><li>健康生活方式：运动、饮食、戒烟限酒</li><li>定期复查，及时发现并发症</li><li>学习疾病知识，提高自我管理能力</li></ul></div><div class="diet-box"><h4>🌿 中医辅助调理</h4><p>根据具体病种选择对应体质调理方案，可在下方"中医"模式详细了解。</p></div>';
-  }
-  // 症状描述
-  if(msg.length>2){
-    return '<b>根据您的描述</b>："'+orig+'"<br><br>暂时没有找到完全匹配的知识库条目。以下是一些通用建议：<br><br><div class="med-section"><h4>📋 建议您：</h4><ul><li>如果症状持续或加重，请及时就医</li><li>详细记录症状出现的时间、部位、性质</li><li>带上既往检查资料和用药清单就诊</li><li>描述症状时可以告诉我：部位（哪里不舒服）、性质（怎么不舒服）、时间（多久了）</li></ul></div><div class="herb-box"><h4>💬 您可以尝试说：</h4><p>"头痛"、"胃疼"、"咳嗽"、"失眠"等，我会为您提供详细分析。</p></div>';
-  }
-  return '<b>您好！</b>请描述您的具体症状。<br><br>例如：<br>· "头痛很厉害"<br>· "胃不舒服吃什么"<br>· "血压高怎么调理"<br>· "咳嗽有痰怎么办"<br>· 输入"体质"测试中医体质辨识';
-}
-
-function genTCM(orig,msg){
-  if(msg.indexOf('体质')!==-1){
-    return medicalKnowledge['体质辨识'].content;
-  }
-  if(msg.indexOf('湿气')!==-1){
-    return '<b>湿气重的综合调理</b><br><br><div class="diet-box"><h4>🍽️ 祛湿明星食材</h4><p>薏米（炒）、赤小豆（不是红豆！）、茯苓、冬瓜、荷叶、陈皮、山药</p></div><div class="herb-box"><h4>🌿 祛湿中药</h4><p>茯苓、薏苡仁、白术、陈皮、藿香、佩兰</p></div><div class="med-section"><h4>🏃 生活方式</h4><ul><li>多运动出汗（每天30分钟微微出汗）</li><li>避免久坐，每小时站起来活动5分钟</li><li>保持环境干燥</li><li>规律作息，23点前睡觉</li><li>少吃生冷油腻</li></ul></div>';
-  }
-  if(msg.indexOf('气虚')!==-1){
-    return '<b>气虚体质调理</b><br><br><div class="diet-box"><h4>🍽️ 补气食物</h4><p>山药、黄芪、党参、大枣、鸡肉、牛肉、糯米、桂圆</p></div><div class="herb-box"><h4>🌿 补气中药</h4><p>黄芪、党参、人参（热性，慎用）、太子参、西洋参（凉性，适合气虚有热者）</p></div><div class="med-section"><h4>🏃 生活建议</h4><ul><li>适度运动（太极拳、八段锦、散步）</li><li>充足睡眠（7-8小时）</li><li>避免过度劳累</li><li>注意保暖，尤其是后背和足部</li></ul></div>';
-  }
-  if(msg.indexOf('阴虚')!==-1){
-    return '<b>阴虚体质调理</b><br><br><div class="diet-box"><h4>🍽️ 滋阴食物</h4><p>银耳、百合、梨、蜂蜜、麦冬、沙参、玉竹、石斛</p></div><div class="herb-box"><h4>🌿 滋阴中药</h4><p>麦冬、玉竹、沙参、生地、知母、黄精</p></div><div class="med-section"><h4>🏃 生活建议</h4><ul><li>保证充足睡眠（7-8小时）</li><li>避免熬夜（23点前睡）</li><li>练习静坐冥想</li><li>减少辛辣刺激食物</li></ul></div>';
-  }
-  if(msg.indexOf('阳虚')!==-1){
-    return '<b>阳虚体质调理</b><br><br><div class="diet-box"><h4>🍽️ 温阳食物</h4><p>羊肉、韭菜、核桃、生姜、肉桂、杜仲、桂圆、红糖</p></div><div class="herb-box"><h4>🌿 温阳中药</h4><p>附子（需医生处方，毒性大）、肉桂、干姜、巴戟天、鹿茸</p></div><div class="med-section"><h4>🏃 生活建议</h4><ul><li>多晒太阳（每天15-30分钟，重点晒后背督脉）</li><li>睡前泡脚（艾叶+生姜煮水）</li><li>适度运动（快走、太极拳）</li><li>注意保暖，尤其腰腹和足部</li></ul></div>';
-  }
-  if(msg.indexOf('肝郁')!==-1||msg.indexOf('气郁')!==-1){
-    return '<b>肝郁气滞调理</b><br><br><div class="diet-box"><h4>🍽️ 疏肝食物</h4><p>玫瑰花茶、佛手茶、山楂、陈皮、香蕉、燕麦</p></div><div class="herb-box"><h4>🌿 疏肝中药</h4><p>柴胡、香附、郁金、玫瑰花、绿萼梅</p></div><div class="med-section"><h4>🏃 生活方式</h4><ul><li>保持心情舒畅，学会情绪管理</li><li>适度运动（太极拳、瑜伽、散步）</li><li>深呼吸练习（每天3次，每次10个深呼吸）</li><li>社交活动，与朋友交流</li><li>按摩太冲穴（足背大趾和二趾之间）</li></ul></div>';
-  }
-  return medicalKnowledge['体质辨识'].content;
-}
-
-function genDiet(orig,msg){
-  var plans={
-    '湿气':{h:'祛湿饮食方案',foods:'薏米（炒）、赤小豆、冬瓜、荷叶、陈皮、茯苓、山药、玉米须茶',
-      avoid:'甜食、油腻、生冷、酒类、浓茶',
-      recipe:'早餐：薏米红豆粥
-午餐：冬瓜排骨汤+清炒芹菜+米饭
-晚餐：清蒸鱼+凉拌苦瓜
-茶饮：玉米须茶、陈皮茶'},
-    '失眠':{h:'助眠饮食方案',foods:'酸枣仁、百合、莲子、小米、核桃、牛奶（温热，睡前1小时）',
-      avoid:'咖啡、浓茶（下午2点后禁饮）、酒精、辛辣',
-      recipe:'早餐：小米粥+核桃包+牛奶
-晚餐：酸枣仁粥+馒头+凉拌木耳
-睡前：温热牛奶200ml'},
-    '养胃':{h:'养胃饮食方案',foods:'山药、小米、南瓜、莲子、芡实、红枣、蒸蛋、软面条',
-      avoid:'辛辣、生冷、油腻、过甜、过酸、咖啡、浓茶、酒精',
-      recipe:'早餐：小米粥+馒头+蒸蛋
-午餐：山药排骨汤+清炒南瓜+米饭
-晚餐：清蒸鱼+软面条+炒青菜'},
-    '高血压':{h:'降压饮食方案（DASH饮食）',foods:'芹菜、燕麦、香蕉、黑木耳、荞麦、深海鱼、绿叶蔬菜',
-      avoid:'腌制品（腊肉、酱菜）、高盐零食、加工食品',
-      recipe:'早餐：燕麦粥+全麦面包+香蕉
-午餐：芹菜炒肉+番茄蛋汤+米饭
-晚餐：清蒸鸡胸+凉拌木耳+荞麦面'},
-    '减肥':{h:'健康减肥饮食',foods:'鸡胸肉、西兰花、糙米、燕麦、黄瓜、番茄、鱼、豆腐',
-      avoid:'油炸食品、甜饮料、零食、酒精、白米白面',
-      recipe:'早餐：全麦吐司+水煮蛋+脱脂牛奶
-午餐：鸡胸肉沙拉+糙米饭
-晚餐：清蒸鱼+蔬菜汤+杂粮粥'},
-    '补气血':{h:'补气血饮食方案',foods:'红枣、桂圆、当归、乌鸡、菠菜、牛肉、枸杞、黑木耳',
-      avoid:'生冷、浓茶、咖啡、辛辣刺激',
-      recipe:'早餐：红枣桂圆粥+煮鸡蛋+核桃
-午餐：当归羊肉汤+清炒菠菜+米饭
-晚餐：乌鸡汤+馒头+红豆粥'},
-    '痛风':{h:'痛风饮食方案',foods:'冬瓜、黄瓜、樱桃（每天10颗）、芹菜、低脂牛奶、鸡蛋',
-      avoid:'动物内脏、海鲜（尤其贝类）、啤酒和白酒、浓肉汤、火锅汤',
-      recipe:'早餐：小米粥+鸡蛋
-午餐：清炒时蔬+番茄蛋汤+米饭
-晚餐：冬瓜汤+清蒸蛋+杂粮粥'},
-    '糖尿病':{h:'控血糖饮食方案',foods:'燕麦、糙米、苦瓜、西兰花、黄瓜、黑木耳、鱼、豆腐',
-      avoid:'白米饭、白面包、甜食、含糖饮料、西瓜（高GI）',
-      recipe:'早餐：燕麦粥+水煮蛋+黄瓜
-午餐：清蒸鱼+炒西兰花+糙米饭
-晚餐：豆腐汤+凉拌苦瓜+杂粮饭'},
-    '护眼':{h:'护眼饮食方案',foods:'胡萝卜、蓝莓、枸杞、菊花、菠菜、蛋黄、深海鱼',
-      avoid:'高糖、辛辣、油炸、过量咖啡因',
-      recipe:'早餐：枸杞粥+胡萝卜饼+牛奶
-午餐：清炒胡萝卜+番茄蛋汤+米饭
-晚餐：菊花茶+蓝莓+杂粮饭'}
-  };
-  var planKeys=['湿气','失眠','减肥','高血压','糖尿病','养胃','补气血','痛风','护眼'];
-  for(var i=0;i<planKeys.length;i++){
-    if(msg.indexOf(planKeys[i])!==-1){
-      var p=dietPlans[planKeys[i]];
-      return '<b>'+planKeys[i]+'饮食方案</b><br><br><div class="diet-box"><h4>🌟 推荐食物</h4><p>'+p.foods.replace(/,/g,'、')+'</p></div><div class="med-section"><h4>⚠️ 应避免</h4><p>'+p.avoid.replace(/,/g,'、')+'</p></div><div class="herb-box"><h4>🍽️ 参考食谱</h4><p>'+p.recipe.replace(/\n/g,'<br>')+'</p></div>';
-    }
-  }
-  return '<b>饮食调理</b><br><br>请告诉我您想调理哪方面：<br>· "湿气重吃什么"<br>· "减肥食谱"<br>· "降血压饮食"<br>· "控血糖饮食"<br>· "养胃食谱"<br>· "补气血"<br>· "失眠吃什么"<br>· "痛风饮食"<br>· "护眼食物"';
-}
-
-function genKnowledge(orig,msg){
-  var km={
-    '亚健康':'<b>亚健康</b><br><br>介于健康与疾病之间的灰色状态。表现：疲劳乏力、失眠、情绪低落、注意力不集中，但检查无器质性病变。<br><br><div class="med-section"><h4>💪 改善建议</h4><ul><li>规律作息：23点前睡，7-8小时睡眠</li><li>适度运动：每周3-5次，每次30分钟微微出汗</li><li>均衡饮食，补充维生素矿物质</li><li>心理调节，必要时寻求专业帮助</li><li>定期体检</li></ul></div><div class="herb-box"><h4>🌿 中医调理</h4><p>黄芪、党参、枸杞、菊花——益气养阴，适合亚健康气虚人群日常泡水。</p></div>',
-    '免疫力':'<b>提高免疫力</b><br><br><div class="med-section"><h4>🥗 免疫相关营养素</h4><ul><li>蛋白质：免疫细胞的基础（鸡蛋、牛奶、鱼、豆制品）</li><li>维C：柑橘、猕猴桃、青椒</li><li>维D：晒太阳（每天15-30分钟）、鱼肝油</li><li>锌：瘦肉、海鲜、豆类、坚果</li><li>硒：巴西坚果、海鲜</li></ul></div><div class="med-section"><h4>🏃 生活方式</h4><ul><li>保证睡眠</li><li>适度运动</li><li>减少压力</li><li>戒烟限酒</li></ul></div>',
-    '体检':'<b>体检重点指标</b><br><br><div class="med-section"><h4>🩸 必查项目</h4><ul><li>血常规：了解贫血、感染</li><li>尿常规：筛查泌尿系统疾病</li><li>肝肾功能：评估代谢功能</li><li>血脂：心血管风险筛查</li><li>血糖：糖尿病筛查</li><li>心电图：心脏疾病筛查</li><li>腹部B超：肝胆胰脾肾</li></ul></div><div class="med-section"><h4>40岁以上加项</h4><ul><li>肿瘤标志物</li><li>甲状腺B超</li><li>颈动脉B超</li><li>骨密度</li></ul></div>',
-    '中医养生':'<b>中医四季养生</b><br><br><div class="diet-box"><h4>🍃 四季养生要点</h4><ul><li><b>春（养肝）</b>：早睡早起，多吃绿色蔬菜，适度运动</li><li><b>夏（养心）</b>：晚睡早起，多吃苦味食物，注意防暑</li><li><b>秋（养肺）</b>：早睡早起，多吃润燥食物</li><li><b>冬（养肾）</b>：早睡晚起，多吃温补食物</li></ul></div><div class="herb-box"><h4>🌿 通用养生</h4><p>规律作息、饮食有节、情志舒畅、适度运动——中医养生四大基石。</p></div>'
-  };
-  var kmKeys=['亚健康','免疫力','体检','中医养生'];
-  for(var i=0;i<kmKeys.length;i++){
-    if(msg.indexOf(kmKeys[i])!==-1)return km[kmKeys[i]];
-  }
-  return '<b>健康知识库</b><br><br>请告诉我您想了解：<br>· "什么是亚健康"<br>· "如何提高免疫力"<br>· "体检主要看什么"<br>· "中医养生原则"';
-}
-
-// ========== 反馈系统 ==========
+// 反馈星级
 document.querySelectorAll('.fb-star').forEach(function(s){
   s.addEventListener('click',function(){
     fbRating=+this.dataset.v;
-    document.querySelectorAll('.fb-star').forEach(function(st,i){
-      st.classList.toggle('active',i<fbRating);
-    });
+    document.querySelectorAll('.fb-star').forEach(function(st,i){st.classList.toggle('on',i<fbRating)});
   });
-  s.addEventListener('mouseenter',function(){
-    var r=+this.dataset.v;
-    document.querySelectorAll('.fb-star').forEach(function(st,i){
-      st.style.color=i<r?'#ffc107':'#ddd';
-    });
-  });
-  s.addEventListener('mouseleave',function(){
-    document.querySelectorAll('.fb-star').forEach(function(st,i){
-      st.style.color=i<fbRating?'#ffc107':'#ddd';
-    });
-  });
+  s.addEventListener('mouseenter',function(){var r=+this.dataset.v;document.querySelectorAll('.fb-star').forEach(function(st,i){st.style.color=i<r?'#ffc107':'#ddd'})});
+  s.addEventListener('mouseleave',function(){document.querySelectorAll('.fb-star').forEach(function(st,i){st.style.color=i<fbRating?'#ffc107':'#ddd'})});
 });
 
-function openFB(){document.getElementById('fbModal').classList.add('open');}
-function closeFB(){document.getElementById('fbModal').classList.remove('open')}
+// 反馈面板
+function openFB(){document.getElementById('fbModal').classList.add('on')}
+function closeFB(){document.getElementById('fbModal').classList.remove('on')}
 function openAdmin(){
-  document.getElementById('adminModal').classList.add('open');
-  updateFBStats();
-  loadFBList();
+  document.getElementById('adminModal').classList.add('on');
+  updStats();loadFB();
   document.getElementById('ppToken').value=localStorage.getItem('pp_token')||'';
 }
-function closeAdmin(){document.getElementById('adminModal').classList.remove('open')}
+function closeAdmin(){document.getElementById('adminModal').classList.remove('on')}
 
-function savePPToken(){
-  var t=document.getElementById('ppToken').value.trim();
-  localStorage.setItem('pp_token',t);
-  showToast('Pushplus Token已保存','ok');
-}
+function doSaveToken(){localStorage.setItem('pp_token',document.getElementById('ppToken').value.trim());showT('Token已保存','ok')}
 
-function updateFBStats(){
-  var list=JSON.parse(localStorage.getItem('tcm_feedbacks')||'[]');
-  document.getElementById('totalFB').textContent=list.length;
-}
+function updStats(){document.getElementById('totalFB').textContent=JSON.parse(localStorage.getItem('tcm_fb')||'[]').length}
 
-function loadFBList(){
-  var list=JSON.parse(localStorage.getItem('tcm_feedbacks')||'[]');
+function loadFB(){
+  var list=JSON.parse(localStorage.getItem('tcm_fb')||'[]');
   var el=document.getElementById('fbList');
-  if(list.length===0){el.className='fb-empty';el.textContent='暂无反馈记录';return;}
+  if(list.length===0){el.className='femp';el.textContent='暂无反馈记录';return}
   el.className='';
   el.innerHTML=list.slice().reverse().slice(0,15).map(function(f){
     var sc='<span style="color:'+(f.rating>=4?'#52c41a':f.rating>=3?'#fa8c16':'#ff4d4f')+'">'+"★".repeat(f.rating||0)+'☆'.repeat(5-(f.rating||0))+'</span>';
-    return '<div class="fb-card"><div class="sc">'+sc+'</div><div class="txt">'+(f.text||'无文字').replace(/</g,'&lt;').replace(/
-/g,'<br>')+'</div><div class="tm">'+f.time+' · '+f.mode+'</div></div>';
-  }).join('');
+    return'<div class="fc"><div class="sc">'+sc+'</div><div class="tx">'+(f.text||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div><div class="tm">'+f.time+' · '+f.mode+'</div></div>';
+  }).join('')
 }
 
-function submitFB(){
+function doSubmitFB(){
   var text=document.getElementById('fbText').value.trim();
-  if(!text){showToast('请填写反馈内容','err');return;}
-  var entry={rating:fbRating||0,text:text,time:new Date().toLocaleString('zh-CN'),mode:currentMode};
-  var fbList=JSON.parse(localStorage.getItem('tcm_feedbacks')||'[]');
-  fbList.push(entry);
-  localStorage.setItem('tcm_feedbacks',JSON.stringify(fbList));
-  pushToWechat(entry);
-  closeFB();
-  showToast('感谢反馈！已记录并推送','ok');
-  document.getElementById('fbText').value='';
-  fbRating=0;
-  document.querySelectorAll('.fb-star').forEach(function(s){s.classList.remove('active');s.style.color='#ddd'});
-  updateFBStats();
+  if(!text){showT('请填写反馈内容','err');return}
+  var entry={rating:fbRating||0,text:text,time:new Date().toLocaleString('zh-CN'),mode:curMode};
+  var fbList=JSON.parse(localStorage.getItem('tcm_fb')||'[]');
+  fbList.push(entry);localStorage.setItem('tcm_fb',JSON.stringify(fbList));
+  pushWX(entry);
+  closeFB();showT('感谢反馈！已推送至微信','ok');
+  document.getElementById('fbText').value='';fbRating=0;
+  document.querySelectorAll('.fb-star').forEach(function(s){s.classList.remove('on');s.style.color='#ddd'});
+  updStats();
 }
 
-function pushToWechat(entry){
+function pushWX(entry){
   var token=localStorage.getItem('pp_token')||'';
-  if(!token){showToast('请先在管理面板配置Pushplus Token','info');return;}
-  var content='★ AI健康助手用户反馈 ★\n\n⏰：'+entry.time+'\n⭐：'+(entry.rating||0)+'星\n📋：'+entry.mode+'\n📝：'+entry.text;
+  if(!token){showT('请先在管理面板配置Pushplus Token','err');return}
+  var content='★ AI健康助手反馈 ★\n\n⏰：'+entry.time+'\n⭐：'+(entry.rating||0)+'星\n📋：'+entry.mode+'\n📝：'+entry.text;
   fetch('https://www.pushplus.plus/send?token='+token+'&title=AI健康助手反馈&content='+encodeURIComponent(content)+'&type=txt',{mode:'no-cors'})
-    .then(function(){showToast('微信推送成功','ok')})
-    .catch(function(){showToast('微信推送失败','err')});
+    .then(function(){showT('微信推送成功','ok')})
+    .catch(function(){showT('微信推送失败','err')});
 }
 
-function exportCSV(){
-  var list=JSON.parse(localStorage.getItem('tcm_feedbacks')||'[]');
-  if(list.length===0){showToast('暂无反馈可导出','err');return;}
+function doExport(){
+  var list=JSON.parse(localStorage.getItem('tcm_fb')||'[]');
+  if(list.length===0){showT('暂无反馈可导出','err');return}
   var csv='\uFEFF评分,时间,模式,内容\n';
-  list.forEach(function(f){
-    csv+=(f.rating||0)+'星,"'+f.time+'","'+f.mode+'","'+(f.text||'').replace(/"/g,'""')+'"\n';
-  });
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download='feedback_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
-  showToast('CSV已下载','ok');
+  list.forEach(function(f){csv+=(f.rating||0)+'星,"'+f.time+'","'+f.mode+'","'+(f.text||'').replace(/"/g,'""')+'"\n'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='feedback_'+new Date().toISOString().slice(0,10)+'.csv';a.click();showT('CSV已下载','ok');
 }
 
-function pushAllWechat(){
-  var list=JSON.parse(localStorage.getItem('tcm_feedbacks')||'[]');
-  if(list.length===0){showToast('暂无反馈','err');return;}
+function doPushAll(){
+  var list=JSON.parse(localStorage.getItem('tcm_fb')||'[]');
+  if(list.length===0){showT('暂无反馈','err');return}
   var token=localStorage.getItem('pp_token')||'';
-  if(!token){showToast('请先配置Pushplus Token','info');return;}
+  if(!token){showT('请先配置Pushplus Token','err');return}
   var body='AI健康助手反馈汇总（共'+list.length+'条）\n\n';
-  list.slice(-10).forEach(function(f,i){
-    body+=(i+1)+'. '+f.time+' '+("★").repeat(f.rating||0)+'\n'+f.text+'\n\n';
-  });
-  fetch('https://www.pushplus.plus/send?token='+token+'&title=AI健康助手反馈汇总&content='+encodeURIComponent(body)+'&type=txt',{mode:'no-cors'})
-    .then(function(){showToast('汇总已推送微信','ok')})
-    .catch(function(){showToast('推送失败','err')});
+  list.slice(-10).forEach(function(f,i){body+=(i+1)+'. '+f.time+' '+("★").repeat(f.rating||0)+'\n'+f.text+'\n\n'});
+  fetch('https://www.pushplus.plus/send?token='+token+'&title=反馈汇总&content='+encodeURIComponent(body)+'&type=txt',{mode:'no-cors'})
+    .then(function(){showT('汇总已推送微信','ok')})
+    .catch(function(){showT('推送失败','err')});
 }
 
-// ========== 自主学习 ==========
+// 自主学习
 function autoLearn(){
-  var list=JSON.parse(localStorage.getItem('tcm_feedbacks')||'[]');
-  if(list.length===0){showToast('暂无反馈可分析','err');return;}
-  var existingKeys=Object.keys(medicalKnowledge);
+  var list=JSON.parse(localStorage.getItem('tcm_fb')||'[]');
+  if(list.length===0){showT('暂无反馈可分析','err');return}
   var newItems=[];
-  var suggestions=[];
-
-  // 简单关键词匹配 -> 知识库条目
-  var mapping={
-    '眼睛干':{key:'眼疲劳',title:'眼疲劳',content:'眼疲劳由长时间用眼、熬夜等引起。\n建议：每20分钟远眺20秒、做眼保健操、必要时使用人工泪液。\n饮食：富含叶黄素（菠菜、玉米）、蓝莓、动物肝脏。'},
-    '腰疼':{key:'腰痛',title:'腰痛/腰肌劳损',content:'腰痛常见原因：腰肌劳损、腰椎间盘突出、骨质疏松。<br>急性期：卧床休息、热敷；慢性期：适度运动（游泳、瑜伽）、核心肌群训练。'},
-    '腿疼':{key:'关节痛',title:'关节痛',content:'关节痛常见原因：骨关节炎、痛风、滑膜炎。<br>建议：休息、适度热敷、避免加重动作。'},
-    '胃酸':{key:'胃炎',title:'胃酸过多',content:'胃酸过多：反酸、烧心、胃部灼热感。<br>治疗：奥美拉唑（晨起空腹服）、铝碳酸镁（餐后嚼服）。'},
-    '皮疹':{key:'特禀',title:'皮肤过敏/皮疹',content:'皮肤过敏：常见原因有食物过敏、接触性过敏、药物过敏。<br>处理：避免搔抓、冷敷、口服抗组胺药（氯雷他定）。'},
-    '湿疹':{key:'湿热',title:'湿疹',content:'湿疹：慢性过敏性皮肤病，表现为红斑、瘙痒、水疱、渗出。<br>中医属"湿热浸淫"，宜清热利湿。'},
-    '过敏':{key:'特禀',title:'过敏体质',content:'过敏体质（特禀质）：容易对花粉、尘螨、食物、药物等过敏。<br>处理：查明过敏原并严格避免；严重者需就医进行脱敏治疗。'},
-  };
-
-  list.forEach(function(f){
-    var txt=f.text;
-    Object.keys(mapping).forEach(function(kw){
-      if(txt.indexOf(kw)!==-1&&!existingKeys.some(function(ek){return txt.indexOf(ek)!==-1})){
-        if(!newItems.some(function(n){return n.key===mapping[kw].key})){
-          newItems.push(mapping[kw]);
-          suggestions.push('新增知识：'+mapping[kw].title);
-        }
+  var kw={'眼睛干':'眼疲劳','腰疼':'腰痛','胃酸':'胃炎','皮疹':'过敏','湿疹':'湿疹','过敏':'特禀质','腿疼':'关节痛'};
+  Object.keys(kw).forEach(function(k){
+    if(list.some(function(f){return f.text.indexOf(k)!==-1})&&!Object.keys(KB).some(function(bk){return kw[k].indexOf(bk)!==-1})){
+      if(!newItems.some(function(n){return n.key===kw[k]})){
+        newItems.push({key:kw[k],t:kw[k],c:'由用户反馈新增的相关知识。'})
       }
-    });
-  });
-
-  if(newItems.length===0){
-    showToast('暂无新的自主学习内容','info');
-  } else {
-    var stored=JSON.parse(localStorage.getItem('tcm_learned')||'[]');
-    newItems.forEach(function(n){
-      if(!stored.some(function(s){return s.key===n.key}))stored.push(n);
-    });
-    localStorage.setItem('tcm_learned',JSON.stringify(stored));
-    showToast('已分析'+suggestions.length+'条新知识，已保存','ok');
-  }
-}
-
-function saveKBUpdate(){
-  var learned=JSON.parse(localStorage.getItem('tcm_learned')||'[]');
-  if(learned.length===0){showToast('暂无新知识可更新','info');return;}
-  learned.forEach(function(item){
-    if(!medicalKnowledge[item.key]){
-      medicalKnowledge[item.key]={
-        cat:'用户反馈新增',title:item.title,content:item.content,
-        emergency:'',diet:'',drugs:'',synergy:'',food:'',herbs:''
-      };
     }
   });
-  localStorage.setItem('tcm_kb_snapshot',JSON.stringify(learned));
-  showToast('知识库已更新'+learned.length+'条','ok');
+  if(newItems.length===0){showT('暂无新的自主学习内容','info');return}
+  var stored=JSON.parse(localStorage.getItem('tcm_new')||'[]');
+  newItems.forEach(function(n){if(!stored.some(function(s){return s.key===n.key}))stored.push(n)});
+  localStorage.setItem('tcm_new',JSON.stringify(stored));
+  showT('已分析'+newItems.length+'条新知识，已保存','ok');
 }
+
+function doAutoLearn(){autoLearn()}
+
+function doSaveKB(){
+  var learned=JSON.parse(localStorage.getItem('tcm_new')||'[]');
+  if(learned.length===0){showT('暂无新知识可更新','info');return}
+  learned.forEach(function(item){if(!KB[item.key])KB[item.key]={t:item.t,c:item.c,e:'',d:'',dr:'',s:'',f:'',h:''}});
+  localStorage.setItem('tcm_kb',JSON.stringify(learned));
+  showT('知识库已更新'+learned.length+'条','ok');
+}
+
+
 </script>
 </body>
 </html>
