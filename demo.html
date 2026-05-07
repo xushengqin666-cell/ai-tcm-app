@@ -772,36 +772,9 @@
     updateQuickInputs();
     document.getElementById('userInput').focus();
 
-let currentRating=0;
-function showFeedback(){document.getElementById('feedbackModal').classList.add('show');document.querySelectorAll('.star').forEach(s=>s.classList.remove('active'));currentRating=0;}
-function closeFeedback(){document.getElementById('feedbackModal').classList.remove('show');}
-document.querySelectorAll('.star').forEach(s=>{s.onclick=function(){currentRating=+this.dataset.rating;document.querySelectorAll('.star').forEach((st,i)=>{if(i<currentRating)st.classList.add('active');else st.classList.remove('active');});};});
-function submitFeedback(){const text=document.getElementById('feedbackText').value;const fb={rating:currentRating,text:text,time:new Date().toISOString()};let fbs=JSON.parse(localStorage.getItem('feedbacks')||'[]');fbs.push(fb);localStorage.setItem('feedbacks',JSON.stringify(fbs));addMessage('ai','感谢您的反馈！已记录。');closeFeedback();}
+
 </script>
 
-<!-- Feedback Button -->
-<div class="feedback-btn" onclick="showFeedbackModal()">💬 反馈</div>
-
-<!-- Feedback Modal -->
-<div id="feedbackModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.7);">
-    <div class="modal-content" style="background:#1a1a2e;margin:10% auto;padding:25px;border-radius:15px;width:90%;max-width:450px;border:1px solid rgba(255,255,255,0.2);">
-        <h2 style="margin-bottom:20px;color:#00d2ff;">📝 提交反馈</h2>
-        <p style="margin-bottom:15px;color:rgba(255,255,255,0.7);">您对本App的评价：</p>
-        <div class="star-rating" style="font-size:32px;margin-bottom:20px;cursor:pointer;">
-            <span onclick="setRating(1)">⭐</span>
-            <span onclick="setRating(2)">⭐</span>
-            <span onclick="setRating(3)">⭐</span>
-            <span onclick="setRating(4)">⭐</span>
-            <span onclick="setRating(5)">⭐</span>
-        </div>
-        <input type="hidden" id="ratingValue" value="0">
-        <textarea id="feedbackText" placeholder="请写下您的反馈意见..." style="width:100%;height:100px;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;resize:none;font-size:14px;margin-bottom:15px;"></textarea>
-        <div style="display:flex;gap:10px;">
-            <button onclick="submitFeedback()" style="flex:1;padding:12px;background:linear-gradient(90deg,#00d2ff,#3a7bd5);border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:15px;">提交</button>
-            <button onclick="closeFeedbackModal()" style="flex:1;padding:12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;cursor:pointer;font-size:15px;">取消</button>
-        </div>
-    </div>
-</div>
 
 <!-- Admin Panel -->
 <div id="adminPanel" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8);">
@@ -821,184 +794,233 @@ function submitFeedback(){const text=document.getElementById('feedbackText').val
     </div>
 </div>
 
-<!-- Knowledge Base Admin -->
-<div id="kbAdminPanel" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8);">
-    <div class="modal-content" style="background:#1a1a2e;margin:5% auto;padding:25px;border-radius:15px;width:95%;max-width:900px;border:1px solid rgba(255,255,255,0.2);max-height:90vh;overflow-y:auto;">
-        <h2 style="margin-bottom:20px;color:#9c27b0;">📚 知识库管理</h2>
-        <div style="margin-bottom:20px;">
-            <input type="password" id="kbAdminPassword" placeholder="输入管理员密码" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;width:200px;margin-right:10px;">
-            <button onclick="verifyKBAdmin()" style="padding:10px 20px;background:linear-gradient(90deg,#9c27b0,#673ab7);border:none;border-radius:8px;color:#fff;cursor:pointer;">验证</button>
+
+<
+<!-- Feedback Button -->
+<div class="feedback-btn" onclick="showFeedbackModal()">💬</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" style="display:none;position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <div style="background:#1a1a2e;margin:8% auto;padding:30px;border-radius:16px;width:90%;max-width:480px;border:1px solid rgba(255,255,255,0.15);color:#fff;">
+        <h2 style="margin:0 0 20px 0;font-size:22px;color:#00d2ff;">📝 意见反馈</h2>
+        <p style="margin:0 0 12px 0;color:rgba(255,255,255,0.7);font-size:14px;">您对App的评价：</p>
+        <div id="starContainer" style="font-size:36px;margin-bottom:20px;cursor:pointer;letter-spacing:4px;">
+            <span data-rating="1" style="opacity:0.4;transition:opacity 0.2s,transform 0.2s;display:inline-block;">&#9733;</span>
+            <span data-rating="2" style="opacity:0.4;transition:opacity 0.2s,transform 0.2s;display:inline-block;">&#9733;</span>
+            <span data-rating="3" style="opacity:0.4;transition:opacity 0.2s,transform 0.2s;display:inline-block;">&#9733;</span>
+            <span data-rating="4" style="opacity:0.4;transition:opacity 0.2s,transform 0.2s;display:inline-block;">&#9733;</span>
+            <span data-rating="5" style="opacity:0.4;transition:opacity 0.2s,transform 0.2s;display:inline-block;">&#9733;</span>
         </div>
-        <div id="kbContent" style="display:none;">
-            <div style="margin-bottom:20px;padding:15px;background:rgba(0,0,0,0.3);border-radius:10px;">
-                <h4 style="color:#00d2ff;margin-bottom:10px;">➕ 添加新知识</h4>
-                <input type="text" id="newKbCategory" placeholder="分类（如：中药功效）" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;">
-                <input type="text" id="newKbKey" placeholder="关键词" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;">
-                <textarea id="newKbValue" placeholder="知识内容" style="width:100%;height:80px;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;resize:none;"></textarea>
-                <button onclick="addNewKnowledge()" style="padding:10px 20px;background:linear-gradient(90deg,#00d2ff,#3a7bd5);border:none;border-radius:8px;color:#fff;cursor:pointer;">添加到知识库</button>
+        <textarea id="fbText" placeholder="请写下您的建议或问题..." style="width:100%;height:110px;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;resize:none;box-sizing:border-box;margin-bottom:16px;font-family:inherit;"></textarea>
+        <div style="display:flex;gap:10px;">
+            <button onclick="doSubmitFeedback()" style="flex:1;padding:13px;background:linear-gradient(90deg,#00d2ff,#3a7bd5);border:none;border-radius:10px;color:#fff;font-size:16px;cursor:pointer;font-weight:600;">提交反馈</button>
+            <button onclick="hideFeedbackModal()" style="flex:1;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;font-size:16px;cursor:pointer;">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel" style="display:none;position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.85);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <div style="background:#1a1a2e;margin:4% auto;padding:30px;border-radius:16px;width:95%;max-width:860px;border:1px solid rgba(255,255,255,0.15);color:#fff;max-height:92vh;overflow-y:auto;">
+        <h2 style="margin:0 0 20px 0;font-size:22px;color:#ffc107;">&#128737; 管理面板</h2>
+        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input type="password" id="adminPwd" placeholder="管理员密码" style="padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;">
+            <button onclick="doVerifyAdmin()" style="padding:10px 20px;background:linear-gradient(90deg,#ffc107,#ff9800);border:none;border-radius:8px;color:#000;font-size:14px;cursor:pointer;font-weight:600;">验证</button>
+            <button onclick="doExportCSV()" style="padding:10px 20px;background:linear-gradient(90deg,#4caf50,#2e7d32);border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;">&#128229; 导出CSV</button>
+            <button onclick="doEmailFB()" style="padding:10px 20px;background:linear-gradient(90deg,#ea4335,#d32f2f);border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;">&#9993; 发送邮件</button>
+            <button onclick="hideAdminPanel()" style="padding:10px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:14px;cursor:pointer;">&#10006; 关闭</button>
+        </div>
+        <div id="fbListContainer" style="display:none;">
+            <h3 style="margin:0 0 15px 0;font-size:16px;color:#00d2ff;">&#128203; 反馈记录 (<span id="fbCount">0</span>条)</h3>
+            <div id="fbItems" style="max-height:60vh;overflow-y:auto;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- KB Admin Panel -->
+<div id="kbAdminPanel" style="display:none;position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.85);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <div style="background:#1a1a2e;margin:4% auto;padding:30px;border-radius:16px;width:95%;max-width:900px;border:1px solid rgba(255,255,255,0.15);color:#fff;max-height:92vh;overflow-y:auto;">
+        <h2 style="margin:0 0 20px 0;font-size:22px;color:#9c27b0;">&#128218; 知识库管理</h2>
+        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input type="password" id="kbPwd" placeholder="管理员密码" style="padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;">
+            <button onclick="doVerifyKB()" style="padding:10px 20px;background:linear-gradient(90deg,#9c27b0,#673ab7);border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;font-weight:600;">验证</button>
+            <button onclick="hideKBAdmin()" style="padding:10px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:14px;cursor:pointer;">&#10006; 关闭</button>
+        </div>
+        <div id="kbManageArea" style="display:none;">
+            <div style="padding:16px;background:rgba(0,0,0,0.3);border-radius:10px;margin-bottom:20px;">
+                <h4 style="margin:0 0 12px 0;color:#00d2ff;font-size:15px;">&#10133; 添加新知识</h4>
+                <input type="text" id="kbCat" placeholder="分类" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;box-sizing:border-box;">
+                <input type="text" id="kbKey" placeholder="关键词" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;box-sizing:border-box;">
+                <textarea id="kbVal" placeholder="知识内容" style="width:100%;height:80px;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;resize:none;box-sizing:border-box;font-family:inherit;"></textarea>
+                <button onclick="doAddKB()" style="padding:10px 20px;background:linear-gradient(90deg,#00d2ff,#3a7bd5);border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;">添加到知识库</button>
             </div>
-            <h3 style="margin-bottom:15px;color:#ffc107;">现有知识库</h3>
-            <div id="kbList"></div>
+            <h3 style="margin:0 0 12px 0;font-size:16px;color:#ffc107;">&#128218; 现有知识</h3>
+            <div id="kbItems" style="max-height:50vh;overflow-y:auto;"></div>
         </div>
-        <button onclick="closeKBAdminPanel()" style="margin-top:20px;padding:10px 20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;cursor:pointer;">关闭</button>
     </div>
 </div>
 
 <style>
-.feedback-btn { position:fixed; bottom:20px; right:20px; width:55px; height:55px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; box-shadow:0 4px 15px rgba(102,126,234,0.4); z-index:9998; transition:transform 0.3s; }
-.feedback-btn:hover { transform:scale(1.1); }
-.star-rating span { transition:transform 0.2s; }
-.star-rating span:hover { transform:scale(1.2); }
-.star-rating .active { color: #ffc107 !important; }
+.feedback-btn{position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(102,126,234,0.5);z-index:99998;transition:transform 0.2s;}
+.feedback-btn:hover{transform:scale(1.15);}
 </style>
 
 <script>
-// Feedback System
-var currentRating = 0;
-var feedbackData = JSON.parse(localStorage.getItem('tcm_feedback') || '[]');
+// ===== Feedback System =====
+(function(){
+    var fbRating = 0;
+    var fbData = JSON.parse(localStorage.getItem('tcm_feedback')||'[]');
 
-function showFeedbackModal() { document.getElementById('feedbackModal').style.display = 'block'; }
-function closeFeedbackModal() { document.getElementById('feedbackModal').style.display = 'none'; }
-function setRating(n) { 
-    currentRating = n;
-    var stars = document.querySelectorAll('.star-rating span');
-    stars.forEach(function(s,i){ s.classList.toggle('active', i < n); });
-    document.getElementById('ratingValue').value = n;
-}
-
-function submitFeedback() {
-    var text = document.getElementById('feedbackText').value;
-    if (!text && currentRating === 0) { alert('请评分或填写反馈'); return; }
-    var feedback = { rating: currentRating, text: text, time: new Date().toLocaleString('zh-CN') };
-    feedbackData.push(feedback);
-    localStorage.setItem('tcm_feedback', JSON.stringify(feedbackData));
-    alert('感谢您的反馈！');
-    closeFeedbackModal();
-    document.getElementById('feedbackText').value = '';
-    currentRating = 0;
-    setRating(0);
-}
-
-// Admin Panel
-var adminVerified = false;
-function showAdminPanel() { document.getElementById('adminPanel').style.display = 'block'; }
-function closeAdminPanel() { document.getElementById('adminPanel').style.display = 'none'; adminVerified = false; }
-
-function verifyAdmin() {
-    var pwd = document.getElementById('adminPassword').value;
-    if (pwd === 'qwer1234') {
-        adminVerified = true;
-        document.getElementById('feedbackList').style.display = 'block';
-        renderFeedbackList();
-    } else { alert('密码错误'); }
-}
-
-function renderFeedbackList() {
-    var container = document.getElementById('feedbackItems');
-    document.getElementById('feedbackCount').textContent = feedbackData.length;
-    container.innerHTML = feedbackData.map(function(f, i) {
-        return '<div style="padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.05);border-radius:8px;border-left:3px solid ' + (f.rating >= 4 ? '#4caf50' : f.rating >= 3 ? '#ffc107' : '#ff6b6b') + ';">' +
-            '<div style="color:#ffc107;margin-bottom:5px;">' + '⭐'.repeat(f.rating) + '</div>' +
-            '<div style="color:rgba(255,255,255,0.9);margin-bottom:5px;">' + (f.text || '无文字') + '</div>' +
-            '<div style="color:rgba(255,255,255,0.5);font-size:12px;">' + f.time + '</div></div>';
-    }).join('');
-}
-
-function exportFeedbackCSV() {
-    var csv = '评分,反馈内容,时间\n';
-    feedbackData.forEach(function(f) {
-        csv += f.rating + '星,"' + (f.text || '').replace(/"/g,'""') + '",' + f.time + '\n';
+    // Star rating setup
+    var stars = document.querySelectorAll('#starContainer span');
+    stars.forEach(function(star){
+        star.addEventListener('click', function(){
+            fbRating = parseInt(this.getAttribute('data-rating'));
+            stars.forEach(function(s,i){
+                s.style.opacity = i < fbRating ? '1' : '0.4';
+                s.style.color = i < fbRating ? '#ffc107' : '#fff';
+                s.style.transform = i < fbRating ? 'scale(1.3)' : 'scale(1)';
+            });
+        });
+        star.addEventListener('mouseenter', function(){
+            var r = parseInt(this.getAttribute('data-rating'));
+            stars.forEach(function(s,i){
+                if(i<r) {s.style.opacity='0.8'; s.style.transform='scale(1.15)';}
+            });
+        });
+        star.addEventListener('mouseleave', function(){
+            stars.forEach(function(s,i){
+                if(i<fbRating){s.style.opacity='1';s.style.transform='scale(1.3)';s.style.color='#ffc107';}
+                else{s.style.opacity='0.4';s.style.transform='scale(1)';s.style.color='#fff';}
+            });
+        });
     });
-    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'feedback_' + new Date().toISOString().slice(0,10) + '.csv';
-    a.click();
-};
 
-function emailFeedback() {
-    if (feedbackData.length === 0) { alert('暂无反馈'); return; }
-    var summary = '反馈总数: ' + feedbackData.length + '\n\n';
-    feedbackData.forEach(function(f, i) {
-        summary += (i+1) + '. ' + f.time + ' - ' + '⭐'.repeat(f.rating) + '\n';
-        if (f.text) summary += '   ' + f.text + '\n';
-        summary += '\n';
-    });
-    var mailto = 'mailto:xushengqin666@gmail.com?subject=AI健康App用户反馈&body=' + encodeURIComponent(summary);
-    window.location.href = mailto;
-}
-
-// Knowledge Base Admin
-var kbAdminVerified = false;
-var knowledgeBase = JSON.parse(localStorage.getItem('tcm_knowledge') || '[]');
-
-function showKBAdminPanel() { document.getElementById('kbAdminPanel').style.display = 'block'; }
-function closeKBAdminPanel() { document.getElementById('kbAdminPanel').style.display = 'none'; kbAdminVerified = false; }
-
-function verifyKBAdmin() {
-    var pwd = document.getElementById('kbAdminPassword').value;
-    if (pwd === 'qwer1234') {
-        kbAdminVerified = true;
-        document.getElementById('kbContent').style.display = 'block';
-        renderKBList();
-    } else { alert('密码错误'); }
-}
-
-function renderKBList() {
-    var container = document.getElementById('kbList');
-    if (knowledgeBase.length === 0) {
-        container.innerHTML = '<p style="color:rgba(255,255,255,0.5);">知识库为空</p>';
-        return;
-    }
-    container.innerHTML = knowledgeBase.map(function(k, i) {
-        return '<div style="padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.05);border-radius:8px;">' +
-            '<div style="color:#9c27b0;font-weight:bold;margin-bottom:5px;">' + k.category + '</div>' +
-            '<div style="color:#00d2ff;margin-bottom:5px;">' + k.key + '</div>' +
-            '<div style="color:rgba(255,255,255,0.8);margin-bottom:5px;">' + k.value + '</div>' +
-            '<button onclick="deleteKnowledge(' + i + ')" style="padding:5px 10px;background:#ff6b6b;border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:12px;">删除</button></div>';
-    }).join('');
-}
-
-function addNewKnowledge() {
-    var cat = document.getElementById('newKbCategory').value;
-    var key = document.getElementById('newKbKey').value;
-    var val = document.getElementById('newKbValue').value;
-    if (!cat || !key || !val) { alert('请填写完整'); return; }
-    knowledgeBase.push({ category: cat, key: key, value: val });
-    localStorage.setItem('tcm_knowledge', JSON.stringify(knowledgeBase));
-    alert('添加成功');
-    renderKBList();
-    document.getElementById('newKbCategory').value = '';
-    document.getElementById('newKbKey').value = '';
-    document.getElementById('newKbValue').value = '';
-}
-
-function deleteKnowledge(idx) {
-    if (confirm('确认删除？')) {
-        knowledgeBase.splice(idx, 1);
-        localStorage.setItem('tcm_knowledge', JSON.stringify(knowledgeBase));
-        renderKBList();
-    }
-}
-
-// Hidden admin shortcuts - type 'admin' in chat
-var originalProcessUserMessage = null;
-if (typeof processUserMessage === 'function') {
-    originalProcessUserMessage = processUserMessage;
-    processUserMessage = function(msg) {
-        if (msg.toLowerCase() === 'admin') {
-            showAdminPanel();
-            return '已打开管理面板';
-        }
-        if (msg.toLowerCase() === 'kb') {
-            showKBAdminPanel();
-            return '已打开知识库管理';
-        }
-        if (originalProcessUserMessage) return originalProcessUserMessage(msg);
-        return '';
+    window.showFeedbackModal = function(){
+        document.getElementById('feedbackModal').style.display='block';
     };
-}
+    window.hideFeedbackModal = function(){
+        document.getElementById('feedbackModal').style.display='none';
+    };
+    window.doSubmitFeedback = function(){
+        var text = document.getElementById('fbText').value;
+        if(fbRating===0&&!text){alert('请评分或填写反馈内容');return;}
+        var entry = {rating:fbRating,text:text,time:new Date().toLocaleString('zh-CN')};
+        fbData.push(entry);
+        localStorage.setItem('tcm_feedback',JSON.stringify(fbData));
+        alert('感谢您的反馈！');
+        hideFeedbackModal();
+        document.getElementById('fbText').value='';
+        fbRating=0;
+        stars.forEach(function(s){s.style.opacity='0.4';s.style.color='#fff';s.style.transform='scale(1)';});
+    };
+
+    // Admin
+    window.showAdminPanel = function(){document.getElementById('adminPanel').style.display='block';};
+    window.hideAdminPanel = function(){document.getElementById('adminPanel').style.display='none';};
+    window.doVerifyAdmin = function(){
+        if(document.getElementById('adminPwd').value==='qwer1234'){
+            document.getElementById('fbListContainer').style.display='block';
+            var cnt = document.getElementById('fbCount');
+            var list = document.getElementById('fbItems');
+            cnt.textContent = fbData.length;
+            if(fbData.length===0){
+                list.innerHTML='<p style="color:rgba(255,255,255,0.4);padding:20px;text-align:center;">暂无反馈</p>';
+            } else {
+                list.innerHTML = fbData.map(function(f,i){
+                    var col = f.rating>=4?'#4caf50':f.rating>=3?'#ffc107':'#ff6b6b';
+                    return '<div style="padding:14px;margin-bottom:10px;background:rgba(255,255,255,0.05);border-radius:8px;border-left:4px solid '+col+';">'+
+                        '<div style="color:#ffc107;margin-bottom:6px;font-size:18px;">'+"&#9733;".repeat(f.rating)+'</div>'+
+                        '<div style="color:rgba(255,255,255,0.9);margin-bottom:6px;">'+(f.text||'无文字反馈')+'</div>'+
+                        '<div style="color:rgba(255,255,255,0.4);font-size:12px;">'+f.time+'</div></div>';
+                }).join('');
+            }
+        } else {alert('密码错误');}
+    };
+    window.doExportCSV = function(){
+        if(fbData.length===0){alert('暂无反馈可导出');return;}
+        var csv = '﻿评分,反馈内容,时间
+';
+        fbData.forEach(function(f){
+            csv += f.rating+'星,"'+(f.text||'').replace(/"/g,'""')+'",'+f.time+'
+';
+        });
+        var blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+        var a = document.createElement('a');a.href=URL.createObjectURL(blob);
+        a.download='feedback_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+    };
+    window.doEmailFB = function(){
+        if(fbData.length===0){alert('暂无反馈');return;}
+        var body = 'AI健康App反馈汇总 ('+fbData.length+'条)
+
+';
+        fbData.forEach(function(f,i){
+            body += (i+1)+'. '+f.time+' '+'★'.repeat(f.rating)+'
+'+(f.text||'无文字')+'
+
+';
+        });
+        window.location.href='mailto:xushengqin666@gmail.com?subject=AI健康App用户反馈&body='+encodeURIComponent(body);
+    };
+
+    // KB Admin
+    var kbData = JSON.parse(localStorage.getItem('tcm_kb')||'[]');
+    window.showKBAdminPanel = function(){document.getElementById('kbAdminPanel').style.display='block';};
+    window.hideKBAdmin = function(){document.getElementById('kbAdminPanel').style.display='none';};
+    window.doVerifyKB = function(){
+        if(document.getElementById('kbPwd').value==='qwer1234'){
+            document.getElementById('kbManageArea').style.display='block';
+            renderKBList();
+        } else {alert('密码错误');}
+    };
+    function renderKBList(){
+        var el = document.getElementById('kbItems');
+        if(kbData.length===0){
+            el.innerHTML='<p style="color:rgba(255,255,255,0.4);padding:20px;text-align:center;">知识库为空</p>';
+        } else {
+            el.innerHTML = kbData.map(function(k,i){
+                return '<div style="padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.05);border-radius:8px;">'+
+                    '<div style="color:#9c27b0;font-weight:600;margin-bottom:4px;">'+k.cat+'</div>'+
+                    '<div style="color:#00d2ff;margin-bottom:4px;">'+k.key+'</div>'+
+                    '<div style="color:rgba(255,255,255,0.8);margin-bottom:8px;font-size:13px;">'+k.val+'</div>'+
+                    '<button onclick="doDelKB('+i+')" style="padding:5px 12px;background:#ff6b6b;border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:12px;">删除</button></div>';
+            }).join('');
+        }
+    }
+    window.doAddKB = function(){
+        var c = document.getElementById('kbCat').value.trim();
+        var k = document.getElementById('kbKey').value.trim();
+        var v = document.getElementById('kbVal').value.trim();
+        if(!c||!k||!v){alert('请填写完整');return;}
+        kbData.push({cat:c,key:k,val:v});
+        localStorage.setItem('tcm_kb',JSON.stringify(kbData));
+        alert('添加成功');
+        renderKBList();
+        document.getElementById('kbCat').value='';
+        document.getElementById('kbKey').value='';
+        document.getElementById('kbVal').value='';
+    };
+    window.doDelKB = function(i){
+        if(confirm('确认删除？')){kbData.splice(i,1);localStorage.setItem('tcm_kb',JSON.stringify(kbData));renderKBList();}
+    };
+
+    // Chat shortcuts
+    var _origPM = null;
+    if(typeof processMsg==='function'){
+        _origPM = processMsg;
+        window.processMsg = function(m){
+            if(m.toLowerCase()==='admin'){showAdminPanel();return '[管理面板已打开]';}
+            if(m.toLowerCase()==='kb'){showKBAdminPanel();return '[知识库管理已打开]';}
+            return _origPM(m);
+        };
+    } else if(typeof processUserMessage==='function'){
+        _origPM = processUserMessage;
+        window.processUserMessage = function(m){
+            if(m.toLowerCase()==='admin'){showAdminPanel();return '已打开管理面板';}
+            if(m.toLowerCase()==='kb'){showKBAdminPanel();return '已打开知识库管理';}
+            return _origPM(m);
+        };
+    }
+})();
 </script>
 
-</body>
-</html>
