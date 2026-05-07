@@ -1,0 +1,23 @@
+{
+  "name": "AI中西医健康助手",
+  "short_name": "AI健康助手",
+  "description": "中西医结合智能问诊，随时随地守护健康",
+  "start_url": "/ai-tcm-app/demo.html",
+  "display": "standalone",
+  "background_color": "#0052d9",
+  "theme_color": "#0052d9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230052d9' width='512' height='512' rx='90'/><text x='256' y='340' font-size='260' text-anchor='middle' fill='white'>🏥</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "health",
+    "medical",
+    "lifestyle"
+  ]
+}
