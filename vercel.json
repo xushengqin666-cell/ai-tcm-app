@@ -1,18 +1,28 @@
 {
   "version": 2,
-  "buildCommand": "node -e \"const fs=require('fs'); fs.mkdirSync('public',{recursive:true}); fs.copyFileSync('demo.html','public/index.html');\"",
-  "outputDirectory": "public",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/api/ask", "destination": "/api/ask" }
+    {
+      "source": "/api/ask",
+      "destination": "/api/ask"
+    }
   ],
   "headers": [
     {
       "source": "/api/ask",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type"
+        }
       ]
     }
   ]
