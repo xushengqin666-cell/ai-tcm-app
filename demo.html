@@ -1,371 +1,692 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AI涓タ鍖诲仴搴峰姪鎵?/title>
+<title>AI中西医健康助手 — 昆明医科大学专业知识库</title>
+<meta name="description" content="基于昆明医科大学专业知识库的AI健康咨询助手，涵盖72种常见病、中医体质辨识与科学饮食方案">
+<meta name="theme-color" content="#1a472a">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-:root {
-  --primary: #10b981; --primary-dark: #059669; --secondary: #f59e0b;
-  --bg-start: #ecfdf5; --bg-end: #d1fae5;
-  --surface: rgba(255,255,255,0.95); --surface-glass: rgba(255,255,255,0.7);
-  --text: #1f2937; --text-light: #6b7280;
-  --border: rgba(16,185,129,0.2); --shadow: 0 8px 32px rgba(16,185,129,0.15);
+/* ===== CSS RESET & VARIABLES ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf8f5;--surface:#ffffff;--primary:#1a472a;--primary-light:#2d6a4f;
+  --primary-dark:#0d2818;--accent:#c9a84c;--accent-light:#f0e6c8;
+  --text:#2c2c2c;--text-secondary:#6b7280;--text-light:#9ca3af;
+  --border:#e8e4de;--shadow:0 2px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.10);--radius:16px;--radius-sm:10px;
+  --radius-xs:6px;--transition:all .25s cubic-bezier(.4,0,.2,1);
+  --chat-bg:#f0ede8;--user-bubble:#1a472a;--ai-bubble:#ffffff;
+  --danger:#dc2626;--success:#16a34a;--warning:#f59e0b;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { font-size: 20px; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-  color: var(--text); line-height: 1.6; height: 100vh; overflow: hidden;
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow:hidden;height:100dvh}
+
+/* ===== APP SHELL ===== */
+.app{display:flex;flex-direction:column;height:100dvh;max-width:480px;margin:0 auto;position:relative;background:var(--bg)}
+@media(min-width:481px){.app{border-left:1px solid var(--border);border-right:1px solid var(--border);box-shadow:var(--shadow-lg)}}
+
+/* ===== HEADER ===== */
+.header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 60%,#3a7d5c 100%);color:#fff;padding:16px 20px;flex-shrink:0;position:relative;overflow:hidden;z-index:101}
+.header::before{content:"";position:absolute;top:-40%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(201,168,76,.15) 0%,transparent 70%);border-radius:50%}
+.header-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:40px;height:40px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.brand-text h1{font-size:22px;font-weight:700;letter-spacing:.3px}
+.brand-text p{font-size:11px;opacity:.75;margin-top:1px;letter-spacing:.2px}
+.header-actions{display:flex;gap:6px}
+.header-btn{width:36px;height:36px;border:none;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border-radius:10px;color:#fff;font-size:16px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center}
+.header-btn:hover{background:rgba(255,255,255,.22)}
+.header-btn:active{transform:scale(.92)}
+
+/* ===== MODE TABS ===== */
+.modes{display:flex;gap:6px;padding:12px 16px 8px;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;z-index:98}
+.modes::-webkit-scrollbar{display:none}
+.mode-btn{flex-shrink:0;padding:10px 16px;border:1.5px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);text-align:center;min-width:80px}
+.mode-btn .mode-label{font-size:16px;font-weight:600;color:var(--text);letter-spacing:.3px}
+.mode-btn .mode-desc{display:block;font-size:10px;color:var(--text-light);margin-top:2px}
+.mode-btn.active{border-color:var(--primary);background:linear-gradient(135deg,rgba(26,71,42,.06),rgba(45,106,79,.04));color:var(--primary)}
+.mode-btn.active .mode-label{color:var(--primary)}
+.mode-btn:hover{border-color:var(--primary-light)}
+.mode-btn:active{transform:scale(.96)}
+
+/* ===== CHIPS BAR ===== */
+.chips-bar{display:flex;gap:6px;padding:4px 16px 10px;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;animation:fadeInUp .3s ease;position:relative;z-index:97}
+.chips-bar::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:8px 16px;border:1.5px solid var(--border);background:var(--surface);border-radius:20px;font-size:15px;color:var(--text-secondary);cursor:pointer;transition:var(--transition);white-space:nowrap;font-weight:500}
+.chip:hover{border-color:var(--accent);color:var(--primary);background:var(--accent-light)}
+.chip:active{transform:scale(.94)}
+
+/* ===== CHAT AREA ===== */
+.chat-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.chat-area::-webkit-scrollbar{width:4px}
+.chat-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* Messages */
+.msg{display:flex;gap:10px;margin-bottom:16px;animation:fadeInUp .35s ease}
+.msg.user{flex-direction:row-reverse}
+.msg-avatar{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.msg.ai .msg-avatar{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff}
+.msg.user .msg-avatar{background:linear-gradient(135deg,var(--accent),#d4b65c);color:#fff}
+.msg-bubble{max-width:78%;padding:14px 18px;border-radius:var(--radius);font-size:16px;line-height:1.9;word-break:break-word}
+.msg.ai .msg-bubble{background:var(--surface);border:1px solid var(--border);border-top-left-radius:4px;box-shadow:var(--shadow)}
+.msg.user .msg-bubble{background:var(--user-bubble);color:#fff;border-top-right-radius:4px}
+
+/* KB Card inside AI message */
+.kb-card{margin-top:10px;background:linear-gradient(135deg,#f7f5f0,#faf8f5);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.kb-card-header{padding:10px 14px;background:linear-gradient(135deg,rgba(26,71,42,.08),rgba(45,106,79,.05));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.kb-card-header .cat-icon{font-size:22px}
+.kb-card-header .cat-name{font-size:13px;color:var(--text-light);background:var(--surface);padding:3px 10px;border-radius:10px;border:1px solid var(--border)}
+.kb-card-header .title{font-size:16px;font-weight:700;color:var(--primary);flex:1}
+.kb-card-body{padding:14px 16px;font-size:14px}
+.kb-section{margin-bottom:10px}
+.kb-section:last-child{margin-bottom:0}
+.kb-section-title{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.kb-section-title::after{content:"";flex:1;height:1px;background:var(--border)}
+.kb-section-content{font-size:13.5px;color:var(--text);line-height:1.8}
+.kb-section-content strong{color:var(--primary-dark)}
+.kb-tag{display:inline-block;padding:3px 10px;margin:4px 2px 0 0;background:var(--accent-light);color:var(--primary-dark);border-radius:10px;font-size:12px;font-weight:500}
+.kb-emergency{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-radius:var(--radius-xs);padding:8px 12px;font-size:12px;color:var(--danger);display:flex;align-items:flex-start;gap:6px}
+.kb-emergency::before{content:"⚠️";flex-shrink:0}
+
+/* TCM Card */
+.tcm-card{margin-top:10px;background:linear-gradient(135deg,#f7f5f0,#faf8f5);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.tcm-card .kb-card-header{background:linear-gradient(135deg,rgba(34,139,34,.08),rgba(46,160,67,.05))}
+.tcm-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,rgba(34,139,34,.1),rgba(46,160,67,.06));color:#1a5c2a;font-size:11px;font-weight:600;border-radius:12px;margin-bottom:8px}
+
+/* Typing indicator */
+.typing{display:flex;gap:4px;padding:8px 0}
+.typing span{width:7px;height:7px;background:var(--primary-light);border-radius:50%;animation:typing 1.4s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+
+/* ===== INPUT BAR ===== */
+.input-bar{padding:12px 16px 20px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;min-height:70px;display:flex;align-items:center;position:relative;z-index:99}
+.input-row{display:flex;gap:8px;align-items:center;position:relative;z-index:99}
+.input-wrap{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:24px;padding:10px 16px;transition:var(--transition);display:flex;align-items:center;position:relative;z-index:99}
+.input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,71,42,.1)}
+.input-wrap textarea{width:100%;border:none;background:none;font-family:var(--font);font-size:17px;line-height:1.6;resize:none;max-height:110px;outline:none;color:var(--text);padding:2px 0}.input-wrap textarea::placeholder{color:#aaa;font-size:16px}
+.send-btn{width:48px;height:48px;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border-radius:50%;font-size:20px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:10;margin-left:4px;box-shadow:0 2px 12px rgba(26,71,42,.25)}
+.send-btn:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(26,71,42,.3)}
+.send-btn:active{transform:scale(.92)}
+.send-btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.disclaimer{text-align:center;font-size:10px;color:var(--text-light);margin-top:6px}
+
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:480px;max-height:85dvh;overflow-y:auto;padding:24px 20px 40px;animation:slideUp .35s cubic-bezier(.4,0,.2,1)}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px}
+.modal h2{font-size:18px;font-weight:700;color:var(--primary);margin-bottom:16px;text-align:center}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border:none;background:var(--bg);border-radius:50%;font-size:16px;cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;justify-content:center}
+
+/* Feedback */
+.stars{display:flex;gap:8px;justify-content:center;margin:16px 0}
+.star{font-size:32px;cursor:pointer;transition:var(--transition);opacity:.3}
+.star.active{opacity:1;transform:scale(1.1)}
+.star:hover{transform:scale(1.2)}
+.feedback-text{width:100%;min-height:80px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:var(--font);font-size:14px;resize:vertical;outline:none;transition:var(--transition)}
+.feedback-text:focus{border-color:var(--primary)}
+.submit-btn{width:100%;padding:14px;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:15px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);margin-top:12px}
+.submit-btn:hover{opacity:.9;transform:translateY(-1px)}
+.submit-btn:active{transform:scale(.98)}
+
+/* Admin */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:11px;color:var(--text-light);margin-top:4px}
+.admin-row{margin-bottom:12px}
+.admin-row label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
+.admin-row input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none;transition:var(--transition)}
+.admin-row input:focus{border-color:var(--primary)}
+.admin-btn{width:100%;padding:12px;border:1.5px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;transition:var(--transition);margin-bottom:8px}
+.admin-btn:hover{border-color:var(--primary);color:var(--primary)}
+.admin-btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.admin-btn.primary:hover{opacity:.9}
+
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--surface);border:1px solid var(--border);padding:12px 24px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:200;transition:transform .4s cubic-bezier(.4,0,.2,1);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--success);color:var(--success)}
+.toast.error{border-color:var(--danger);color:var(--danger)}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:360px){
+  .mode-btn{min-width:68px;padding:8px 12px}
+  .mode-btn .mode-desc{display:none}
+  .brand-text h1{font-size:15px}
+  .brand-text p{display:none}
 }
-.app { display: flex; flex-direction: column; height: 100vh; max-width: 500px; margin: 0 auto; padding: 12px; gap: 12px; }
-.header {
-  background: var(--surface-glass); backdrop-filter: blur(20px); border-radius: 20px;
-  padding: 20px; display: flex; align-items: center; justify-content: space-between;
-  border: 1px solid var(--border); box-shadow: var(--shadow);
+
+/* Safe area */
+@supports(padding:max(0px)){
+  .input-bar{padding-bottom:max(10px,env(safe-area-inset-bottom) + 6px)}
+  .header{padding-top:max(16px,env(safe-area-inset-top) + 8px)}
 }
-.header h1 { font-size: 26px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.header p { font-size: 14px; color: var(--text-light); margin-top: 4px; }
-.mode-bar {
-  display: flex; gap: 8px; padding: 4px; background: var(--surface-glass);
-  backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid var(--border);
-}
-.mode-btn {
-  flex: 1; padding: 14px 8px; border: none; background: transparent; border-radius: 12px;
-  font-size: 15px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.3s;
-}
-.mode-btn.active {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.3);
-}
-.api-status {
-  font-size: 11px; padding: 4px 10px; border-radius: 12px;
-  background: rgba(16,185,129,0.1); color: var(--primary-dark);
-}
-.api-status.offline {
-  background: rgba(239,68,68,0.1); color: #dc2626;
-}
-.chips-bar { display: flex; gap: 10px; padding: 4px; overflow-x: auto; scrollbar-width: none; }
-.chips-bar::-webkit-scrollbar { display: none; }
-.chip {
-  padding: 12px 20px; border: 2px solid var(--border); background: var(--surface);
-  border-radius: 25px; font-size: 17px; font-weight: 500; color: var(--text);
-  cursor: pointer; white-space: nowrap; flex-shrink: 0;
-}
-.chip:active { transform: scale(0.95); background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-color: transparent; }
-.chat { flex: 1; overflow-y: auto; padding: 8px 4px; display: flex; flex-direction: column; gap: 16px; }
-.msg { display: flex; gap: 12px; align-items: flex-start; animation: fadeIn 0.3s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.msg.user { flex-direction: row-reverse; }
-.msg-avatar {
-  width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center;
-  justify-content: center; font-size: 20px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.msg.ai .msg-avatar { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
-.msg.user .msg-avatar { background: linear-gradient(135deg, var(--secondary), #d97706); color: white; }
-.msg-bubble {
-  max-width: 85%; padding: 16px 20px; border-radius: 20px; font-size: 18px; line-height: 1.7;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-}
-.msg.ai .msg-bubble { background: var(--surface); border: 1px solid var(--border); border-top-left-radius: 4px; }
-.msg.user .msg-bubble { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-top-right-radius: 4px; }
-.kb-card { margin-top: 16px; background: var(--surface); border: 2px solid var(--border); border-radius: 20px; overflow: hidden; }
-.kb-card-header { padding: 16px 20px; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05)); font-weight: 700; color: var(--primary-dark); font-size: 18px; border-bottom: 1px solid var(--border); }
-.kb-card-body { padding: 16px 20px; font-size: 16px; line-height: 1.8; }
-.kb-section { margin-bottom: 12px; }
-.kb-section:last-child { margin-bottom: 0; }
-.kb-section-title { font-weight: 700; color: var(--primary); margin-bottom: 6px; font-size: 15px; }
-.kb-section-content { color: var(--text); }
-.typing { display: flex; gap: 6px; padding: 8px 0; }
-.typing span { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; animation: bounce 1.4s ease-in-out infinite; }
-.typing span:nth-child(1) { animation-delay: 0s; }
-.typing span:nth-child(2) { animation-delay: 0.2s; }
-.typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-12px); } }
-.input-bar { background: var(--surface); backdrop-filter: blur(20px); border-radius: 24px; padding: 12px; border: 2px solid var(--border); box-shadow: var(--shadow); }
-.input-row { display: flex; gap: 12px; align-items: flex-end; }
-.input-wrap { flex: 1; background: var(--bg-start); border-radius: 20px; padding: 14px 18px; }
-.input-wrap textarea { width: 100%; border: none; background: none; font-size: 20px; line-height: 1.5; resize: none; max-height: 100px; outline: none; font-family: inherit; color: var(--text); }
-.input-wrap textarea::placeholder { color: var(--text-light); }
-.send-btn { width: 60px; height: 60px; border: none; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 20px; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(16,185,129,0.4); transition: transform 0.2s; flex-shrink: 0; }
-.send-btn:active { transform: scale(0.9); }
-.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 </style>
 </head>
 <body>
+
 <div class="app">
+  <!-- HEADER -->
   <div class="header">
-    <div>
-      <h1>馃尶 AI涓タ鍖诲姪鎵?/h1>
-      <p>涓タ鍖荤粨鍚?路 鏅鸿兘鍋ュ悍鍜ㄨ</p>
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">🌿</div>
+        <div class="brand-text">
+          <h1>AI中西医健康助手</h1>
+          <p>昆明医科大学 · 专业知识库</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" onclick="openFeedback()" title="反馈">💬</button>
+        <button class="header-btn" onclick="openAdmin()" title="管理">⚙️</button>
+      </div>
     </div>
-    <span class="api-status" id="apiStatus">鈿?AI妯″紡</span>
   </div>
 
-  <div class="mode-bar" id="modesBar">
-    <button class="mode-btn active" data-mode="ai">馃 AI鍜ㄨ</button>
-    <button class="mode-btn" data-mode="consult">馃摉 鐤剧梾搴?/button>
-    <button class="mode-btn" data-mode="tcm">馃尶 涓尰</button>
+  <!-- MODE TABS -->
+  <div class="modes">
+    <button class="mode-btn" data-mode="consult" onclick="switchMode('consult')">💬 咨询<span class="mode-desc">专业中西医健康咨询</span></button>
+<button class="mode-btn" data-mode="tcm" onclick="switchMode('tcm')">🌿 中医<span class="mode-desc">中医体质辨识与调理</span></button>
+<button class="mode-btn" data-mode="diet" onclick="switchMode('diet')">🥗 饮食<span class="mode-desc">疾病饮食方案推荐</span></button>
+<button class="mode-btn" data-mode="knowledge" onclick="switchMode('knowledge')">📚 知识<span class="mode-desc">常见病知识科普</span></button>
+
   </div>
 
+  <!-- CHIPS -->
   <div class="chips-bar" id="chipsBar"></div>
-  <div class="chat" id="chatArea"></div>
 
+  <!-- CHAT -->
+  <div class="chat-area" id="chatArea"></div>
+
+  <!-- INPUT -->
   <div class="input-bar">
     <div class="input-row">
       <div class="input-wrap">
-        <textarea id="userInput" rows="1" placeholder="杈撳叆浠讳綍鍋ュ悍闂..."></textarea>
+        <textarea id="userInput" rows="1" placeholder="输入症状或问题..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
       </div>
-      <button class="send-btn" id="sendBtn">鉃?/button>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
     </div>
+    <div class="disclaimer">⚠️ 仅供参考，不能替代医生诊断 · 紧急情况请拨打120</div>
   </div>
 </div>
 
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay" id="feedbackModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>💬 意见反馈</h2>
+    <p style="text-align:center;color:var(--text-secondary);font-size:13px;margin-bottom:12px">您的反馈帮助我们变得更好</p>
+    <div class="stars" id="starsContainer">
+      <span class="star" data-v="1" onclick="setRating(1)">⭐</span>
+      <span class="star" data-v="2" onclick="setRating(2)">⭐</span>
+      <span class="star" data-v="3" onclick="setRating(3)">⭐</span>
+      <span class="star" data-v="4" onclick="setRating(4)">⭐</span>
+      <span class="star" data-v="5" onclick="setRating(5)">⭐</span>
+    </div>
+    <textarea class="feedback-text" id="feedbackText" placeholder="请输入您的建议或遇到的问题..."></textarea>
+    <button class="submit-btn" onclick="submitFeedback()">提交反馈</button>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>⚙️ 管理面板</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="statCount">0</div><div class="stat-label">反馈数量</div></div>
+      <div class="stat-card"><div class="stat-num" id="statAvg">0</div><div class="stat-label">平均评分</div></div>
+    </div>
+    <div class="admin-row">
+      <label>Pushplus Token（微信推送）</label>
+      <input type="text" id="pushplusToken" placeholder="从 pushplus.plus 获取">
+    </div>
+    <button class="admin-btn primary" onclick="saveAdmin()">💾 保存设置</button>
+    <button class="admin-btn" onclick="exportCSV()">📊 导出反馈CSV</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
-var KB_DATA = {"KB": {"鎰熷啋": {"cat": "鍛煎惛绯荤粺", "title": "鏅€氭劅鍐?涓婂懠鍚搁亾鎰熸煋", "content": "鏅€氭劅鍐掑鐢辩梾姣掑紩璧枫€傜棁鐘讹細榧诲銆佹祦娑曘€佸捊鐥涖€佸挸鍡姐€佽交搴﹀彂鐑€傚鐞嗭細澶氫紤鎭€佽ˉ鍏呮按鍒嗐€佸鐥囩敤鑽€傝嫢鍙戠儹>38.5鈩冩寔缁?澶╀互涓婏紝鎴栧嚭鐜拌兏闂枫€佸懠鍚稿洶闅撅紝璇风珛鍗冲氨鍖汇€?, "emergency": "楂樼儹涓嶉€€锛?39鈩冿級銆佸懠鍚稿洶闅俱€佹剰璇嗘ā绯娿€佸墽鐑堝ご鐥?, "diet": "瀹滐細娓呮贰鏄撴秷鍖栵紙绮ャ€佹堡闈€佽捀铔嬶級锛涘瘜鍚淮C姘存灉锛堟瀛愩€佺寱鐚存锛夛紱娓╁紑姘淬€傚繉锛氳緵杈ｆ补鑵汇€佺敓鍐烽鐗┿€佹祿鑼跺挅鍟°€?, "drugs": "瑙ｇ儹闀囩棝锛氬涔欓叞姘ㄥ熀閰氥€佸竷娲涜姮銆傞€氶蓟锛氫吉楹婚粍纰便€傛敞鎰忥細鎶楃敓绱犲鐥呮瘨鏃犳晥锛屽嬁婊ョ敤銆?, "synergy": "甯冩礇鑺?闃垮徃鍖规灄锛氬鍔犺儍鑲犻亾鍑鸿椋庨櫓銆傚绉嶅鏂规劅鍐掕嵂涓嶈鍙犲姞鏈嶇敤銆?, "food": "甯冩礇鑺伩鍏嶄笌閰掔簿鍚屾湇銆傛湇鐢ㄦ劅鍐掕嵂鏈熼棿閬垮厤椹鹃┒銆?, "herbs": "閲戦摱鑺便€佽繛缈樸€佽杽鑽枫€佽崋鑺モ€斺€旂枏椋庢竻鐑€?}, "鍙戠儹": {"cat": "鍛煎惛绯荤粺", "title": "鍙戠儹/鍙戠儳", "content": "鍙戠儹鏄満浣撳鎰熸煋鐨勬甯稿厤鐤弽搴斻€備綋娓?37.3鈩冧负鍙戠儹銆傚鐞嗗師鍒欙細38.5鈩冧互涓嬬墿鐞嗛檷娓╋紱38.5鈩冧互涓婃湇鐢ㄩ€€鐑嵂锛涘楗按銆傞€€鐑槸涓轰簡缂撹В涓嶉€傦紝涓嶆槸瑕佹妸浣撴俯闄嶅埌姝ｅ父銆?, "emergency": "浣撴俯>39.5鈩冩寔缁笉闄嶃€佹娊鎼愩€佺毊鐤广€佹剰璇嗕笉娓呫€侀閮ㄥ兊纭?, "diet": "瀹滐細娴佽川/鍗婃祦璐紙绮ャ€佹堡銆佹灉钄眮锛夛紱娓呮贰灏戞补銆傚繉锛氶珮铔嬬櫧楂樿剛鑲€佽緵杈ｅ埡婵€銆佺敓鍐枫€?, "drugs": "閫€鐑細瀵逛箼閰版皑鍩洪厷锛堟洿瀹夊叏锛夈€佸竷娲涜姮锛堟姉鐐庢晥鏋滃ソ锛夈€傚効绔ワ細绂佺敤闃垮徃鍖规灄锛堢憺姘忕患鍚堝緛椋庨櫓锛夈€?, "synergy": "澶氱閫€鐑嵂鍚屾椂鏈嶇敤鍙兘閫犳垚鑲濇崯浼わ紝涓嶈鍙犲姞銆傚涔欓叞姘ㄥ熀閰?閰掔簿鏄捐憲澧炲姞鑲濇瘨鎬с€?, "food": "鍙戠儹鏈熼棿澶氬枬姘达紙1500-2000ml/澶╋級銆傚彲鍠濇贰鐩愭按琛ュ厖鐢佃В璐ㄣ€?, "herbs": "鏌磋儭銆侀粍鑺┿€佺敓鐭宠啅锛堥珮鐑椂锛夆€斺€旀竻鐑郴鐏€?}, "鍜冲椊": {"cat": "鍛煎惛绯荤粺", "title": "鍜冲椊", "content": "鍜冲椊鏄懠鍚搁亾娓呴櫎寮傜墿鍜屽垎娉岀墿鐨勪繚鎶ゆ€у弽灏勩€傚共鍜筹細鍙崇編娌欒姮銆傛湁鐥板挸鍡斤細姘ㄦ捍绱€佷箼閰板崐鑳辨皑閰搞€傝嫢鍜冲椊>3鍛ㄣ€佸挸琛€銆佽兏鐥涳紝璇风珛鍗冲氨鍖汇€?, "emergency": "鍜宠銆佸懠鍚稿洶闅俱€佽兏鐥涖€佸挸鍡戒即闅忛珮鐑?, "diet": "瀹滐細姊ㄣ€佺櫨鍚堛€佽渹铚滐紙1宀佷互涓婏級銆佺櫧钀濆崪銆侀摱鑰炽€傚繉锛氱敎鑵汇€佹补鐐搞€佸瘨鍑夈€侀奔鑵ュ彂鐗┿€?, "drugs": "骞插挸锛氬彸缇庢矙鑺紙瀛曞绂佺敤锛夈€傛湁鐥帮細姘ㄦ捍绱€佷箼閰板崐鑳辨皑閰搞€?, "synergy": "涓灑闀囧挸鑽?鎶楃粍鑳鸿嵂锛氬彲鑳藉紩璧峰懠鍚告姂鍒躲€?, "food": "铚傝湝锛?宀佷互涓婏級鏈夎交搴︽鍜充綔鐢紙寰瘉璇佸疄锛夈€?, "herbs": "宸濊礉銆佹瀲鏉峰彾銆佹潖浠併€佹姊椻€斺€旀鼎鑲烘鍜冲寲鐥般€?}, "鏀皵绠＄値": {"cat": "鍛煎惛绯荤粺", "title": "鎬ユ€ф敮姘旂鐐?, "content": "鏀皵绠￠粡鑶滅殑鎬ユ€х値鐥囷紝甯哥户鍙戜簬涓婂懠鍚搁亾鎰熸煋銆傚涓虹梾姣掑紩璧枫€傜棁鐘讹細鎸佺画鍜冲椊銆佸挸鐥帮紙鐧界棸鈫掗粍鑴撶棸锛夈€佸彂鐑€傛不鐤楋細瀵圭棁涓轰富锛屾姉鐢熺礌浠呯粏鑿屾劅鏌撴椂浣跨敤銆?, "emergency": "楂樼儹锛?39鈩冿級銆佸挸榛勮創鐥般€佸懠鍚稿洶闅俱€佽兏鐥?, "diet": "瀹滐細娓呮贰楗锛涘瘜鍚淮鐢熺礌A銆丆鐨勯鐗╋紱娓╁紑姘淬€傚繉锛氳緵杈ｅ埡婵€銆佹补鑵婚鐗┿€佺敓鍐烽ギ椋燂紱鎴掔儫銆?, "drugs": "鍜冲椊锛氱棸澶氭椂鐢ㄧ鐥拌嵂锛堟皑婧寸储锛夈€傚彂鐑細鐢ㄥ涔欓叞姘ㄥ熀閰氭垨甯冩礇鑺€傜粏鑿屾劅鏌撴椂浣跨敤鎶楃敓绱犮€?, "herbs": "椋庡瘨琚偤锛氫笁鎷楁堡鍚堟鍡芥暎銆傞鐑姱鑲猴細妗戣強楗姞鍑忋€?}, "鑲虹値": {"cat": "鍛煎惛绯荤粺", "title": "鑲虹値", "content": "鑲哄疄璐ㄧ殑鐐庣棁锛岀敱缁嗚弻銆佺梾姣掋€佹敮鍘熶綋绛夊紩璧枫€傚父瑙佺梾鍘熶綋锛氳偤鐐庨摼鐞冭弻銆傜棁鐘讹細鍙戠儹銆佸挸鍡姐€佸挸榛勮創鐥版垨閾侀攬鑹茬棸銆佽兏鐥涖€佸懠鍚稿洶闅俱€傞渶姝ｈ鎶楃敓绱犳不鐤楋紝鐤楃▼5-7澶┿€?, "emergency": "楂樼儹浼村懠鍚稿洶闅俱€佽兏鐥涖€佹剰璇嗘敼鍙樸€佸彛鍞囧彂缁€鈥斺€旂珛鍗冲氨鍖伙紒", "diet": "瀹滐細楂樼儹閲忋€侀珮铔嬬櫧銆佹槗娑堝寲锛涘瘜鍚淮鐢熺礌C锛涘厖瓒虫按鍒嗐€傚繉锛氭补鑵汇€佽緵杈ｅ埡婵€銆佺敓鍐枫€侀厭绮俱€?, "drugs": "鎶楃敓绱狅細闃胯帿瑗挎灄/鍏嬫媺缁撮吀锛屾垨澶х幆鍐呴叝绫伙紙闃垮闇夌礌锛夈€傚鐥囷細閫€鐑€佺鐥般€佹哀鐤楋紙閲嶇棁锛夈€?, "herbs": "鐥扮儹澹呰偤锛氶奔鑵ヨ崏銆侀粍鑺┿€佺摐钂岀毊銆傛姘旇櫄寮憋細瑗挎磱鍙傘€侀粍鑺€?}, "杩囨晱鎬ч蓟鐐?: {"cat": "鍛煎惛绯荤粺", "title": "杩囨晱鎬ч蓟鐐?, "content": "榧婚粡鑶滅殑杩囨晱鎬х値鐥囷紝涓嶪gE浠嬪鐨勫彉鎬佸弽搴旀湁鍏炽€傚父瑙佽繃鏁忓師锛氳姳绮夈€佸皹铻ㄣ€佸姩鐗╃毊灞戙€傜棁鐘讹細闃靛彂鎬ф墦鍠峰殢銆佹竻姘存牱榧绘稌銆侀蓟濉炪€侀蓟鐥掋€佺溂鐥掋€傛不鐤楋細閬垮厤杩囨晱鍘?鑽墿銆?, "emergency": "鍑虹幇鍝枠鐥囩姸鎴栬繃鏁忔€т紤鍏嬶紙缃曡锛?, "diet": "瀹滐細鍧囪　楗锛涘瘜鍚淮鐢熺礌C銆丒鐨勯鐗┿€傚繉锛氬凡鐭ヨ繃鏁忕殑椋熺墿锛涜緵杈ｅ埡婵€锛涢厭绮俱€?, "drugs": "涓€绾匡細榧荤敤绯栫毊璐ㄦ縺绱狅紙甯冨湴濂堝痉銆佹盁鏇垮崱鏉撅級銆傚彛鏈嶆姉缁勮兒鑽紙姘浄浠栧畾銆佽タ鏇垮埄鍡級銆傜櫧涓夌儻鍙椾綋鎷姉鍓傦紙瀛熼瞾鍙哥壒锛夈€?, "herbs": "鑲鸿劸涓よ櫄锛氱帀灞忛鏁ｅ姞鍑忋€傝偩铏氾細鍙冲綊涓稿姞鍑忋€?}, "楂樿鍘?: {"cat": "蹇冭绠＄郴缁?, "title": "鍘熷彂鎬ч珮琛€鍘?, "content": "琛€鍘嬫寔缁墺140/90 mmHg涓洪珮琛€鍘嬨€傛不鐤楋細浣庣洂楗锛?5g/澶╋級銆佽寰嬭繍鍔ㄣ€佽嵂鐗╂不鐤椼€傚父鐢ㄩ檷鍘嬭嵂锛欳CB绫伙紙姘ㄦ隘鍦板钩锛夈€丄RB绫伙紙缂矙鍧︼級銆傜洰鏍囷細涓€鑸?130/80 mmHg銆?, "emergency": "琛€鍘?180/120浼村ご鐥涖€佽兏鐥涖€佽鍔涙ā绯娾€斺€旈珮琛€鍘嬪嵄璞★紝绔嬪嵆灏卞尰锛?, "diet": "瀹滐細DASH楗锛堣敩鏋溿€佸叏璋枫€佷綆鑴傚ザ锛夈€侀粦鏈ㄨ€炽€佽姽鑿溿€佸北妤傘€傚繉锛氳厡鍒跺搧銆佽厞鑲夈€侀叡鑿滐紙楂橀挔锛夛紱娴撹尪銆?, "drugs": "CCB绫伙細姘ㄦ隘鍦板钩锛堟櫒璧锋湇锛夈€侫RB绫伙細缂矙鍧︼紙淇濇姢鑲捐剰锛夈€傜蹇岋細鎿呰嚜鍋滆嵂浼氬鑷磋鍘嬪弽璺筹紝鍗卞強鐢熷懡銆?, "synergy": "鍦板钩绫?尾鍙椾綋闃绘粸鍓傦細鍙姞閲嶅績琛般€傚湴骞崇被+钁¤悇鏌氭眮锛氬鍔犺鑽祿搴︺€?, "food": "瑗挎煔姹佹樉钁楀鍔犲湴骞崇被鑽墿琛€鑽祿搴︼紝鏈嶇敤鑰呯楗€?, "herbs": "閽╄棨銆佸ぉ楹汇€佺綏甯冮夯銆佸喅鏄庡瓙鈥斺€斿钩鑲濇綔闃抽檷鍘嬨€?}, "鍐犲績鐥?: {"cat": "蹇冭绠＄郴缁?, "title": "鍐犵姸鍔ㄨ剦绮ユ牱纭寲鎬у績鑴忕梾", "content": "鍐犵姸鍔ㄨ剦绮ユ牱纭寲瀵艰嚧蹇冭倢缂鸿缂烘哀銆傜被鍨嬶細绋冲畾鍨嬪績缁炵棝銆佷笉绋冲畾鍨嬪績缁炵棝銆佹€ユ€у績鑲屾姝汇€傛不鐤楋細鑽墿銆佷粙鍏ワ紙鏀灦锛夈€佹惌妗ユ墜鏈€?, "emergency": "鍓х儓鑳哥棝鎸佺画>20鍒嗛挓锛屼即鍑烘睏銆佹伓蹇冦€佸懠鍚稿洶闅俱€佹繏姝绘劅鈥斺€旀€ユ€у績姊楋紒绔嬪嵆鎷ㄦ墦120锛?, "diet": "瀹滐細娣辨捣楸笺€佺嚂楹︺€佽眴鍒跺搧銆佽敩鑿滄按鏋溿€佸叏璋风墿銆佸潥鏋溿€傚繉锛氬姩鐗╁唴鑴忋€佽偉鑲夈€佽泲榛勶紙姣忓懆<3涓級銆佸ザ娌广€佺硶鐐广€?, "drugs": "鎶楄灏忔澘锛氶樋鍙稿尮鏋楋紙闀挎湡锛夈€佹隘鍚℃牸闆枫€傞檷鑴傦細浠栨眬绫伙紙闃挎墭浼愪粬姹€锛夈€傛姉蹇冭倢缂鸿锛氱閰哥敇娌癸紙鑸屼笅鍚湇锛夈€佺編鎵樻礇灏斻€?, "synergy": "闃垮徃鍖规灄+鍗庢硶鏋楋細澧炲姞鍑鸿椋庨櫓銆備粬姹€+璐濈壒锛堝悏闈炶礉榻愶級锛氬鍔犺倢鐥呴闄┿€?, "food": "鎴掔儫锛堟渶閲嶈锛夈€傞€傚害杩愬姩锛堟瘡鍛ㄢ墺150鍒嗛挓锛夈€?, "herbs": "涓瑰弬銆佷笁涓冦€侀摱鏉忓彾鈥斺€旀椿琛€鍖栫榾閫氱粶銆?}, "鑴戝崚涓?: {"cat": "蹇冭绠＄郴缁?, "title": "鑴戝崚涓?涓", "content": "鍒嗕负缂鸿鎬э紙鑴戞姝伙紝85%锛夊拰鍑鸿鎬э紙15%锛夈€侭E FAST璇嗗埆锛欱骞宠　銆丒鐪肩潧銆丗闈㈤儴銆丄鎵嬭噦銆丼璇█銆乀鏃堕棿銆傜己琛€鎬у彲鍦?.5灏忔椂鍐呮憾鏍撴垨鍙栨爴銆?, "emergency": "绐佺劧鍑虹幇鐨勯潰閮ㄤ笅鍨傘€佹墜鑷傛棤鍔涖€佽璇濅笉娓呪€斺€旂珛鍗虫嫧鎵?20锛?, "diet": "鎺у埗閽犳憚鍏ャ€傚鍔犺敩鏋溿€佸叏璋风墿銆傞檺鍒堕ケ鍜岃剛鑲€傝ˉ鍏呭彾閰搞€?, "drugs": "缂鸿鎬у崚涓簩绾ч闃诧細鎶楄灏忔澘锛堥樋鍙稿尮鏋?姘悺鏍奸浄锛夈€侀檷鑴傦紙浠栨眬锛夈€侀檷鍘嬨€佹帶鍒惰绯栥€?, "synergy": "闃垮徃鍖规灄+鍗庢硶鏋?鏂板瀷鍙ｆ湇鎶楀嚌鑽細澧炲姞鍑鸿椋庨櫓銆?, "food": "鎴掔儫闄愰厭銆傛帶鍒朵綋閲嶃€傞€傚害杩愬姩銆?, "herbs": "琛ラ槼杩樹簲姹わ紙榛勮姫銆佸綋褰掋€佸窛鑺庛€佽丹鑺嶏級鈥斺€旂泭姘旀椿琛€閫氱粶銆?}, "蹇冨緥澶卞父": {"cat": "蹇冭绠＄郴缁?, "title": "蹇冨緥澶卞父", "content": "蹇冭剰浼犲绯荤粺寮傚父瀵艰嚧蹇冭烦杩囧揩銆佽繃鎱㈡垨涓嶈鍒欍€傚父瑙佺被鍨嬶細鎴块ⅳ銆佸涓婃€у績鍔ㄨ繃閫熴€佸鎬ф棭鎼忋€佹埧瀹や紶瀵奸樆婊炪€傜棁鐘讹細蹇冩偢銆佽兏闂枫€佸ご鏅曘€佹檿鍘ャ€?, "emergency": "鎰忚瘑涓уけ銆佹寔缁兏鐥涖€佽鍘嬫樉钁椾笅闄嶁€斺€旂珛鍗冲氨鍖伙紒", "diet": "瀹滐細鍧囪　楗锛涢伩鍏嶅挅鍟″洜銆侀厭绮俱€傚繉锛氬埡婵€鎬ч鐗╋紱杩囬噺楗厭銆?, "drugs": "鎶楀績寰嬪け甯歌嵂锛氳兒纰橀叜銆佺編鎵樻礇灏斻€佺編瑗垮緥绛夛紙闇€鍖荤敓澶勬柟锛夈€傛埧棰わ細鎶楀嚌锛堝崕娉曟灄/鏂板瀷鍙ｆ湇鎶楀嚌鑽級+鑺傚緥鎺у埗/蹇冪巼鎺у埗銆?, "synergy": "鑳虹閰笌澶氱鑽墿鐩镐簰浣滅敤锛屽姟蹇呭憡鐭ュ尰鐢熸墍鏈夌敤鑽€?, "food": "閬垮厤鍜栧暋鍥狅紙鍜栧暋銆佹祿鑼讹級銆傛垝鐑熼檺閰掋€?, "herbs": "鐐欑敇鑽夋堡鈥斺€旂泭姘旀粙闃达紝閫氶槼澶嶈剦銆?}, "蹇冨姏琛扮": {"cat": "蹇冭绠＄郴缁?, "title": "鎱㈡€у績鍔涜“绔?, "content": "蹇冭剰娉佃鍔熻兘鍑忛€€锛屼笉鑳芥弧瓒虫満浣撻渶姹傘€傝〃鐜帮細鍛煎惛鍥伴毦锛堟椿鍔ㄥ悗鍔犻噸鈫掍紤鎭篃鏈夛級銆佹按鑲匡紙涓嬭偄鈫掑叏韬級銆佷箯鍔涖€佸績鎮搞€侼YHA鍒嗙骇锛欼-IV绾с€?, "emergency": "鎬ユ€у姞閲嶏細鍛煎惛鍥伴毦鍔犻噸銆佷笉鑳藉钩鍗с€佸挸绮夌孩鑹叉场娌棸鈥斺€旀€ユ€у乏蹇冭“锛?, "diet": "闄愰挔锛?2g/澶╋級锛氬噺杞绘按閽犳酱鐣欍€傞檺娑蹭綋锛?1.5-2L/澶╋級銆傞珮铔嬬櫧楗銆?, "drugs": "閲戜笁瑙掞細ACEI/ARB锛堟敼鍠勯鍚庯級+尾鍙椾綋闃绘粸鍓傦紙鏀瑰杽棰勫悗锛?閱涘浐閰彈浣撴嫯鎶楀墏锛堝噺杞绘按鑲匡級銆傚埄灏垮墏锛氬憢濉炵背銆?, "synergy": "鍒╁翱鍓?ACEI锛氭敞鎰忚偩鍔熻兘銆侼SAIDs鍔犻噸姘撮挔娼寸暀锛岄伩鍏嶄娇鐢ㄣ€?, "food": "閬垮厤鑵屽埗椋熷搧銆傚皯椋熷椁愩€傜洃娴嬩綋閲嶏紙姣忔棩浣撻噸澧炲姞>1kg鎻愮ず姘撮挔娼寸暀锛夈€?, "herbs": "鐢熻剦鏁ｏ紙浜哄弬銆侀害鍐€佷簲鍛冲瓙锛夆€斺€旂泭姘旂敓娲ャ€?}, "绯栧翱鐥?: {"cat": "鍐呭垎娉岀郴缁?, "title": "绯栧翱鐥?, "content": "璇婃柇鏍囧噯锛氱┖鑵硅绯栤墺7.0 mmol/L鎴栭鍚?h琛€绯栤墺11.1 mmol/L銆傛不鐤椾簲椹鹃┈杞︼細楗鎺у埗銆佽繍鍔ㄣ€佽嵂鐗╂不鐤椼€佽绯栫洃娴嬨€佸仴搴锋暀鑲层€傜洰鏍囷細绌鸿吂4.4-7.0 mmol/L锛岄鍚?10 mmol/L锛孒bA1c<7%銆?, "emergency": "浣庤绯栵紙<3.9 mmol/L锛変即鏄忚糠鎴栦笉鑳借繘椋熴€侀叜鐥囬吀涓瘨锛堝懠姘旀湁鐑傝嫻鏋滃懗锛?, "diet": "瀹滐細浣嶨I椋熺墿锛堢嚂楹︺€佺硻绫炽€佽崬楹︺€佸叏楹︼級銆佺豢鍙惰敩鑿溿€佷紭璐ㄨ泲鐧姐€傚繉锛氱簿鍒剁硸銆佺櫧绫崇櫧闈€佸惈绯栭ギ鏂欍€佺播绫汇€傛按鏋滄瘡澶╀笉瓒呰繃200g锛屼袱椁愪箣闂村悆銆?, "drugs": "浜岀敳鍙岃儘锛氫竴绾跨敤鑽紝闅忛鏈嶇敤銆傝儼宀涚礌锛氶渶鍐疯棌锛岄伒鍖诲槺璋冩暣鍓傞噺銆侴LP-1鍙椾綋婵€鍔ㄥ墏锛堝徃缇庢牸椴佽偨锛夛細鍑忛噸鏁堟灉濂姐€?, "synergy": "浜岀敳鍙岃儘+澶ч噺閰掔簿锛氬鍔犱钩閰搁吀涓瘨椋庨櫓銆傝儼宀涚礌+尾鍙椾綋闃绘粸鍓傦細鍙兘鎺╃洊浣庤绯栫棁鐘躲€?, "food": "鎱庣敤鏃犵硸椋熷搧鈥斺€斿彲鑳藉惈澶ч噺纰虫按鍖栧悎鐗┿€傚浼氱湅椋熷搧钀ュ吇鏍囩銆?, "herbs": "澶╄姳绮夈€佽憶鏍广€侀粍鑺€佸北鑽€斺€旂泭姘斿吇闃淬€佸仴鑴剧敓娲ャ€?}, "楂樿鑴?: {"cat": "鍐呭垎娉岀郴缁?, "title": "楂樿剛琛€鐥?, "content": "琛€鑴傚紓甯革細鎬昏儐鍥洪唶>5.2鎴朙DL>3.4鎴朤G>1.7 mmol/L銆傛不鐤楋細浠栨眬绫昏嵂鐗╋紙棣栭€夛級鏄牳蹇冿紝鍙ǔ瀹氬姩鑴夋枒鍧椼€傜敓娲绘柟寮忥細浣庤剛楗銆佽繍鍔ㄣ€佸噺閲嶃€佹垝鐑熼檺閰掋€?, "emergency": "", "diet": "瀹滐細鐕曢害锛埼?钁¤仛绯栭檷鑳嗗浐閱囷級銆佹繁娴烽奔锛圤mega-3闄嶇敇娌逛笁閰級銆佸潥鏋溿€佹﹦姒勬补銆傚繉锛氬姩鐗╁唴鑴忋€佽偉鑲夈€佸ザ娌瑰埗鍝併€佹补鐐搁鍝併€佽泲榛勩€?, "drugs": "浠栨眬绫伙細闃挎墭浼愪粬姹€锛堟櫄闂存湇锛夈€佺憺鑸掍紣浠栨眬銆傝礉鐗圭被锛氶潪璇鸿礉鐗癸紙楂樼敇娌逛笁閰閫夛級銆備粬姹€涓嶄笌瑗挎煔鍚屾湇銆?, "synergy": "浠栨眬+璐濈壒锛堝悏闈炶礉榻愶級锛氭樉钁楀鍔犺倢鐥呴闄┾€斺€旇嫢闇€鑱旂敤锛屼紭閫夐潪璇鸿礉鐗广€?, "food": "妞嶇墿鐢鹃唶鍙緟鍔╅檷鑴傘€傚挅鍟℃瘡澶?-2鏉棤绯栧嵆鍙€?, "herbs": "灞辨銆佽嵎鍙躲€佸喅鏄庡瓙銆佺粸鑲¤摑鈥斺€旀椿琛€闄嶈剛銆?}, "鐢茬姸鑵哄姛鑳戒孩杩?: {"cat": "鍐呭垎娉岀郴缁?, "title": "鐢茬姸鑵哄姛鑳戒孩杩涚棁", "content": "鐢茬姸鑵烘縺绱犲垎娉岃繃澶氥€傚父瑙佸師鍥狅細Graves鐥呫€傜棁鐘讹細鎬曠儹銆佸姹椼€佸績鎮搞€佹墜鎶栥€佷綋閲嶄笅闄嶃€佺溂鐞冪獊鍑恒€佺儲韬佹槗鎬掋€傞渶妫€鏌ョ敳鍔熶簲椤广€佺敳鐘惰吅鎶椾綋銆佺敳鐘惰吅瓒呭０銆?, "emergency": "鐢蹭孩鍗辫薄锛氶珮鐑紙>40鈩冿級銆佷弗閲嶅績鎮搞€佹剰璇嗛殰纰嶃€佸憰鍚愯吂娉烩€斺€旀€ヨ瘖锛?, "diet": "楂樼儹閲忋€侀珮铔嬬櫧銆侀珮缁寸敓绱犻ギ椋熴€傞檺鍒剁鎽勫叆锛堟捣甯︺€佺传鑿溿€佹捣椴滐級銆傚繉锛氬挅鍟″洜銆佽緵杈ｅ埡婵€銆?, "drugs": "鎶楃敳鐘惰吅鑽墿锛圓TD锛夛細鐢插矾鍜攽銆佷笝纭哀鍢у暥锛堝瀛?鍝轰钩棣栭€夛級銆偽插彈浣撻樆婊炲墏锛氱編鎵樻礇灏旓紙鎺у埗蹇冩偢锛夈€?, "synergy": "鎶楃敳鐘惰吅鑽?鍗庢硶鏋楋細澧炲己鎶楀嚌浣滅敤銆?, "food": "閬垮厤瀵岀椋熺墿銆備繚璇佷紤鎭紝閬垮厤鎯呯华娉㈠姩銆?, "herbs": "鐢蹭孩闃磋櫄鐏椇锛氬ぉ鑺辩矇銆侀害鍐€佺敓鍦扳€斺€旀粙闃存竻鐑€?}, "鐢茬姸鑵哄姛鑳藉噺閫€": {"cat": "鍐呭垎娉岀郴缁?, "title": "鐢茬姸鑵哄姛鑳藉噺閫€鐥?, "content": "鐢茬姸鑵烘縺绱犲垎娉屼笉瓒炽€傜棁鐘讹細鎬曞喎銆佷箯鍔涖€佷綋閲嶅鍔犮€佽蹇嗗姏鍑忛€€銆佺毊鑲ゅ共鐕ャ€佷究绉樸€佸績鐜囧噺鎱€傞渶闀挎湡鐢茬姸鑵烘縺绱犳浛浠ｆ不鐤椼€?, "emergency": "榛忔恫鎬ф按鑲挎槒杩凤細涓ラ噸鍡滅潯銆佷綋娓╅檷浣庛€佹剰璇嗛殰纰嶁€斺€旀€ヨ瘖锛?, "diet": "閫傞噺纰樻憚鍏ワ紙鍔犵鐩愶級銆傞伩鍏嶈嚧鐢茬姸鑵鸿偪椋熺墿锛堝嵎蹇冭彍銆佽悵鍗滐級銆傞珮铔嬬櫧銆侀珮缁寸敓绱犻ギ椋熴€?, "drugs": "宸︾敳鐘惰吅绱犻挔锛圠-T4锛夛細绌鸿吂鏈嶇敤锛堟棭椁愬墠30鍒嗛挓锛夛紝閬垮厤涓庨挋銆侀搧鍚屾湇銆傝捣濮嬪墏閲忓皬锛岄€愭笎鍔犻噺銆?, "synergy": "宸︾敳鐘惰吅绱?閽欏墏/閾佸墏锛氬噺灏戝惛鏀讹紝闂撮殧4灏忔椂浠ヤ笂鏈嶇敤銆?, "food": "瀹氭湡澶嶆煡鐢插姛锛屾牴鎹粨鏋滆皟鏁磋嵂閲忋€?, "herbs": "鑴捐偩闃宠櫄锛氬彸褰掍父鍔犲噺銆?}, "鐥涢": {"cat": "鍐呭垎娉岀郴缁?, "title": "鐥涢", "content": "灏块吀浠ｈ阿绱婁贡锛屽翱閰哥洂缁撴櫠娌夌Н鍏宠妭銆傚吀鍨嬶細鎬ユ€у崟鍏宠妭鐐庯紙甯歌澶ц剼瓒撅紝绾㈣偪鐑棝锛夈€傛不鐤楋細鎬ユ€ф湡绉嬫按浠欑⒈/NSAIDs锛涚紦瑙ｆ湡闄嶅翱閰歌嵂锛堥潪甯冨徃浠栥€佸埆鍢岄唶锛夆€斺€旈渶闀挎湡瑙勫緥鏈嶇敤銆?, "emergency": "鐥涢鍙戜綔浼撮殢楂樼儹锛?39鈩冿級銆佸叧鑺備弗閲嶇孩鑲?, "diet": "瀹滐細浣庡槍鍛らギ椋熴€佸ぇ閲忛ギ姘达紙>2L/澶╋級銆佹ū妗冦€傚繉锛氬姩鐗╁唴鑴忋€佹捣椴滐紙灏ゅ叾璐濈被锛夈€佹祿鑲夋堡銆佸暏閰掔櫧閰掋€佸惈鏋滅硸楗枡銆?, "drugs": "鎬ユ€ф湡锛氱姘翠粰纰憋紙24h鍐呴閫夛級鎴栧竷娲涜姮銆傞檷灏块吀锛氶潪甯冨徃浠栥€佸埆鍢岄唶锛堥暱鏈燂級銆傛敞鎰忥細闄嶅翱閰歌嵂鍒濇湡浼氳鍙戠棝椋庡彂浣溿€?, "synergy": "鍒槍閱?宸攽鍢屽懁锛氭樉钁楀寮洪楂撴姂鍒讹紝绂佸繉锛?, "food": "姣忔棩楗按>2L銆傛ū妗冩湁杞诲害闄嶅翱閰镐綔鐢ㄣ€?, "herbs": "鍦熻尟鑻撱€佽悊钖€佽枏鑻′粊銆佸▉鐏典粰鈥斺€旂婀块€氱粶姝㈢棝銆?}, "楠ㄨ川鐤忔澗": {"cat": "鍐呭垎娉岀郴缁?, "title": "楠ㄨ川鐤忔澗鐥?, "content": "楠ㄥ瘑搴﹂檷浣庯紝楠ㄨ剢鎬у鍔狅紝甯歌浜庣粷缁忓悗濂虫€у拰鑰佸勾浜恒€傛不鐤楋細閽欏墏+缁寸敓绱燚锛堝熀纭€锛夈€佹姉楠ㄨ川鐤忔澗鑽紙鍙岃啨閰哥洂绫伙級銆傞闃诧細璐熼噸杩愬姩銆佸厖瓒虫棩鐓э紙姣忓ぉ15-30鍒嗛挓锛夈€侀槻璺屽€掋€?, "emergency": "璺屽€掑悗鍓х儓鐤肩棝锛岀枒浼奸鎶?, "diet": "瀹滐細楂橀挋椋熺墿锛堢墰濂?000-1200mg/澶╂槸閲戞爣鍑嗐€佽眴鍒跺搧銆佽姖楹汇€佽櫨鐨€佹繁缁胯壊钄彍锛夈€傚繉锛氳繃澶氬挅鍟″洜锛?3鏉?澶╋級銆侀珮閽狅紙鍔犻€熼挋娴佸け锛夈€?, "drugs": "閽欏墏锛氱⒊閰搁挋锛堥殢椁愭湇锛夋垨鏌犳閰搁挋锛堢┖鑵瑰彲鏈嶏級銆傞鍚告敹鎶戝埗鍓傦細闃夸粦鑶﹂吀閽狅紙鏅ㄨ捣绌鸿吂鏈嶏紝鐩寸珛30鍒嗛挓锛夈€?, "synergy": "閽欏墏+缁寸敓绱燚锛氭槸鎵€鏈夋姉楠ㄨ川鐤忔澗娌荤枟鐨勫熀纭€锛屽繀椤昏仈鐢ㄣ€?, "food": "鍜栧暋鍜屽彲涔愬噺灏戦挋鍚告敹銆傛渶浣抽ギ鏂欙細鐧藉紑姘淬€佹贰鑼躲€佷綆鑴傜墰濂躲€?, "herbs": "楠ㄧ琛ャ€佺画鏂€佹潨浠层€侀緹鏉库€斺€旇ˉ鑲惧己楠ㄣ€?}, "鑲ヨ儢": {"cat": "鍐呭垎娉岀郴缁?, "title": "鑲ヨ儢鐥?, "content": "浣撹川鎸囨暟锛圔MI锛夆墺28涓鸿偉鑳栥€傚嵄瀹筹細绯栧翱鐥呫€侀珮琛€鍘嬨€佸啝蹇冪梾銆佽剳鍗掍腑銆佺潯鐪犲懠鍚告殏鍋溿€佺檶鐥囬闄╁鍔犮€傛不鐤楋細楗鎺у埗銆佽繍鍔ㄣ€佽嵂鐗╂不鐤楋紙濂ュ埄鍙镐粬銆佸徃缇庢牸椴佽偨锛夈€佷唬璋㈡墜鏈€?, "emergency": "鑲ヨ儢鐩稿叧鎬ョ棁锛氱潯鐪犲懠鍚告殏鍋滅患鍚堝緛銆佹€ユ€у績琛?, "diet": "姣忔棩鐑噺璧ゅ瓧500-750kcal銆傝泲鐧借川鎽勫叆1.2-1.6g/kg浣撻噸銆傞檺鍒剁簿鍒剁⒊姘淬€侀珮鑴傝偑椋熺墿銆?, "drugs": "濂ュ埄鍙镐粬锛氭姂鍒惰剛鑲惛鏀讹紝闅忛鏈嶇敤銆侴LP-1鍙椾綋婵€鍔ㄥ墏锛堝徃缇庢牸椴佽偨锛夛細闄嶇硸+鍑忛噸銆?, "synergy": "鍑忚偉鑽?閰掔簿锛氬彲鑳藉鍔犲壇浣滅敤銆?, "food": "璁板綍楗鏃ヨ銆傜粏鍤兼參鍜斤紙姣忓彛>20娆★級銆?, "herbs": "灞辨銆佽嵎鍙躲€佸喅鏄庡瓙銆佹辰娉烩€斺€斿埄姘存秷鑴傘€?}, "鑳冪値": {"cat": "娑堝寲绯荤粺", "title": "鑳冪値/鑳冮儴涓嶉€?, "content": "鑳冮粡鑶滅値鐥囥€傜棁鐘讹細涓婅吂鐥涖€佽儉姘斻€佸弽閰搞€佹伓蹇冦€佸棾姘斻€傛不鐤楋細鎶戦吀鑽紙濂ョ編鎷夊攽锛夈€佽儍榛忚啘淇濇姢鍓傦紙閾濈⒊閰搁晛锛夈€佷績鍔ㄥ姏鑽紙澶氭綐绔嬮叜锛夈€傚缓璁細瑙勫緥楗銆佺粏鍤兼參鍜姐€侀伩鍏嶅埡婵€鎬ч鐗┿€?, "emergency": "鍛曡锛堢孩鑹叉垨鍜栧暋娓ｆ牱锛夈€佹煆娌规牱榛戜究銆佸墽鐑堣吂鐥?, "diet": "瀹滐細娓呮贰鏄撴秷鍖栵紙绮ャ€侀澶淬€佽蒋鐑傞潰锛夈€佽捀铔嬨€傚繉锛氳緵杈ｃ€佺敓鍐枫€佹补鑵汇€佽繃鐢溿€佽繃閰搞€佸挅鍟°€侀厭绮俱€傝寰嬭繘椁愶紝姣忛涓冨叓鍒嗛ケ銆?, "drugs": "鎶戦吀锛氬ゥ缇庢媺鍞戯紙鏅ㄨ捣绌鸿吂锛夈€侀浄璐濇媺鍞戙€傛姢鑳冿細閾濈⒊閰搁晛锛堥鍚庡毤鏈嶏級銆備績鍔ㄥ姏锛氬娼樼珛閰紙椁愬墠15-30鍒嗛挓锛夈€?, "synergy": "濂ョ編鎷夊攽+姘悺鏍奸浄锛氶檷浣庢隘鍚℃牸闆风枟鏁堚€斺€斾紭鍏堟崲鐢ㄦ钞鎵樻媺鍞戙€?, "food": "閰稿ザ鍙湪鑳冮粡鑶滃舰鎴愪繚鎶ゅ眰銆傛俯鐑墰濂跺彲鏆傛椂缂撹В鑳冪棝銆?, "herbs": "鐧借姩銆佹捣铻佃浉銆佺爞浠併€侀檲鐨€斺€斿拰鑳冩鐥涖€佸埗閰搞€?}, "鎬ユ€ц儍鑲犵値": {"cat": "娑堝寲绯荤粺", "title": "鎬ユ€ц儍鑲犵値", "content": "鑳冭偁閬撻粡鑶滅殑鎬ユ€х値鐥囷紝澶氱敱鐥呮瘨锛堣濡傜梾姣掋€佽疆鐘剁梾姣掞級鎴栫粏鑿岋紙澶ц偁鏉嗚弻銆佹矙闂ㄨ弻锛夊紩璧枫€傜棁鐘讹細鑵圭棝銆佽吂娉汇€佸憰鍚愩€佸彂鐑€?, "emergency": "涓ラ噸鑴辨按锛堢溂绐濆嚬闄枫€佺毊鑲ゅ脊鎬у樊锛夈€侀珮鐑笉閫€銆佽渚?, "diet": "瀹滐細娓呮贰娴佽川锛堢播姹ゃ€侀潰姹わ級銆佽ˉ娑茬洂锛堥槻姝㈣劚姘达級銆傚繉锛氭补鑵汇€佺敓鍐枫€佽緵杈ｃ€佸ザ鍒跺搧锛堝姞閲嶈吂娉伙級銆?, "drugs": "琛ユ恫鐩愶細琛ュ厖姘村垎鍜岀數瑙ｈ川銆傛娉伙細钂欒劚鐭虫暎銆傝皟鑺傝偁閬撹弻缇わ細鐩婄敓鑿岋紙鍙屾鏉嗚弻銆佷钩閰告潌鑿岋級銆傜粏鑿屾劅鏌撴椂浣跨敤鎶楃敓绱犮€?, "synergy": "鎶楃敓绱?鐩婄敓鑿岋細闇€闂撮殧2灏忔椂浠ヤ笂鏈嶇敤銆?, "food": "灏戦噺澶氶銆備粠娴佽川鈫掑崐娴佽川鈫掓甯搁ギ椋熼€愭杩囨浮銆?, "herbs": "钘块姝ｆ皵鏁ｏ紙钘块銆佺传鑻忋€佺櫧鑺凤級鈥斺€斿鎰熼瀵掞紝鍐呬激婀挎粸銆?}, "渚跨": {"cat": "娑堝寲绯荤粺", "title": "渚跨", "content": "鎺掍究娆℃暟鍑忓皯锛堟瘡鍛?3娆★級銆佺勃渚垮共缁撱€佹帓渚垮洶闅俱€傚垎涓哄姛鑳芥€т究绉樺拰鍣ㄨ川鎬т究绉樸€傛不鐤楋細澧炲姞鑶抽绾ょ淮锛?5-35g/澶╋級銆侀€傞噺楗按锛?.5-2L/澶╋級銆佽繍鍔ㄣ€佸吇鎴愭帓渚夸範鎯€?, "emergency": "鎬ユ€т究绉樹即鑵圭棝銆佸憰鍚愨€斺€旇鎯曡偁姊楅樆锛?, "diet": "瀹滐細鑶抽绾ょ淮锛堢矖绮€佽敩鑿溿€佹按鏋滐級銆佽冻閲忛ギ姘淬€傚繉锛氱簿鍒堕鍝併€佽緵杈ｅ埡婵€銆?, "drugs": "瀹圭Н鎬ф郴鑽細楹﹂焊銆佹杞﹀墠銆傛笚閫忔€ф郴鑽細涔虫灉绯栥€佽仛涔欎簩閱囥€傚埡婵€鎬ф郴鑽細姣旀矙鍙暥锛堢煭鏈熺敤锛夈€?, "synergy": "鍒烘縺鎬ф郴鑽暱鏈熶娇鐢ㄤ細瀵艰嚧渚濊禆銆?, "food": "鍏绘垚瀹氭椂鎺掍究涔犳儻銆傚鍔犺繍鍔ㄣ€?, "herbs": "楹诲瓙浠佷父鈥斺€旀鼎鑲犻€氫究銆?}, "鑵规郴": {"cat": "娑堝寲绯荤粺", "title": "鑵规郴", "content": "鎺掍究娆℃暟澧炲锛?3娆?澶╋級銆佺勃渚跨█钖勩€佹按鍒嗗鍔犮€傚垎涓烘€ユ€у拰鎱㈡€с€傛€ユ€у涓烘劅鏌擄紝鎱㈡€ч渶鎺掗櫎鍣ㄨ川鎬х柧鐥呫€?, "emergency": "涓ラ噸鑴辨按銆佽渚裤€佹寔缁珮鐑?, "diet": "瀹滐細娓呮贰娴佽川銆佽ˉ娑茬洂銆傚繉锛氭补鑵汇€佺敓鍐枫€侀珮绾ょ淮銆佸ザ鍒跺搧銆?, "drugs": "琛ユ恫锛氳ˉ娑茬洂銆傛娉伙細钂欒劚鐭虫暎銆傝皟鑺傝偁閬擄細鐩婄敓鑿屻€傛姉鎰熸煋锛氭盁鍝岄吀锛堢粏鑿屾€э級銆?, "synergy": "鎰熸煋鎬ц吂娉荤鐢ㄦ娉昏嵂锛堝Θ纰嶆瘨绱犳帓鍑猴級銆?, "food": "BRAT楗锛氶钑夈€佺背楗€佽嫻鏋滈叡銆佸悙鍙搞€?, "herbs": "鍙傝嫇鐧芥湳鏁ｂ€斺€斿仴鑴炬笚婀挎娉汇€?}, "鑴傝偑鑲?: {"cat": "娑堝寲绯荤粺", "title": "鑴傝偑鑲?, "content": "鑲濈粏鑳炶剛鑲矇绉?5%锛屽垎閰掔簿鎬э紙AFLD锛夊拰闈為厭绮炬€э紙NAFLD/MASLD锛夈€傛不鐤楋細鍑忛噸5-10%鍙€嗚浆鑴傝偑鑲濓紙鏈€鏈夋晥锛夈€佹垝閰掋€佹帶鍒惰绯栬鑴傘€?, "emergency": "鑲濆尯鍓х棝銆侀粍鐤革紙鐪肩潧鍜岀毊鑲ゅ彂榛勶級", "diet": "瀹滐細鍦颁腑娴烽ギ椋燂紙姗勬娌广€佹繁鑹茶敩鑿溿€佸叏璋枫€侀奔锛夈€佺豢鑼躲€傚繉锛氶厭绮俱€佹灉绯栭ギ鏂欍€侀珮绯栭珮鑴傞鍝併€佹补鐐搁鍝併€?, "drugs": "浜岀敳鍙岃儘锛堝悎骞剁硸灏跨梾鏃讹級銆傜淮鐢熺礌E锛?00IU/澶╋紝瀵筃ASH鏈変竴瀹氭晥鏋滐紝涓嶉€傜敤浜庣硸灏跨梾鎮ｈ€咃級銆傛姢鑲濊嵂锛堟槗鍠勫绛夛級鍙兘杈呭姪銆?, "food": "鍜栧暋锛堟瘡澶?-3鏉棤绯栵級鍙檷浣庤倽閰垛€斺€斿惊璇佽瘉瀹炵殑鎶よ倽楗銆?, "herbs": "涓瑰弬銆佸北妤傘€佽憶鏍广€佷簲鍛冲瓙鈥斺€斾繚鑲濋檷鑴傘€?}, "鑲濈値": {"cat": "娑堝寲绯荤粺", "title": "鑲濈値", "content": "鑲濊剰鐐庣棁锛屽父瑙佸師鍥狅細鐥呮瘨鎬э紙鐢层€佷箼銆佷笝銆佷竵銆佹垔鑲濓級銆侀厭绮炬€с€侀潪閰掔簿鎬с€佽嵂鐗╂€с€傜棁鐘讹細涔忓姏銆侀娆蹭笉鎸€佹伓蹇冦€佸彸涓婅吂涓嶉€傘€侀粍鐤搞€?, "emergency": "鎬ユ€ч噸鍨嬭倽鐐庯細鏋佸害涔忓姏銆佷弗閲嶉粍鐤搞€佹剰璇嗛殰纰嶁€斺€旀€ヨ瘖锛?, "diet": "瀹滐細楂樿泲鐧斤紙鑲濅慨澶嶏級銆佹槗娑堝寲銆佺淮鐢熺礌涓板瘜銆傚繉锛氶厭绮俱€侀珮鑴傝偑銆佽緵杈ｅ埡婵€銆?, "drugs": "鐥呮瘨鎬ц倽鐐庯細鎶楃梾姣掕嵂锛堜箼鑲濇牳鑻风被浼肩墿銆佷笝鑲濈洿鎺ユ姉鐥呮瘨鑽級銆傛姢鑲濊嵂锛氱敇鑽夐吀鍒跺墏銆佹按椋炶摕瀹俱€?, "synergy": "鎶楃梾姣掕嵂闇€瓒崇枟绋嬶紝涓嶈鑷鍋滆嵂銆?, "food": "缁濆鎴掗厭銆傚畾鏈熷鏌ヨ倽鍔熻兘銆佺梾姣掕浇閲忋€?, "herbs": "鑼甸檲銆佹爛瀛愩€佹煷鑳°€佷簲鍛冲瓙鈥斺€旀竻鐑埄婀裤€佺枏鑲濊В姣掋€?}, "鑳嗗泭鐐?: {"cat": "娑堝寲绯荤粺", "title": "鑳嗗泭鐐?, "content": "鑳嗗泭鐨勭値鐥囷紝甯镐笌鑳嗙粨鐭虫湁鍏炽€傚垎涓烘€ユ€у拰鎱㈡€с€傛€ユ€э細鍙充笂鑵瑰墽鐥涳紙澧ㄨ彶寰侀槼鎬э級銆佸彂鐑€佹伓蹇冨憰鍚愩€傛參鎬э細鍙充笂鑵归殣鐥涖€侀ケ鑳€鎰熴€?, "emergency": "鎬ユ€у寲鑴撴€ц儐鍥婄値銆佽儐鍥婄┛瀛斺€斺€旀€ヨ瘖鎵嬫湳锛?, "diet": "瀹滐細浣庤剛楗銆佹竻娣℃槗娑堝寲銆傚繉锛氶珮鑴傝偑楗锛堟补鐐搞€佽偉鑲夈€佽泲榛勶級銆佽緵杈ｅ埡婵€銆?, "drugs": "鎶楃敓绱狅細澶村绫?鐢茬鍞戙€傝В鐥夛細灞辫帹鑿⒈銆傚埄鑳嗭細鐔婂幓姘ц儐閰搞€?, "synergy": "鐔婂幓姘ц儐閰搁渶闀挎湡鏈嶇敤锛屽畾鏈熷鏌ャ€?, "food": "灏戦噺澶氶銆傞伩鍏嶆毚楗毚椋熴€?, "herbs": "閲戦挶鑽夈€佽尩闄堛€侀儊閲戔€斺€斿埄鑳嗘帓鐭炽€?}, "鐥旂柈": {"cat": "娑堝寲绯荤粺", "title": "鐥旂柈", "content": "鑲涢棬鐩磋偁闈欒剦鏇插紶銆傚垎涓哄唴鐥斻€佸鐥斻€佹贩鍚堢棓銆傜棁鐘讹細渚胯銆佽倹闂ㄧ柤鐥涖€佽劚鍑恒€佺槞鐥掋€傛不鐤楋細淇濆畧娌荤枟锛堝潗娴淬€佽蒋鍖栧ぇ渚裤€佸眬閮ㄧ敤鑽級銆佹墜鏈€?, "emergency": "澶ч噺渚胯瀵艰嚧璐銆佺棓鏍稿祵椤垮潖姝?, "diet": "瀹滐細鑶抽绾ょ淮锛?5-35g/澶╋級銆佽冻閲忛ギ姘淬€傚繉锛氳緵杈ｅ埡婵€銆佷箙鍧愪箙韫层€?, "drugs": "鍙ｆ湇锛氬湴姒嗘瑙掍父銆佽繄涔嬬伒銆傚鐢細椹簲榫欑棓鐤啅銆佹爴鍓傘€?, "synergy": "渚跨鍔犻噸鐥旂柈锛屽舰鎴愭伓鎬у惊鐜€?, "food": "鍏绘垚鎺掍究濂戒範鎯紙姣忓ぉ鍥哄畾鏃堕棿锛屼笉瓒呰繃5鍒嗛挓锛夈€傛俯姘村潗娴淬€?, "herbs": "鍦版銆佹鑺便€佽丹灏忚眴鈥斺€斿噳琛€姝㈣銆佹秷鑲挎鐥涖€?}, "鍙ｈ厰婧冪枴": {"cat": "浜斿畼绉?, "title": "澶嶅彂鎬у彛鑵旀簝鐤?, "content": "鍙ｈ厰榛忚啘鍙嶅鍙戜綔鐨勬簝鐤°€傜梾鍥犲鏉傦細鍏嶇柅鍥犵礌銆佺淮鐢熺礌缂轰箯銆佹満姊板埡婵€銆?, "emergency": "婧冪枴瓒呰繃2鍛ㄤ笉鎰堟垨鏁伴噺澧炲", "diet": "瀹滐細瀵屽惈缁寸敓绱燘銆丆鐨勯鐗┿€傚繉锛氳緵杈ｃ€佽繃鐑€侀吀鎬ч鐗┿€?, "drugs": "灞€閮細鍙ｈ厰婧冪枴鏁ｃ€佽タ鐡滈湝銆傚叏韬細缁寸敓绱燘2銆佺淮鐢熺礌C銆傚弽澶嶅彂浣滄帓鏌ョ郴缁熸€х柧鐥呫€?, "synergy": "淇濇寔鍙ｈ厰娓呮磥銆?, "food": "閬垮厤鍜激銆?, "herbs": "瀵艰丹鏁ｏ紙蹇冭劸绉儹锛夈€佺帀濂崇厧锛堥槾铏氱伀鏃猴級銆?}, "澶寸棝": {"cat": "绁炵粡绯荤粺", "title": "澶寸棝", "content": "鍘熷洜浼楀锛氱揣寮犳€с€佽绠℃€с€佸亸澶寸棝銆侀蓟绐︽€с€佺户鍙戞€уご鐥涖€傚鐞嗭細浼戞伅銆佹斁鏉俱€佹鐥涜嵂銆傝嫢澶寸棝绐佺劧鍓х儓浼村彂鐑?鍛曞悙/瑙嗙墿妯＄硦/鍋忕槴锛岃绔嬪嵆灏卞尰銆?, "emergency": "绐佺劧鍓х儓澶寸棝锛堥浄鍑绘牱锛夈€佷即鎰忚瘑鍙樺寲銆侀椤瑰己鐩淬€佽鐗╂ā绯娿€佸亸鐦€斺€旂珛鍗冲氨鍖伙紒", "diet": "瀹滐細瑙勫緥杩涢锛堥伩鍏嶄綆琛€绯栵級銆佸潥鏋溿€佹繁娴烽奔銆傚繉锛氶厭绮撅紙鍋忓ご鐥涘父瑙佽鍥狅級銆佽厡鍒惰倝銆?, "drugs": "姝㈢棝锛氬竷娲涜姮锛堥閫夛級銆佸涔欓叞姘ㄥ熀閰氥€傚亸澶寸棝锛氭洸鏅潶绫伙紙鍙戜綔鏃╂湡鏈嶏級銆傛敞鎰忥細姣忔湀姝㈢棝鑽?10澶╁彲鑷磋嵂鐗╄繃搴︿娇鐢ㄦ€уご鐥涖€?, "synergy": "姝㈢棝鑽?閰掔簿锛氭樉钁楀鍔犺儍鑲犻亾鍜岃倽鑴忔崯浼ゃ€?, "food": "鑴辨按鏄ご鐥涙渶甯歌璇卞洜锛岀‘淇濇瘡鏃ラギ姘?500-2000ml銆?, "herbs": "宸濊妿銆佺櫧鑺枫€佸ぉ楹汇€佽強鑺扁€斺€旂椋庨€氱粶姝㈢棝銆?}, "澶辩湢": {"cat": "绁炵粡绯荤粺", "title": "澶辩湢", "content": "鍏ョ潯鍥伴毦銆佺潯鐪犳祬銆佹槗閱掋€佹棭閱掞紝褰卞搷鐧藉ぉ鍔熻兘銆傛不鐤楋細鐫＄湢鍗敓锛堣寰嬩綔鎭€佺潯鍓?灏忔椂閬垮厤灞忓箷锛夈€佽鐭ヨ涓烘不鐤楋紙CBT-I锛屽惊璇侀噾鏍囧噯锛夈€佽嵂鐗╋紙鐭湡锛夈€?, "emergency": "", "diet": "瀹滐細娓╃墰濂躲€侀吀鏋ｄ粊绮ワ紙鐫″墠2灏忔椂锛夈€侀钑夈€傚繉锛氬挅鍟°€佹祿鑼讹紙涓嬪崍2鐐瑰悗绂侀ギ锛夈€侀厭绮撅紙鐮村潖鐫＄湢缁撴瀯锛夈€?, "drugs": "闈炶嫰浜屾爱鍗撶被锛氫綈鍖瑰厠闅嗐€佸彸浣愬尮鍏嬮殕锛堟垚鐦炬€ц緝浣庯級銆傝お榛戠礌锛氬€掓椂宸€呫€佽€佸勾澶辩湢鑰呫€傚畨鐪犺嵂鏈夋垚鐦炬€э紝閬靛尰鍢变娇鐢ㄣ€?, "synergy": "瀹夌湢鑽?閰掔簿锛氫弗閲嶅懠鍚告姂鍒讹紝鍙嚧姝伙紒", "food": "鑹叉皑閰搁鐗╋紙鐗涘ザ銆佺伀楦°€佸潥鏋滐級淇冭繘瑜粦绱犲悎鎴愩€?, "herbs": "閰告灒浠併€佹煆瀛愪粊銆佽繙蹇椼€佸悎娆㈢毊鈥斺€斿吇蹇冨畨绁炰績鐫＄湢銆?}, "鎶戦儊鐥?: {"cat": "绁炵粡绯荤粺", "title": "鎶戦儊鐥?, "content": "浠ユ寔缁殑鎯呯华浣庤惤銆佸叴瓒ｅ噺閫€涓烘牳蹇冪棁鐘讹紝甯镐即鏈夌潯鐪犻殰纰嶃€侀娆叉敼鍙樸€佹敞鎰忓姏涓嬮檷銆佽嚜璐ｈ嚜缃€傞渶涓撲笟璇婃柇鍜屾不鐤椼€?, "emergency": "鏈夎嚜鏉€蹇靛ご鎴栬涓衡€斺€旂珛鍗冲氨鍖绘垨鎷ㄦ墦蹇冪悊鍗辨満骞查鐑嚎锛?, "diet": "瀹滐細瀵屽惈Omega-3锛堟繁娴烽奔锛夈€佸彾閰革紙缁垮彾钄彍锛夈€佺淮鐢熺礌D鐨勯鐗┿€傚繉锛氶厭绮撅紙鍔犻噸鎶戦儊锛夈€佸挅鍟″洜杩囬噺銆?, "drugs": "SSRI绫伙紙棣栭€夛級锛氳垗鏇叉灄銆佸笗缃楄タ姹€銆佽壘鍙歌タ閰炴櫘鍏般€係NRI绫伙細鏂囨媺娉曡緵銆佺背閭ｆ櫘浠戙€傞渶瓒崇枟绋嬶紙鑷冲皯6-12涓湀锛夈€?, "synergy": "鎶楁姂閮佽嵂+閰掔簿锛氬鍔犻晣闈欎綔鐢ㄣ€?, "food": "瑙勫緥楗銆傞€傚害杩愬姩锛堝鎶戦儊鏈夋不鐤椾綔鐢級銆?, "herbs": "鏌磋儭鐤忚倽鏁ｃ€侀€嶉仴鏁ｂ€斺€旂枏鑲濊В閮併€?}, "鐒﹁檻鐥?: {"cat": "绁炵粡绯荤粺", "title": "鐒﹁檻鐥?, "content": "浠ヨ繃搴︾殑鎷呭咖銆佺揣寮犮€佹亹鎯т负鐗瑰緛锛屽父浼存湁蹇冩偢銆佸嚭姹椼€侀ⅳ鎶栥€佽兏闂枫€佸懠鍚稿洶闅剧瓑韬綋鐥囩姸銆傚垎涓哄箍娉涙€х劍铏戝拰鎯婃亹闅滅銆?, "emergency": "鎯婃亹鍙戜綔锛堝己鐑堟亹鎯ф劅浼翠弗閲嶈函浣撶棁鐘讹級鈥斺€旈渶鎺掗櫎蹇冭剰鐤剧梾", "diet": "瀹滐細瀵屽惈B鏃忕淮鐢熺礌鐨勯鐗┿€侀晛锛堝潥鏋溿€佹繁缁垮彾鑿滐級銆傚繉锛氬挅鍟″洜銆侀厭绮俱€?, "drugs": "SSRI绫伙細甯曠綏瑗挎眬銆佽垗鏇叉灄銆傜煭鏁堣嫰浜屾爱鍗撶被锛氶樋鏅攽浠戯紙鐭湡浣跨敤锛屾垚鐦炬€э級銆?, "synergy": "鑻簩姘崜绫?閰掔簿锛氬懠鍚告姂鍒堕闄┿€?, "food": "瑙勫緥浣滄伅銆傛繁鍛煎惛缁冧範銆傜憸浼姐€佸啣鎯炽€?, "herbs": "澶╃帇琛ュ績涓光€斺€旀粙闃村吇琛€銆佽ˉ蹇冨畨绁炪€?}, "鐪╂檿": {"cat": "绁炵粡绯荤粺", "title": "鐪╂檿", "content": "鎰熻鑷韩鎴栧懆鍥寸幆澧冩棆杞?鏅冨姩鎰熴€傚父瑙佸師鍥狅細鑰崇煶鐥囷紙鑹€ч樀鍙戞€т綅缃€х湬鏅曪級銆佸墠搴缁忕値銆佹灏煎焹鐥呫€侀妞庣梾銆佽剳琛€绠＄梾銆?, "emergency": "鐪╂檿浼村墽鐑堝ご鐥涖€佽鍔涢殰纰嶃€佽偄浣撴棤鍔涒€斺€旇鎯曡剳鍗掍腑锛?, "diet": "瀹滐細娓呮贰楗銆佸瘜鍚淮鐢熺礌銆傚繉锛氳緵杈ｅ埡婵€銆佹祿鑼跺挅鍟°€?, "drugs": "鑰崇煶鐥囷細鎵嬫硶澶嶄綅锛堥閫夛級銆傚墠搴缁忕値锛氭縺绱犮€佸墠搴姂鍒跺墏锛堣嫰娴锋媺鏄庯級銆傛灏煎焹鐥咃細鍒╁翱鍓傘€佸墠搴姂鍒跺墏銆?, "synergy": "鍓嶅涵鎶戝埗鍓傞暱鏈熶娇鐢ㄥ欢缂撳墠搴姛鑳戒唬鍋裤€?, "food": "鍙戜綔鏃跺崸搴婁紤鎭紝閬垮厤澶撮儴蹇€熻繍鍔ㄣ€?, "herbs": "澶╅夯閽╄棨楗€斺€斿钩鑲濇綔闃炽€佺唲椋庢鐪┿€?}, "棰堟鐥?: {"cat": "绁炵粡绯荤粺", "title": "棰堟鐥?, "content": "棰堟閫€琛屾€х梾鍙橈紝澶氬洜闀挎湡浣庡ご瀵艰嚧銆傜棁鐘讹細棰堥儴鍍电‖鐤肩棝銆佸ご鏅曪紙妞庡姩鑴夊彈鍘嬶級銆佹墜鑷傞夯鏈ㄣ€佽偐鑳岄吀鐥涖€備弗閲嶇缁忓帇杩渶鎵嬫湳銆?, "emergency": "鍥涜偄楹绘湪绐佺劧鍔犻噸銆佸ぇ灏忎究澶辩锛堣剨楂撳瀷棰堟鐥咃紝闇€鎬ヨ瘖鎵嬫湳锛?, "diet": "瀹滐細鍚挋椋熺墿锛堢墰濂躲€佽眴鍒跺搧銆佽姖楹伙級銆佸瘜鍚兌鍘熻泲鐧界殑椋熺墿銆傚繉锛氶暱鏈熶綆澶淬€佸挅鍟″洜鎽勫叆杩囧銆?, "drugs": "姝㈢棝锛氬竷娲涜姮銆佸鏉ユ様甯冦€傝倢鑲夋澗寮涳細涔欏搶绔嬫澗銆傝惀鍏荤缁忥細鐢查挻鑳猴紙娲绘€х淮B12锛夈€?, "food": "姘ㄥ熀钁¤悇绯栧拰纭吀杞绱犲鏃╂湡杞閫€鍙樺彲鑳芥湁甯姪銆?, "herbs": "钁涙牴锛堥妞庣梾瑕佽嵂锛夈€侀浮琛€钘ゃ€佸窛鑺庛€佹鏋濃€斺€旇垝绛嬫椿缁溿€?}, "鑵版闂寸洏绐佸嚭": {"cat": "绁炵粡绯荤粺", "title": "鑵版闂寸洏绐佸嚭鐥?, "content": "妞庨棿鐩樼氦缁寸幆鐮磋锛岄珦鏍哥獊鍑哄帇杩缁忔牴銆傜棁鐘讹細鑵扮棝浼翠笅鑲㈡斁灏勭棝锛堝潗楠ㄧ缁忕棝锛夈€侀夯鏈ㄣ€佽倢鍔涗笅闄嶃€?, "emergency": "鍑虹幇椹熬缁煎悎寰侊紙澶у皬渚垮け绂併€侀瀺鍖洪夯鏈級鈥斺€旀€ヨ瘖鎵嬫湳锛?, "diet": "瀹滐細瀵屽惈閽欍€佽泲鐧借川鐨勯鐗┿€傚繉锛氳緵杈ｅ埡婵€銆?, "drugs": "姝㈢棝锛歂SAIDs锛堝竷娲涜姮銆佸鏉ヨ€冩様锛夈€傜缁忔牴姘磋偪锛氱敇闇查唶+鍦板绫虫澗銆傝惀鍏荤缁忥細鐢查挻鑳恒€?, "synergy": "淇濆畧娌荤枟鏃犳晥鎴栧嚭鐜拌倢鍔涗笅闄嶉渶鑰冭檻鎵嬫湳銆?, "food": "鐫＄‖鏉垮簥銆傞伩鍏嶄箙鍧愪箙绔欍€?, "herbs": "鐙椿瀵勭敓姹も€斺€旂椋庢箍銆佹鐥圭棝銆佺泭鑲濊偩銆?}, "闈㈢槴": {"cat": "绁炵粡绯荤粺", "title": "闈㈢缁忛夯鐥癸紙闈㈢槴锛?, "content": "闈㈢缁忓彈鎹熷鑷撮潰閮ㄨ倢鑲夌槴鐥€傚垎涓轰腑鏋㈡€э紙鑴戣绠＄梾寮曡捣锛夊拰鍛ㄥ洿鎬э紙Bell楹荤椆鏈€甯歌锛夈€傝〃鐜帮細棰濈汗娑堝け銆佺溂鐫戦棴鍚堜笉鍏ㄣ€佸彛瑙掓鏂溿€?, "emergency": "绐佺劧鍑虹幇闈㈢槴浼村叾浠栫缁忕郴缁熺棁鐘垛€斺€旇鎯曡剳鍗掍腑锛?, "diet": "瀹滐細娓呮贰鏄撴秷鍖栥€侀珮缁寸敓绱犻ギ椋熴€傚繉锛氳緵杈ｅ埡婵€銆?, "drugs": "鎬ユ€ф湡锛氱硸鐨川婵€绱狅紙寮虹殑鏉撅紝鏃╂湡浣跨敤鍙噺杞绘按鑲匡級銆佺淮鐢熺礌B1銆丅12銆傜溂鐫戦棴鍚堜笉鍏細鐪艰嵂姘淬€佷汉宸ユ唱娑层€?, "synergy": "鏃╂湡锛?2灏忔椂鍐咃級浣跨敤婵€绱犳晥鏋滄渶濂姐€?, "food": "淇濇寔闈㈤儴淇濇殩銆傝繘琛岄潰閮ㄨ倢鑲夊悍澶嶈缁冦€?, "herbs": "鐗垫鏁ｏ紙鐧介檮瀛愩€佸兊铓曘€佸叏铦庯級鈥斺€旂椋庡寲鐥般€侀€氱粶姝㈢棄銆?}, "绫婚婀垮叧鑺傜値": {"cat": "椋庢箍鍏嶇柅绯荤粺", "title": "绫婚婀垮叧鑺傜値", "content": "鑷韩鍏嶇柅鎬у叧鑺傜値鐥囷紝琛ㄧ幇涓哄绉版€у鍏宠妭鑲胯儉鐤肩棝銆佹櫒鍍碉紙>1灏忔椂锛夈€傚彲瀵艰嚧鍏宠妭鐣稿舰鍜屽姛鑳戒抚澶便€?, "emergency": "鍑虹幇鍙戠儹銆佽兏闂枫€佸懠鍚稿洶闅锯€斺€旇鎯曢棿璐ㄦ€ц偤鐐庯紒", "diet": "瀹滐細瀵屽惈Omega-3锛堟繁娴烽奔锛夈€佹姉姘у寲鐗╄川锛堟按鏋滆敩鑿滐級銆傚繉锛氱儫閰掋€?, "drugs": "DMARDs锛堟敼鍙樼梾鎯呮姉椋庢箍鑽級锛氱敳姘ㄨ澏鍛わ紙棣栭€夛級銆佹潵姘熺背鐗广€佺緹姘柟銆傜敓鐗╁埗鍓傦細TNF-伪鎶戝埗鍓傘€?, "synergy": "鐢叉皑铦跺懁+鍙堕吀锛氬噺灏戝壇浣滅敤銆?, "food": "閫傚害杩愬姩淇濇寔鍏宠妭鍔熻兘銆?, "herbs": "鐙椿銆佹瀵勭敓銆佺Е鑹解€斺€旂椋庢箍銆佹鐥圭棝銆?}, "楠ㄥ叧鑺傜値": {"cat": "椋庢箍鍏嶇柅绯荤粺", "title": "楠ㄥ叧鑺傜値", "content": "鍏宠妭杞閫€鍙橈紝甯歌浜庤啙銆侀珛銆佹墜鍏宠妭銆傜棁鐘讹細鍏宠妭鐤肩棝锛堟椿鍔ㄥ悗鍔犻噸锛夈€佸兊纭紙<30鍒嗛挓锛夈€佽偪鑳€銆侀鎿︽劅銆?, "emergency": "鎬ユ€у叧鑺傜孩鑲跨儹鐥涗即鍙戠儹鈥斺€旇鎯曟劅鏌撴€у叧鑺傜値锛?, "diet": "瀹滐細瀵屽惈鑳跺師铔嬬櫧銆侀挋鐨勯鐗┿€傚繉锛氳偉鑳栵紙澧炲姞鍏宠妭璐熸媴锛夈€?, "drugs": "姝㈢棝锛歂SAIDs锛堝鐢?鍙ｆ湇锛夈€佸涔欓叞姘ㄥ熀閰氥€傚叧鑺傝厰娉ㄥ皠锛氱幓鐠冮吀閽犮€佺硸鐨川婵€绱犮€?, "synergy": "姘ㄥ熀钁¤悇绯栧拰纭吀杞绱狅細璇佹嵁涓嶄竴锛屽彲灏濊瘯銆?, "food": "鎺у埗浣撻噸銆傞€傚害杩愬姩锛堟父娉炽€侀獞杞︼級銆?, "herbs": "楠ㄧ琛ャ€佺画鏂€佸▉鐏典粰鈥斺€旇ˉ鑲惧己楠ㄣ€佺椋庨€氱粶銆?}, "绯荤粺鎬х孩鏂戠嫾鐤?: {"cat": "椋庢箍鍏嶇柅绯荤粺", "title": "绯荤粺鎬х孩鏂戠嫾鐤?, "content": "绯荤粺鎬ц嚜韬厤鐤梾锛屽瑙佷簬骞磋交濂虫€с€傝〃鐜帮細闈㈤儴铦跺舰绾㈡枒銆佸叧鑺傜棝銆佸彛鑵旀簝鐤°€佸厜鏁忔劅銆佷箯鍔涖€傚彲绱強鑲俱€佸績銆佽偤銆佽剳銆?, "emergency": "鍑虹幇鎶芥悙銆佹剰璇嗛殰纰嶃€佽兏闂峰翱灏戔€斺€旂疮鍙婇噸瑕佽剰鍣紒", "diet": "瀹滐細鍧囪　楗銆佸瘜鍚淮鐢熺礌D銆傚繉锛氬厜鏁忛鐗╋紙鑺硅彍銆侀鑿滐級銆佽緵杈ｅ埡婵€銆?, "drugs": "鍩虹娌荤枟锛氱緹姘柟銆傚厤鐤姂鍒讹細绯栫毊璐ㄦ縺绱犮€佺～鍞戝槍鍛ゃ€侀湁閰氶吀閰€傜敓鐗╁埗鍓傦細璐濆埄鏈ㄥ崟鎶椼€?, "synergy": "缇熸隘鍠归渶瀹氭湡鐪肩妫€鏌ワ紙瑙嗙綉鑶滅梾鍙橈級銆?, "food": "閬垮厤鏃ユ檼銆傛垝鐑熴€?, "herbs": "鍏懗鍦伴粍涓搞€佺煡鏌忓湴榛勪父鈥斺€旀粙闃存竻鐑€?}, "骞茬嚗缁煎悎寰?: {"cat": "椋庢箍鍏嶇柅绯荤粺", "title": "骞茬嚗缁煎悎寰?, "content": "澶栧垎娉岃吅鍙楃疮鐨勮嚜韬厤鐤梾銆傝〃鐜帮細鍙ｅ共鐪煎共銆佺墮榻跨墖鐘惰劚钀姐€佸叧鑺傜棝銆傚彲浼村叾浠栬嚜韬厤鐤梾銆?, "emergency": "鍑虹幇涔忓姏銆佷綆鐑€佹穻宸寸粨鑲垮ぇ鈥斺€旇鎯曟穻宸寸槫锛?, "diet": "瀹滐細婊嬮槾娑︾嚗銆傚繉锛氳緵杈ｅ埡婵€銆佺儫閰掋€?, "drugs": "瀵圭棁锛氫汉宸ユ唱娑层€佸斁娑叉浛浠ｅ搧銆傚厤鐤皟鑺傦細缇熸隘鍠广€傜疮鍙婅剰鍣細绯栫毊璐ㄦ縺绱?鍏嶇柅鎶戝埗鍓傘€?, "food": "淇濇寔鍙ｈ厰婀挎鼎銆傞伩鍏嶆湇鐢ㄥ紩璧峰彛骞茬殑鑽墿銆?, "herbs": "娌欏弬銆侀害鍐€佺帀绔光€斺€斿吇闃存鼎鐕ャ€?}, "鑽ㄩ夯鐤?: {"cat": "鐨偆绉?, "title": "鑽ㄩ夯鐤?, "content": "鐨偆琛€绠″弽搴旀€у楂橈紝琛ㄧ幇涓洪鍥紙绾㈡枒+姘磋偪锛夈€佺槞鐥掋€傚垎涓烘€ユ€у拰鎱㈡€э紙>6鍛級銆?, "emergency": "鍑虹幇鍠夊ご姘磋偪銆佸懠鍚稿洶闅锯€斺€旇繃鏁忔€т紤鍏嬶紒", "diet": "瀹滐細娓呮贰楗銆傚繉锛氬凡鐭ヨ繃鏁忛鐗┿€佽緵杈ｅ埡婵€銆佹捣椴溿€?, "drugs": "鎶楃粍鑳鸿嵂锛氭隘闆蜂粬瀹氥€佽タ鏇垮埄鍡€傛€ユ€т弗閲嶏細绯栫毊璐ㄦ縺绱犮€傛參鎬э細濂ラ┈鐝犲崟鎶椼€?, "synergy": "閬垮厤鎶撴尃銆?, "food": "璁板綍楗鏃ヨ鎵捐鍥犮€?, "herbs": "娑堥鏁ｂ€斺€旂枏椋庢竻鐑€佸噳琛€姝㈢棐銆?}, "婀跨柟": {"cat": "鐨偆绉?, "title": "婀跨柟/鐗瑰簲鎬х毊鐐?, "content": "鎱㈡€х値鐥囨€х毊鑲ょ梾銆傝〃鐜帮細鐦欑棐銆佺毊鐤癸紙绾㈡枒銆佷笜鐤广€佹按鐤憋級銆佺毊鑲ゅ共鐕ャ€?, "emergency": "缁у彂鎰熸煋锛堢孩鑲跨儹鐥涖€佽創鎬у垎娉岀墿锛?, "diet": "瀹滐細娓呮贰銆佸瘜鍚淮鐢熺礌銆傚繉锛氳緵杈ｅ埡婵€銆佹捣椴溿€佺墰缇婅倝銆?, "drugs": "澶栫敤锛氱硸鐨川婵€绱狅紙鏍规嵁閮ㄤ綅閫夋嫨寮哄害锛夈€侀挋璋冪７閰搁叾鎶戝埗鍓傦紙浠栧厠鑾徃锛夈€傚彛鏈嶏細鎶楃粍鑳鸿嵂銆傜郴缁燂細鍏嶇柅鎶戝埗鍓傘€佺敓鐗╁埗鍓傘€?, "synergy": "婵€绱犻暱鏈熶娇鐢ㄥ鑷寸毊鑲よ悗缂┿€?, "food": "淇濇寔鐨偆婀挎鼎銆傞伩鍏嶇儹姘寸儷娲椼€?, "herbs": "榫欒儐鑽夈€侀粍鑺╋紙婀跨儹锛夛紱鐢熷湴銆佸綋褰掞紙琛€铏氶鐕ワ級銆?}, "閾跺睉鐥?: {"cat": "椋庢箍鍏嶇柅绯荤粺", "title": "閾跺睉鐥?, "content": "鎱㈡€х値鐥囨€х毊鑲ょ梾锛屽吀鍨嬭〃鐜帮細槌炲睉鎬х孩鏂戙€佽杽鑶滅幇璞°€佺偣鐘跺嚭琛€銆傚垎涓哄甯稿瀷銆佸叧鑺傚瀷銆佽創鐤卞瀷銆佺孩鐨梾鍨嬨€?, "emergency": "鍏宠妭鍓х儓鐤肩棝銆佺孩鐨梾鍨嬨€佽創鐤卞瀷鈥斺€旈渶浣忛櫌娌荤枟锛?, "diet": "瀹滐細瀵屽惈缁寸敓绱燗銆丒鐨勯鐗┿€傚繉锛氳緵杈ｅ埡婵€銆侀厭绮俱€佹捣椴溿€?, "drugs": "澶栫敤锛氱硸鐨川婵€绱犮€佺淮鐢熺礌D3琛嶇敓鐗┿€傜郴缁熸不鐤楋細鐢叉皑铦跺懁銆佺幆瀛㈢礌銆傜敓鐗╁埗鍓傦細TNF-伪鎶戝埗鍓傘€両L-17鎶戝埗鍓傘€?, "synergy": "鎰熸煋鍙鍙戞垨鍔犻噸閾跺睉鐥呫€?, "food": "淇濇寔鐨偆婀挎鼎銆傞伩鍏嶅浼ゃ€?, "herbs": "琛€鐑瀷锛氱妧瑙掑湴榛勬堡鍔犲噺銆傝鐦€鍨嬶細妗冪孩鍥涚墿姹ゅ姞鍑忋€?}, "甯︾姸鐤辩柟": {"cat": "椋庢箍鍏嶇柅绯荤粺", "title": "甯︾姸鐤辩柟", "content": "姘寸棙-甯︾姸鐤辩柟鐥呮瘨鍐嶆縺娲伙紝琛ㄧ幇涓烘部鍗曚晶绁炵粡鍒嗗竷鐨勬垚绨囨按鐤变即鐤肩棝銆傚父瑙佷簬鑲嬮棿绁炵粡銆佷笁鍙夌缁忋€?, "emergency": "鍑虹幇鍦ㄩ潰閮紙鐪笺€侀蓟锛夆€斺€斿彲鑳藉奖鍝嶈鍔涳紒", "diet": "瀹滐細娓呮贰鏄撴秷鍖栥€侀珮铔嬬櫧銆傚繉锛氳緵杈ｅ埡婵€銆佸彂鎬ч鐗╋紙鐗涚緤鑲夈€佹捣椴滐級銆?, "drugs": "鎶楃梾姣掞細闃挎様娲涢煢銆佷紣鏄旀礇闊︼紙鏃╂湡浣跨敤锛?2灏忔椂鍐呮渶浣筹級銆傛鐥涳細鍔犲反鍠蜂竵銆佹櫘鐟炲反鏋椼€傚鐢細闃挎様娲涢煢杞啅銆?, "synergy": "鏃╂湡鎶楃梾姣掑彲鍑忓皯鍚庨仐绁炵粡鐥涖€?, "food": "淇濇寔鐨柟娓呮磥骞茬嚗銆?, "herbs": "榫欒儐娉昏倽姹も€斺€旀竻鑲濇郴鐏€佸埄婀胯В姣掋€?}, "鎱㈡€ц偩鐥?: {"cat": "娉屽翱绯荤粺", "title": "鎱㈡€ц偩鑴忕梾", "content": "鑲捐剰缁撴瀯/鍔熻兘寮傚父>3涓湀銆傚垎涓?-5鏈熴€傚父瑙佸師鍥狅細绯栧翱鐥呫€侀珮琛€鍘嬨€佹參鎬ц偩灏忕悆鑲剧値銆?, "emergency": "灏块噺鏄捐憲鍑忓皯鎴栨棤灏裤€佷弗閲嶆按鑲裤€佹剰璇嗛殰纰嶁€斺€斿翱姣掔棁锛?, "diet": "浼樿川浣庤泲鐧介ギ椋燂紙0.6-0.8g/kg/澶╋級銆傞檺閽狅紙<2g/澶╋級銆傞檺閽俱€佺７锛堟櫄鏈燂級銆?, "drugs": "鎺у埗鍘熷彂鐥咃細闄嶅帇锛圓CEI/ARB棣栭€夛紝淇濇姢鑲捐剰锛夈€侀檷绯栥€傚苟鍙戠棁锛氬埄灏垮墏銆佺籂閰搞€佽ˉ閽欍€侀鐥呮不鐤椼€?, "synergy": "ACEI/ARB+閽剧洂锛氬彲鑳藉鑷撮珮閽捐鐥囥€?, "food": "瀹氭湡鐩戞祴鑲惧姛鑳藉拰鐢佃В璐ㄣ€傞伩鍏嶈偩姣掓€ц嵂鐗╋紙NSAIDs銆侀€犲奖鍓傦級銆?, "herbs": "澶ч粍銆佷腹鍙傘€佺Н闆崏鈥斺€旈€氳厬娉勬祳銆佹椿琛€鍖栫榾銆?}, "灏胯矾鎰熸煋": {"cat": "娉屽翱绯荤粺", "title": "灏胯矾鎰熸煋", "content": "缁嗚弻渚靛叆娉屽翱绯荤粺寮曡捣鐨勭値鐥囥€傚垎涓轰笂灏胯矾鎰熸煋锛堣偩鐩傝偩鐐庯級鍜屼笅灏胯矾鎰熸煋锛堣唨鑳辩値銆佸翱閬撶値锛夈€傜棁鐘讹細灏块銆佸翱鎬ャ€佸翱鐥涖€佸彂鐑€?, "emergency": "楂樼儹浼磋叞鐥涒€斺€旇偩鐩傝偩鐐庯紝闇€鎶楃敓绱犳不鐤楋紒", "diet": "瀹滐細娓呮贰楗銆佽冻閲忛ギ姘达紙>1500ml/澶╋級銆傚繉锛氳緵杈ｅ埡婵€銆侀厭绮俱€?, "drugs": "涓嬪翱璺劅鏌擄細纾烽湁绱犮€佸憢鍠冨Ε鍥犮€佸ご瀛㈢被锛?-7澶╋級銆備笂灏胯矾鎰熸煋锛氬柟璇洪叜绫汇€佸ご瀛㈢被锛?0-14澶╋級銆?, "synergy": "澶氬枬姘淬€佹寜鏃舵帓灏挎槸棰勯槻鍏抽敭銆?, "food": "娉ㄦ剰涓汉鍗敓銆?, "herbs": "鍏鏁ｏ紙杞﹀墠瀛愩€佺灴楹︺€佽惞钃勶級鈥斺€旀竻鐑埄婀裤€侀€氭穻姝㈢棝銆?}, "鍓嶅垪鑵哄鐢?: {"cat": "娉屽翱绯荤粺", "title": "鑹€у墠鍒楄吅澧炵敓", "content": "鑰佸勾鐢锋€у父瑙侊紝琛ㄧ幇涓哄翱棰戯紙灏ゅ叾澶滃翱澧炲锛夈€佸翱鎬ャ€佸翱绛夊緟銆佸翱娴佸彉缁嗐€佸翱涓嶅敖鎰熴€?, "emergency": "绐佺劧瀹屽叏涓嶈兘鎺掑翱锛堝翱娼寸暀锛夆€斺€旈渶瀵煎翱锛?, "diet": "瀹滐細瀵屽惈閿屻€佺淮鐢熺礌E鐨勯鐗┿€傚繉锛氳緵杈ｅ埡婵€銆佸挅鍟″洜銆侀厭绮俱€?, "drugs": "伪鍙椾綋闃绘粸鍓傦細鍧︾储缃楄緵锛堝揩閫熸敼鍠勭棁鐘讹級銆?伪杩樺師閰舵姂鍒跺墏锛氶潪閭ｉ泟鑳猴紙缂╁皬鍓嶅垪鑵轰綋绉紝闇€闀挎湡鏈嶇敤锛夈€?, "synergy": "伪鍙椾綋闃绘粸鍓?5伪杩樺師閰舵姂鍒跺墏锛氳仈鍚堟不鐤楁晥鏋滄洿濂姐€?, "food": "瀹氭湡澶嶆煡PSA鎺掗櫎鍓嶅垪鑵虹檶銆?, "herbs": "鍓嶅垪搴凤紙榛勮姫銆佷腹鍙傘€佹浠侊級鈥斺€旂泭姘旀椿琛€銆佸寲鐦€閫氱粶銆?}, "鑲剧粨鐭?: {"cat": "娉屽翱绯荤粺", "title": "娉屽翱绯荤粨鐭?, "content": "娉屽翱绯荤粺褰㈡垚鐨勫潥纭墿璐ㄣ€傝〃鐜颁负绐佺劧鍑虹幇鐨勫墽鐑堣叞鐥涳紙鑲剧粸鐥涳級銆佽灏裤€佸翱棰戝翱鎬ャ€?, "emergency": "缁撶煶浼村彂鐑€斺€旇鎯曡創鑲撅紒", "diet": "鏍规嵁缁撶煶鎴愬垎璋冩暣銆傛櫘閬嶏細澶氬枬姘达紙>2000ml/澶╋級銆佸潎琛￠ギ椋熴€?, "drugs": "姝㈢棝锛歂SAIDs銆侀樋鐗囩被銆傛帓鐭筹細伪鍙椾綋闃绘粸鍓傦紙鍧︾储缃楄緵锛夈€佸埄灏垮墏锛堝櫥鍡被锛夈€?, "synergy": "浣撳鍐插嚮娉㈢鐭炽€佽緭灏跨闀滃彇鐭斥€斺€旀牴鎹粨鐭冲ぇ灏忎綅缃€夋嫨銆?, "food": "鏍规嵁缁撶煶鎴愬垎鍒嗘瀽缁撴灉璋冩暣楗銆?, "herbs": "閲戦挶鑽夈€佹捣閲戞矙銆侀浮鍐呴噾鈥斺€斿埄灏挎帓鐭炽€?}, "璐": {"cat": "琛€娑茬郴缁?, "title": "璐", "content": "琛€绾㈣泲鐧芥垨绾㈢粏鑳炲噺灏戙€傚父瑙佸師鍥狅細缂洪搧鎬э紙鏈€甯歌锛夈€佸法骞肩粏鑳炴€с€佹參鎬х梾鎬с€佹憾琛€鎬с€傜棁鐘讹細涔忓姏銆佸ご鏅曘€佸績鎮搞€侀潰鑹茶媿鐧姐€?, "emergency": "琛€绾㈣泲鐧?60g/L鎴栨€ユ€уぇ鍑鸿鈥斺€旇緭琛€娌荤枟锛?, "diet": "鏍规嵁绫诲瀷璋冩暣銆傜己閾佹€э細瀵屽惈閾佺殑椋熺墿锛堢孩鑲夈€佸姩鐗╄倽鑴忋€佽鍒跺搧锛夈€?, "drugs": "缂洪搧鎬э細鍙ｆ湇閾佸墏锛堢～閰镐簹閾併€佺惀鐝€閰镐簹閾侊級+缁寸敓绱燙銆傚法骞肩粏鑳炴€э細鍙堕吀銆佺淮鐢熺礌B12銆?, "synergy": "閾佸墏涓庤尪銆佸挅鍟°€侀挋鍓傚悓鏈嶅奖鍝嶅惛鏀躲€?, "food": "鍙ｆ湇閾佸墏鏃堕伩鍏嶅枬鑼躲€?, "herbs": "褰撳綊銆佺啛鍦般€侀粍鑺€斺€旇ˉ姘斿吇琛€銆?}, "鑲虹檶": {"cat": "鑲跨槫", "title": "鑲虹檶", "content": "鎴戝浗鍙戠梾鐜囧拰姝讳骸鐜囨渶楂樼殑鎭舵€ц偪鐦ゃ€傚垎涓哄皬缁嗚優鑲虹檶鍜岄潪灏忕粏鑳炶偤鐧屻€傚嵄闄╁洜绱狅細鍚哥儫锛堟渶閲嶈锛夈€佺┖姘旀薄鏌撱€佽亴涓氭毚闇层€?, "emergency": "鍑虹幇鍜銆佽兏鐥涘姞閲嶃€佸懠鍚稿洶闅锯€斺€斿彲鑳芥櫄鏈燂紒", "diet": "瀹滐細楂樿泲鐧姐€侀珮鐑噺銆佹槗娑堝寲銆傚繉锛氳緵杈ｅ埡婵€銆佽厡鍒堕鍝併€?, "drugs": "鎵嬫湳锛氭棭鏈熼閫夈€傚寲鐤楋細閾傜被涓哄熀纭€銆傞澏鍚戞不鐤楋細閽堝EGFR銆丄LK绛夌獊鍙樸€傚厤鐤不鐤楋細PD-1/PD-L1鎶戝埗鍓傘€?, "synergy": "鍩哄洜妫€娴嬫寚瀵奸澏鍚戞不鐤楅€夋嫨銆?, "food": "鎴掔儫锛堟渶閲嶈锛夈€傚畾鏈熶綋妫€锛堜綆鍓傞噺CT锛夈€?, "herbs": "鎵舵鍥烘湰锛氬弬鑺壎姝ｆ敞灏勬恫銆佽礊鑺壎姝ｉ绮掋€?}, "鑳冪檶": {"cat": "鑲跨槫", "title": "鑳冪檶", "content": "甯歌娑堝寲閬撴伓鎬ц偪鐦ゃ€傚嵄闄╁洜绱狅細骞介棬铻烘潌鑿屾劅鏌撱€佽厡鍒堕鍝併€佺儫鐔忛鍝併€侀仐浼犮€傛棭鏈熸棤鐥囩姸鎴栭潪鐗瑰紓鎬ф秷鍖栦笉鑹€?, "emergency": "鍑虹幇鍛曡銆侀粦渚裤€佷綋閲嶆槑鏄句笅闄嶁€斺€旇鎯曟櫄鏈燂紒", "diet": "瀹滐細鏂伴矞钄灉銆佸皯鐩愬皯鑵屾笉銆傚繉锛氳厡鍒躲€佺儫鐔忋€侀珮鐩愩€佽緵杈ｃ€?, "drugs": "鎵嬫湳锛氭牴娌诲叧閿€傚寲鐤楋細姘熷翱鍢у暥绫?閾傜被銆傞澏鍚戯細鏇插Ε鐝犲崟鎶楋紙HER2闃虫€э級銆傚厤鐤不鐤楋細PD-1鎶戝埗鍓傘€?, "synergy": "鏍归櫎骞介棬铻烘潌鑿屽彲闄嶄綆鑳冪檶椋庨櫓銆?, "food": "鏍规不骞介棬铻烘潌鑿屻€傚畾鏈熻儍闀滄鏌ワ紙楂樺嵄浜虹兢锛夈€?, "herbs": "鍋ヨ劸鐩婃皵锛氬洓鍚涘瓙姹ゅ姞鍑忋€?}, "缁撶洿鑲犵檶": {"cat": "鑲跨槫", "title": "缁撶洿鑲犵檶", "content": "甯歌娑堝寲閬撴伓鎬ц偪鐦ゃ€傚嵄闄╁洜绱狅細楂樿剛鑲綆绾ょ淮楗銆佽偉鑳栥€佸惛鐑熴€佸鏃忓彶銆傝〃鐜帮細澶т究涔犳儻鏀瑰彉銆佷究琛€銆佽吂鐥涖€佽传琛€銆?, "emergency": "鎬ユ€ц偁姊楅樆銆佺┛瀛斺€斺€旀€ヨ瘖鎵嬫湳锛?, "diet": "瀹滐細楂樼氦缁淬€佷綆鑴傝偑楗銆傚繉锛氱孩鑲夈€佸姞宸ヨ倝鍒跺搧銆侀珮鑴傝偑楗銆?, "drugs": "鎵嬫湳锛氭牴娌诲叧閿€傚寲鐤楋細CAPOX銆丗OLFOX鏂规銆傞澏鍚戯細璐濅紣鍗曟姉銆佽タ濡ユ様鍗曟姉銆傚厤鐤不鐤楋細PD-1锛坉MMR/MSI-H锛夈€?, "synergy": "缁撹偁闀滅瓫鏌ユ棭鏈熷彂鐜扮檶鍓嶇梾鍙橈紙鑵虹槫锛夈€?, "food": "瀹氭湡绛涙煡锛堢粨鑲犻暅锛夈€?, "herbs": "妲愯姳銆佸湴姒嗐€佽丹鑺嶁€斺€斿噳琛€姝㈣銆佸寲鐦€瑙ｆ瘨銆?}, "涔宠吅鐧?: {"cat": "鑲跨槫", "title": "涔宠吅鐧?, "content": "濂虫€ф渶甯歌鎭舵€ц偪鐦ゃ€傚嵄闄╁洜绱狅細閬椾紶锛圔RCA1/2绐佸彉锛夈€侀泴婵€绱犳毚闇层€佺敓鑲插洜绱犮€傝〃鐜帮細鏃犵棝鑲垮潡銆佷钩澶存孩娑层€佺毊鑲ゆ鐨牱鏀瑰彉銆?, "emergency": "鍑虹幇楠ㄧ棝銆佸挸鍡解€斺€旇鎯曡浆绉伙紒", "diet": "瀹滐細瀵屽惈钄彍姘存灉銆佸叏璋风墿銆傚繉锛氶珮鑴傝偑楗銆侀厭绮俱€?, "drugs": "鎵嬫湳锛氫繚涔虫垨鍏ㄥ垏銆傚寲鐤楋細钂界幆绫?绱潐绫汇€傚唴鍒嗘硨娌荤枟锛氫粬鑾様鑺€佽姵棣欓叾鎶戝埗鍓傘€傞澏鍚戯細鏇插Ε鐝犲崟鎶楋紙HER2+锛夈€?, "synergy": "瀹氭湡涔宠吅瓒呭０/閽奸澏绛涙煡銆?, "food": "姣嶄钩鍠傚吇鍙檷浣庨闄┿€?, "herbs": "鐤忚倽鐞嗘皵锛氶€嶉仴鏁ｅ姞鍑忋€?}, "鐢茬姸鑵虹檶": {"cat": "鑲跨槫", "title": "鐢茬姸鑵虹檶", "content": "鍐呭垎娉岀郴缁熸渶甯歌鎭舵€ц偪鐦わ紝棰勫悗杈冨ソ銆傜梾鐞嗙被鍨嬶細涔冲ご鐘剁檶锛堟渶甯歌锛夈€佹护娉＄檶銆侀珦鏍风檶銆佹湭鍒嗗寲鐧屻€?, "emergency": "鍑虹幇澹伴煶鍢跺搼銆佸懠鍚稿洶闅锯€斺€旇鎯曟皵绠′镜鐘紒", "diet": "瀹滐細鍧囪　楗銆傚繉锛氳緵杈ｅ埡婵€銆?, "drugs": "鎵嬫湳锛氱敳鐘惰吅鍏ㄥ垏/娆″叏鍒囥€傜131娌荤枟锛氬垎鍖栧瀷鐢茬姸鑵虹檶銆俆SH鎶戝埗娌荤枟锛氬乏鐢茬姸鑵虹礌銆?, "synergy": "瀹氭湡澶嶆煡鐢茬姸鑵虹悆铔嬬櫧銆?, "food": "鐢茬姸鑵哄叏鍒囧悗闇€琛ラ挋鍜岀淮鐢熺礌D銆?, "herbs": "澶忔灟鑽夈€佹禉璐濇瘝鈥斺€斿寲鐥版暎缁撱€?}, "鏈堢粡涓嶈皟": {"cat": "濡囦骇绉?, "title": "鏈堢粡涓嶈皟", "content": "鏈堢粡鍛ㄦ湡銆佺粡鏈熴€佺粡閲忓紓甯搞€傚父瑙佸師鍥狅細鍐呭垎娉屽け璋冿紙澶氬泭鍗靛发缁煎悎寰併€佺敳鐘惰吅鍔熻兘寮傚父锛夈€佸瓙瀹梾鍙樸€佹儏缁帇鍔涖€?, "emergency": "鏈堢粡閲忚繃澶氬鑷磋传琛€鎴栧仠缁忓悗鍑鸿鈥斺€旇鎯曞瓙瀹唴鑶滅檶锛?, "diet": "瀹滐細瀵屽惈閾併€佽泲鐧借川鐨勯鐗┿€傚繉锛氱敓鍐枫€佽緵杈ｅ埡婵€銆?, "drugs": "璋冪粡锛氶泴瀛曟縺绱犲懆鏈熸不鐤椼€傛帓鍗甸殰纰嶏細鍏嬬綏绫宠姮銆佹潵鏇插攽銆傚鍥婂嵉宸㈢患鍚堝緛锛氫簩鐢插弻鑳嶃€佽揪鑻?35銆?, "synergy": "闀挎湡鏈堢粡涓嶈皟闇€鎺掓煡澶氬泭鍗靛发缁煎悎寰併€佺敳鐘惰吅鐤剧梾銆?, "food": "璁板綍鏈堢粡鍛ㄦ湡銆?, "herbs": "鍥涚墿姹ゃ€佷箤楦＄櫧鍑や父鈥斺€旇ˉ琛€璋冪粡銆?}, "鐥涚粡": {"cat": "濡囦骇绉?, "title": "鐥涚粡", "content": "鏈堢粡鏈熶笅鑵归儴鐤肩棝銆傚垎涓哄師鍙戞€э紙鏃犲櫒璐ㄦ€х梾鍙橈級鍜岀户鍙戞€э紙瀛愬鍐呰啘寮備綅鐥囥€佸瓙瀹吅鑲岀梾绛夛級銆?, "emergency": "鐤肩棝鍔犻噸鎴栦笌浠ュ線涓嶅悓鈥斺€旀帓鏌ュ櫒璐ㄦ€х柧鐥咃紒", "diet": "瀹滐細娓╃儹銆佹槗娑堝寲椋熺墿銆傚繉锛氱敓鍐枫€佽緵杈ｃ€佸挅鍟″洜銆?, "drugs": "姝㈢棝锛歂SAIDs锛堝竷娲涜姮銆佹湀缁忓墠棰勯槻鎬ф湇鐢級銆傞伩瀛曡嵂锛氭姂鍒舵帓鍗点€傚師鍙戞€х棝缁忔晥鏋滆壇濂姐€?, "synergy": "鐑暦鍙紦瑙ｇ柤鐥涖€?, "food": "閫傚害杩愬姩銆備繚鎸佹俯鏆栥€?, "herbs": "鐩婃瘝鑽夈€佸綋褰掋€佸窛鑺庘€斺€旀椿琛€鍖栫榾銆佽皟缁忔鐥涖€?}, "鏇村勾鏈熺患鍚堝緛": {"cat": "濡囦骇绉?, "title": "鏇村勾鏈熺患鍚堝緛", "content": "濂虫€х粷缁忓墠鍚庡洜闆屾縺绱犳按骞充笅闄嶅嚭鐜扮殑涓€绯诲垪鐥囩姸銆傝〃鐜帮細娼儹鍑烘睏銆佹儏缁尝鍔ㄣ€佸け鐪犮€侀鍏宠妭鐥涖€侀槾閬撳共娑┿€?, "emergency": "鍑虹幇寮傚父瀛愬鍑鸿鈥斺€旀帓鏌ュ瓙瀹唴鑶滅梾鍙橈紒", "diet": "瀹滐細瀵屽惈閽欍€佺淮鐢熺礌D鐨勯鐗┿€傚繉锛氳緵杈ｅ埡婵€銆佸挅鍟″洜銆侀厭绮俱€?, "drugs": "婵€绱犳浛浠ｆ不鐤楋紙MHT锛夛細绐楀彛鏈燂紙60宀佸墠鎴栫粷缁?0骞村唴锛変娇鐢ㄥ埄澶т簬寮娿€傞渶涓綋鍖栨柟妗堛€?, "synergy": "MHT闇€瀹氭湡澶嶆煡璇勪及鍒╁紛銆?, "food": "琛ュ厖閽欏墏锛?200mg/澶╋級鍜岀淮鐢熺礌D锛?00-1000IU/澶╋級銆?, "herbs": "鏇村勾瀹夈€佸叚鍛冲湴榛勪父鈥斺€旀粙闃磋ˉ鑲俱€佸畞蹇冨畨绁炪€?}, "涔宠吅澧炵敓": {"cat": "濡囦骇绉?, "title": "涔宠吅澧炵敓鐥?, "content": "涔宠吅缁勭粐澧炵敓鍜岄€€琛屾€ф敼鍙橈紝涓庨泴婵€绱犳按骞虫尝鍔ㄦ湁鍏炽€傝〃鐜帮細涔虫埧鑳€鐥涖€佽偪鍧楋紙闅忔湀缁忓懆鏈熷彉鍖栵級銆?, "emergency": "鍑虹幇鍥哄畾鑲垮潡鎴栦钩澶存孩琛€鈥斺€旀帓鏌ヤ钩鑵虹檶锛?, "diet": "瀹滐細瀵屽惈缁寸敓绱燛銆佺氦缁寸殑椋熺墿銆傚繉锛氳緵杈ｅ埡婵€銆佸挅鍟″洜銆侀珮鑴傝偑楗銆?, "drugs": "姝㈢棝锛氶€嶉仴涓搞€佷钩鐧栨秷銆傝皟鑺傚唴鍒嗘硨锛氫粬鑾様鑺紙閲嶅害锛夈€?, "synergy": "瀹氭湡涔宠吅瓒呭０/閽奸澏澶嶆煡銆?, "food": "淇濇寔蹇冩儏鑸掔晠銆?, "herbs": "姗樻牳銆佹鍙躲€佸鏋崏鈥斺€旂枏鑲濇暎缁撱€?}, "闃撮亾鐐?: {"cat": "濡囦骇绉?, "title": "闃撮亾鐐?, "content": "闃撮亾榛忚啘鐐庣棁銆傜被鍨嬶細缁嗚弻鎬э紙鏈€甯歌锛夈€佸康鐝犺弻鎬э紙闇夎弻鎬э級銆佹淮铏€с€傝〃鐜帮細鐦欑棐銆佸紓鍛炽€佸垎娉岀墿寮傚父銆?, "emergency": "鍙嶅鍙戜綔鎴栦即闅忓叏韬棁鐘?, "diet": "瀹滐細娓呮贰楗銆佸瘜鍚泭鐢熻弻鐨勯鐗┿€傚繉锛氳緵杈ｅ埡婵€銆佺敎椋熴€?, "drugs": "缁嗚弻鎬э細鐢茬鍞戙€傚康鐝犺弻鎬э細鍏嬮湁鍞戙€佹盁搴峰攽銆傛淮铏€э細鐢茬鍞戯紙澶鍚屾不锛夈€?, "synergy": "闀挎湡浣跨敤鎶楃敓绱犵牬鍧忛槾閬撹弻缇ゃ€?, "food": "淇濇寔澶栭槾娓呮磥骞茬嚗銆傞伩鍏嶈繃搴︽竻娲椼€?, "herbs": "鑻﹀弬銆侀粍鏌忋€佽泧搴婂瓙鈥斺€旀竻鐑嚗婀裤€佹潃铏鐥掋€?}, "灏忓効鍙戠儹": {"cat": "鍎跨", "title": "鍎跨鍙戠儹", "content": "鍎跨甯歌鐥囩姸銆備綋娓?38鈩冧负鍙戠儹銆傚父瑙佸師鍥狅細鎰熸煋锛堢梾姣掍负涓伙級銆傚鐞嗭細38.5鈩冧互涓嬬墿鐞嗛檷娓╋紝38.5鈩冧互涓婄敤閫€鐑嵂銆?, "emergency": "3涓湀浠ヤ笅濠村効鍙戠儹銆佹寔缁珮鐑笉閫€銆佸嚭鐜版娊鎼愩€佺毊鐤光€斺€旂珛鍗冲氨鍖伙紒", "diet": "瀹滐細娓呮贰娴佽川銆佽ˉ鍏呮按鍒嗐€傚繉锛氳緵杈ｃ€佹补鑵汇€?, "drugs": "瀵逛箼閰版皑鍩洪厷锛堥閫夛紝3涓湀浠ヤ笂锛夈€佸竷娲涜姮锛?涓湀浠ヤ笂锛夈€傜鐢細闃垮徃鍖规灄锛堢憺姘忕患鍚堝緛锛夈€佸凹缇庤垝鍒╋紙鍎跨绂佺敤锛夈€?, "synergy": "閫€鐑嵂涓嶈鍙犲姞浣跨敤銆?, "food": "灏戦噺澶氭鍠傛按銆?, "herbs": "灏忓効鎺ㄦ嬁锛氭竻澶╂渤姘淬€侀€€鍏厬銆?}, "灏忓効鑵规郴": {"cat": "鍎跨", "title": "鍎跨鑵规郴", "content": "澶т究娆℃暟澧炲銆佹€х姸鏀瑰彉銆傚父瑙佸師鍥狅細鐥呮瘨鎬э紙杞姸鐥呮瘨锛夈€佺粏鑿屾€с€傛不鐤楋細琛ユ恫锛堝叧閿級銆佽皟鑺傝偁閬撹弻缇ゃ€佸鐥囨不鐤椼€?, "emergency": "鍑虹幇鑴辨按琛ㄧ幇锛堢溂绐濆嚬闄枫€佺毊鑲ゅ脊鎬у樊銆佸翱灏戯級銆佽渚裤€侀珮鐑?, "diet": "瀹滐細琛ユ恫鐩愩€佺背姹ゃ€佺█绮ャ€傚繉锛氭补鑵汇€佺敓鍐枫€佹灉姹侊紙鍚硸楂橈級銆?, "drugs": "琛ユ恫鐩怚II锛氳ˉ鍏呮按鍒嗗拰鐢佃В璐ㄣ€傝挋鑴辩煶鏁ｏ細淇濇姢鑲犻粡鑶溿€傜泭鐢熻弻锛氬竷鎷夋皬閰垫瘝鑿屻€佸弻姝ф潌鑿屻€?, "synergy": "涓嶅缓璁娇鐢ㄥ己鍔涙娉昏嵂锛堝Θ纰嶆瘨绱犳帓鍑猴級銆?, "food": "缁х画姣嶄钩鍠傚吇銆傞厤鏂瑰ザ鍠傚吇鍙殏鏃舵崲鏃犱钩绯栧ザ绮夈€?, "herbs": "鎺ㄦ嬁锛氭懇鑵广€佹弶鑴愩€?}, "鎵嬭冻鍙ｇ梾": {"cat": "鍎跨", "title": "鎵嬭冻鍙ｇ梾", "content": "鑲犻亾鐥呮瘨寮曡捣鐨勬€ユ€т紶鏌撶梾銆?宀佷互涓嬪効绔ュ瑙併€傝〃鐜帮細鎵嬨€佽冻銆佸彛鑵旂柋鐤癸紝浼村彂鐑€?, "emergency": "鍑虹幇楂樼儹涓嶉€€銆佸棞鐫°€佸憰鍚愩€佽倢闃垫寷鈥斺€旇鎯曢噸鐥囨墜瓒冲彛鐥咃紒", "diet": "瀹滐細娓呮贰銆佹槗娑堝寲銆佹俯鍑夋祦璐ㄣ€傚繉锛氳緵杈ｃ€佸捀閰搞€佸埡婵€鎬ч鐗┿€?, "drugs": "瀵圭棁娌荤枟锛氭棤鐗规晥鎶楃梾姣掕嵂銆傞€€鐑細甯冩礇鑺?瀵逛箼閰版皑鍩洪厷銆傚彛鑵旂柤鐥涳細寮€鍠夊墤鍠烽浘銆?, "synergy": "闅旂鑷崇柋鐤规秷閫€锛堥€氬父1鍛級銆?, "food": "淇濇寔鍙ｈ厰娓呮磥銆?, "herbs": "閲戦摱鑺便€佽繛缈樸€佹澘钃濇牴鈥斺€旀竻鐑В姣掋€?}, "姘寸棙": {"cat": "鍎跨", "title": "姘寸棙", "content": "姘寸棙-甯︾姸鐤辩柟鐥呮瘨寮曡捣銆傝〃鐜帮細鍙戠儹銆佺槞鐥掓€х毊鐤癸紙绾㈡枒鈫掍笜鐤光啋姘寸柋鈫掔粨鐥傦級銆備紶鏌撴€у己銆?, "emergency": "鍑虹幇楂樼儹銆佸ご鐥涖€佸憰鍚愨€斺€旇鎯曡剳鐐庯紒", "diet": "瀹滐細娓呮贰銆佹槗娑堝寲楗銆傚繉锛氳緵杈ｃ€佸彂鎬ч鐗╋紙楸艰櫨缇婅倝锛夈€?, "drugs": "鎶楃梾姣掞細闃挎様娲涢煢锛堟棭鏈熶娇鐢級銆傚鐥囷細閫€鐑€佹鐥掋€?, "synergy": "闅旂鑷冲叏閮ㄧ粨鐥傦紙閫氬父1鍛級銆?, "food": "鍓寚鐢查伩鍏嶆姄鐮淬€?, "herbs": "閾剁繕鏁ｂ€斺€旂枏椋庢竻鐑€佽В姣掗€忕柟銆?}, "杩戣": {"cat": "浜斿畼绉?, "title": "杩戣", "content": "鐪肩悆杩囧害鐢熼暱瀵艰嚧杩滃鐗╀綋鎴愬儚鍦ㄨ缃戣啘鍓嶃€傚垎涓鸿酱鎬ц繎瑙嗗拰灞堝厜鎬ц繎瑙嗐€傞珮搴﹁繎瑙嗭紙>600搴︼級澧炲姞鐪煎簳鐥呭彉椋庨櫓銆?, "emergency": "鍑虹幇椋炶殜鐥囥€侀棯鍏夋劅銆佽閲庣己鎹熲€斺€旇鎯曡缃戣啘鑴辩锛?, "diet": "瀹滐細瀵屽惈缁寸敓绱燗銆丆銆丒锛屽彾榛勭礌鐨勯鐗╋紙鑳¤悵鍗溿€佽摑鑾撱€佺豢鍙惰敩鑿滐級銆?, "drugs": "妗嗘灦鐪奸暅锛氭渶瀹夊叏銆傝鑶滃褰㈤暅锛圤K闀滐級锛氭帶鍒惰繎瑙嗚繘灞曘€傛淮鐪兼恫锛氫綆娴撳害闃挎墭鍝侊紙0.01%锛夈€?, "synergy": "姣忓ぉ鎴峰娲诲姩>2灏忔椂鍙闃茶繎瑙嗐€?, "food": "淇濇寔姝ｇ‘璇诲啓濮垮娍锛?3cm浠ヤ笂锛夈€?, "herbs": "鏉炶強鍦伴粍涓糕€斺€旀粙鑲惧吇鑲濄€佹槑鐩€?}, "骞茬溂鐥?: {"cat": "浜斿畼绉?, "title": "骞茬溂鐥?, "content": "娉恫鍒嗘硨鍑忓皯鎴栬捀鍙戣繃蹇鑷寸溂琛ㄤ笉閫傘€傜棁鐘讹細鐪煎共銆佺溂绾€佸紓鐗╂劅銆佽鐤插姵銆?, "emergency": "鍑虹幇涓ラ噸鐪肩棝銆佽鍔涗笅闄?, "diet": "瀹滐細瀵屽惈Omega-3锛堟繁娴烽奔锛夈€佺淮鐢熺礌A鐨勯鐗┿€傚繉锛氶暱鏃堕棿浣跨敤鐢靛瓙浜у搧銆?, "drugs": "浜哄伐娉恫锛氱幓鐠冮吀閽犳淮鐪兼恫锛堥閫夛級銆傛姉鐐庯細鐜绱犳淮鐪兼恫銆?, "synergy": "鐪ㄧ溂缁冧範銆佺儹鏁峰彲缂撹В銆?, "food": "閬垮厤闀挎椂闂翠僵鎴撮殣褰㈢溂闀溿€?, "herbs": "鑿婅姳銆佹灨鏉炪€佸喅鏄庡瓙鈥斺€旀竻鑲濇槑鐩€?}, "涓€崇値": {"cat": "浜斿畼绉?, "title": "涓€崇値", "content": "涓€宠厰鐐庣棁銆傚垎涓哄垎娉屾€т腑鑰崇値锛堢Н娑诧級鍜屽寲鑴撴€т腑鑰崇値銆傚父瑙佽〃鐜帮細鑰崇棝銆佸惉鍔涗笅闄嶃€佽€抽福銆?, "emergency": "鍑虹幇楂樼儹銆佸ご鐥涖€佸憰鍚愨€斺€旇鎯曡剳鑶滅値锛?, "diet": "瀹滐細娓呮贰楗銆傚繉锛氳緵杈ｅ埡婵€銆?, "drugs": "鎶楃敓绱狅細闃胯帿瑗挎灄/澶村绫汇€傚噺鍏呰鍓傦細楹婚粍纰辨淮榧汇€?, "synergy": "鎿ら蓟娑曟椂涓嶈涓や晶鍚屾椂鎿ゃ€?, "food": "閬垮厤姘磋繘鍏ヨ€虫湹銆?, "herbs": "榫欒儐鑽夈€佹煷鑳°€侀粍鑺┾€斺€旀竻鑲濇郴鐏€?}, "榧荤値": {"cat": "浜斿畼绉?, "title": "榧荤値", "content": "榧婚粡鑶滅値鐥囥€傚垎涓鸿繃鏁忔€ч蓟鐐庯紙瑙佺浉鍏宠瘝鏉★級鍜岄潪杩囨晱鎬ч蓟鐐庛€傜棁鐘讹細榧诲銆佹祦娑曘€佹墦鍠峰殢銆侀蓟鐥掋€?, "emergency": "鍑虹幇鍡呰涓уけ銆佸ご鐥涖€侀蓟鍑鸿", "diet": "瀹滐細娓呮贰楗銆傚繉锛氳緵杈ｅ埡婵€銆佸凡鐭ヨ繃鏁忓師銆?, "drugs": "榧荤敤绯栫毊璐ㄦ縺绱狅細甯冨湴濂堝痉銆佹盁鏇垮崱鏉俱€傛姉缁勮兒鑽細姘浄浠栧畾銆佽タ鏇垮埄鍡€傜敓鐞嗙洂姘村啿娲椼€?, "synergy": "閬垮厤鎺ヨЕ杩囨晱鍘熷拰鍒烘縺鐗┿€?, "food": "淇濇寔瀹ゅ唴娓呮磥銆?, "herbs": "鑻嶈€冲瓙銆佽緵澶枫€佺櫧鑺封€斺€斿鑲洪€氱獚銆?}, "鍜界値": {"cat": "浜斿畼绉?, "title": "鍜界値", "content": "鍜介儴榛忚啘鐐庣棁銆傚垎涓烘€ユ€у拰鎱㈡€с€傜棁鐘讹細鍜界棝銆佸捊骞层€佸紓鐗╂劅銆佸挸鍡姐€?, "emergency": "鍑虹幇楂樼儹銆佸懠鍚稿洶闅锯€斺€旇鎯曟€ユ€т細鍘岀値锛?, "diet": "瀹滐細娓呮贰銆佹俯鍑夐ギ椋熴€傚繉锛氳緵杈ｅ埡婵€銆佽繃鐑鐗┿€佺儫閰掋€?, "drugs": "鍚墖锛氳タ鍦扮銆佽儢澶ф捣鍚墖銆傚捊閮ㄥ柗闆撅細寮€鍠夊墤銆傜粏鑿屾劅鏌撴椂浣跨敤鎶楃敓绱犮€?, "synergy": "澶氬枬姘淬€佷繚鎸佸彛鑵旀竻娲併€?, "food": "閬垮厤杩囧害鐢ㄥ棑銆?, "herbs": "閲戦摱鑺便€佽儢澶ф捣銆侀害鍐€斺€旀竻鐑埄鍜姐€?}, "鐥ょ柈": {"cat": "鐨偆绉?, "title": "鐥ょ柈/闈掓槬鐥?, "content": "姣涘泭鐨剛鑵烘參鎬х値鐥囥€備笌婵€绱犳按骞炽€佺毊鑴傚垎娉岃繃澶氥€佹瘺鍥婅鍖栥€佺棨鐤笝閰告潌鑿屾劅鏌撴湁鍏炽€?, "emergency": "鍑虹幇鍥婅偪銆佺粨鑺?, "diet": "瀹滐細娓呮贰楗銆佸瘜鍚淮鐢熺礌A鐨勯鐗┿€傚繉锛氳緵杈ｅ埡婵€銆侀珮绯栭珮鑴傞ギ椋燂紙鍔犻噸鐨剛鍒嗘硨锛夈€?, "drugs": "澶栫敤锛氱淮A閰哥被锛堥樋杈惧笗鏋楋級銆佽繃姘у寲鑻敳閰般€佹姉鐢熺礌锛堝厠鏋楅湁绱狅級銆傚彛鏈嶏細鎶楃敓绱狅紙澶氳タ鐜礌锛夈€佸紓缁碅閰革紙閲嶅害锛夈€?, "synergy": "缁碅閰?鎶楃敓绱狅細鍗忓悓浣滅敤銆?, "food": "涓嶈鐢ㄦ墜鎸ゅ帇銆備繚鎸侀潰閮ㄦ竻娲併€?, "herbs": "鏋囨澐鍙躲€佹鐧界毊銆侀粍鑺┾€斺€旀竻鑲烘郴鐏€?}, "浜氬仴搴?: {"cat": "涓尰", "title": "浜氬仴搴风姸鎬?, "content": "浠嬩簬鍋ュ悍涓庣柧鐥呬箣闂寸殑鐏拌壊鐘舵€併€傝〃鐜帮細鐤插姵涔忓姏銆佸け鐪犮€佹儏缁綆钀姐€佹敞鎰忓姏涓嶉泦涓€佸悇绉嶈函浣撲笉閫傦紝浣嗘鏌ユ棤鍣ㄨ川鎬х梾鍙樸€?, "emergency": "", "diet": "瀹滐細鍧囪　钀ュ吇銆佸僵鑹茶敩鏋滐紙姣忓ぉ5绉嶉鑹蹭互涓婏級銆佷紭璐ㄨ泲鐧姐€佷簲璋锋潅绮€傚繉锛氱啲澶滐紙23鐐瑰悗鐫★級銆佷箙鍧愪笉鍔ㄣ€?, "drugs": "鏃犵壒寮傛€ц嵂鐗╋紝閽堝鐥囩姸娌荤枟鈥斺€斿潎闇€鍖荤敓澶勬柟銆?, "synergy": "", "food": "鏋告潪鑿婅姳鑼跺吇鑲濇槑鐩紱灞辫嵂鍋ヨ劸鐩婃皵銆?, "herbs": "榛勮姫銆佸厷鍙傘€佹灨鏉炪€佽強鑺扁€斺€旂泭姘斿吇闃淬€佹竻鑲濇槑鐩€?}, "浣撹川杈ㄨ瘑": {"cat": "涓尰", "title": "涓尰涔濈浣撹川杈ㄨ瘑", "content": "骞冲拰璐細绮惧姏鍏呮矝锛岀潯鐪犲畨锛岄娆插ソ銆?br>姘旇櫄璐細姘旂煭涔忓姏銆佹槗鎰熷啋鈥斺€斿疁琛ユ皵锛堜汉鍙傘€侀粍鑺級銆?br>闃宠櫄璐細鐣忓瘨鎬曞喎銆佹墜瓒冲啺鍑夆€斺€斿疁娓╅槼锛堢緤鑲夈€佹鍦嗭級銆?br>闃磋櫄璐細鍙ｅ共鍜界嚗銆佹墜瓒冲績鐑€斺€斿疁婊嬮槾锛堥摱鑰炽€佺櫨鍚堬級銆?br>鐥版箍璐細浣撹儢鐥板銆佽吂閮ㄨ偉婊♀€斺€斿疁鍖栫棸绁涙箍锛堥檲鐨€佽枏绫筹級銆?br>婀跨儹璐細闈㈡补鑵汇€佸彛鑻︺€侀暱鐥樷€斺€斿疁娓呯儹鍒╂箍锛堣嫤鐡溿€佺豢璞嗭級銆?br>琛€鐦€璐細闈㈣壊鏅︽殫銆佺柤鐥涘浐瀹氣€斺€斿疁娲昏鍖栫榾锛堜笁涓冦€佷腹鍙傦級銆?br>姘旈儊璐細鎯呯华鎶戦儊銆佺劍铏戣儊鑳€鈥斺€斿疁鐤忚倽瑙ｉ儊锛堢帿鐟拌姳鑼讹級銆?br>鐗圭璐細瀹规槗杩囨晱鈥斺€旀煡鏄庡苟閬垮厤杩囨晱鍘熴€?, "emergency": "", "diet": "鏍规嵁浣撹川绫诲瀷閫夋嫨椋熺墿銆傛皵铏氬疁琛ワ紝鐥版箍瀹滅锛屾箍鐑疁娓咃紝闃磋櫄瀹滄粙锛岄槼铏氬疁娓┿€?, "drugs": "", "synergy": "", "food": "", "herbs": "涔濈浣撹川鍚勬湁瀵瑰簲璋冪悊鏂规锛屽叿浣撶敤鑽鍜ㄨ涓尰甯堛€?}, "鏈悗璋冪悊": {"cat": "涓尰", "title": "鎵嬫湳鍚庝腑鍖昏皟鐞?, "content": "鎵嬫湳鍚庤韩浣撹櫄寮憋紝涓尰璋冪悊淇冭繘鎭㈠銆傚師鍒欙細鎵舵鍥烘湰銆佹椿琛€鍖栫榾銆?, "emergency": "", "diet": "瀹滐細鏄撴秷鍖栥€侀珮铔嬬櫧銆侀珮缁寸敓绱犮€傚繉锛氱敓鍐枫€佹补鑵汇€佽緵杈ｃ€?, "drugs": "", "synergy": "", "food": "鏍规嵁鎵嬫湳绫诲瀷璋冩暣銆?, "herbs": "鍥涘悰瀛愭堡锛堟皵铏氾級+妗冪孩鍥涚墿姹わ紙琛€鐦€锛夆€斺€旂泭姘旀椿琛€銆?}, "鑲跨槫搴峰": {"cat": "涓尰", "title": "鑲跨槫搴峰鏈熻皟鐞?, "content": "鎵嬫湳/鏀惧寲鐤楀悗涓尰璋冪悊锛屽噺杞诲壇浣滅敤锛屾彁楂樼敓娲昏川閲忋€?, "emergency": "", "diet": "瀹滐細瀵屽惈钀ュ吇銆佹槗娑堝寲銆傚繉锛氳緵杈ｅ埡婵€銆佽厡鍒堕鍝併€?, "drugs": "", "synergy": "", "food": "瀹氭湡澶嶆煡銆?, "herbs": "鎵舵鍥烘湰锛氶粍鑺€佸厷鍙傘€佺伒鑺濃€斺€斿寮哄厤鐤€?}}, "DIET": {"婀挎皵": {"f": "钖忕背锛堢倰锛夈€佽丹灏忚眴銆佽尟鑻撱€佸啲鐡溿€佽嵎鍙躲€侀檲鐨€佸北鑽?, "a": "鐢滈銆佹补鑵汇€佺敓鍐枫€侀厭绫汇€佹祿鑼?, "r": "鏃╅锛氳枏绫崇孩璞嗙播\n鍗堥锛氬啲鐡滄帓楠ㄦ堡+娓呯倰鑺硅彍+绫抽キ\n鏅氶锛氭竻钂搁奔+鍑夋媽鑻︾摐\n鑼堕ギ锛氱帀绫抽』鑼?}, "澶辩湢": {"f": "閰告灒浠併€佺櫨鍚堛€佽幉瀛愩€佸皬绫炽€佹牳妗冦€佺墰濂讹紙娓╃儹鐫″墠1灏忔椂锛?, "a": "鍜栧暋銆佹祿鑼讹紙涓嬪崍2鐐瑰悗绂侀ギ锛夈€侀厭绮俱€佽緵杈?, "r": "鏃╅锛氬皬绫崇播+鏍告鍖?鐗涘ザ\n鏅氶锛氶吀鏋ｄ粊绮?棣掑ご\n鐫″墠锛氭俯鐑墰濂?00ml"}, "鍏昏儍": {"f": "灞辫嵂銆佸皬绫炽€佸崡鐡溿€佽幉瀛愩€佽姟瀹炪€佺孩鏋ｃ€佽捀铔嬨€佽蒋闈㈡潯", "a": "杈涜荆銆佺敓鍐枫€佹补鑵汇€佽繃鐢溿€佽繃閰搞€佸挅鍟°€侀厭绮?, "r": "鏃╅锛氬皬绫崇播+棣掑ご+钂歌泲\n鍗堥锛氬北鑽帓楠ㄦ堡+娓呯倰鍗楃摐+绫抽キ\n鏅氶锛氭竻钂搁奔+杞潰鏉?}, "楂樿鍘?: {"f": "鑺硅彍銆佺嚂楹︺€侀钑夈€侀粦鏈ㄨ€炽€佽崬楹︺€佹繁娴烽奔銆佺豢鍙惰敩鑿?, "a": "鑵屽埗鍝併€侀珮鐩愰浂椋熴€佸姞宸ラ鍝併€佹祿鑼?, "r": "鏃╅锛氱嚂楹︾播+鍏ㄩ害闈㈠寘+棣欒晧\n鍗堥锛氳姽鑿滅倰鑲?鐣寗铔嬫堡+绫抽キ\n鏅氶锛氭竻钂搁浮鑳?鍑夋媽鏈ㄨ€?鑽為害闈?}, "鍑忚偉": {"f": "楦¤兏鑲夈€佽タ鍏拌姳銆佺硻绫炽€佺嚂楹︺€侀粍鐡溿€佺暘鑼勩€侀奔銆佽眴鑵?, "a": "娌圭偢椋熷搧銆佺敎楗枡銆侀浂椋熴€侀厭绮俱€佺櫧绫崇櫧闈?, "r": "鏃╅锛氬叏楹﹀悙鍙?姘寸叜铔?鑴辫剛鐗涘ザ\n鍗堥锛氶浮鑳歌倝娌欐媺+绯欑背楗璡n鏅氶锛氭竻钂搁奔+钄彍姹?鏉傜伯绮?}, "琛ユ皵琛€": {"f": "绾㈡灒銆佹鍦嗐€佸綋褰掋€佷箤楦°€佽彔鑿溿€佺墰鑲夈€佹灨鏉炪€侀粦鏈ㄨ€?, "a": "鐢熷喎銆佹祿鑼躲€佸挅鍟°€佽緵杈ｅ埡婵€", "r": "鏃╅锛氱孩鏋ｆ鍦嗙播+鐓浮铔?鏍告\n鍗堥锛氬綋褰掔緤鑲夋堡+娓呯倰鑿犺彍+绫抽キ\n鏅氶锛氫箤楦℃堡+棣掑ご+绾㈣眴绮?}, "鐥涢": {"f": "鍐摐銆侀粍鐡溿€佹ū妗冿紙姣忓ぉ10棰楋級銆佽姽鑿溿€佷綆鑴傜墰濂躲€侀浮铔?, "a": "鍔ㄧ墿鍐呰剰銆佹捣椴滐紙灏ゅ叾璐濈被锛夈€佸暏閰掔櫧閰掋€佹祿鑲夋堡", "r": "鏃╅锛氬皬绫崇播+楦¤泲\n鍗堥锛氭竻鐐掓椂钄?鐣寗铔嬫堡+绫抽キ\n鏅氶锛氬啲鐡滄堡+娓呰捀铔?鏉傜伯绮?}, "绯栧翱鐥?: {"f": "鐕曢害銆佺硻绫炽€佽嫤鐡溿€佽タ鍏拌姳銆侀粍鐡溿€侀粦鏈ㄨ€炽€侀奔銆佽眴鑵?, "a": "鐧界背楗€佺櫧闈㈠寘銆佺敎椋熴€佸惈绯栭ギ鏂欍€佽タ鐡滐紙楂楪I锛?, "r": "鏃╅锛氱嚂楹︾播+姘寸叜铔?榛勭摐\n鍗堥锛氭竻钂搁奔+鐐掕タ鍏拌姳+绯欑背楗璡n鏅氶锛氳眴鑵愭堡+鍑夋媽鑻︾摐+鏉傜伯楗?}, "鍏昏倽": {"f": "鏋告潪銆佽強鑺便€佺豢鑼躲€佺嚂楹︺€佹繁娴烽奔銆佽摑鑾?, "a": "閰掔簿銆侀珮鑴傞ギ椋熴€佽厡鍒堕鍝併€侀湁鍙橀鐗?, "r": "鏃╅锛氭灨鏉炶強鑺辫尪+鍏ㄩ害闈㈠寘\n鍗堥锛氭竻钂搁奔+鍑夋媽鏈ㄨ€?绫抽キ\n鏅氶锛氬北妤傜豢鑼?鏉傜伯楗?}, "琛ヨ偩": {"f": "榛戣眴銆侀粦鑺濋夯銆佹牳妗冦€佹灨鏉炪€佸北鑽€佺緤鑲?, "a": "鐢熷喎銆佽緵杈ｃ€佸挅鍟°€侀厭绮?, "r": "鏃╅锛氶粦鑺濋夯绯?鏍告鍖匼n鍗堥锛氬北鑽倴鎺掗+鐐掗潚鑿?绫抽キ\n鏅氶锛氱緤鑲夋堡+鏉傜伯楗?}, "娑﹁偤": {"f": "姊ㄣ€佺櫨鍚堛€侀摱鑰炽€佽渹铚溿€侀害鍐€佹矙鍙?, "a": "杈涜荆鍒烘縺銆佺儫閰掋€佸共鐕ョ幆澧?, "r": "鏃╅锛氱櫨鍚堢播+铚傝湝\n鍗堥锛氶摱鑰宠幉瀛愮竟+涓婚\n鏅氶锛氭ⅷ姹?娓呮贰鑿滃搧"}, "鎶ゅ績": {"f": "娣辨捣楸笺€佺嚂楹︺€佸潥鏋溿€佽摑鑾撱€侀粦鏈ㄨ€炽€佸北妤?, "a": "楂樼洂銆侀珮鑴傝偑銆佽厡鍒堕鍝併€侀厭绮?, "r": "鏃╅锛氱嚂楹︾播+鍧氭灉\n鍗堥锛氭竻钂搁奔+鍑夋媽鏈ㄨ€?绫抽キ\n鏅氶锛氬北妤傝尪+鏉傜伯钄彍"}, "鍋ヨ劸": {"f": "灞辫嵂銆佽幉瀛愩€佽姟瀹炪€佽尟鑻撱€佸皬绫炽€佺孩鏋?, "a": "鐢熷喎銆佹补鑵汇€佽緵杈ｃ€佹毚楗毚椋?, "r": "鏃╅锛氬北鑽播+绾㈡灒\n鍗堥锛氳幉瀛愮倴楦?鐐掗潚鑿?绫抽キ\n鏅氶锛氬皬绫崇播+钂歌泲"}, "璋冪悊鏈堢粡": {"f": "绾㈡灒銆佹鍦嗐€侀粦璞嗐€佺孩绯栥€佸北鑽?, "a": "鐢熷喎銆佽緵杈ｃ€佸挅鍟°€侀厭绮?, "r": "鏃╅锛氱孩鏋ｆ鍦嗙播\n鍗堥锛氶粦璞嗙尓韫勬堡+钄彍+绫抽キ\n鏅氶锛氱孩绯栧鑼?鏉傜伯"}, "鍎跨澧炲己鍏嶇柅": {"f": "楦¤泲銆佺墰濂躲€佺槮鑲夈€佽儭钀濆崪銆佽摑鑾撱€佺寱鐚存", "a": "闆堕銆侀ギ鏂欍€佹补鐐搁鍝?, "r": "鏃╅锛氶浮铔?鐗涘ザ+姘存灉\n鍗堥锛氳儭钀濆崪鐐掕倝+钄彍+绫抽キ\n鏅氶锛氭竻钂搁奔+鏉傜伯绮?}}, "TCM": {"姘旇櫄": {"s": ["瀹规槗鐤蹭箯", "姘旂煭鎳掕█", "鍔ㄥ垯姹楀嚭", "瀹规槗鎰熷啋", "澹伴煶浣庡急"], "d": ["灞辫嵂", "榛勮姫", "澶ф灒", "楦¤倝", "鐗涜倝", "绯背"], "a": ["鐢熷喎椋熺墿", "杈涜荆鍒烘縺", "娌硅吇椋熺墿"], "l": ["閫傚害杩愬姩锛堝お鏋佹嫵锛?, "淇濊瘉鐫＄湢", "閬垮厤杩囧害鍔崇疮"]}, "闃宠櫄": {"s": ["鐣忓瘨鑲㈠喎", "鑵拌啙閰歌蒋", "澶滃翱澶?, "闈㈣壊鑻嶇櫧", "鍥涜偄涓嶆俯"], "d": ["缇婅倝", "闊彍", "鏍告", "鐢熷", "鑲夋", "妗傚渾"], "a": ["鐢熷喎椋熺墿", "鍐板噳楗枡"], "l": ["澶氭檼澶槼", "閫傚害杩愬姩", "鐫″墠娉¤剼"]}, "闃磋櫄": {"s": ["鍙ｅ共鍜界嚗", "鎵嬭冻蹇冪儹", "鐩楁睏", "渚跨", "澶辩湢澶氭ⅵ", "鑸岀孩灏戣嫈"], "d": ["閾惰€?, "鐧惧悎", "姊?, "铚傝湝", "楹﹀啲", "娌欏弬", "鐜夌"], "a": ["杈涜荆椋熺墿", "娌圭偢椋熷搧", "鐑熼厭", "鍜栧暋"], "l": ["淇濊瘉鐫＄湢", "閬垮厤鐔", "缁冧範闈欏潗"]}, "鐥版箍": {"s": ["浣撹儢鐥板", "鑵归儴鑲ユ弧", "闈㈤儴娌硅吇", "韬噸鍥板€?, "鑸岃嫈鍘氳吇"], "d": ["钖忚嫛浠?, "鍐摐", "璧ゅ皬璞?, "鑽峰彾", "闄堢毊", "灞辨", "鑼嫇"], "a": ["鐢滈", "娌硅吇椋熺墿", "鐢熷喎椋熺墿", "閰?], "l": ["澧炲姞杩愬姩", "鎺у埗楗", "灏戦澶氶"]}, "婀跨儹": {"s": ["闈㈤儴娌硅吇", "鍙ｈ嫤", "瀹规槗闀跨棙", "鐑﹁簛鏄撴€?, "灏忎究榛?, "鑸岀孩鑻旈粍"], "d": ["缁胯眴", "鑻︾摐", "鍐摐", "鑺硅彍", "鑾插瓙蹇?, "鑿婅姳"], "a": ["杈涜荆椋熺墿", "娌圭偢椋熷搧", "閰掔簿", "鐢滈"], "l": ["澧炲姞杩愬姩", "澶氬枬姘?, "閬垮厤鐔"]}, "琛€鐦€": {"s": ["鐤肩棝鍥哄畾", "闈㈣壊鏅︽殫", "鐨偆闈掔传", "鍋ュ繕", "鏈堢粡琛€鍧?, "鑸岃川绱殫"], "d": ["榛戞湪鑰?, "灞辨", "妗冧粊", "绾㈣姳", "涓変竷", "涓瑰弬"], "a": ["鐢熷喎", "娌硅吇", "鐑熼厭"], "l": ["閫傚害杩愬姩", "淇濇寔娓╂殩", "鎸夋懇缁忕粶"]}, "姘旈儊": {"s": ["鎯呯华浣庤惤", "鐒﹁檻涓嶅畨", "鑳佽儉", "鍜介儴寮傜墿鎰?, "鑳搁椃鍠勫お鎭?], "d": ["鐜懓鑺?, "浣涙墜", "灞辨", "闄堢毊", "棣欒晧", "灏忛害"], "a": ["杈涜荆", "鍜栧暋鍥?, "閰掔簿"], "l": ["淇濇寔蹇冩儏鑸掔晠", "绀句氦娲诲姩", "缁冧範娣卞懠鍚?]}, "鐗圭": {"s": ["杩囨晱鎬ч蓟鐐?, "鑽ㄩ夯鐤?, "鍝枠", "椋熺墿杩囨晱", "鐨偆鐦欑棐"], "d": ["瀵屽惈缁碈", "瀵屽惈Omega-3", "鐩婄敓鑿?], "a": ["宸茬煡杩囨晱鍘?, "杈涜荆", "鍙戠墿"], "l": ["鏌ユ槑杩囨晱鍘?, "閬垮厤鎺ヨЕ", "澧炲己浣撹川"]}, "骞冲拰": {"s": ["绮惧姏鍏呮矝", "闈㈣壊娑︽辰", "鐫＄湢瀹?, "椋熸濂?, "閫傚簲鍔涘己", "鑸屾贰绾㈣嫈钖勭櫧"], "d": ["鍧囪　楗", "浜旇胺鏉傜伯", "鏂伴矞钄灉", "閫傞噺铔嬬櫧璐?], "a": ["鍋忛", "鏆撮ギ鏆撮"], "l": ["瑙勫緥浣滄伅", "閫傚害杩愬姩", "蹇冩€佸钩鍜?]}}, "symptomKeywords": {"鍙戠儳": "鍙戠儹", "楂樼儳": "鍙戠儹", "浣撴俯楂?: "鍙戠儹", "澶寸柤": "澶寸棝", "澶寸棝": "澶寸棝", "澶存檿": "鐪╂檿", "鑳冪柤": "鑳冪値", "鑳冪棝": "鑳冪値", "鑳冧笉鑸掓湇": "鑳冪値", "鑲犺儍涓嶉€?: "鑳冪値", "鍜冲椊": "鍜冲椊", "鍜崇棸": "鍜冲椊", "骞插挸": "鍜冲椊", "鐫′笉鐫€": "澶辩湢", "鐫＄湢涓嶅ソ": "澶辩湢", "澶辩湢": "澶辩湢", "楂樿鍘?: "楂樿鍘?, "琛€鍘嬮珮": "楂樿鍘?, "楂樺帇楂?: "楂樿鍘?, "绯栧翱鐥?: "绯栧翱鐥?, "琛€绯栭珮": "绯栧翱鐥?, "楂樿绯?: "绯栧翱鐥?, "琛€鑴傞珮": "楂樿鑴?, "楂樿鑴?: "楂樿鑴?, "琛€鑴傚紓甯?: "楂樿鑴?, "鑶濈洊鐤?: "鍏宠妭鐥?, "鍏宠妭鐤?: "鍏宠妭鐥?, "鍏宠妭鐥?: "鍏宠妭鐥?, "鑵扮柤": "鑵扮棝", "鑵伴吀": "鑵扮棝", "鑵扮棝": "鑵扮棝", "棰堟鐤?: "棰堟鐥?, "鑴栧瓙鐤?: "棰堟鐥?, "鑴栧瓙鍍电‖": "棰堟鐥?, "闀跨棙": "鐨偆闂", "鐥樼棙": "鐨偆闂", "鐥ょ柈": "鐨偆闂", "鐪肩潧骞?: "鐪肩柌鍔?, "鐪肩潧鐤插姵": "鐪肩柌鍔?, "鐪肩柌鍔?: "鐪肩柌鍔?, "瑙嗗姏妯＄硦": "鐪肩柌鍔?, "鐤插姵": "鐤插姵", "涔忓姏": "鐤插姵", "娌＄簿绁?: "鐤插姵", "浣撹川": "浣撹川杈ㄨ瘑", "闃宠櫄": "浣撹川杈ㄨ瘑", "闃磋櫄": "浣撹川杈ㄨ瘑", "姘旇櫄": "浣撹川杈ㄨ瘑", "鐥版箍": "浣撹川杈ㄨ瘑", "婀跨儹": "浣撹川杈ㄨ瘑", "琛€鐦€": "浣撹川杈ㄨ瘑", "姘旈儊": "浣撹川杈ㄨ瘑", "鐗圭": "浣撹川杈ㄨ瘑", "骞冲拰": "浣撹川杈ㄨ瘑", "浜氬仴搴?: "浜氬仴搴?, "鎰熷啋": "鎰熷啋", "娴佹劅": "鎰熷啋", "鐥涢": "鐥涢", "灏块吀楂?: "鐥涢", "楂樺翱閰?: "鐥涢", "楠ㄨ川鐤忔澗": "楠ㄨ川鐤忔澗", "楠ㄥ瘑搴︿綆": "楠ㄨ川鐤忔澗", "鑴傝偑鑲?: "鑴傝偑鑲?, "鑲濊剛鑲?: "鑴傝偑鑲?, "鑵规郴": "鑵规郴", "鎷夎倸瀛?: "鑵规郴", "渚跨": "渚跨", "澶т究骞?: "渚跨", "涔欒倽": "鑲濈値", "涓欒倽": "鑲濈値", "鑲濈値": "鑲濈値", "鑲虹値": "鑲虹値", "鏀皵绠＄値": "鏀皵绠＄値", "榧荤値": "榧荤値", "杩囨晱鎬ч蓟鐐?: "杩囨晱鎬ч蓟鐐?, "鍜界値": "鍜界値", "鍠夊挋鐥?: "鍜界値", "涓€崇値": "涓€崇値", "鑰虫湹鐤?: "涓€崇値", "杩戣": "杩戣", "鏁ｅ厜": "杩戣", "骞茬溂": "骞茬溂鐥?, "鐪煎共": "骞茬溂鐥?, "鍙ｈ厰婧冪枴": "鍙ｈ厰婧冪枴", "婧冪枴": "鍙ｈ厰婧冪枴", "鑽ㄩ夯鐤?: "鑽ㄩ夯鐤?, "椋庡洟": "鑽ㄩ夯鐤?, "婀跨柟": "婀跨柟", "鐗瑰簲鎬х毊鐐?: "婀跨柟", "閾跺睉鐥?: "閾跺睉鐥?, "鐗涚毊鐧?: "閾跺睉鐥?, "绫婚婀?: "绫婚婀垮叧鑺傜値", "椋庢箍鎬у叧鑺傜値": "绫婚婀垮叧鑺傜値", "楠ㄥ叧鑺傜値": "楠ㄥ叧鑺傜値", "閫€鍖栨€у叧鑺傜値": "楠ㄥ叧鑺傜値", "鍐犲績鐥?: "鍐犲績鐥?, "蹇冪粸鐥?: "鍐犲績鐥?, "蹇冩": "鍐犲績鐥?, "蹇冭倢姊楁": "鍐犲績鐥?, "鑴戝崚涓?: "鑴戝崚涓?, "涓": "鑴戝崚涓?, "鑴戞": "鑴戝崚涓?, "蹇冨緥澶卞父": "蹇冨緥澶卞父", "蹇冩偢": "蹇冨緥澶卞父", "蹇冭“": "蹇冨姏琛扮", "蹇冨姏琛扮": "蹇冨姏琛扮", "鐢蹭孩": "鐢茬姸鑵哄姛鑳戒孩杩?, "鐢茬姸鑵哄姛鑳戒孩杩?: "鐢茬姸鑵哄姛鑳戒孩杩?, "鐢插噺": "鐢茬姸鑵哄姛鑳藉噺閫€", "鐢茬姸鑵哄姛鑳藉噺閫€": "鐢茬姸鑵哄姛鑳藉噺閫€", "鑲ヨ儢": "鑲ヨ儢", "浣撻噸瓒呮爣": "鑲ヨ儢", "璐": "璐", "琛€绾㈣泲鐧戒綆": "璐", "鑲剧値": "鎱㈡€ц偩鐥?, "鑲剧梾": "鎱㈡€ц偩鐥?, "鑲剧粨鐭?: "鑲剧粨鐭?, "灏胯矾缁撶煶": "鑲剧粨鐭?, "灏胯矾鎰熸煋": "灏胯矾鎰熸煋", "灏块亾鐐?: "灏胯矾鎰熸煋", "鍓嶅垪鑵哄鐢?: "鍓嶅垪鑵哄鐢?, "鍓嶅垪鑵鸿偉澶?: "鍓嶅垪鑵哄鐢?, "鏈堢粡涓嶈皟": "鏈堢粡涓嶈皟", "鏈堢粡绱婁贡": "鏈堢粡涓嶈皟", "鐥涚粡": "鐥涚粡", "缁忔湡鑵圭棝": "鐥涚粡", "鏇村勾鏈?: "鏇村勾鏈熺患鍚堝緛", "缁濈粡": "鏇村勾鏈熺患鍚堝緛", "涔宠吅澧炵敓": "涔宠吅澧炵敓", "涔宠吅缁撹妭": "涔宠吅澧炵敓", "闃撮亾鐐?: "闃撮亾鐐?, "闃撮亾鐐庣棁": "闃撮亾鐐?, "鎵嬭冻鍙?: "鎵嬭冻鍙ｇ梾", "鎵嬭冻鍙ｇ梾": "鎵嬭冻鍙ｇ梾", "姘寸棙": "姘寸棙", "鐥旂柈": "鐥旂柈", "鑲涜": "鐥旂柈", "鎶戦儊鐥?: "鎶戦儊鐥?, "鎶戦儊": "鎶戦儊鐥?, "鐒﹁檻": "鐒﹁檻鐥?, "鐒﹁檻鐥?: "鐒﹁檻鐥?, "鐪╂檿": "鐪╂檿", "闈㈢槴": "闈㈢槴", "闈㈢缁忛夯鐥?: "闈㈢槴", "鑵版闂寸洏绐佸嚭": "鑵版闂寸洏绐佸嚭", "鑵扮獊": "鑵版闂寸洏绐佸嚭", "鑲虹檶": "鑲虹檶", "鑲鸿偪鐦?: "鑲虹檶", "鑳冪檶": "鑳冪檶", "鑳冭偪鐦?: "鑳冪檶", "鑲犵檶": "缁撶洿鑲犵檶", "缁撹偁鐧?: "缁撶洿鑲犵檶", "鐩磋偁鐧?: "缁撶洿鑲犵檶", "涔宠吅鐧?: "涔宠吅鐧?, "涔宠吅鑲跨槫": "涔宠吅鐧?, "鐢茬姸鑵虹檶": "鐢茬姸鑵虹檶", "鐢茬姸鑵鸿偪鐦?: "鐢茬姸鑵虹檶"}};
-var CHIPS_DATA = {"consult": ["鎰熷啋", "鍙戠儹", "鍜冲椊", "鏀皵绠＄値", "鑲虹値", "杩囨晱鎬ч蓟鐐?, "楂樿鍘?, "鍐犲績鐥?, "鑴戝崚涓?, "蹇冨緥澶卞父", "蹇冨姏琛扮", "绯栧翱鐥?], "tcm": ["闃磋櫄", "闃宠櫄", "姘旇櫄", "鐥版箍", "婀跨儹", "琛€鐦€", "姘旈儊"], "diet": ["楂樿鍘嬮ギ椋?, "绯栧翱鐥呴ギ椋?, "鐥涢楗", "鍑忚偉楗", "鑳冪梾楗"]};
-var API_BASE = "https://ai-tcm-app.vercel.app";
+// ===== KNOWLEDGE BASE =====
+var KB_DATA = {"KB":{"感冒":{"cat":"呼吸系统","title":"普通感冒/上呼吸道感染","content":"普通感冒多由病毒引起。症状：鼻塞、流涕、咽痛、咳嗽、轻度发热。处理：多休息、补充水分、对症用药。若发热>38.5℃持续3天以上，或出现胸闷、呼吸困难，请立即就医。","emergency":"高热不退（>39℃）、呼吸困难、意识模糊、剧烈头痛","diet":"宜：清淡易消化（粥、汤面、蒸蛋）；富含维C水果（橙子、猕猴桃）；温开水。忌：辛辣油腻、生冷食物、浓茶咖啡。","drugs":"解热镇痛：对乙酰氨基酚、布洛芬。通鼻：伪麻黄碱。注意：抗生素对病毒无效，勿滥用。","synergy":"布洛芬+阿司匹林：增加胃肠道出血风险。多种复方感冒药不要叠加服用。","food":"布洛芬避免与酒精同服。服用感冒药期间避免驾驶。","herbs":"金银花、连翘、薄荷、荆芥——疏风清热。"},"发热":{"cat":"呼吸系统","title":"发热/发烧","content":"发热是机体对感染的正常免疫反应。体温>37.3℃为发热。处理原则：38.5℃以下物理降温；38.5℃以上服用退热药；多饮水。退热是为了缓解不适，不是要把体温降到正常。","emergency":"体温>39.5℃持续不降、抽搐、皮疹、意识不清、颈部僵硬","diet":"宜：流质/半流质（粥、汤、果蔬汁）；清淡少油。忌：高蛋白高脂肪、辛辣刺激、生冷。","drugs":"退热：对乙酰氨基酚（更安全）、布洛芬（抗炎效果好）。儿童：禁用阿司匹林（瑞氏综合征风险）。","synergy":"多种退热药同时服用可能造成肝损伤，不要叠加。对乙酰氨基酚+酒精显著增加肝毒性。","food":"发热期间多喝水（1500-2000ml/天）。可喝淡盐水补充电解质。","herbs":"柴胡、黄芩、生石膏（高热时）——清热泻火。"},"咳嗽":{"cat":"呼吸系统","title":"咳嗽","content":"咳嗽是呼吸道清除异物和分泌物的保护性反射。干咳：右美沙芬。有痰咳嗽：氨溴索、乙酰半胱氨酸。若咳嗽>3周、咳血、胸痛，请立即就医。","emergency":"咳血、呼吸困难、胸痛、咳嗽伴随高热","diet":"宜：梨、百合、蜂蜜（1岁以上）、白萝卜、银耳。忌：甜腻、油炸、寒凉、鱼腥发物。","drugs":"干咳：右美沙芬（孕妇禁用）。有痰：氨溴索、乙酰半胱氨酸。","synergy":"中枢镇咳药+抗组胺药：可能引起呼吸抑制。","food":"蜂蜜（1岁以上）有轻度止咳作用（循证证实）。","herbs":"川贝、枇杷叶、杏仁、桔梗——润肺止咳化痰。"},"支气管炎":{"cat":"呼吸系统","title":"急性支气管炎","content":"支气管黏膜的急性炎症，常继发于上呼吸道感染。多为病毒引起。症状：持续咳嗽、咳痰（白痰→黄脓痰）、发热。治疗：对症为主，抗生素仅细菌感染时使用。","emergency":"高热（>39℃）、咳黄脓痰、呼吸困难、胸痛","diet":"宜：清淡饮食；富含维生素A、C的食物；温开水。忌：辛辣刺激、油腻食物、生冷饮食；戒烟。","drugs":"咳嗽：痰多时用祛痰药（氨溴索）。发热：用对乙酰氨基酚或布洛芬。细菌感染时使用抗生素。","herbs":"风寒袭肺：三拗汤合止嗽散。风热犯肺：桑菊饮加减。"},"肺炎":{"cat":"呼吸系统","title":"肺炎","content":"肺实质的炎症，由细菌、病毒、支原体等引起。常见病原体：肺炎链球菌。症状：发热、咳嗽、咳黄脓痰或铁锈色痰、胸痛、呼吸困难。需正规抗生素治疗，疗程5-7天。","emergency":"高热伴呼吸困难、胸痛、意识改变、口唇发绀——立即就医！","diet":"宜：高热量、高蛋白、易消化；富含维生素C；充足水分。忌：油腻、辛辣刺激、生冷、酒精。","drugs":"抗生素：阿莫西林/克拉维酸，或大环内酯类（阿奇霉素）。对症：退热、祛痰、氧疗（重症）。","herbs":"痰热壅肺：鱼腥草、黄芩、瓜蒌皮。正气虚弱：西洋参、黄芪。"},"过敏性鼻炎":{"cat":"呼吸系统","title":"过敏性鼻炎","content":"鼻黏膜的过敏性炎症，与IgE介导的变态反应有关。常见过敏原：花粉、尘螨、动物皮屑。症状：阵发性打喷嚏、清水样鼻涕、鼻塞、鼻痒、眼痒。治疗：避免过敏原+药物。","emergency":"出现哮喘症状或过敏性休克（罕见）","diet":"宜：均衡饮食；富含维生素C、E的食物。忌：已知过敏的食物；辛辣刺激；酒精。","drugs":"一线：鼻用糖皮质激素（布地奈德、氟替卡松）。口服抗组胺药（氯雷他定、西替利嗪）。白三烯受体拮抗剂（孟鲁司特）。","herbs":"肺脾两虚：玉屏风散加减。肾虚：右归丸加减。"},"高血压":{"cat":"心血管系统","title":"原发性高血压","content":"血压持续≥140/90 mmHg为高血压。治疗：低盐饮食（<5g/天）、规律运动、药物治疗。常用降压药：CCB类（氨氯地平）、ARB类（缬沙坦）。目标：一般<130/80 mmHg。","emergency":"血压>180/120伴头痛、胸痛、视力模糊——高血压危象，立即就医！","diet":"宜：DASH饮食（蔬果、全谷、低脂奶）、黑木耳、芹菜、山楂。忌：腌制品、腊肉、酱菜（高钠）；浓茶。","drugs":"CCB类：氨氯地平（晨起服）。ARB类：缬沙坦（保护肾脏）。禁忌：擅自停药会导致血压反跳，危及生命。","synergy":"地平类+β受体阻滞剂：可加重心衰。地平类+葡萄柚汁：增加血药浓度。","food":"西柚汁显著增加地平类药物血药浓度，服用者禁饮。","herbs":"钩藤、天麻、罗布麻、决明子——平肝潜阳降压。"},"冠心病":{"cat":"心血管系统","title":"冠状动脉粥样硬化性心脏病","content":"冠状动脉粥样硬化导致心肌缺血缺氧。类型：稳定型心绞痛、不稳定型心绞痛、急性心肌梗死。治疗：药物、介入（支架）、搭桥手术。","emergency":"剧烈胸痛持续>20分钟，伴出汗、恶心、呼吸困难、濒死感——急性心梗！立即拨打120！","diet":"宜：深海鱼、燕麦、豆制品、蔬菜水果、全谷物、坚果。忌：动物内脏、肥肉、蛋黄（每周<3个）、奶油、糕点。","drugs":"抗血小板：阿司匹林（长期）、氯吡格雷。降脂：他汀类（阿托伐他汀）。抗心肌缺血：硝酸甘油（舌下含服）、美托洛尔。","synergy":"阿司匹林+华法林：增加出血风险。他汀+贝特（吉非贝齐）：增加肌病风险。","food":"戒烟（最重要）。适度运动（每周≥150分钟）。","herbs":"丹参、三七、银杏叶——活血化瘀通络。"},"脑卒中":{"cat":"心血管系统","title":"脑卒中/中风","content":"分为缺血性（脑梗死，85%）和出血性（15%）。BE FAST识别：B平衡、E眼睛、F面部、A手臂、S语言、T时间。缺血性可在4.5小时内溶栓或取栓。","emergency":"突然出现的面部下垂、手臂无力、说话不清——立即拨打120！","diet":"控制钠摄入。增加蔬果、全谷物。限制饱和脂肪。补充叶酸。","drugs":"缺血性卒中二级预防：抗血小板（阿司匹林/氯吡格雷）、降脂（他汀）、降压、控制血糖。","synergy":"阿司匹林+华法林/新型口服抗凝药：增加出血风险。","food":"戒烟限酒。控制体重。适度运动。","herbs":"补阳还五汤（黄芪、当归、川芎、赤芍）——益气活血通络。"},"心律失常":{"cat":"心血管系统","title":"心律失常","content":"心脏传导系统异常导致心跳过快、过慢或不规则。常见类型：房颤、室上性心动过速、室性早搏、房室传导阻滞。症状：心悸、胸闷、头晕、晕厥。","emergency":"意识丧失、持续胸痛、血压显著下降——立即就医！","diet":"宜：均衡饮食；避免咖啡因、酒精。忌：刺激性食物；过量饮酒。","drugs":"抗心律失常药：胺碘酮、美托洛尔、美西律等（需医生处方）。房颤：抗凝（华法林/新型口服抗凝药）+节律控制/心率控制。","synergy":"胺碘酮与多种药物相互作用，务必告知医生所有用药。","food":"避免咖啡因（咖啡、浓茶）。戒烟限酒。","herbs":"炙甘草汤——益气滋阴，通阳复脉。"},"心力衰竭":{"cat":"心血管系统","title":"慢性心力衰竭","content":"心脏泵血功能减退，不能满足机体需求。表现：呼吸困难（活动后加重→休息也有）、水肿（下肢→全身）、乏力、心悸。NYHA分级：I-IV级。","emergency":"急性加重：呼吸困难加重、不能平卧、咳粉红色泡沫痰——急性左心衰！","diet":"限钠（<2g/天）：减轻水钠潴留。限液体（<1.5-2L/天）。高蛋白饮食。","drugs":"金三角：ACEI/ARB（改善预后）+β受体阻滞剂（改善预后）+醛固酮受体拮抗剂（减轻水肿）。利尿剂：呋塞米。","synergy":"利尿剂+ACEI：注意肾功能。NSAIDs加重水钠潴留，避免使用。","food":"避免腌制食品。少食多餐。监测体重（每日体重增加>1kg提示水钠潴留）。","herbs":"生脉散（人参、麦冬、五味子）——益气生津。"},"糖尿病":{"cat":"内分泌系统","title":"糖尿病","content":"诊断标准：空腹血糖≥7.0 mmol/L或餐后2h血糖≥11.1 mmol/L。治疗五驾马车：饮食控制、运动、药物治疗、血糖监测、健康教育。目标：空腹4.4-7.0 mmol/L，餐后<10 mmol/L，HbA1c<7%。","emergency":"低血糖（<3.9 mmol/L）伴昏迷或不能进食、酮症酸中毒（呼气有烂苹果味）","diet":"宜：低GI食物（燕麦、糙米、荞麦、全麦）、绿叶蔬菜、优质蛋白。忌：精制糖、白米白面、含糖饮料、粥类。水果每天不超过200g，两餐之间吃。","drugs":"二甲双胍：一线用药，随餐服用。胰岛素：需冷藏，遵医嘱调整剂量。GLP-1受体激动剂（司美格鲁肽）：减重效果好。","synergy":"二甲双胍+大量酒精：增加乳酸酸中毒风险。胰岛素+β受体阻滞剂：可能掩盖低血糖症状。","food":"慎用无糖食品——可能含大量碳水化合物。学会看食品营养标签。","herbs":"天花粉、葛根、黄芪、山药——益气养阴、健脾生津。"},"高血脂":{"cat":"内分泌系统","title":"高脂血症","content":"血脂异常：总胆固醇>5.2或LDL>3.4或TG>1.7 mmol/L。治疗：他汀类药物（首选）是核心，可稳定动脉斑块。生活方式：低脂饮食、运动、减重、戒烟限酒。","emergency":"","diet":"宜：燕麦（β-葡聚糖降胆固醇）、深海鱼（Omega-3降甘油三酯）、坚果、橄榄油。忌：动物内脏、肥肉、奶油制品、油炸食品、蛋黄。","drugs":"他汀类：阿托伐他汀（晚间服）、瑞舒伐他汀。贝特类：非诺贝特（高甘油三酯首选）。他汀不与西柚同服。","synergy":"他汀+贝特（吉非贝齐）：显著增加肌病风险——若需联用，优选非诺贝特。","food":"植物甾醇可辅助降脂。咖啡每天1-2杯无糖即可。","herbs":"山楂、荷叶、决明子、绞股蓝——活血降脂。"},"甲状腺功能亢进":{"cat":"内分泌系统","title":"甲状腺功能亢进症","content":"甲状腺激素分泌过多。常见原因：Graves病。症状：怕热、多汗、心悸、手抖、体重下降、眼球突出、烦躁易怒。需检查甲功五项、甲状腺抗体、甲状腺超声。","emergency":"甲亢危象：高热（>40℃）、严重心悸、意识障碍、呕吐腹泻——急诊！","diet":"高热量、高蛋白、高维生素饮食。限制碘摄入（海带、紫菜、海鲜）。忌：咖啡因、辛辣刺激。","drugs":"抗甲状腺药物（ATD）：甲巯咪唑、丙硫氧嘧啶（备孕/哺乳首选）。β受体阻滞剂：美托洛尔（控制心悸）。","synergy":"抗甲状腺药+华法林：增强抗凝作用。","food":"避免富碘食物。保证休息，避免情绪波动。","herbs":"甲亢阴虚火旺：天花粉、麦冬、生地——滋阴清热。"},"甲状腺功能减退":{"cat":"内分泌系统","title":"甲状腺功能减退症","content":"甲状腺激素分泌不足。症状：怕冷、乏力、体重增加、记忆力减退、皮肤干燥、便秘、心率减慢。需长期甲状腺激素替代治疗。","emergency":"黏液性水肿昏迷：严重嗜睡、体温降低、意识障碍——急诊！","diet":"适量碘摄入（加碘盐）。避免致甲状腺肿食物（卷心菜、萝卜）。高蛋白、高维生素饮食。","drugs":"左甲状腺素钠（L-T4）：空腹服用（早餐前30分钟），避免与钙、铁同服。起始剂量小，逐渐加量。","synergy":"左甲状腺素+钙剂/铁剂：减少吸收，间隔4小时以上服用。","food":"定期复查甲功，根据结果调整药量。","herbs":"脾肾阳虚：右归丸加减。"},"痛风":{"cat":"内分泌系统","title":"痛风","content":"尿酸代谢紊乱，尿酸盐结晶沉积关节。典型：急性单关节炎（常见大脚趾，红肿热痛）。治疗：急性期秋水仙碱/NSAIDs；缓解期降尿酸药（非布司他、别嘌醇）——需长期规律服用。","emergency":"痛风发作伴随高热（>39℃）、关节严重红肿","diet":"宜：低嘌呤饮食、大量饮水（>2L/天）、樱桃。忌：动物内脏、海鲜（尤其贝类）、浓肉汤、啤酒白酒、含果糖饮料。","drugs":"急性期：秋水仙碱（24h内首选）或布洛芬。降尿酸：非布司他、别嘌醇（长期）。注意：降尿酸药初期会诱发痛风发作。","synergy":"别嘌醇+巯唑嘌呤：显著增强骨髓抑制，禁忌！","food":"每日饮水>2L。樱桃有轻度降尿酸作用。","herbs":"土茯苓、萆薢、薏苡仁、威灵仙——祛湿通络止痛。"},"骨质疏松":{"cat":"内分泌系统","title":"骨质疏松症","content":"骨密度降低，骨脆性增加，常见于绝经后女性和老年人。治疗：钙剂+维生素D（基础）、抗骨质疏松药（双膦酸盐类）。预防：负重运动、充足日照（每天15-30分钟）、防跌倒。","emergency":"跌倒后剧烈疼痛，疑似骨折","diet":"宜：高钙食物（牛奶1000-1200mg/天是金标准、豆制品、芝麻、虾皮、深绿色蔬菜）。忌：过多咖啡因（>3杯/天）、高钠（加速钙流失）。","drugs":"钙剂：碳酸钙（随餐服）或柠檬酸钙（空腹可服）。骨吸收抑制剂：阿仑膦酸钠（晨起空腹服，直立30分钟）。","synergy":"钙剂+维生素D：是所有抗骨质疏松治疗的基础，必须联用。","food":"咖啡和可乐减少钙吸收。最佳饮料：白开水、淡茶、低脂牛奶。","herbs":"骨碎补、续断、杜仲、龟板——补肾强骨。"},"肥胖":{"cat":"内分泌系统","title":"肥胖症","content":"体质指数（BMI）≥28为肥胖。危害：糖尿病、高血压、冠心病、脑卒中、睡眠呼吸暂停、癌症风险增加。治疗：饮食控制、运动、药物治疗（奥利司他、司美格鲁肽）、代谢手术。","emergency":"肥胖相关急症：睡眠呼吸暂停综合征、急性心衰","diet":"每日热量赤字500-750kcal。蛋白质摄入1.2-1.6g/kg体重。限制精制碳水、高脂肪食物。","drugs":"奥利司他：抑制脂肪吸收，随餐服用。GLP-1受体激动剂（司美格鲁肽）：降糖+减重。","synergy":"减肥药+酒精：可能增加副作用。","food":"记录饮食日记。细嚼慢咽（每口>20次）。","herbs":"山楂、荷叶、决明子、泽泻——利水消脂。"},"胃炎":{"cat":"消化系统","title":"胃炎/胃部不适","content":"胃黏膜炎症。症状：上腹痛、胀气、反酸、恶心、嗳气。治疗：抑酸药（奥美拉唑）、胃黏膜保护剂（铝碳酸镁）、促动力药（多潘立酮）。建议：规律饮食、细嚼慢咽、避免刺激性食物。","emergency":"呕血（红色或咖啡渣样）、柏油样黑便、剧烈腹痛","diet":"宜：清淡易消化（粥、馒头、软烂面）、蒸蛋。忌：辛辣、生冷、油腻、过甜、过酸、咖啡、酒精。规律进餐，每餐七八分饱。","drugs":"抑酸：奥美拉唑（晨起空腹）、雷贝拉唑。护胃：铝碳酸镁（餐后嚼服）。促动力：多潘立酮（餐前15-30分钟）。","synergy":"奥美拉唑+氯吡格雷：降低氯吡格雷疗效——优先换用泮托拉唑。","food":"酸奶可在胃黏膜形成保护层。温热牛奶可暂时缓解胃痛。","herbs":"白芨、海螵蛸、砂仁、陈皮——和胃止痛、制酸。"},"急性胃肠炎":{"cat":"消化系统","title":"急性胃肠炎","content":"胃肠道黏膜的急性炎症，多由病毒（诺如病毒、轮状病毒）或细菌（大肠杆菌、沙门菌）引起。症状：腹痛、腹泻、呕吐、发热。","emergency":"严重脱水（眼窝凹陷、皮肤弹性差）、高热不退、血便","diet":"宜：清淡流质（粥汤、面汤）、补液盐（防止脱水）。忌：油腻、生冷、辛辣、奶制品（加重腹泻）。","drugs":"补液盐：补充水分和电解质。止泻：蒙脱石散。调节肠道菌群：益生菌（双歧杆菌、乳酸杆菌）。细菌感染时使用抗生素。","synergy":"抗生素+益生菌：需间隔2小时以上服用。","food":"少量多餐。从流质→半流质→正常饮食逐步过渡。","herbs":"藿香正气散（藿香、紫苏、白芷）——外感风寒，内伤湿滞。"},"便秘":{"cat":"消化系统","title":"便秘","content":"排便次数减少（每周<3次）、粪便干结、排便困难。分为功能性便秘和器质性便秘。治疗：增加膳食纤维（25-35g/天）、适量饮水（1.5-2L/天）、运动、养成排便习惯。","emergency":"急性便秘伴腹痛、呕吐——警惕肠梗阻！","diet":"宜：膳食纤维（粗粮、蔬菜、水果）、足量饮水。忌：精制食品、辛辣刺激。","drugs":"容积性泻药：麦麸、欧车前。渗透性泻药：乳果糖、聚乙二醇。刺激性泻药：比沙可啶（短期用）。","synergy":"刺激性泻药长期使用会导致依赖。","food":"养成定时排便习惯。增加运动。","herbs":"麻子仁丸——润肠通便。"},"腹泻":{"cat":"消化系统","title":"腹泻","content":"排便次数增多（>3次/天）、粪便稀薄、水分增加。分为急性和慢性。急性多为感染，慢性需排除器质性疾病。","emergency":"严重脱水、血便、持续高热","diet":"宜：清淡流质、补液盐。忌：油腻、生冷、高纤维、奶制品。","drugs":"补液：补液盐。止泻：蒙脱石散。调节肠道：益生菌。抗感染：氟哌酸（细菌性）。","synergy":"感染性腹泻禁用止泻药（妨碍毒素排出）。","food":"BRAT饮食：香蕉、米饭、苹果酱、吐司。","herbs":"参苓白术散——健脾渗湿止泻。"},"脂肪肝":{"cat":"消化系统","title":"脂肪肝","content":"肝细胞脂肪沉积>5%，分酒精性（AFLD）和非酒精性（NAFLD/MASLD）。治疗：减重5-10%可逆转脂肪肝（最有效）、戒酒、控制血糖血脂。","emergency":"肝区剧痛、黄疸（眼睛和皮肤发黄）","diet":"宜：地中海饮食（橄榄油、深色蔬菜、全谷、鱼）、绿茶。忌：酒精、果糖饮料、高糖高脂食品、油炸食品。","drugs":"二甲双胍（合并糖尿病时）。维生素E（400IU/天，对NASH有一定效果，不适用于糖尿病患者）。护肝药（易善复等）只能辅助。","food":"咖啡（每天2-3杯无糖）可降低肝酶——循证证实的护肝饮食。","herbs":"丹参、山楂、葛根、五味子——保肝降脂。"},"肝炎":{"cat":"消化系统","title":"肝炎","content":"肝脏炎症，常见原因：病毒性（甲、乙、丙、丁、戊肝）、酒精性、非酒精性、药物性。症状：乏力、食欲不振、恶心、右上腹不适、黄疸。","emergency":"急性重型肝炎：极度乏力、严重黄疸、意识障碍——急诊！","diet":"宜：高蛋白（肝修复）、易消化、维生素丰富。忌：酒精、高脂肪、辛辣刺激。","drugs":"病毒性肝炎：抗病毒药（乙肝核苷类似物、丙肝直接抗病毒药）。护肝药：甘草酸制剂、水飞蓟宾。","synergy":"抗病毒药需足疗程，不要自行停药。","food":"绝对戒酒。定期复查肝功能、病毒载量。","herbs":"茵陈、栀子、柴胡、五味子——清热利湿、疏肝解毒。"},"胆囊炎":{"cat":"消化系统","title":"胆囊炎","content":"胆囊的炎症，常与胆结石有关。分为急性和慢性。急性：右上腹剧痛（墨菲征阳性）、发热、恶心呕吐。慢性：右上腹隐痛、饱胀感。","emergency":"急性化脓性胆囊炎、胆囊穿孔——急诊手术！","diet":"宜：低脂饮食、清淡易消化。忌：高脂肪饮食（油炸、肥肉、蛋黄）、辛辣刺激。","drugs":"抗生素：头孢类+甲硝唑。解痉：山莨菪碱。利胆：熊去氧胆酸。","synergy":"熊去氧胆酸需长期服用，定期复查。","food":"少量多餐。避免暴饮暴食。","herbs":"金钱草、茵陈、郁金——利胆排石。"},"痔疮":{"cat":"消化系统","title":"痔疮","content":"肛门直肠静脉曲张。分为内痔、外痔、混合痔。症状：便血、肛门疼痛、脱出、瘙痒。治疗：保守治疗（坐浴、软化大便、局部用药）、手术。","emergency":"大量便血导致贫血、痔核嵌顿坏死","diet":"宜：膳食纤维（25-35g/天）、足量饮水。忌：辛辣刺激、久坐久蹲。","drugs":"口服：地榆槐角丸、迈之灵。外用：马应龙痔疮膏、栓剂。","synergy":"便秘加重痔疮，形成恶性循环。","food":"养成排便好习惯（每天固定时间，不超过5分钟）。温水坐浴。","herbs":"地榆、槐花、赤小豆——凉血止血、消肿止痛。"},"口腔溃疡":{"cat":"五官科","title":"复发性口腔溃疡","content":"口腔黏膜反复发作的溃疡。病因复杂：免疫因素、维生素缺乏、机械刺激。","emergency":"溃疡超过2周不愈或数量增多","diet":"宜：富含维生素B、C的食物。忌：辛辣、过烫、酸性食物。","drugs":"局部：口腔溃疡散、西瓜霜。全身：维生素B2、维生素C。反复发作排查系统性疾病。","synergy":"保持口腔清洁。","food":"避免咬伤。","herbs":"导赤散（心脾积热）、玉女煎（阴虚火旺）。"},"头痛":{"cat":"神经系统","title":"头痛","content":"原因众多：紧张性、血管性、偏头痛、鼻窦性、继发性头痛。处理：休息、放松、止痛药。若头痛突然剧烈伴发热/呕吐/视物模糊/偏瘫，请立即就医。","emergency":"突然剧烈头痛（雷击样）、伴意识变化、颈项强直、视物模糊、偏瘫——立即就医！","diet":"宜：规律进食（避免低血糖）、坚果、深海鱼。忌：酒精（偏头痛常见诱因）、腌制肉。","drugs":"止痛：布洛芬（首选）、对乙酰氨基酚。偏头痛：曲普坦类（发作早期服）。注意：每月止痛药>10天可致药物过度使用性头痛。","synergy":"止痛药+酒精：显著增加胃肠道和肝脏损伤。","food":"脱水是头痛最常见诱因，确保每日饮水1500-2000ml。","herbs":"川芎、白芷、天麻、菊花——祛风通络止痛。"},"失眠":{"cat":"神经系统","title":"失眠","content":"入睡困难、睡眠浅、易醒、早醒，影响白天功能。治疗：睡眠卫生（规律作息、睡前1小时避免屏幕）、认知行为治疗（CBT-I，循证金标准）、药物（短期）。","emergency":"","diet":"宜：温牛奶、酸枣仁粥（睡前2小时）、香蕉。忌：咖啡、浓茶（下午2点后禁饮）、酒精（破坏睡眠结构）。","drugs":"非苯二氮卓类：佐匹克隆、右佐匹克隆（成瘾性较低）。褪黑素：倒时差者、老年失眠者。安眠药有成瘾性，遵医嘱使用。","synergy":"安眠药+酒精：严重呼吸抑制，可致死！","food":"色氨酸食物（牛奶、火鸡、坚果）促进褪黑素合成。","herbs":"酸枣仁、柏子仁、远志、合欢皮——养心安神促睡眠。"},"抑郁症":{"cat":"神经系统","title":"抑郁症","content":"以持续的情绪低落、兴趣减退为核心症状，常伴有睡眠障碍、食欲改变、注意力下降、自责自罪。需专业诊断和治疗。","emergency":"有自杀念头或行为——立即就医或拨打心理危机干预热线！","diet":"宜：富含Omega-3（深海鱼）、叶酸（绿叶蔬菜）、维生素D的食物。忌：酒精（加重抑郁）、咖啡因过量。","drugs":"SSRI类（首选）：舍曲林、帕罗西汀、艾司西酞普兰。SNRI类：文拉法辛、米那普仑。需足疗程（至少6-12个月）。","synergy":"抗抑郁药+酒精：增加镇静作用。","food":"规律饮食。适度运动（对抑郁有治疗作用）。","herbs":"柴胡疏肝散、逍遥散——疏肝解郁。"},"焦虑症":{"cat":"神经系统","title":"焦虑症","content":"以过度的担忧、紧张、恐惧为特征，常伴有心悸、出汗、颤抖、胸闷、呼吸困难等躯体症状。分为广泛性焦虑和惊恐障碍。","emergency":"惊恐发作（强烈恐惧感伴严重躯体症状）——需排除心脏疾病","diet":"宜：富含B族维生素的食物、镁（坚果、深绿叶菜）。忌：咖啡因、酒精。","drugs":"SSRI类：帕罗西汀、舍曲林。短效苯二氮卓类：阿普唑仑（短期使用，成瘾性）。","synergy":"苯二氮卓类+酒精：呼吸抑制风险。","food":"规律作息。深呼吸练习。瑜伽、冥想。","herbs":"天王补心丹——滋阴养血、补心安神。"},"眩晕":{"cat":"神经系统","title":"眩晕","content":"感觉自身或周围环境旋转/晃动感。常见原因：耳石症（良性阵发性位置性眩晕）、前庭神经炎、梅尼埃病、颈椎病、脑血管病。","emergency":"眩晕伴剧烈头痛、视力障碍、肢体无力——警惕脑卒中！","diet":"宜：清淡饮食、富含维生素。忌：辛辣刺激、浓茶咖啡。","drugs":"耳石症：手法复位（首选）。前庭神经炎：激素、前庭抑制剂（苯海拉明）。梅尼埃病：利尿剂、前庭抑制剂。","synergy":"前庭抑制剂长期使用延缓前庭功能代偿。","food":"发作时卧床休息，避免头部快速运动。","herbs":"天麻钩藤饮——平肝潜阳、熄风止眩。"},"颈椎病":{"cat":"神经系统","title":"颈椎病","content":"颈椎退行性病变，多因长期低头导致。症状：颈部僵硬疼痛、头晕（椎动脉受压）、手臂麻木、肩背酸痛。严重神经压迫需手术。","emergency":"四肢麻木突然加重、大小便失禁（脊髓型颈椎病，需急诊手术）","diet":"宜：含钙食物（牛奶、豆制品、芝麻）、富含胶原蛋白的食物。忌：长期低头、咖啡因摄入过多。","drugs":"止痛：布洛芬、塞来昔布。肌肉松弛：乙哌立松。营养神经：甲钴胺（活性维B12）。","food":"氨基葡萄糖和硫酸软骨素对早期软骨退变可能有帮助。","herbs":"葛根（颈椎病要药）、鸡血藤、川芎、桑枝——舒筋活络。"},"腰椎间盘突出":{"cat":"神经系统","title":"腰椎间盘突出症","content":"椎间盘纤维环破裂，髓核突出压迫神经根。症状：腰痛伴下肢放射痛（坐骨神经痛）、麻木、肌力下降。","emergency":"出现马尾综合征（大小便失禁、鞍区麻木）——急诊手术！","diet":"宜：富含钙、蛋白质的食物。忌：辛辣刺激。","drugs":"止痛：NSAIDs（布洛芬、塞来考昔）。神经根水肿：甘露醇+地塞米松。营养神经：甲钴胺。","synergy":"保守治疗无效或出现肌力下降需考虑手术。","food":"睡硬板床。避免久坐久站。","herbs":"独活寄生汤——祛风湿、止痹痛、益肝肾。"},"面瘫":{"cat":"神经系统","title":"面神经麻痹（面瘫）","content":"面神经受损导致面部肌肉瘫痪。分为中枢性（脑血管病引起）和周围性（Bell麻痹最常见）。表现：额纹消失、眼睑闭合不全、口角歪斜。","emergency":"突然出现面瘫伴其他神经系统症状——警惕脑卒中！","diet":"宜：清淡易消化、高维生素饮食。忌：辛辣刺激。","drugs":"急性期：糖皮质激素（强的松，早期使用可减轻水肿）、维生素B1、B12。眼睑闭合不全：眼药水、人工泪液。","synergy":"早期（72小时内）使用激素效果最好。","food":"保持面部保暖。进行面部肌肉康复训练。","herbs":"牵正散（白附子、僵蚕、全蝎）——祛风化痰、通络止痉。"},"类风湿关节炎":{"cat":"风湿免疫系统","title":"类风湿关节炎","content":"自身免疫性关节炎症，表现为对称性多关节肿胀疼痛、晨僵（>1小时）。可导致关节畸形和功能丧失。","emergency":"出现发热、胸闷、呼吸困难——警惕间质性肺炎！","diet":"宜：富含Omega-3（深海鱼）、抗氧化物质（水果蔬菜）。忌：烟酒。","drugs":"DMARDs（改变病情抗风湿药）：甲氨蝶呤（首选）、来氟米特、羟氯喹。生物制剂：TNF-α抑制剂。","synergy":"甲氨蝶呤+叶酸：减少副作用。","food":"适度运动保持关节功能。","herbs":"独活、桑寄生、秦艽——祛风湿、止痹痛。"},"骨关节炎":{"cat":"风湿免疫系统","title":"骨关节炎","content":"关节软骨退变，常见于膝、髋、手关节。症状：关节疼痛（活动后加重）、僵硬（<30分钟）、肿胀、骨擦感。","emergency":"急性关节红肿热痛伴发热——警惕感染性关节炎！","diet":"宜：富含胶原蛋白、钙的食物。忌：肥胖（增加关节负担）。","drugs":"止痛：NSAIDs（外用+口服）、对乙酰氨基酚。关节腔注射：玻璃酸钠、糖皮质激素。","synergy":"氨基葡萄糖和硫酸软骨素：证据不一，可尝试。","food":"控制体重。适度运动（游泳、骑车）。","herbs":"骨碎补、续断、威灵仙——补肾强骨、祛风通络。"},"系统性红斑狼疮":{"cat":"风湿免疫系统","title":"系统性红斑狼疮","content":"系统性自身免疫病，多见于年轻女性。表现：面部蝶形红斑、关节痛、口腔溃疡、光敏感、乏力。可累及肾、心、肺、脑。","emergency":"出现抽搐、意识障碍、胸闷尿少——累及重要脏器！","diet":"宜：均衡饮食、富含维生素D。忌：光敏食物（芹菜、香菜）、辛辣刺激。","drugs":"基础治疗：羟氯喹。免疫抑制：糖皮质激素、硫唑嘌呤、霉酚酸酯。生物制剂：贝利木单抗。","synergy":"羟氯喹需定期眼科检查（视网膜病变）。","food":"避免日晒。戒烟。","herbs":"六味地黄丸、知柏地黄丸——滋阴清热。"},"干燥综合征":{"cat":"风湿免疫系统","title":"干燥综合征","content":"外分泌腺受累的自身免疫病。表现：口干眼干、牙齿片状脱落、关节痛。可伴其他自身免疫病。","emergency":"出现乏力、低热、淋巴结肿大——警惕淋巴瘤！","diet":"宜：滋阴润燥。忌：辛辣刺激、烟酒。","drugs":"对症：人工泪液、唾液替代品。免疫调节：羟氯喹。累及脏器：糖皮质激素+免疫抑制剂。","food":"保持口腔湿润。避免服用引起口干的药物。","herbs":"沙参、麦冬、玉竹——养阴润燥。"},"荨麻疹":{"cat":"皮肤科","title":"荨麻疹","content":"皮肤血管反应性增高，表现为风团（红斑+水肿）、瘙痒。分为急性和慢性（>6周）。","emergency":"出现喉头水肿、呼吸困难——过敏性休克！","diet":"宜：清淡饮食。忌：已知过敏食物、辛辣刺激、海鲜。","drugs":"抗组胺药：氯雷他定、西替利嗪。急性严重：糖皮质激素。慢性：奥马珠单抗。","synergy":"避免抓挠。","food":"记录饮食日记找诱因。","herbs":"消风散——疏风清热、凉血止痒。"},"湿疹":{"cat":"皮肤科","title":"湿疹/特应性皮炎","content":"慢性炎症性皮肤病。表现：瘙痒、皮疹（红斑、丘疹、水疱）、皮肤干燥。","emergency":"继发感染（红肿热痛、脓性分泌物）","diet":"宜：清淡、富含维生素。忌：辛辣刺激、海鲜、牛羊肉。","drugs":"外用：糖皮质激素（根据部位选择强度）、钙调磷酸酶抑制剂（他克莫司）。口服：抗组胺药。系统：免疫抑制剂、生物制剂。","synergy":"激素长期使用导致皮肤萎缩。","food":"保持皮肤湿润。避免热水烫洗。","herbs":"龙胆草、黄芩（湿热）；生地、当归（血虚风燥）。"},"银屑病":{"cat":"风湿免疫系统","title":"银屑病","content":"慢性炎症性皮肤病，典型表现：鳞屑性红斑、薄膜现象、点状出血。分为寻常型、关节型、脓疱型、红皮病型。","emergency":"关节剧烈疼痛、红皮病型、脓疱型——需住院治疗！","diet":"宜：富含维生素A、E的食物。忌：辛辣刺激、酒精、海鲜。","drugs":"外用：糖皮质激素、维生素D3衍生物。系统治疗：甲氨蝶呤、环孢素。生物制剂：TNF-α抑制剂、IL-17抑制剂。","synergy":"感染可诱发或加重银屑病。","food":"保持皮肤湿润。避免外伤。","herbs":"血热型：犀角地黄汤加减。血瘀型：桃红四物汤加减。"},"带状疱疹":{"cat":"风湿免疫系统","title":"带状疱疹","content":"水痘-带状疱疹病毒再激活，表现为沿单侧神经分布的成簇水疱伴疼痛。常见于肋间神经、三叉神经。","emergency":"出现在面部（眼、鼻）——可能影响视力！","diet":"宜：清淡易消化、高蛋白。忌：辛辣刺激、发性食物（牛羊肉、海鲜）。","drugs":"抗病毒：阿昔洛韦、伐昔洛韦（早期使用，72小时内最佳）。止痛：加巴喷丁、普瑞巴林。外用：阿昔洛韦软膏。","synergy":"早期抗病毒可减少后遗神经痛。","food":"保持皮疹清洁干燥。","herbs":"龙胆泻肝汤——清肝泻火、利湿解毒。"},"慢性肾病":{"cat":"泌尿系统","title":"慢性肾脏病","content":"肾脏结构/功能异常>3个月。分为1-5期。常见原因：糖尿病、高血压、慢性肾小球肾炎。","emergency":"尿量显著减少或无尿、严重水肿、意识障碍——尿毒症！","diet":"优质低蛋白饮食（0.6-0.8g/kg/天）。限钠（<2g/天）。限钾、磷（晚期）。","drugs":"控制原发病：降压（ACEI/ARB首选，保护肾脏）、降糖。并发症：利尿剂、纠酸、补钙、骨病治疗。","synergy":"ACEI/ARB+钾盐：可能导致高钾血症。","food":"定期监测肾功能和电解质。避免肾毒性药物（NSAIDs、造影剂）。","herbs":"大黄、丹参、积雪草——通腑泄浊、活血化瘀。"},"尿路感染":{"cat":"泌尿系统","title":"尿路感染","content":"细菌侵入泌尿系统引起的炎症。分为上尿路感染（肾盂肾炎）和下尿路感染（膀胱炎、尿道炎）。症状：尿频、尿急、尿痛、发热。","emergency":"高热伴腰痛——肾盂肾炎，需抗生素治疗！","diet":"宜：清淡饮食、足量饮水（>1500ml/天）。忌：辛辣刺激、酒精。","drugs":"下尿路感染：磷霉素、呋喃妥因、头孢类（3-7天）。上尿路感染：喹诺酮类、头孢类（10-14天）。","synergy":"多喝水、按时排尿是预防关键。","food":"注意个人卫生。","herbs":"八正散（车前子、瞿麦、萹蓄）——清热利湿、通淋止痛。"},"前列腺增生":{"cat":"泌尿系统","title":"良性前列腺增生","content":"老年男性常见，表现为尿频（尤其夜尿增多）、尿急、尿等待、尿流变细、尿不尽感。","emergency":"突然完全不能排尿（尿潴留）——需导尿！","diet":"宜：富含锌、维生素E的食物。忌：辛辣刺激、咖啡因、酒精。","drugs":"α受体阻滞剂：坦索罗辛（快速改善症状）。5α还原酶抑制剂：非那雄胺（缩小前列腺体积，需长期服用）。","synergy":"α受体阻滞剂+5α还原酶抑制剂：联合治疗效果更好。","food":"定期复查PSA排除前列腺癌。","herbs":"前列康（黄芪、丹参、桃仁）——益气活血、化瘀通络。"},"肾结石":{"cat":"泌尿系统","title":"泌尿系结石","content":"泌尿系统形成的坚硬物质。表现为突然出现的剧烈腰痛（肾绞痛）、血尿、尿频尿急。","emergency":"结石伴发热——警惕脓肾！","diet":"根据结石成分调整。普遍：多喝水（>2000ml/天）、均衡饮食。","drugs":"止痛：NSAIDs、阿片类。排石：α受体阻滞剂（坦索罗辛）、利尿剂（噻嗪类）。","synergy":"体外冲击波碎石、输尿管镜取石——根据结石大小位置选择。","food":"根据结石成分分析结果调整饮食。","herbs":"金钱草、海金沙、鸡内金——利尿排石。"},"贫血":{"cat":"血液系统","title":"贫血","content":"血红蛋白或红细胞减少。常见原因：缺铁性（最常见）、巨幼细胞性、慢性病性、溶血性。症状：乏力、头晕、心悸、面色苍白。","emergency":"血红蛋白<60g/L或急性大出血——输血治疗！","diet":"根据类型调整。缺铁性：富含铁的食物（红肉、动物肝脏、血制品）。","drugs":"缺铁性：口服铁剂（硫酸亚铁、琥珀酸亚铁）+维生素C。巨幼细胞性：叶酸、维生素B12。","synergy":"铁剂与茶、咖啡、钙剂同服影响吸收。","food":"口服铁剂时避免喝茶。","herbs":"当归、熟地、黄芪——补气养血。"},"肺癌":{"cat":"肿瘤","title":"肺癌","content":"我国发病率和死亡率最高的恶性肿瘤。分为小细胞肺癌和非小细胞肺癌。危险因素：吸烟（最重要）、空气污染、职业暴露。","emergency":"出现咯血、胸痛加重、呼吸困难——可能晚期！","diet":"宜：高蛋白、高热量、易消化。忌：辛辣刺激、腌制食品。","drugs":"手术：早期首选。化疗：铂类为基础。靶向治疗：针对EGFR、ALK等突变。免疫治疗：PD-1/PD-L1抑制剂。","synergy":"基因检测指导靶向治疗选择。","food":"戒烟（最重要）。定期体检（低剂量CT）。","herbs":"扶正固本：参芪扶正注射液、贞芪扶正颗粒。"},"胃癌":{"cat":"肿瘤","title":"胃癌","content":"常见消化道恶性肿瘤。危险因素：幽门螺杆菌感染、腌制食品、烟熏食品、遗传。早期无症状或非特异性消化不良。","emergency":"出现呕血、黑便、体重明显下降——警惕晚期！","diet":"宜：新鲜蔬果、少盐少腌渍。忌：腌制、烟熏、高盐、辛辣。","drugs":"手术：根治关键。化疗：氟尿嘧啶类+铂类。靶向：曲妥珠单抗（HER2阳性）。免疫治疗：PD-1抑制剂。","synergy":"根除幽门螺杆菌可降低胃癌风险。","food":"根治幽门螺杆菌。定期胃镜检查（高危人群）。","herbs":"健脾益气：四君子汤加减。"},"结直肠癌":{"cat":"肿瘤","title":"结直肠癌","content":"常见消化道恶性肿瘤。危险因素：高脂肪低纤维饮食、肥胖、吸烟、家族史。表现：大便习惯改变、便血、腹痛、贫血。","emergency":"急性肠梗阻、穿孔——急诊手术！","diet":"宜：高纤维、低脂肪饮食。忌：红肉、加工肉制品、高脂肪饮食。","drugs":"手术：根治关键。化疗：CAPOX、FOLFOX方案。靶向：贝伐单抗、西妥昔单抗。免疫治疗：PD-1（dMMR/MSI-H）。","synergy":"结肠镜筛查早期发现癌前病变（腺瘤）。","food":"定期筛查（结肠镜）。","herbs":"槐花、地榆、赤芍——凉血止血、化瘀解毒。"},"乳腺癌":{"cat":"肿瘤","title":"乳腺癌","content":"女性最常见恶性肿瘤。危险因素：遗传（BRCA1/2突变）、雌激素暴露、生育因素。表现：无痛肿块、乳头溢液、皮肤橘皮样改变。","emergency":"出现骨痛、咳嗽——警惕转移！","diet":"宜：富含蔬菜水果、全谷物。忌：高脂肪饮食、酒精。","drugs":"手术：保乳或全切。化疗：蒽环类+紫杉类。内分泌治疗：他莫昔芬、芳香酶抑制剂。靶向：曲妥珠单抗（HER2+）。","synergy":"定期乳腺超声/钼靶筛查。","food":"母乳喂养可降低风险。","herbs":"疏肝理气：逍遥散加减。"},"甲状腺癌":{"cat":"肿瘤","title":"甲状腺癌","content":"内分泌系统最常见恶性肿瘤，预后较好。病理类型：乳头状癌（最常见）、滤泡癌、髓样癌、未分化癌。","emergency":"出现声音嘶哑、呼吸困难——警惕气管侵犯！","diet":"宜：均衡饮食。忌：辛辣刺激。","drugs":"手术：甲状腺全切/次全切。碘131治疗：分化型甲状腺癌。TSH抑制治疗：左甲状腺素。","synergy":"定期复查甲状腺球蛋白。","food":"甲状腺全切后需补钙和维生素D。","herbs":"夏枯草、浙贝母——化痰散结。"},"月经不调":{"cat":"妇产科","title":"月经不调","content":"月经周期、经期、经量异常。常见原因：内分泌失调（多囊卵巢综合征、甲状腺功能异常）、子宫病变、情绪压力。","emergency":"月经量过多导致贫血或停经后出血——警惕子宫内膜癌！","diet":"宜：富含铁、蛋白质的食物。忌：生冷、辛辣刺激。","drugs":"调经：雌孕激素周期治疗。排卵障碍：克罗米芬、来曲唑。多囊卵巢综合征：二甲双胍、达英-35。","synergy":"长期月经不调需排查多囊卵巢综合征、甲状腺疾病。","food":"记录月经周期。","herbs":"四物汤、乌鸡白凤丸——补血调经。"},"痛经":{"cat":"妇产科","title":"痛经","content":"月经期下腹部疼痛。分为原发性（无器质性病变）和继发性（子宫内膜异位症、子宫腺肌病等）。","emergency":"疼痛加重或与以往不同——排查器质性疾病！","diet":"宜：温热、易消化食物。忌：生冷、辛辣、咖啡因。","drugs":"止痛：NSAIDs（布洛芬、月经前预防性服用）。避孕药：抑制排卵。原发性痛经效果良好。","synergy":"热敷可缓解疼痛。","food":"适度运动。保持温暖。","herbs":"益母草、当归、川芎——活血化瘀、调经止痛。"},"更年期综合征":{"cat":"妇产科","title":"更年期综合征","content":"女性绝经前后因雌激素水平下降出现的一系列症状。表现：潮热出汗、情绪波动、失眠、骨关节痛、阴道干涩。","emergency":"出现异常子宫出血——排查子宫内膜病变！","diet":"宜：富含钙、维生素D的食物。忌：辛辣刺激、咖啡因、酒精。","drugs":"激素替代治疗（MHT）：窗口期（60岁前或绝经10年内）使用利大于弊。需个体化方案。","synergy":"MHT需定期复查评估利弊。","food":"补充钙剂（1200mg/天）和维生素D（800-1000IU/天）。","herbs":"更年安、六味地黄丸——滋阴补肾、宁心安神。"},"乳腺增生":{"cat":"妇产科","title":"乳腺增生症","content":"乳腺组织增生和退行性改变，与雌激素水平波动有关。表现：乳房胀痛、肿块（随月经周期变化）。","emergency":"出现固定肿块或乳头溢血——排查乳腺癌！","diet":"宜：富含维生素E、纤维的食物。忌：辛辣刺激、咖啡因、高脂肪饮食。","drugs":"止痛：逍遥丸、乳癖消。调节内分泌：他莫昔芬（重度）。","synergy":"定期乳腺超声/钼靶复查。","food":"保持心情舒畅。","herbs":"橘核、橘叶、夏枯草——疏肝散结。"},"阴道炎":{"cat":"妇产科","title":"阴道炎","content":"阴道黏膜炎症。类型：细菌性（最常见）、念珠菌性（霉菌性）、滴虫性。表现：瘙痒、异味、分泌物异常。","emergency":"反复发作或伴随全身症状","diet":"宜：清淡饮食、富含益生菌的食物。忌：辛辣刺激、甜食。","drugs":"细菌性：甲硝唑。念珠菌性：克霉唑、氟康唑。滴虫性：甲硝唑（夫妻同治）。","synergy":"长期使用抗生素破坏阴道菌群。","food":"保持外阴清洁干燥。避免过度清洗。","herbs":"苦参、黄柏、蛇床子——清热燥湿、杀虫止痒。"},"小儿发热":{"cat":"儿科","title":"儿童发热","content":"儿童常见症状。体温>38℃为发热。常见原因：感染（病毒为主）。处理：38.5℃以下物理降温，38.5℃以上用退热药。","emergency":"3个月以下婴儿发热、持续高热不退、出现抽搐、皮疹——立即就医！","diet":"宜：清淡流质、补充水分。忌：辛辣、油腻。","drugs":"对乙酰氨基酚（首选，3个月以上）、布洛芬（6个月以上）。禁用：阿司匹林（瑞氏综合征）、尼美舒利（儿童禁用）。","synergy":"退热药不要叠加使用。","food":"少量多次喂水。","herbs":"小儿推拿：清天河水、退六腑。"},"小儿腹泻":{"cat":"儿科","title":"儿童腹泻","content":"大便次数增多、性状改变。常见原因：病毒性（轮状病毒）、细菌性。治疗：补液（关键）、调节肠道菌群、对症治疗。","emergency":"出现脱水表现（眼窝凹陷、皮肤弹性差、尿少）、血便、高热","diet":"宜：补液盐、米汤、稀粥。忌：油腻、生冷、果汁（含糖高）。","drugs":"补液盐III：补充水分和电解质。蒙脱石散：保护肠黏膜。益生菌：布拉氏酵母菌、双歧杆菌。","synergy":"不建议使用强力止泻药（妨碍毒素排出）。","food":"继续母乳喂养。配方奶喂养可暂时换无乳糖奶粉。","herbs":"推拿：摩腹、揉脐。"},"手足口病":{"cat":"儿科","title":"手足口病","content":"肠道病毒引起的急性传染病。5岁以下儿童多见。表现：手、足、口腔疱疹，伴发热。","emergency":"出现高热不退、嗜睡、呕吐、肌阵挛——警惕重症手足口病！","diet":"宜：清淡、易消化、温凉流质。忌：辛辣、咸酸、刺激性食物。","drugs":"对症治疗：无特效抗病毒药。退热：布洛芬/对乙酰氨基酚。口腔疼痛：开喉剑喷雾。","synergy":"隔离至疱疹消退（通常1周）。","food":"保持口腔清洁。","herbs":"金银花、连翘、板蓝根——清热解毒。"},"水痘":{"cat":"儿科","title":"水痘","content":"水痘-带状疱疹病毒引起。表现：发热、瘙痒性皮疹（红斑→丘疹→水疱→结痂）。传染性强。","emergency":"出现高热、头痛、呕吐——警惕脑炎！","diet":"宜：清淡、易消化饮食。忌：辛辣、发性食物（鱼虾羊肉）。","drugs":"抗病毒：阿昔洛韦（早期使用）。对症：退热、止痒。","synergy":"隔离至全部结痂（通常1周）。","food":"剪指甲避免抓破。","herbs":"银翘散——疏风清热、解毒透疹。"},"近视":{"cat":"五官科","title":"近视","content":"眼球过度生长导致远处物体成像在视网膜前。分为轴性近视和屈光性近视。高度近视（>600度）增加眼底病变风险。","emergency":"出现飞蚊症、闪光感、视野缺损——警惕视网膜脱离！","diet":"宜：富含维生素A、C、E，叶黄素的食物（胡萝卜、蓝莓、绿叶蔬菜）。","drugs":"框架眼镜：最安全。角膜塑形镜（OK镜）：控制近视进展。滴眼液：低浓度阿托品（0.01%）。","synergy":"每天户外活动>2小时可预防近视。","food":"保持正确读写姿势（33cm以上）。","herbs":"杞菊地黄丸——滋肾养肝、明目。"},"干眼症":{"cat":"五官科","title":"干眼症","content":"泪液分泌减少或蒸发过快导致眼表不适。症状：眼干、眼红、异物感、视疲劳。","emergency":"出现严重眼痛、视力下降","diet":"宜：富含Omega-3（深海鱼）、维生素A的食物。忌：长时间使用电子产品。","drugs":"人工泪液：玻璃酸钠滴眼液（首选）。抗炎：环孢素滴眼液。","synergy":"眨眼练习、热敷可缓解。","food":"避免长时间佩戴隐形眼镜。","herbs":"菊花、枸杞、决明子——清肝明目。"},"中耳炎":{"cat":"五官科","title":"中耳炎","content":"中耳腔炎症。分为分泌性中耳炎（积液）和化脓性中耳炎。常见表现：耳痛、听力下降、耳鸣。","emergency":"出现高热、头痛、呕吐——警惕脑膜炎！","diet":"宜：清淡饮食。忌：辛辣刺激。","drugs":"抗生素：阿莫西林/头孢类。减充血剂：麻黄碱滴鼻。","synergy":"擤鼻涕时不要两侧同时擤。","food":"避免水进入耳朵。","herbs":"龙胆草、柴胡、黄芩——清肝泻火。"},"鼻炎":{"cat":"五官科","title":"鼻炎","content":"鼻黏膜炎症。分为过敏性鼻炎（见相关词条）和非过敏性鼻炎。症状：鼻塞、流涕、打喷嚏、鼻痒。","emergency":"出现嗅觉丧失、头痛、鼻出血","diet":"宜：清淡饮食。忌：辛辣刺激、已知过敏原。","drugs":"鼻用糖皮质激素：布地奈德、氟替卡松。抗组胺药：氯雷他定、西替利嗪。生理盐水冲洗。","synergy":"避免接触过敏原和刺激物。","food":"保持室内清洁。","herbs":"苍耳子、辛夷、白芷——宣肺通窍。"},"咽炎":{"cat":"五官科","title":"咽炎","content":"咽部黏膜炎症。分为急性和慢性。症状：咽痛、咽干、异物感、咳嗽。","emergency":"出现高热、呼吸困难——警惕急性会厌炎！","diet":"宜：清淡、温凉饮食。忌：辛辣刺激、过烫食物、烟酒。","drugs":"含片：西地碘、胖大海含片。咽部喷雾：开喉剑。细菌感染时使用抗生素。","synergy":"多喝水、保持口腔清洁。","food":"避免过度用嗓。","herbs":"金银花、胖大海、麦冬——清热利咽。"},"痤疮":{"cat":"皮肤科","title":"痤疮/青春痘","content":"毛囊皮脂腺慢性炎症。与激素水平、皮脂分泌过多、毛囊角化、痤疮丙酸杆菌感染有关。","emergency":"出现囊肿、结节","diet":"宜：清淡饮食、富含维生素A的食物。忌：辛辣刺激、高糖高脂饮食（加重皮脂分泌）。","drugs":"外用：维A酸类（阿达帕林）、过氧化苯甲酰、抗生素（克林霉素）。口服：抗生素（多西环素）、异维A酸（重度）。","synergy":"维A酸+抗生素：协同作用。","food":"不要用手挤压。保持面部清洁。","herbs":"枇杷叶、桑白皮、黄芩——清肺泻火。"},"亚健康":{"cat":"中医","title":"亚健康状态","content":"介于健康与疾病之间的灰色状态。表现：疲劳乏力、失眠、情绪低落、注意力不集中、各种躯体不适，但检查无器质性病变。","emergency":"","diet":"宜：均衡营养、彩色蔬果（每天5种颜色以上）、优质蛋白、五谷杂粮。忌：熬夜（23点后睡）、久坐不动。","drugs":"无特异性药物，针对症状治疗——均需医生处方。","synergy":"","food":"枸杞菊花茶养肝明目；山药健脾益气。","herbs":"黄芪、党参、枸杞、菊花——益气养阴、清肝明目。"},"体质辨识":{"cat":"中医","title":"中医九种体质辨识","content":"平和质：精力充沛，睡眠安，食欲好。<br>气虚质：气短乏力、易感冒——宜补气（人参、黄芪）。<br>阳虚质：畏寒怕冷、手足冰凉——宜温阳（羊肉、桂圆）。<br>阴虚质：口干咽燥、手足心热——宜滋阴（银耳、百合）。<br>痰湿质：体胖痰多、腹部肥满——宜化痰祛湿（陈皮、薏米）。<br>湿热质：面油腻、口苦、长痘——宜清热利湿（苦瓜、绿豆）。<br>血瘀质：面色晦暗、疼痛固定——宜活血化瘀（三七、丹参）。<br>气郁质：情绪抑郁、焦虑胁胀——宜疏肝解郁（玫瑰花茶）。<br>特禀质：容易过敏——查明并避免过敏原。","emergency":"","diet":"根据体质类型选择食物。气虚宜补，痰湿宜祛，湿热宜清，阴虚宜滋，阳虚宜温。","drugs":"","synergy":"","food":"","herbs":"九种体质各有对应调理方案，具体用药请咨询中医师。"},"术后调理":{"cat":"中医","title":"手术后中医调理","content":"手术后身体虚弱，中医调理促进恢复。原则：扶正固本、活血化瘀。","emergency":"","diet":"宜：易消化、高蛋白、高维生素。忌：生冷、油腻、辛辣。","drugs":"","synergy":"","food":"根据手术类型调整。","herbs":"四君子汤（气虚）+桃红四物汤（血瘀）——益气活血。"},"肿瘤康复":{"cat":"中医","title":"肿瘤康复期调理","content":"手术/放化疗后中医调理，减轻副作用，提高生活质量。","emergency":"","diet":"宜：富含营养、易消化。忌：辛辣刺激、腌制食品。","drugs":"","synergy":"","food":"定期复查。","herbs":"扶正固本：黄芪、党参、灵芝——增强免疫。"}},"DIET":{"湿气":{"f":"薏米（炒）、赤小豆、茯苓、冬瓜、荷叶、陈皮、山药","a":"甜食、油腻、生冷、酒类、浓茶","r":"早餐：薏米红豆粥\n午餐：冬瓜排骨汤+清炒芹菜+米饭\n晚餐：清蒸鱼+凉拌苦瓜\n茶饮：玉米须茶"},"失眠":{"f":"酸枣仁、百合、莲子、小米、核桃、牛奶（温热睡前1小时）","a":"咖啡、浓茶（下午2点后禁饮）、酒精、辛辣","r":"早餐：小米粥+核桃包+牛奶\n晚餐：酸枣仁粥+馒头\n睡前：温热牛奶200ml"},"养胃":{"f":"山药、小米、南瓜、莲子、芡实、红枣、蒸蛋、软面条","a":"辛辣、生冷、油腻、过甜、过酸、咖啡、酒精","r":"早餐：小米粥+馒头+蒸蛋\n午餐：山药排骨汤+清炒南瓜+米饭\n晚餐：清蒸鱼+软面条"},"高血压":{"f":"芹菜、燕麦、香蕉、黑木耳、荞麦、深海鱼、绿叶蔬菜","a":"腌制品、高盐零食、加工食品、浓茶","r":"早餐：燕麦粥+全麦面包+香蕉\n午餐：芹菜炒肉+番茄蛋汤+米饭\n晚餐：清蒸鸡胸+凉拌木耳+荞麦面"},"减肥":{"f":"鸡胸肉、西兰花、糙米、燕麦、黄瓜、番茄、鱼、豆腐","a":"油炸食品、甜饮料、零食、酒精、白米白面","r":"早餐：全麦吐司+水煮蛋+脱脂牛奶\n午餐：鸡胸肉沙拉+糙米饭\n晚餐：清蒸鱼+蔬菜汤+杂粮粥"},"补气血":{"f":"红枣、桂圆、当归、乌鸡、菠菜、牛肉、枸杞、黑木耳","a":"生冷、浓茶、咖啡、辛辣刺激","r":"早餐：红枣桂圆粥+煮鸡蛋+核桃\n午餐：当归羊肉汤+清炒菠菜+米饭\n晚餐：乌鸡汤+馒头+红豆粥"},"痛风":{"f":"冬瓜、黄瓜、樱桃（每天10颗）、芹菜、低脂牛奶、鸡蛋","a":"动物内脏、海鲜（尤其贝类）、啤酒白酒、浓肉汤","r":"早餐：小米粥+鸡蛋\n午餐：清炒时蔬+番茄蛋汤+米饭\n晚餐：冬瓜汤+清蒸蛋+杂粮粥"},"糖尿病":{"f":"燕麦、糙米、苦瓜、西兰花、黄瓜、黑木耳、鱼、豆腐","a":"白米饭、白面包、甜食、含糖饮料、西瓜（高GI）","r":"早餐：燕麦粥+水煮蛋+黄瓜\n午餐：清蒸鱼+炒西兰花+糙米饭\n晚餐：豆腐汤+凉拌苦瓜+杂粮饭"},"养肝":{"f":"枸杞、菊花、绿茶、燕麦、深海鱼、蓝莓","a":"酒精、高脂饮食、腌制食品、霉变食物","r":"早餐：枸杞菊花茶+全麦面包\n午餐：清蒸鱼+凉拌木耳+米饭\n晚餐：山楂绿茶+杂粮饭"},"补肾":{"f":"黑豆、黑芝麻、核桃、枸杞、山药、羊肉","a":"生冷、辛辣、咖啡、酒精","r":"早餐：黑芝麻糊+核桃包\n午餐：山药炖排骨+炒青菜+米饭\n晚餐：羊肉汤+杂粮饭"},"润肺":{"f":"梨、百合、银耳、蜂蜜、麦冬、沙参","a":"辛辣刺激、烟酒、干燥环境","r":"早餐：百合粥+蜂蜜\n午餐：银耳莲子羹+主食\n晚餐：梨汤+清淡菜品"},"护心":{"f":"深海鱼、燕麦、坚果、蓝莓、黑木耳、山楂","a":"高盐、高脂肪、腌制食品、酒精","r":"早餐：燕麦粥+坚果\n午餐：清蒸鱼+凉拌木耳+米饭\n晚餐：山楂茶+杂粮蔬菜"},"健脾":{"f":"山药、莲子、芡实、茯苓、小米、红枣","a":"生冷、油腻、辛辣、暴饮暴食","r":"早餐：山药粥+红枣\n午餐：莲子炖鸡+炒青菜+米饭\n晚餐：小米粥+蒸蛋"},"调理月经":{"f":"红枣、桂圆、黑豆、红糖、山药","a":"生冷、辛辣、咖啡、酒精","r":"早餐：红枣桂圆粥\n午餐：黑豆猪蹄汤+蔬菜+米饭\n晚餐：红糖姜茶+杂粮"},"儿童增强免疫":{"f":"鸡蛋、牛奶、瘦肉、胡萝卜、蓝莓、猕猴桃","a":"零食、饮料、油炸食品","r":"早餐：鸡蛋+牛奶+水果\n午餐：胡萝卜炒肉+蔬菜+米饭\n晚餐：清蒸鱼+杂粮粥"}},"TCM":{"气虚":{"s":["容易疲乏","气短懒言","动则汗出","容易感冒","声音低弱"],"d":["山药","黄芪","大枣","鸡肉","牛肉","糯米"],"a":["生冷食物","辛辣刺激","油腻食物"],"l":["适度运动（太极拳）","保证睡眠","避免过度劳累"]},"阳虚":{"s":["畏寒肢冷","腰膝酸软","夜尿多","面色苍白","四肢不温"],"d":["羊肉","韭菜","核桃","生姜","肉桂","桂圆"],"a":["生冷食物","冰凉饮料"],"l":["多晒太阳","适度运动","睡前泡脚"]},"阴虚":{"s":["口干咽燥","手足心热","盗汗","便秘","失眠多梦","舌红少苔"],"d":["银耳","百合","梨","蜂蜜","麦冬","沙参","玉竹"],"a":["辛辣食物","油炸食品","烟酒","咖啡"],"l":["保证睡眠","避免熬夜","练习静坐"]},"痰湿":{"s":["体胖痰多","腹部肥满","面部油腻","身重困倦","舌苔厚腻"],"d":["薏苡仁","冬瓜","赤小豆","荷叶","陈皮","山楂","茯苓"],"a":["甜食","油腻食物","生冷食物","酒"],"l":["增加运动","控制饮食","少食多餐"]},"湿热":{"s":["面部油腻","口苦","容易长痘","烦躁易怒","小便黄","舌红苔黄"],"d":["绿豆","苦瓜","冬瓜","芹菜","莲子心","菊花"],"a":["辛辣食物","油炸食品","酒精","甜食"],"l":["增加运动","多喝水","避免熬夜"]},"血瘀":{"s":["疼痛固定","面色晦暗","皮肤青紫","健忘","月经血块","舌质紫暗"],"d":["黑木耳","山楂","桃仁","红花","三七","丹参"],"a":["生冷","油腻","烟酒"],"l":["适度运动","保持温暖","按摩经络"]},"气郁":{"s":["情绪低落","焦虑不安","胁胀","咽部异物感","胸闷善太息"],"d":["玫瑰花","佛手","山楂","陈皮","香蕉","小麦"],"a":["辛辣","咖啡因","酒精"],"l":["保持心情舒畅","社交活动","练习深呼吸"]},"特禀":{"s":["过敏性鼻炎","荨麻疹","哮喘","食物过敏","皮肤瘙痒"],"d":["富含维C","富含Omega-3","益生菌"],"a":["已知过敏原","辛辣","发物"],"l":["查明过敏原","避免接触","增强体质"]},"平和":{"s":["精力充沛","面色润泽","睡眠安","食欲好","适应力强","舌淡红苔薄白"],"d":["均衡饮食","五谷杂粮","新鲜蔬果","适量蛋白质"],"a":["偏食","暴饮暴食"],"l":["规律作息","适度运动","心态平和"]}},"symptomKeywords":{"发烧":"发热","高烧":"发热","体温高":"发热","头疼":"头痛","头痛":"头痛","头晕":"眩晕","胃疼":"胃炎","胃痛":"胃炎","胃不舒服":"胃炎","肠胃不适":"胃炎","咳嗽":"咳嗽","咳痰":"咳嗽","干咳":"咳嗽","睡不着":"失眠","睡眠不好":"失眠","失眠":"失眠","高血压":"高血压","血压高":"高血压","高压高":"高血压","糖尿病":"糖尿病","血糖高":"糖尿病","高血糖":"糖尿病","血脂高":"高血脂","高血脂":"高血脂","血脂异常":"高血脂","膝盖疼":"关节痛","关节疼":"关节痛","关节痛":"关节痛","腰疼":"腰痛","腰酸":"腰痛","腰痛":"腰痛","颈椎疼":"颈椎病","脖子疼":"颈椎病","脖子僵硬":"颈椎病","长痘":"皮肤问题","痘痘":"皮肤问题","痤疮":"皮肤问题","眼睛干":"眼疲劳","眼睛疲劳":"眼疲劳","眼疲劳":"眼疲劳","视力模糊":"眼疲劳","疲劳":"疲劳","乏力":"疲劳","没精神":"疲劳","体质":"体质辨识","阳虚":"体质辨识","阴虚":"体质辨识","气虚":"体质辨识","痰湿":"体质辨识","湿热":"体质辨识","血瘀":"体质辨识","气郁":"体质辨识","特禀":"体质辨识","平和":"体质辨识","亚健康":"亚健康","感冒":"感冒","流感":"感冒","痛风":"痛风","尿酸高":"痛风","高尿酸":"痛风","骨质疏松":"骨质疏松","骨密度低":"骨质疏松","脂肪肝":"脂肪肝","肝脂肪":"脂肪肝","腹泻":"腹泻","拉肚子":"腹泻","便秘":"便秘","大便干":"便秘","乙肝":"肝炎","丙肝":"肝炎","肝炎":"肝炎","肺炎":"肺炎","支气管炎":"支气管炎","鼻炎":"鼻炎","过敏性鼻炎":"过敏性鼻炎","咽炎":"咽炎","喉咙痛":"咽炎","中耳炎":"中耳炎","耳朵疼":"中耳炎","近视":"近视","散光":"近视","干眼":"干眼症","眼干":"干眼症","口腔溃疡":"口腔溃疡","溃疡":"口腔溃疡","荨麻疹":"荨麻疹","风团":"荨麻疹","湿疹":"湿疹","特应性皮炎":"湿疹","银屑病":"银屑病","牛皮癣":"银屑病","类风湿":"类风湿关节炎","风湿性关节炎":"类风湿关节炎","骨关节炎":"骨关节炎","退化性关节炎":"骨关节炎","冠心病":"冠心病","心绞痛":"冠心病","心梗":"冠心病","心肌梗死":"冠心病","脑卒中":"脑卒中","中风":"脑卒中","脑梗":"脑卒中","心律失常":"心律失常","心悸":"心律失常","心衰":"心力衰竭","心力衰竭":"心力衰竭","甲亢":"甲状腺功能亢进","甲状腺功能亢进":"甲状腺功能亢进","甲减":"甲状腺功能减退","甲状腺功能减退":"甲状腺功能减退","肥胖":"肥胖","体重超标":"肥胖","贫血":"贫血","血红蛋白低":"贫血","肾炎":"慢性肾病","肾病":"慢性肾病","肾结石":"肾结石","尿路结石":"肾结石","尿路感染":"尿路感染","尿道炎":"尿路感染","前列腺增生":"前列腺增生","前列腺肥大":"前列腺增生","月经不调":"月经不调","月经紊乱":"月经不调","痛经":"痛经","经期腹痛":"痛经","更年期":"更年期综合征","绝经":"更年期综合征","乳腺增生":"乳腺增生","乳腺结节":"乳腺增生","阴道炎":"阴道炎","阴道炎症":"阴道炎","手足口":"手足口病","手足口病":"手足口病","水痘":"水痘","痔疮":"痔疮","肛裂":"痔疮","抑郁症":"抑郁症","抑郁":"抑郁症","焦虑":"焦虑症","焦虑症":"焦虑症","眩晕":"眩晕","面瘫":"面瘫","面神经麻痹":"面瘫","腰椎间盘突出":"腰椎间盘突出","腰突":"腰椎间盘突出","肺癌":"肺癌","肺肿瘤":"肺癌","胃癌":"胃癌","胃肿瘤":"胃癌","肠癌":"结直肠癌","结肠癌":"结直肠癌","直肠癌":"结直肠癌","乳腺癌":"乳腺癌","乳腺肿瘤":"乳腺癌","甲状腺癌":"甲状腺癌","甲状腺肿瘤":"甲状腺癌"}};
 
-var currentMode = 'ai';
+// ===== STATE =====
+var currentMode = 'consult';
+var feedbackRating = 0;
 var isTyping = false;
-var chatHistory = [];
 
-var TCM_TYPES = {"闃磋櫄": "鐗瑰緛锛氬彛骞茶垖鐕ャ€佹墜瓒冲績鐑€佺洍姹椼€佸け鐪犲姊︺€佽垖绾㈠皯鑻斻€?br>璋冪悊锛氭粙闃存竻鐑紝瀹滈閾惰€炽€佺櫨鍚堛€侀害鍐€佺煶鏂涳紱閬垮厤杈涜荆鍒烘縺銆?br>鎺ㄨ崘锛氱煡鏌忓湴榛勪父銆佸叚鍛冲湴榛勪父銆?, "闃宠櫄": "鐗瑰緛锛氱晱瀵掕偄鍐枫€侀潰鑹茶媿鐧姐€佺鐤蹭箯鍔涖€佸枩鐑ギ銆佽垖娣¤嫈鐧姐€?br>璋冪悊锛氭俯琛ヨ偩闃筹紝瀹滈缇婅倝銆侀煭鑿溿€佽倝妗傦紱閬垮厤鐢熷喎銆?br>鎺ㄨ崘锛氶噾鍖偩姘斾父銆佸彸褰掍父銆?, "姘旇櫄": "鐗瑰緛锛氭皵鐭噿瑷€銆佸鏄撶柌鍔炽€佸鏄撴劅鍐掋€佸０闊充綆寮便€佽垖娣¤嫈鐧姐€?br>璋冪悊锛氳ˉ姘斿仴鑴撅紝瀹滈灞辫嵂銆侀粍鑺€佸厷鍙傘€佸ぇ鏋ｏ紱閬垮厤杩囧害鍔崇疮銆?br>鎺ㄨ崘锛氳ˉ涓泭姘斾父銆佺帀灞忛鏁ｃ€?, "鐥版箍": "鐗瑰緛锛氫綋鍨嬭偉鑳栥€佺棸澶氳兏闂枫€佽垖鑻斿帤鑵汇€佸ぇ渚跨矘婊炪€?br>璋冪悊锛氬仴鑴剧婀匡紝瀹滈钖忎粊銆佽丹灏忚眴銆佸啲鐡滐紱閬垮厤鐢滆吇娌硅吇銆?br>鎺ㄨ崘锛氫簩闄堜父銆佸弬鑻撶櫧鏈暎銆?, "婀跨儹": "鐗瑰緛锛氬彛鑻﹀彛骞层€侀潰绾㈢洰璧ゃ€佸皬渚块粍璧ゃ€佽垖绾㈣嫈榛勮吇銆?br>璋冪悊锛氭竻鐑埄婀匡紝瀹滈缁胯眴銆佽枏浠併€佽嫤鐡滐紱閬垮厤杈涜荆閰掔簿銆?br>鎺ㄨ崘锛氶緳鑳嗘郴鑲濅父銆佷笁浠佹堡銆?, "琛€鐦€": "鐗瑰緛锛氱柤鐥涘浐瀹氥€侀潰鑹叉櫐鏆椼€佽垖璐ㄧ传鏆楁垨鏈夌榾鏂戙€?br>璋冪悊锛氭椿琛€鍖栫榾锛屽疁椋熼粦鏈ㄨ€炽€佸北妤傘€佺帿鐟拌姳锛涢伩鍏嶅瘨鍑夈€?br>鎺ㄨ崘锛氳搴滈€愮榾涓搞€佷笁涓冪矇銆?, "姘旈儊": "鐗瑰緛锛氭儏缁姂閮併€佽兏鑳佽儉闂枫€佸徆鎭€佽剦寮︺€?br>璋冪悊锛氱枏鑲濈悊姘旓紝瀹滈鐜懓鑺便€侀檲鐨€佷經鎵嬶紱淇濇寔蹇冩儏鑸掔晠銆?br>鎺ㄨ崘锛氶€嶉仴涓搞€佹煷鑳＄枏鑲濇暎銆?};
-var DIET_PLAN = {"楂樿鍘嬮ギ椋?: "鍘熷垯锛氫綆鐩愩€佷綆鑴傘€侀珮閽?br>瀹滈锛氳姽鑿溿€佽彔鑿溿€佸北妤傘€侀鑿囥€佺嚂楹?br>蹇岄锛氬捀鑿溿€佽厞鑲夈€佸姩鐗╁唴鑴?br>姣忔棩鐩愭憚鍏ヤ笉瓒呰繃6鍏?, "绯栧翱鐥呴ギ椋?: "鍘熷垯锛氭帶鍒舵€荤儹閲忋€佷綆绯栥€佷綆鑴傘€侀珮绾ょ淮<br>瀹滈锛氳嫤鐡溿€侀粍鐡溿€佺暘鑼勩€佽崬楹︺€侀瓟鑺?br>蹇岄锛氱硸鏋溿€佽泲绯曘€佺櫧绫抽キ锛堥檺閲忥級<br>瀹氭椂瀹氶噺锛岄鍚庢暎姝?, "鐥涢楗": "鍘熷垯锛氫綆鍢屽懁銆侀珮纰辨€с€佸楗按<br>瀹滈锛氱墰濂躲€侀浮铔嬨€佺櫧鑿溿€佽嫻鏋溿€佽嫃鎵撴按<br>蹇岄锛氭捣椴溿€佸姩鐗╁唴鑴忋€佸暏閰掋€佹祿姹?br>姣忔棩楗按2000ml浠ヤ笂", "鍑忚偉楗": "鍘熷垯锛氫綆鐑噺銆侀珮铔嬬櫧銆佸钄彍<br>瀹滈锛氶浮鑳歌倝銆佽タ鍏拌姳銆佽嫻鏋溿€佺嚂楹︺€侀浮铔?br>蹇岄锛氭补鐐搁鍝併€佺敎楗枡銆佽柉鐗囥€佸ザ鑼?, "鑳冪梾楗": "鍘熷垯锛氳寰嬮ギ椋熴€佺粏鍤兼參鍜姐€佹俯鍜屾槗娑堝寲<br>瀹滈锛氬皬绫崇播銆侀潰鏉°€佽捀铔嬨€佽嫻鏋溿€佸北鑽?br>蹇岄锛氳緵杈ｃ€佺敓鍐枫€佹补鑵汇€佽繃鐢滆繃閰?};
+var CHIPS_DATA = {"consult": ["感冒", "发热", "咳嗽", "头痛", "高血压", "糖尿病", "胃炎", "失眠", "过敏", "痛风"], "tcm": ["体质辨识", "阴虚", "阳虚", "气虚", "痰湿", "湿热", "血瘀", "气郁", "特禀"], "diet": ["高血压饮食", "糖尿病饮食", "痛风饮食", "胃病饮食", "减肥饮食", "贫血饮食", "老人饮食", "儿童饮食"], "knowledge": ["感冒", "高血压", "糖尿病", "冠心病", "高血脂", "骨质疏松", "脂肪肝", "贫血", "焦虑", "痛风"]};
+var WELCOME = {"consult": "👋 您好！我是AI中西医健康助手，由昆明医科大学专业医学知识库驱动。\n\n我可以为您提供常见病的专业解答，包括症状分析、用药建议、注意事项等。\n\n⚠️ **重要声明**：本助手仅供健康参考，不能替代专业医生诊断。如有紧急情况请拨打120。", "tcm": "🌿 中医体质辨识模式\n\n中医将人体体质分为九种类型，不同体质对应不同的养生方案。\n\n您可以告诉我您的症状，我来帮您初步辨识体质类型，并提供针对性的调理建议。", "diet": "🥗 疾病饮食方案模式\n\n科学饮食是疾病康复的重要环节。\n\n请告诉我您关注的具体疾病或健康问题，我将为您提供专业的饮食建议。", "knowledge": "📚 健康知识科普模式\n\n这里汇集了72种常见病的专业医学知识。\n\n您可以输入疾病名称或症状关键词，我将为您提供详细的疾病百科信息。"};
+var CAT_ICONS = {"呼吸系统": "🫁", "心血管系统": "❤️", "消化系统": "🫄", "内分泌系统": "🧬", "神经系统": "🧠", "泌尿系统": "🫘", "骨科/风湿": "🦴", "皮肤科": "🧴", "五官科": "👁️", "妇产科": "👶", "精神心理": "🧘", "血液系统": "🩸", "肿瘤": "🔬", "其他": "📋", "中医体质": "🌿", "亚健康": "💤", "营养科": "🥗", "儿科": "🧒"};
 
-document.addEventListener('DOMContentLoaded', init);
+// ===== INIT =====
+(function init(){
+  var mode = localStorage.getItem('mode') || 'consult';
+  switchMode(mode);
+  loadAdmin();
+  showWelcome();
+})();
 
-function init() {
-  document.querySelectorAll('.mode-btn').forEach(function(b) {
-    b.addEventListener('click', function() { switchMode(this.dataset.mode); });
-  });
-  document.getElementById('sendBtn').addEventListener('click', sendMessage);
-  document.getElementById('userInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-  updateApiStatus();
-  switchMode('ai');
-}
-
-function updateApiStatus() {
-  var el = document.getElementById('apiStatus');
-  if (API_BASE && API_BASE.indexOf('vercel.app') >= 0) {
-    el.textContent = '鈿?AI鍦ㄧ嚎';
-    el.className = 'api-status';
-  } else {
-    el.textContent = '馃摉 鏈湴妯″紡';
-    el.className = 'api-status offline';
-  }
-}
-
-function switchMode(mode) {
+// ===== MODE SWITCHING =====
+function switchMode(mode){
   currentMode = mode;
-  document.querySelectorAll('.mode-btn').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.mode === mode);
+  localStorage.setItem('mode', mode);
+  document.querySelectorAll('.mode-btn').forEach(function(btn){
+    btn.classList.toggle('active', btn.dataset.mode === mode);
   });
-  document.getElementById('chatArea').innerHTML = '';
+  // Update chips
   var bar = document.getElementById('chipsBar');
   bar.innerHTML = '';
-  var chips = CHIPS_DATA[mode] || [];
-  chips.forEach(function(k) {
+  (CHIPS_DATA[mode] || []).forEach(function(kw){
     var btn = document.createElement('button');
     btn.className = 'chip';
-    btn.textContent = k;
-    btn.addEventListener('click', function() { sendQuick(k); });
+    btn.textContent = kw;
+    btn.onclick = function(){ sendQuick(kw); };
     bar.appendChild(btn);
   });
-  addAIMessage(getWelcome(mode));
+  // Show welcome if chat is empty
+  var chat = document.getElementById('chatArea');
+  if (chat.children.length === 0) showWelcome();
 }
 
-function getWelcome(mode) {
-  var m = {
-    ai: '馃憢 鎴戞槸AI涓タ鍖诲姪鎵嬶紒<br><br>鎮ㄥ彲浠ラ棶鎴戜换浣曞仴搴烽棶棰橈細<br>鈥?"鎰熷啋浜嗘€庝箞鍔?<br>鈥?"琛€鍘嬮珮鍚冧粈涔堝ソ"<br>鈥?"闃磋櫄浣撹川鎬庝箞璋冪悊"<br>鈥?"绯栧翱鐥呰兘鍚冩按鏋滃悧"<br><br>鎴戜細浠庝腑瑗垮尰涓や釜瑙掑害缁欐偍寤鸿銆?,
-    consult: '馃摉 鐤剧梾鐭ヨ瘑搴撴ā寮?br><br>璇疯緭鍏ョ柧鐥呭悕绉帮紙鏀寔72绉嶅父瑙佺柧鐥咃級',
-    tcm: '馃尶 涓尰浣撹川杈ㄨ瘑<br><br>璇锋弿杩版偍鐨勭棁鐘讹紝鎴戞潵甯偍鍒嗘瀽浣撹川'
-  };
-  return m[mode] || m.ai;
+function showWelcome(){
+  var chat = document.getElementById('chatArea');
+  chat.innerHTML = '';
+  addAIMessage(WELCOME[currentMode] || WELCOME.consult);
 }
 
-function sendMessage() {
-  var input = document.getElementById('userInput');
-  var text = (input.value || '').trim();
-  if (!text || isTyping) return;
-  input.value = '';
-  addUserMsg(text);
-  chatHistory.push({ role: 'user', content: text });
-  processQuery(text);
+// ===== CHAT =====
+function addAIMessage(text, cardHtml){
+  var chat = document.getElementById('chatArea');
+  var div = document.createElement('div');
+  div.className = 'msg ai';
+  var bubble = '<div class="msg-avatar">🌿</div><div class="msg-bubble">' + formatText(text) + (cardHtml || '') + '</div>';
+  div.innerHTML = bubble;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
 }
 
-function sendQuick(kw) {
-  if (isTyping) return;
-  addUserMsg(kw);
-  chatHistory.push({ role: 'user', content: kw });
-  processQuery(kw);
-}
-
-function addUserMsg(text) {
+function addUserMessage(text){
   var chat = document.getElementById('chatArea');
   var div = document.createElement('div');
   div.className = 'msg user';
-  div.innerHTML = '<div class="msg-avatar">馃懁</div><div class="msg-bubble">' + esc(text) + '</div>';
+  div.innerHTML = '<div class="msg-avatar">👤</div><div class="msg-bubble">' + escHtml(text) + '</div>';
   chat.appendChild(div);
-  scroll();
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function addAIMessage(html) {
-  var chat = document.getElementById('chatArea');
-  var div = document.createElement('div');
-  div.className = 'msg ai';
-  div.innerHTML = '<div class="msg-avatar">馃尶</div><div class="msg-bubble">' + html + '</div>';
-  chat.appendChild(div);
-  scroll();
-}
-
-function showTyping() {
+function showTyping(){
   isTyping = true;
-  var btn = document.getElementById('sendBtn');
-  btn.disabled = true;
   var chat = document.getElementById('chatArea');
   var div = document.createElement('div');
   div.className = 'msg ai';
-  div.id = 'typing';
-  div.innerHTML = '<div class="msg-avatar">馃尶</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  div.id = 'typingMsg';
+  div.innerHTML = '<div class="msg-avatar">🌿</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
   chat.appendChild(div);
-  scroll();
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function hideTyping() {
+function hideTyping(){
   isTyping = false;
-  document.getElementById('sendBtn').disabled = false;
-  var el = document.getElementById('typing');
+  var el = document.getElementById('typingMsg');
   if (el) el.remove();
 }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function scroll() { var c = document.getElementById('chatArea'); if(c) c.scrollTop = c.scrollHeight; }
-
-function processQuery(query) {
-  if (currentMode === 'ai') {
-    askAI(query);
-  } else {
-    searchKB(query);
-  }
+function escHtml(s){
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
 }
 
-// ============ AI 妯″紡 ============
-function askAI(query) {
-  if (!API_BASE || API_BASE === '') {
-    // 娌℃湁API鏃讹紝鐢ㄦ湰鍦癒B + 閫氱敤鍥炲鍏滃簳
-    var kbResult = searchKBOnly(query);
-    if (kbResult.found) {
-      showTyping();
-      setTimeout(function() {
-        hideTyping();
-        addAIMessage('馃摉 鏍规嵁鎴戠殑鐭ヨ瘑搴撲负鎮ㄦ壘鍒帮細<br><br>' + kbResult.html);
-      }, 600);
-    } else {
-      showTyping();
-      setTimeout(function() {
-        hideTyping();
-        addAIMessage('馃摉 鎶辨瓑锛岀煡璇嗗簱涓湭鎵惧埌"' + esc(query) + '"鐨勭浉鍏充俊鎭€?br><br>璇烽儴缃?Vercel API 鏉ュ惎鐢ˋI鍥炵瓟浠绘剰闂銆?br><br>鉁?鍙敤蹇嵎闂锛? + Object.keys(KB_DATA.KB || {}).slice(0,6).join('銆?));
-      }, 600);
-    }
-    return;
-  }
+function formatText(text){
+  if (!text) return '';
+  return escHtml(text).replace(/\n/g, '<br>').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
 
+// ===== SEND MESSAGE =====
+function sendMessage(){
+  var input = document.getElementById('userInput');
+  var text = input.value.trim();
+  if (!text || isTyping) return;
+  input.value = '';
+  autoResize(input);
+  addUserMessage(text);
+  processQuery(text);
+}
+
+function sendQuick(kw){
+  if (isTyping) return;
+  addUserMessage(kw);
+  processQuery(kw);
+}
+
+function handleKey(e){
+  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ===== QUERY PROCESSING =====
+function processQuery(query){
   showTyping();
-  fetch(API_BASE + '/api/ask', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      question: query,
-      history: chatHistory.slice(-8)
-    })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
+  setTimeout(function(){
     hideTyping();
-    if (data.error) {
-      // 闄嶇骇鍒版湰鍦癒B
-      var kb = searchKBOnly(query);
-      addAIMessage('鈿狅笍 AI鏈嶅姟鏆傛椂涓嶅彲鐢紙' + data.error + '锛?br><br>馃摉 鏈湴鐭ヨ瘑搴撴悳绱細<br>' + (kb.found ? kb.html : '鏈壘鍒扮浉鍏崇粨鏋?));
-    } else {
-      addAIMessage(data.answer || data.response || JSON.stringify(data));
-      chatHistory.push({ role: 'assistant', content: data.answer || data.response || '' });
+    var result = searchKB(query);
+    addAIMessage(result.text, result.cardHtml);
+  }, 600 + Math.random() * 600);
+}
+
+function searchKB(query){
+  var q = query.toLowerCase();
+  
+  // TCM mode
+  if (currentMode === 'tcm') return searchTCM(q, query);
+  
+  // Diet mode
+  if (currentMode === 'diet') return searchDiet(q, query);
+  
+  // Consult & Knowledge mode - search KB
+  var kb = KB_DATA.KB || {};
+  var keywords = KB_DATA.symptomKeywords || {};
+  
+  // Direct match first
+  var directMatch = findDirectMatch(q, kb);
+  if (directMatch) return buildKBResponse(directMatch.name, directMatch.data);
+  
+  // Keyword search
+  var matches = findKeywordMatches(q, kb, keywords);
+  if (matches.length > 0) return buildKBResponse(matches[0].name, matches[0].data);
+  
+  // Fuzzy match
+  var fuzzy = findFuzzyMatch(q, kb);
+  if (fuzzy) return buildKBResponse(fuzzy.name, fuzzy.data);
+  
+  return { text: '抱歉，我暂时没有找到与"' + query + '"相关的专业知识。
+
+您可以尝试：
+1. 输入具体疾病名称（如"高血压""糖尿病"）
+2. 输入主要症状（如"头痛""胸闷"）
+3. 点击上方的快捷标签
+
+目前知识库涵盖72种常见病，如有紧急情况请及时就医。', cardHtml: '' };
+}
+
+function findDirectMatch(q, kb){
+  for (var name in kb) {
+    if (q === name.toLowerCase() || q.indexOf(name.toLowerCase()) >= 0 || name.toLowerCase().indexOf(q) >= 0) {
+      return { name: name, data: kb[name] };
     }
-  })
-  .catch(function(err) {
-    hideTyping();
-    addAIMessage('鈿狅笍 缃戠粶閿欒锛岃妫€鏌ョ綉缁滃悗閲嶈瘯銆?br>閿欒锛? + err.message);
+  }
+  return null;
+}
+
+function findKeywordMatches(q, kb, keywords){
+  var scores = [];
+  for (var name in kb) {
+    var entry = kb[name];
+    var score = 0;
+    // Match in name
+    if (q.indexOf(name.toLowerCase()) >= 0 || name.toLowerCase().indexOf(q) >= 0) score += 10;
+    // Match in keywords
+    var kws = keywords[name] || [];
+    for (var i = 0; i < kws.length; i++) {
+      if (q.indexOf(kws[i].toLowerCase()) >= 0 || kws[i].toLowerCase().indexOf(q) >= 0) score += 3;
+    }
+    // Match in title
+    if (entry.title && entry.title.toLowerCase().indexOf(q) >= 0) score += 5;
+    // Match in content
+    if (entry.content && entry.content.toLowerCase().indexOf(q) >= 0) score += 2;
+    if (score > 0) scores.push({ name: name, data: entry, score: score });
+  }
+  scores.sort(function(a,b){ return b.score - a.score; });
+  return scores.slice(0, 3);
+}
+
+function findFuzzyMatch(q, kb){
+  var best = null, bestScore = 0;
+  for (var name in kb) {
+    var s = similarity(q, name.toLowerCase());
+    if (s > bestScore && s > 0.4) { bestScore = s; best = { name: name, data: kb[name] }; }
+  }
+  return best;
+}
+
+function similarity(a, b){
+  if (a === b) return 1;
+  if (!a || !b) return 0;
+  var longer = a.length > b.length ? a : b;
+  var shorter = a.length > b.length ? b : a;
+  var hits = 0;
+  for (var i = 0; i < shorter.length; i++) {
+    if (longer.indexOf(shorter[i]) >= 0) hits++;
+  }
+  return (hits * 2) / (a.length + b.length);
+}
+
+function buildKBResponse(name, data){
+  var icon = CAT_ICONS[data.cat] || '📋';
+  var card = '<div class="kb-card">';
+  card += '<div class="kb-card-header">';
+  card += '<span class="cat-icon">' + icon + '</span>';
+  card += '<span class="cat-name">' + (data.cat || '未分类') + '</span>';
+  card += '<span class="title">' + escHtml(data.title || name) + '</span>';
+  card += '</div><div class="kb-card-body">';
+  
+  if (data.content) card += kbSection('📋 疾病概述', data.content);
+  if (data.drugs) card += kbSection('💊 用药建议', data.drugs);
+  if (data.diet) card += kbSection('🍽️ 饮食建议', data.diet);
+  if (data.herbs) card += kbSection('🌿 中医方案', data.herbs);
+  if (data.synergy) card += kbSection('⚠️ 药物相互作用', data.synergy);
+  if (data.food) card += kbSection('🍎 食物注意', data.food);
+  if (data.emergency) card += '<div class="kb-emergency">' + escHtml(data.emergency) + '</div>';
+  
+  card += '</div></div>';
+  
+  return { text: '为您找到了以下专业信息：', cardHtml: card };
+}
+
+function kbSection(title, content){
+  return '<div class="kb-section"><div class="kb-section-title">' + title + '</div><div class="kb-section-content">' + formatText(content) + '</div></div>';
+}
+
+// ===== TCM SEARCH =====
+function searchTCM(q, query){
+  var tcm = KB_DATA.TCM || {};
+  // Check for direct体质 match
+  for (var name in tcm) {
+    var entry = tcm[name];
+    if (q.indexOf(name.toLowerCase()) >= 0 || query.indexOf(name) >= 0) return buildTCMResponse(name, entry);
+    // Check features
+    if (entry.features && entry.features.toLowerCase().indexOf(q) >= 0) return buildTCMResponse(name, entry);
+  }
+  // Check symptoms in all tcm
+  for (var name in tcm) {
+    var entry = tcm[name];
+    var f = (entry.features || '') + ' ' + (entry.advice || '');
+    if (f.indexOf(q) >= 0) return buildTCMResponse(name, entry);
+  }
+  return { text: '抱歉，未能匹配到具体的中医体质类型。
+
+中医九种体质包括：平和质、气虚质、阳虚质、阴虚质、痰湿质、湿热质、血瘀质、气郁质、特禀质。
+
+您可以描述自己的症状特征，我来帮您初步辨识。', cardHtml: '' };
+}
+
+function buildTCMResponse(name, data){
+  var card = '<div class="tcm-card">';
+  card += '<div class="kb-card-header">';
+  card += '<span class="cat-icon">🌿</span>';
+  card += '<span class="cat-name">中医体质</span>';
+  card += '<span class="title">' + escHtml(data.title || name) + '</span>';
+  card += '</div><div class="kb-card-body">';
+  if (data.features) card += kbSection('🔍 体质特征', data.features);
+  if (data.advice) card += kbSection('💡 调理建议', data.advice);
+  if (data.food) card += kbSection('🥗 推荐食物', data.food);
+  if (data.avoid) card += kbSection('🚫 忌食', data.avoid);
+  if (data.herbs) card += kbSection('🌿 调理方药', data.herbs);
+  if (data.exercise) card += kbSection('🏃 运动建议', data.exercise);
+  card += '</div></div>';
+  return { text: '根据您的描述，初步分析如下：', cardHtml: card };
+}
+
+// ===== DIET SEARCH =====
+function searchDiet(q, query){
+  var diet = KB_DATA.DIET || {};
+  // Direct match
+  for (var name in diet) {
+    var entry = diet[name];
+    if (q.indexOf(name.toLowerCase()) >= 0 || query.indexOf(name) >= 0) return buildDietResponse(name, entry);
+  }
+  // Search in KB entries that match and have diet info
+  var kb = KB_DATA.KB || {};
+  var keywords = KB_DATA.symptomKeywords || {};
+  for (var name in kb) {
+    var entry = kb[name];
+    if (q.indexOf(name.toLowerCase()) >= 0 || name.toLowerCase().indexOf(q) >= 0) {
+      if (entry.diet) {
+        var card = buildKBResponse(name, entry);
+        return { text: '以下是关于"' + name + '"的饮食建议：', cardHtml: card.cardHtml };
+      }
+    }
+  }
+  // Keyword match
+  for (var name in kb) {
+    var entry = kb[name];
+    var kws = keywords[name] || [];
+    for (var i = 0; i < kws.length; i++) {
+      if (q.indexOf(kws[i].toLowerCase()) >= 0 && entry.diet) {
+        var card = buildKBResponse(name, entry);
+        return { text: '以下是关于"' + name + '"的饮食建议：', cardHtml: card.cardHtml };
+      }
+    }
+  }
+  return { text: '抱歉，暂时没有找到"' + query + '"的专项饮食方案。
+
+当前涵盖的饮食方案包括：高血压、糖尿病、痛风、胃病、减肥、贫血、老人、儿童等多种方案。
+
+您也可以在"咨询"模式下查看具体疾病的饮食建议。', cardHtml: '' };
+}
+
+function buildDietResponse(name, data){
+  var card = '<div class="kb-card">';
+  card += '<div class="kb-card-header">';
+  card += '<span class="cat-icon">🥗</span>';
+  card += '<span class="cat-name">营养科</span>';
+  card += '<span class="title">' + escHtml(data.title || name) + '</span>';
+  card += '</div><div class="kb-card-body">';
+  if (data.principle) card += kbSection('📋 饮食原则', data.principle);
+  if (data.recommend) card += kbSection('✅ 推荐食物', data.recommend);
+  if (data.avoid) card += kbSection('❌ 限制食物', data.avoid);
+  if (data.sample) card += kbSection('📝 一日食谱示例', data.sample);
+  if (data.notes) card += kbSection('📌 注意事项', data.notes);
+  card += '</div></div>';
+  return { text: '为您推荐以下饮食方案：', cardHtml: card };
+}
+
+// ===== FEEDBACK =====
+function openFeedback(){ document.getElementById('feedbackModal').classList.add('show'); }
+function closeFeedback(){ document.getElementById('feedbackModal').classList.remove('show'); }
+function setRating(v){
+  feedbackRating = v;
+  document.querySelectorAll('#starsContainer .star').forEach(function(s){
+    s.classList.toggle('active', parseInt(s.dataset.v) <= v);
   });
 }
 
-// ============ 鏈湴 KB 妯″紡 ============
-function searchKB(query) {
-  showTyping();
-  setTimeout(function() {
-    hideTyping();
-    var result = searchKBOnly(query);
-    addAIMessage(result.found ? result.html : '馃摉 鏈壘鍒?' + esc(query) + '"鐨勭浉鍏充俊鎭€傛偍鍙互璇曡瘯锛? + Object.keys(KB_DATA.KB || {}).slice(0,4).join('銆?));
-  }, 600);
+function submitFeedback(){
+  var text = document.getElementById('feedbackText').value.trim();
+  if (feedbackRating === 0){ showToast('请先选择评分 ⭐', 'error'); return; }
+  var fb = { rating: feedbackRating, text: text, time: new Date().toISOString(), mode: currentMode };
+  var list = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+  list.push(fb);
+  localStorage.setItem('feedbacks', JSON.stringify(list));
+  // Try pushplus
+  var token = localStorage.getItem('pushplusToken');
+  if (token) sendPushplus(token, fb);
+  feedbackRating = 0;
+  document.getElementById('feedbackText').value = '';
+  document.querySelectorAll('#starsContainer .star').forEach(function(s){ s.classList.remove('active'); });
+  closeFeedback();
+  showToast('感谢您的反馈！🎉', 'success');
 }
 
-function searchKBOnly(q) {
-  var kb = KB_DATA.KB || {};
-  q = q.toLowerCase().trim();
-
-  if (kb[q]) return { found: true, html: buildCard(q, kb[q]) };
-  var keys = Object.keys(kb);
-  for (var i = 0; i < keys.length; i++) {
-    var name = keys[i];
-    if (name.indexOf(q) >= 0 || q.indexOf(name) >= 0)
-      return { found: true, html: buildCard(name, kb[name]) };
-  }
-
-  var sk = Object.keys(SYMPTOM_KEYWORDS || {});
-  for (var j = 0; j < sk.length; j++) {
-    if (sk[j].indexOf(q) >= 0 || q.indexOf(sk[j]) >= 0) {
-      var matched = SYMPTOM_KEYWORDS[sk[j]];
-      if (kb[matched]) return { found: true, html: buildCard(matched, kb[matched]) };
-    }
-  }
-
-  var tcm = TCM_TYPES || {};
-  for (var t in tcm) { if (t.indexOf(q) >= 0 || q.indexOf(t) >= 0) return { found: true, html: '<div class="kb-card"><div class="kb-card-header">馃尶 ' + t + '</div><div class="kb-card-body">' + tcm[t] + '</div></div>' }; }
-
-  var diet = DIET_PLAN || {};
-  for (var d in diet) { if (d.indexOf(q) >= 0 || q.indexOf(d) >= 0) return { found: true, html: '<div class="kb-card"><div class="kb-card-header">馃 ' + d + '</div><div class="kb-card-body">' + diet[d] + '</div></div>' }; }
-
-  return { found: false, html: '' };
+function sendPushplus(token, fb){
+  var title = '健康助手反馈 ⭐' + fb.rating;
+  var content = '评分：' + fb.rating + '/5\n模式：' + fb.mode + '\n时间：' + fb.time + '\n内容：' + (fb.text || '无');
+  var url = 'https://www.pushplus.plus/send?token=' + token + '&title=' + encodeURIComponent(title) + '&content=' + encodeURIComponent(content) + '&template=txt';
+  try { new Image().src = url; } catch(e){}
 }
 
-var SYMPTOM_KEYWORDS = {};
-(function() {
-  var kb = KB_DATA.KB || {};
-  var keys = Object.keys(kb);
-  for (var i = 0; i < keys.length; i++) {
-    var data = kb[keys[i]];
-    var text = (data.symptoms || '') + ',' + (data.content || '');
-    var parts = text.replace(/銆亅銆倈,/g, ',').split(',');
-    for (var j = 0; j < Math.min(parts.length, 5); j++) {
-      var s = parts[j].trim();
-      if (s && s.length > 1) SYMPTOM_KEYWORDS[s] = keys[i];
-    }
+// ===== ADMIN =====
+function openAdmin(){
+  document.getElementById('adminModal').classList.add('show');
+  var list = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+  document.getElementById('statCount').textContent = list.length;
+  if (list.length > 0) {
+    var sum = list.reduce(function(a,b){ return a + b.rating; }, 0);
+    document.getElementById('statAvg').textContent = (sum / list.length).toFixed(1);
+  } else {
+    document.getElementById('statAvg').textContent = '0';
   }
-})();
-
-function buildCard(name, data) {
-  var html = '<div class="kb-card"><div class="kb-card-header">馃搵 ' + (data.title || name) + '</div><div class="kb-card-body">';
-  if (data.content) html += '<div class="kb-section"><div class="kb-section-title">馃摉 鐤剧梾璇存槑</div><div class="kb-section-content">' + data.content + '</div></div>';
-  if (data.symptoms) html += '<div class="kb-section"><div class="kb-section-title">馃攳 甯歌鐥囩姸</div><div class="kb-section-content">' + data.symptoms + '</div></div>';
-  if (data.drugs) html += '<div class="kb-section"><div class="kb-section-title">馃拪 甯哥敤鑽墿</div><div class="kb-section-content">' + data.drugs + '</div></div>';
-  if (data.diet) html += '<div class="kb-section"><div class="kb-section-title">馃 楗寤鸿</div><div class="kb-section-content">' + data.diet + '</div></div>';
-  if (data.herbs) html += '<div class="kb-section"><div class="kb-section-title">馃尶 涓尰璋冪悊</div><div class="kb-section-content">' + data.herbs + '</div></div>';
-  if (data.emergency) html += '<div class="kb-section"><div class="kb-section-title">馃毃 绱ф€ユ儏鍐?/div><div class="kb-section-content" style="color:#dc2626;">' + data.emergency + '</div></div>';
-  html += '</div></div>';
-  return html;
 }
+function closeAdmin(){ document.getElementById('adminModal').classList.remove('show'); }
+function saveAdmin(){
+  var token = document.getElementById('pushplusToken').value.trim();
+  localStorage.setItem('pushplusToken', token);
+  showToast('设置已保存 ✓', 'success');
+}
+function exportCSV(){
+  var list = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+  if (list.length === 0){ showToast('暂无反馈数据', 'error'); return; }
+  var csv = '\uFEFF评分,内容,时间,模式\n';
+  list.forEach(function(f){ csv += f.rating + ',"' + (f.text||'').replace(/"/g,'""') + '",' + f.time + ',' + f.mode + '\n'; });
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'feedback_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV已导出 📊', 'success');
+}
+
+// ===== TOAST =====
+function showToast(msg, type){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(function(){ t.className = 'toast'; }, 2500);
+}
+
+// ===== MODAL CLOSE ON OVERLAY CLICK =====
+document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+});
 </script>
 </body>
 </html>
