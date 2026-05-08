@@ -470,15 +470,23 @@ function processQuery(query) {
 }
 
 function searchKB(query) {
-  var q = (query || '').toLowerCase();
+  var q = (query || '').toLowerCase().trim();
   var kb = KB_DATA.KB || {};
   
   console.log('searchKB, q:', q);
   console.log('kb keys:', Object.keys(kb));
   
+  // 直接匹配
+  if (kb[q]) {
+    console.log('exact match:', q);
+    return buildKBResponse(q, kb[q]);
+  }
+  
+  // 模糊匹配
   for (var name in kb) {
-    if (q.indexOf(name.toLowerCase()) >= 0 || name.toLowerCase().indexOf(q) >= 0) {
-      console.log('found:', name);
+    var nameLower = name.toLowerCase();
+    if (nameLower.indexOf(q) >= 0 || q.indexOf(nameLower) >= 0) {
+      console.log('fuzzy match:', name);
       return buildKBResponse(name, kb[name]);
     }
   }
