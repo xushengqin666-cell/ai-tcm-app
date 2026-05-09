@@ -394,6 +394,27 @@ function autoResize(el){
 // ===== QUERY PROCESSING =====
 function processQuery(query){
   showTyping();
+  // Consult mode: call AI API
+  if (currentMode === 'consult') {
+    fetch('https://ai-tcm-api.xushengqin666.workers.dev', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: query})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      hideTyping();
+      addAIMessage(data.reply || data.message || JSON.stringify(data), '');
+    })
+    .catch(function(err){
+      hideTyping();
+      // Fallback to local KB on error
+      var result = searchKB(query);
+      addAIMessage(result.text + '\n\n⚠️ AI服务暂时不可用，以上为本地知识库结果', result.cardHtml);
+    });
+    return;
+  }
+  // Other modes: local KB search
   setTimeout(function(){
     hideTyping();
     var result = searchKB(query);
