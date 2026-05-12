@@ -526,9 +526,7 @@ function hideTyping() {
 }
 
 function processQuery(query) {
-  console.log('[DEBUG] processQuery called, mode=' + currentMode + ', query=' + query);
   if (currentMode === 'ai') {
-    console.log('[DEBUG] AI mode: starting fetch to ' + API_BASE);
     isTyping = true;
     showTyping();
     fetch(API_BASE, {
@@ -536,24 +534,18 @@ function processQuery(query) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({question: query})
     })
-    .then(function(r){
-      console.log('[DEBUG] fetch response status:', r.status);
-      return r.json();
-    })
+    .then(function(r){ return r.json(); })
     .then(function(data){
-      console.log('[DEBUG] fetch response data keys:', Object.keys(data));
       isTyping = false;
       hideTyping();
       var reply = data.answer || data.reply || data.message || JSON.stringify(data);
-      console.log('[DEBUG] reply text (first 100):', reply.substring(0, 100));
       addAIMessage(formatText(reply), '');
     })
-    .catch(function(err){
-      console.error('[DEBUG] fetch ERROR:', err);
+    .catch(function(){
       isTyping = false;
       hideTyping();
       var result = searchKB(query);
-      addAIMessage(formatText(result.text) + '<br><br><span style="font-size:12px;color:#dc2626">&#9888; AI服务暂时不可用（' + err.message + '），以上为本地知识库结果</span>', result.cardHtml);
+      addAIMessage(formatText(result.text) + '<br><br><span style="font-size:12px;color:#9a9a9a">&#9888; AI服务暂时不可用，以上为本地知识库结果</span>', result.cardHtml);
     });
   } else {
     isTyping = true;
@@ -608,9 +600,11 @@ function searchKB(query) {
   var words = ql.split(/\s+/);
   var scored = [];
   var keys = ['title','symptoms','diet','drugs','herbs','desc','rec','avoid','tips','keywords'];
-  var allItems = KB_DATA.KB || [];
-  if (currentMode === 'tcm') allItems = KB_DATA.TCM || [];
-  if (currentMode === 'diet') allItems = KB_DATA.DIET || [];
+  var _kbSrc = KB_DATA.KB || {};
+  if (currentMode === 'tcm') _kbSrc = KB_DATA.TCM || {};
+  if (currentMode === 'diet') _kbSrc = KB_DATA.DIET || {};
+  var allItems = Array.isArray(_kbSrc) ? _kbSrc : Object.values(_kbSrc);
+  if (!allItems.length) return {text: "未找到相关知识库条目，请尝试其他关键词或切换到"AI对话"模式咨询在线AI。", cardHtml: ""};
 
   allItems.forEach(function(item) {
     var score = 0;
@@ -682,20 +676,6 @@ function searchKBList(query) {
   scrollToBottom();
   document.getElementById('kbSearchInput').value = '';
 }
-
-window.onerror = function(msg, url, line, col, error) {
-  console.error('[GLOBAL ERROR]', msg, '\n at line', line, ':', col, '\n URL:', url);
-  document.getElementById('chatArea').innerHTML += '<div class="msg ai"><div class="msg-row"><div class="msg-avatar">&#9888;</div><div class="msg-bubble" style="color:red;border:1px solid red;padding:10px"><strong>JS Error:</strong> ' + msg + '<br>Line: ' + line + ':' + col + '</div></div></div>';
-  return false;
-};
-
-window.addEventListener('unhandledrejection', function(e) {
-  console.error('[UNHANDLED PROMISE REJECTION]', e.reason);
-  document.getElementById('chatArea').innerHTML += '<div class="msg ai"><div class="msg-row"><div class="msg-avatar">&#9888;</div><div class="msg-bubble" style="color:red;border:1px solid red;padding:10px"><strong>Promise Error:</strong> ' + e.reason + '</div></div></div>';
-});
-
-console.log('[INIT] Demo page loaded. API_BASE =', API_BASE);
-console.log('[INIT] KB_DATA entries:', Object.keys(KB_DATA.KB).length);
 </script>
 </body>
 </html>
