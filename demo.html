@@ -604,7 +604,7 @@ function searchKB(query) {
   if (currentMode === 'tcm') _kbSrc = KB_DATA.TCM || {};
   if (currentMode === 'diet') _kbSrc = KB_DATA.DIET || {};
   var allItems = Array.isArray(_kbSrc) ? _kbSrc : Object.values(_kbSrc);
-  if (!allItems.length) return {text: "未找到相关知识库条目，请尝试其他关键词或切换到"AI对话"模式咨询在线AI。", cardHtml: ""};
+  if (!allItems.length) return {text: '未找到相关知识库条目，请尝试其他关键词或切换到"AI对话"模式咨询在线AI。', cardHtml: ''};
 
   allItems.forEach(function(item) {
     var score = 0;
