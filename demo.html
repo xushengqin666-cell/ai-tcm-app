@@ -604,41 +604,25 @@ function processQuery(query) {
     })
     .then(function(r){
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      var reader = r.body.getReader();
-      var decoder = new TextDecoder();
-      var buffer = '';
-      function read() {
-        reader.read().then(function(result) {
-          if (result.done) {
-            isTyping = false;
-            finishStream();
-            chatHistory.push({ role: 'assistant', content: streamFullText });
-            return;
-          }
-          buffer += decoder.decode(result.value, {stream: true});
-          var lines = buffer.split('\n');
-          buffer = lines.pop();
-          for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
-            if (line.indexOf('data: ') === 0) {
-              var data = line.substring(6);
-              if (data === '[DONE]') continue;
-              try {
-                var json = JSON.parse(data);
-                if (json.content) appendStreamChar(json.content);
-              } catch(e) {}
-            }
-          }
-          read();
-        }).catch(function(err) {
-          isTyping = false;
-          finishStream();
-          chatHistory.push({ role: 'assistant', content: streamFullText || '(stream error)' });
-        });
-      }
-      read();
+      return r.text();
     })
-    .catch(function(){
+    .then(function(sseText){
+      var content = '';
+      var lines = sseText.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.indexOf('data: ') === 0) {
+          var data = line.substring(6);
+          if (data === '[DONE]') continue;
+          try { var json = JSON.parse(data); if (json.content) content += json.content; } catch(e) {}
+        }
+      }
+      streamFullText = content;
+      isTyping = false;
+      finishStream();
+      chatHistory.push({role: 'assistant', content: content});
+    })
+.catch(function(){
       isTyping = false;
       if (streamingEl) streamingEl.remove();
       var result = searchKB(query);
