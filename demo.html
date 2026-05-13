@@ -470,6 +470,8 @@ var currentMode = 'ai';
 var isTyping = false;
 var currentResults = [];
 var streamingEl = null;
+var streamBuf = '';
+var streamTimer = null;
 var streamFullText = '';
 
 // Init
@@ -547,11 +549,28 @@ function createStreamingBubble() {
 function appendStreamChar(text) {
   if (!streamingEl) return;
   streamFullText += text;
-  streamingEl.innerHTML = formatText(streamFullText) + '<span class="stream-cursor">&#9646;</span>';
-  scrollToBottom();
+  if (!streamBuf) streamBuf = '';
+  streamBuf += text;
+  var shouldFlush = streamBuf.length >= 8 || /[。！？，、；：.!?,;:\n]/.test(streamBuf);
+  if (shouldFlush) {
+    streamingEl.innerHTML = formatText(streamFullText) + '<span class="stream-cursor">&#9646;</span>';
+    scrollToBottom();
+    streamBuf = '';
+  } else if (!streamTimer) {
+    streamTimer = setTimeout(function(){
+      if (streamingEl && streamFullText) {
+        streamingEl.innerHTML = formatText(streamFullText) + '<span class="stream-cursor">&#9646;</span>';
+        scrollToBottom();
+      }
+      streamBuf = '';
+      streamTimer = null;
+    }, 120);
+  }
 }
 
 function finishStream() {
+  if (streamTimer) { clearTimeout(streamTimer); streamTimer = null; }
+  streamBuf = '';
   if (!streamingEl) return;
   streamingEl.innerHTML = formatText(streamFullText);
   scrollToBottom();
