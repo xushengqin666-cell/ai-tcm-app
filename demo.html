@@ -631,7 +631,9 @@ function processQuery(query) {
     chatHistory.forEach(function(m){histMsgs.push({role:m.role,content:m.content});});
     var allMsgs = histMsgs.concat([{role:"user",content:query}]);
 
-    fetch(modelCfg.base, {
+    // DEBUG: log raw response for troubleshooting
+      console.log('[DEBUG] Using model:', modelCfg.model, 'base:', modelCfg.base);
+      fetch(modelCfg.base, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
       body: JSON.stringify({ model: modelCfg.model, messages: allMsgs, stream: true })
@@ -681,6 +683,8 @@ function processQuery(query) {
             var json = JSON.parse(data);
             var delta = json.choices && json.choices[0] ? json.choices[0].delta : null;
             if (!delta) continue;
+            // DEBUG: show all delta keys
+            console.log('[DEBUG] delta keys:', Object.keys(delta).join(','), '| rc:', !!delta.reasoning_content, '| c:', !!delta.content);
             if (delta.reasoning_content) {
               thinkingContent += delta.reasoning_content;
               updateThinking(thinkingContent);
@@ -696,7 +700,7 @@ function processQuery(query) {
       }
 
       function handleFallbackText(text) {
-        var content = '', lines = text.split('\\n');
+        var content = '', thinkingContent = '', lines = text.split('\n');
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim();
           if (!line || line.indexOf('data:') !== 0) continue;
@@ -705,14 +709,20 @@ function processQuery(query) {
           try {
             var json = JSON.parse(data);
             var delta = json.choices && json.choices[0] ? json.choices[0].delta : null;
-            if (delta && delta.content) content += delta.content;
+            if (delta) {
+              if (delta.reasoning_content) { thinkingContent += delta.reasoning_content; }
+              if (delta.content) { content += delta.content; }
+            }
           } catch(e){}
         }
+        if (thinkingContent) updateThinking(thinkingContent);
         streamFullText = content;
         isTyping = false;
-        finishStreamWithThinking('');
+        finishStreamWithThinking(thinkingContent);
         chatHistory.push({role:'user',content:query});
-        chatHistory.push({role:'assistant',content:content});
+        var aObj = {role:'assistant',content:content};
+        if (thinkingContent) aObj.thinking = thinkingContent;
+        chatHistory.push(aObj);
       }
 
       return pump();
