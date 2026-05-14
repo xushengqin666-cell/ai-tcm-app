@@ -902,29 +902,7 @@ function searchKBList(query) {
   scrollToBottom();
   document.getElementById('kbSearchInput').value = '';
 }
-<\/script>
-
-<div id="settingsModal" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:16px;padding:28px 24px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;font-family:sans-serif">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h2 style="font-size:18px;color:#0f3d2e;margin:0">&#9881; 模型与API设置</h2>
-      <button onclick="document.getElementById('settingsModal').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:#999">&#10005;</button>
-    </div>
-    <label style="font-size:13px;color:#444;display:block;margin-bottom:6px;font-weight:600">选择模型：</label>
-    <div id="modelSelector" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px"></div>
-    <label style="font-size:13px;color:#444;display:block;margin-bottom:6px;font-weight:600">API Key (<span id="modelKeyName">Groq LLaMA</span>)：</label>
-    <input id="groqKeyInput" type="password" placeholder="输入API Key..." style="width:100%;padding:10px 12px;border:1.5px solid #e5ddd0;border-radius:10px;font-size:14px;box-sizing:border-box;outline:none">
-    <p id="modelDesc" style="font-size:12px;color:#999;margin:6px 0 14px"></p>
-    <div id="keySaveStatus" style="font-size:12px;color:#c4943a;margin:0 0 16px;min-height:18px"></div>
-    <div style="display:flex;gap:10px">
-      <button onclick="saveKey()" style="flex:1;background:#0f3d2e;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;cursor:pointer">保存</button>
-      <button onclick="document.getElementById('settingsModal').style.display='none'" style="flex:1;background:#f5f2ed;color:#666;border:none;border-radius:10px;padding:10px;font-size:14px;cursor:pointer">取消</button>
-    </div>
-    <p style="font-size:11px;color:#bbb;margin:14px 0 0;text-align:center">
-      Groq <a href="https://console.groq.com/keys" target="_blank" style="color:#0f3d2e">console.groq.com/keys</a> &nbsp;|&nbsp;
-      DeepSeek <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#0f3d2e">platform.deepseek.com/api_keys</a> &nbsp;|&nbsp;
-      OpenRouter <a href="https://openrouter.ai/keys" target="_blank" style="color:#0f3d2e">openrouter.ai/keys</a>
-    </p>function saveKey(){var k=document.getElementById('groqKeyInput').value.trim();if(!k){document.getElementById('keySaveStatus').textContent='请输入 Key';return}localStorage.setItem('GROQ_API_KEY',k);GROQ_API_KEY=k;document.getElementById('keySaveStatus').textContent='已保存，重新发送消息即可生效'}
+function saveKey(){var k=document.getElementById('groqKeyInput').value.trim();if(!k){document.getElementById('keySaveStatus').textContent='请输入 Key';return}localStorage.setItem('GROQ_API_KEY',k);GROQ_API_KEY=k;document.getElementById('keySaveStatus').textContent='已保存，重新发送消息即可生效'}
 function openSettings(){
   var m=document.getElementById('settingsModal');
   renderModelBar();renderModelSelector();
@@ -976,6 +954,27 @@ function renderModelBar(){
     c.appendChild(btn);
   });
 }
-</script>
-</body>
+<\/script>
+
+<div id="settingsModal" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;font-family:sans-serif">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:18px;color:#0f3d2e;margin:0">&#9881; 模型与API设置</h2>
+      <button onclick="document.getElementById('settingsModal').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:#999">&#10005;</button>
+    </div>
+    <label style="font-size:13px;color:#444;display:block;margin-bottom:6px;font-weight:600">选择模型：</label>
+    <div id="modelSelector" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px"></div>
+    <label style="font-size:13px;color:#444;display:block;margin-bottom:6px;font-weight:600">API Key (<span id="modelKeyName">Groq LLaMA</span>)：</label>
+    <input id="groqKeyInput" type="password" placeholder="输入API Key..." style="width:100%;padding:10px 12px;border:1.5px solid #e5ddd0;border-radius:10px;font-size:14px;box-sizing:border-box;outline:none">
+    <p id="modelDesc" style="font-size:12px;color:#999;margin:6px 0 14px"></p>
+    <div id="keySaveStatus" style="font-size:12px;color:#c4943a;margin:0 0 16px;min-height:18px"></div>
+    <div style="display:flex;gap:10px">
+      <button onclick="saveKey()" style="flex:1;background:#0f3d2e;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;cursor:pointer">保存</button>
+      <button onclick="document.getElementById('settingsModal').style.display='none'" style="flex:1;background:#f5f2ed;color:#666;border:none;border-radius:10px;padding:10px;font-size:14px;cursor:pointer">取消</button>
+    </div>
+    <p style="font-size:11px;color:#bbb;margin:14px 0 0;text-align:center">
+      Groq <a href="https://console.groq.com/keys" target="_blank" style="color:#0f3d2e">console.groq.com/keys</a> &nbsp;|&nbsp;
+      DeepSeek <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#0f3d2e">platform.deepseek.com/api_keys</a> &nbsp;|&nbsp;
+      OpenRouter <a href="https://openrouter.ai/keys" target="_blank" style="color:#0f3d2e">openrouter.ai/keys</a>
+    </p></body>
 </html>
