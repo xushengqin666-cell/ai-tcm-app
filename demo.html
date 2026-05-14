@@ -469,7 +469,7 @@ var MODELS = {
   groq_llama: { name: 'Groq LLaMA (免费)', base: 'https://api.groq.com/openai/v1/chat/completions', key: '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', model: 'llama-3.3-70b-versatile', supportsThinking: false },
   deepseek: { name: 'DeepSeek-R1 (深度思考)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-reasoner', supportsThinking: true },
   deepseek_chat: { name: 'DeepSeek-V3 (快速对话)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-chat', supportsThinking: false },
-  openrouter_gemini: { name: 'Gemini 1.5 Flash (媲美GPT)', base: 'https://openrouter.ai/api/v1/chat/completions', key: '', model: 'google/gemini-flash-1.5:free', supportsThinking: false }
+  openrouter_gemini: { name: 'Gemini 1.5 Flash (媲美GPT)', base: 'https://openrouter.ai/api/v1/chat/completions', key: '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', model: 'google/gemini-flash-1.5:free', supportsThinking: false }
 };
 var currentModel = localStorage.getItem('selectedModel') || 'groq_llama';
 function getModel() { return MODELS[currentModel] || MODELS.groq_llama; }
