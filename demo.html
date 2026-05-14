@@ -916,7 +916,7 @@ function renderModelSelector(){
     var info=MODELS[key],btn=document.createElement('button');
     btn.type='button';btn.dataset.model=key;
     var active=currentModel===key;
-    btn.style.cssText='padding:10px 14px;border:2px solid '+('#0f3d2e' if active else '#e5ddd0')+';border-radius:10px;background:'+('#f0faf4' if active else '#fff')+';cursor:pointer;text-align:left;font-size:13px;color:#333;transition:all .2s';
+    btn.style.cssText='padding:10px 14px;border:2px solid '+((active ? '#0f3d2e' : '#e5ddd0'))+';border-radius:10px;background:'+((active ? '#f0faf4' : '#fff'))+';cursor:pointer;text-align:left;font-size:13px;color:#333;transition:all .2s';
     var tags='';
     if(info.supportsThinking) tags+='<span style="display:inline-block;background:#c4943a;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px">\ud83e\udd14 \u6df1\u5ea6\u601d\u8003</span>';
     if(info.key&&!localStorage.getItem('apiKey_'+key)) tags+='<span style="display:inline-block;background:#2d7a4f;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">\u2705 \u514d\u8d39</span>';
@@ -947,7 +947,7 @@ function renderModelBar(){
     var info=MODELS[key],btn=document.createElement('button');
     btn.type='button'; btn.dataset.model=key;
     var active=currentModel===key;
-    btn.style.cssText='padding:6px 14px;border:2px solid '+('#0f3d2e' if active else '#ddd')+';border-radius:20px;background:'+('#0f3d2e' if active else '#fff')+';color:'+('#fff' if active else '#555')+';cursor:pointer;font-size:12px;font-weight:600;transition:all .2s';
+    btn.style.cssText='padding:6px 14px;border:2px solid '+((active ? '#0f3d2e' : '#ddd'))+';border-radius:20px;background:'+((active ? '#0f3d2e' : '#fff'))+';color:'+((active ? '#fff' : '#555'))+';cursor:pointer;font-size:12px;font-weight:600;transition:all .2s';
     var tags=info.supportsThinking?' \ud83e\udd14':'';
     btn.textContent=info.name+tags;
     btn.onclick=function(){currentModel=this.dataset.model;localStorage.setItem('selectedModel',currentModel);renderModelBar();renderModelSelector();updateModelKeyLabel(currentModel);};
