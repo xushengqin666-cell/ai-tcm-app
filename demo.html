@@ -468,7 +468,8 @@ body{
 var MODELS = {
   groq_llama: { name: 'Groq LLaMA (免费)', base: 'https://api.groq.com/openai/v1/chat/completions', key: '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', model: 'llama-3.3-70b-versatile', supportsThinking: false },
   deepseek: { name: 'DeepSeek-R1 (深度思考)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-reasoner', supportsThinking: true },
-  deepseek_chat: { name: 'DeepSeek-V3 (快速对话)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-chat', supportsThinking: false }
+  deepseek_chat: { name: 'DeepSeek-V3 (快速对话)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-chat', supportsThinking: false },
+  openrouter_gemini: { name: 'Gemini 1.5 Flash (媲美GPT)', base: 'https://openrouter.ai/api/v1/chat/completions', key: '', model: 'google/gemini-flash-1.5:free', supportsThinking: false }
 };
 var currentModel = localStorage.getItem('selectedModel') || 'groq_llama';
 function getModel() { return MODELS[currentModel] || MODELS.groq_llama; }
@@ -921,7 +922,8 @@ function searchKBList(query) {
     </div>
     <p style="font-size:11px;color:#bbb;margin:14px 0 0;text-align:center">
       Groq <a href="https://console.groq.com/keys" target="_blank" style="color:#0f3d2e">console.groq.com/keys</a> &nbsp;|&nbsp;
-      DeepSeek <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#0f3d2e">platform.deepseek.com/api_keys</a>
+      DeepSeek <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#0f3d2e">platform.deepseek.com/api_keys</a> &nbsp;|&nbsp;
+      OpenRouter <a href="https://openrouter.ai/keys" target="_blank" style="color:#0f3d2e">openrouter.ai/keys</a>
     </p>function saveKey(){var k=document.getElementById('groqKeyInput').value.trim();if(!k){document.getElementById('keySaveStatus').textContent='请输入 Key';return}localStorage.setItem('GROQ_API_KEY',k);GROQ_API_KEY=k;document.getElementById('keySaveStatus').textContent='已保存，重新发送消息即可生效'}
 function openSettings(){
   var m=document.getElementById('settingsModal');
@@ -940,6 +942,7 @@ function renderModelSelector(){
     var tags='';
     if(info.supportsThinking) tags+='<span style="display:inline-block;background:#c4943a;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px">\ud83e\udd14 \u6df1\u5ea6\u601d\u8003</span>';
     if(info.key&&!localStorage.getItem('apiKey_'+key)) tags+='<span style="display:inline-block;background:#2d7a4f;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">\u2705 \u514d\u8d39</span>';
+    if(key==='openrouter_gemini') tags+='<span style="display:inline-block;background:#4285f4;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">\u26a1 \u5982 GPT-3.5</span>';
     btn.innerHTML='<div style="font-weight:600">'+info.name+tags+'</div>';
     btn.onclick=function(){currentModel=this.dataset.model;localStorage.setItem('selectedModel',currentModel);renderModelSelector();updateModelKeyLabel(currentModel);};
     c.appendChild(btn);
