@@ -427,7 +427,8 @@ body{
   <div class="header-sub">AI中西医健康助手 · Powered by Groq LLaMA</div>
 </div>
 
-<div class="mode-tabs">
+<div id="modelBar" style="display:flex;gap:8px;padding:8px 16px;background:#f8f5f0;border-bottom:1px solid #e5ddd0;flex-wrap:wrap"></div>
+  <div class="mode-tabs">
   <button class="mode-tab active" data-mode="ai" onclick="switchMode('ai')">&#127770; AI对话</button>
   <button class="mode-tab" data-mode="kb" onclick="switchMode('kb')">&#128218; 知识库</button>
   <button class="mode-tab" data-mode="tcm" onclick="switchMode('tcm')">&#127807; 中医体质</button>
@@ -902,7 +903,7 @@ function searchKBList(query) {
 }
 </script>
 
-<div id="settingsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+<div id="settingsModal" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;padding:28px 24px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;font-family:sans-serif">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <h2 style="font-size:18px;color:#0f3d2e;margin:0">&#9881; 模型与API设置</h2>
@@ -924,7 +925,7 @@ function searchKBList(query) {
     </p>function saveKey(){var k=document.getElementById('groqKeyInput').value.trim();if(!k){document.getElementById('keySaveStatus').textContent='请输入 Key';return}localStorage.setItem('GROQ_API_KEY',k);GROQ_API_KEY=k;document.getElementById('keySaveStatus').textContent='已保存，重新发送消息即可生效'}
 function openSettings(){
   var m=document.getElementById('settingsModal');
-  renderModelSelector();
+  renderModelBar();renderModelSelector();
   updateModelKeyLabel(currentModel);
   document.getElementById('keySaveStatus').textContent='';
   m.style.display='flex';
@@ -957,6 +958,20 @@ function saveKey(){
   localStorage.setItem('apiKey_'+currentModel,key);
   document.getElementById('keySaveStatus').textContent='\u2705 \u5df2\u4fdd\u5b58 ('+MODELS[currentModel].name+')';
   document.getElementById('keySaveStatus').style.color='#2d7a4f';
+}
+
+function renderModelBar(){
+  var c=document.getElementById('modelBar'); if(!c) return; c.innerHTML='';
+  Object.keys(MODELS).forEach(function(key){
+    var info=MODELS[key],btn=document.createElement('button');
+    btn.type='button'; btn.dataset.model=key;
+    var active=currentModel===key;
+    btn.style.cssText='padding:6px 14px;border:2px solid '+('#0f3d2e' if active else '#ddd')+';border-radius:20px;background:'+('#0f3d2e' if active else '#fff')+';color:'+('#fff' if active else '#555')+';cursor:pointer;font-size:12px;font-weight:600;transition:all .2s';
+    var tags=info.supportsThinking?' \ud83e\udd14':'';
+    btn.textContent=info.name+tags;
+    btn.onclick=function(){currentModel=this.dataset.model;localStorage.setItem('selectedModel',currentModel);renderModelBar();renderModelSelector();updateModelKeyLabel(currentModel);};
+    c.appendChild(btn);
+  });
 }
 </script>
 </body>
