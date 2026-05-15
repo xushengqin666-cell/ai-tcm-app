@@ -3,177 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>岐黄智医 - 本地版</title>
+<title>岐黄智医 - 测试版</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f2ed;color:#333;min-height:100vh}
-.container{max-width:800px;margin:0 auto;padding:20px}
-.header{background:linear-gradient(135deg,#0f3d2e,#2a8a5e);color:#fff;padding:20px;border-radius:12px;margin-bottom:20px}
-.header h1{font-size:24px;margin-bottom:5px}
-.header p{font-size:14px;opacity:0.8}
-.chat-area{background:#fff;border-radius:12px;padding:20px;min-height:400px;margin-bottom:20px}
-.message{padding:12px;margin:10px 0;border-radius:8px}
-.user-msg{background:#e3f2fd;text-align:right;margin-left:20%}
-.ai-msg{background:#f5f5f5;margin-right:20%}
-.input-area{display:flex;gap:10px}
-input{flex:1;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px}
-button{padding:12px 24px;background:#0f3d2e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:16px}
+body{font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f0f0f0}
+h1{color:#0f3d2e;text-align:center}
+#chat{min-height:300px;background:#fff;padding:15px;border-radius:10px;margin-bottom:15px}
+.msg{padding:10px;margin:8px 0;border-radius:8px;max-width:85%}
+.user{background:#d4edda;margin-left:15%;text-align:right}
+.ai{background:#e8f4f8;margin-right:15%}
+.input-row{display:flex;gap:10px}
+input{flex:1;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button{padding:12px 24px;background:#0f3d2e;color:#fff;border:none;border-radius:8px;cursor:pointer}
 button:hover{background:#1a5c3a}
-.kb-card{background:#fff8e1;border-left:4px solid #ffa726;padding:15px;margin:10px 0;border-radius:8px}
-.kb-card h3{color:#e65100;margin-bottom:8px}
-.kb-section{margin:8px 0;color:#555}
-.kb-section strong{color:#333}
-.notice{background:#fff3e0;padding:10px;border-radius:8px;margin:10px 0;font-size:14px;color:#e65100}
+.loading{color:#888;font-style:italic}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>岐黄智医</h1>
-    <p>中西医结合健康助手（本地知识库版）</p>
-  </div>
-  
-  <div class="notice">
-    ℹ️ 当前为离线模式，使用本地知识库回答。无需网络，无需API Key。
-  </div>
-  
-  <div class="chat-area" id="chatArea">
-    <div class="message ai-msg">
-      您好！我是岐黄智医健康助手。请描述您的症状或健康问题，我会从本地知识库为您查找相关信息。
-    </div>
-  </div>
-  
-  <div class="input-area">
-    <input type="text" id="userInput" placeholder="输入症状或健康问题..." onkeypress="if(event.key==='Enter')sendMessage()">
-    <button onclick="sendMessage()">发送</button>
-  </div>
+<h1>岐黄智医</h1>
+<div id="chat">
+<div class="msg ai">您好！请输入症状或健康问题。</div>
+</div>
+<div class="input-row">
+<input type="text" id="msgInput" placeholder="输入问题..." autofocus>
+<button onclick="sendMsg()">发送</button>
 </div>
 
 <script>
-// 本地知识库
-var KB_DATA = {
-  "感冒": {
-    "cat": "呼吸系统",
-    "title": "普通感冒",
-    "content": "普通感冒是由病毒引起的上呼吸道感染。主要症状包括流鼻涕、鼻塞、咽喉痛、咳嗽、低烧等。通常一周左右自愈。多喝水，注意休息。",
-    "keywords": "感冒 伤风 流鼻涕 鼻塞 咳嗽",
-    "diet": "宜：多喝温水、清淡饮食、蔬菜水果。忌：辛辣刺激、油腻食物。",
-    "drugs": "感冒灵颗粒、板蓝根、对乙酰氨基酚（退烧）。注意：多休息。"
-  },
-  "发烧": {
-    "cat": "全身症状",
-    "title": "发热",
-    "content": "体温超过37.3°C称为发热。38.5°C以下可物理降温，38.5°C以上建议服用退烧药。持续高烧需就医。",
-    "keywords": "发烧 发热 体温高",
-    "diet": "宜：多喝水、流质饮食。忌：油腻辛辣。",
-    "drugs": "布洛芬、对乙酰氨基酚。"
-  },
-  "头痛": {
-    "cat": "神经系统",
-    "title": "头痛",
-    "content": "头痛原因很多，包括紧张性头痛、偏头痛、感冒引起的头痛等。注意休息，必要时服药。",
-    "keywords": "头痛 头疼 偏头痛",
-    "diet": "宜：规律作息、多喝水。忌：过量咖啡因。",
-    "drugs": "布洛芬、对乙酰氨基酚。"
-  },
-  "失眠": {
-    "cat": "神经系统",
-    "title": "失眠",
-    "content": "失眠是指难以入睡或睡眠质量差。可能由压力、焦虑、不良睡眠习惯引起。建议规律作息。",
-    "keywords": "失眠 睡不着 睡眠差",
-    "diet": "宜：睡前喝牛奶、规律作息。忌：睡前剧烈运动、玩手机。",
-    "drugs": "褪黑素（保健品）。严重失眠需就医。"
-  },
-  "胃痛": {
-    "cat": "消化系统",
-    "title": "胃痛",
-    "content": "胃痛可能由胃炎、胃溃疡、消化不良引起。注意饮食规律，避免刺激性食物。",
-    "keywords": "胃痛 胃疼 胃炎",
-    "diet": "宜：清淡饮食、少食多餐。忌：生冷、油腻、酒精。",
-    "drugs": "奥美拉唑、胃舒平。"
-  },
-  "腹泻": {
-    "cat": "消化系统",
-    "title": "腹泻",
-    "content": "腹泻是指排便次数增多、粪便稀薄。注意补充水分和电解质，避免脱水。",
-    "keywords": "腹泻 拉肚子 肚子疼",
-    "diet": "宜：清淡饮食、米粥、面条。忌：生冷、油腻、乳制品。",
-    "drugs": "蒙脱石散、口服补液盐。"
-  }
+// 知识库
+var KB = {
+  "感冒": {"t":"普通感冒","c":"病毒引起的上呼吸道感染。症状：流鼻涕、咳嗽、喉咙痛。治疗：多喝水、休息。","d":"宜喝温水、果汁；忌辛辣。"},
+  "发烧": {"t":"发热","c":"体温>37.3°C。多喝水，38.5°C以上用退烧药。","d":"宜流质饮食；忌油腻。"},
+  "头痛": {"t":"头痛","c":"原因多样，休息可缓解。必要时服止痛药。","d":"宜清淡饮食；忌咖啡因过量。"},
+  "失眠": {"t":"失眠","c":"难以入睡或睡眠浅。建议：规律作息，睡前不看手机。","d":"宜热牛奶、核桃；忌咖啡、浓茶。"},
+  "胃痛": {"t":"胃痛","c":"胃部不适，可能是胃炎或消化不良。避免刺激性食物。","d":"宜粥、面条；忌生冷、辛辣。"},
+  "腹泻": {"t":"腹泻","c":"大便稀薄、次数增多。注意补充水分，口服补液盐。","d":"宜米粥、面包；忌乳制品、油腻。"}
 };
 
-// 搜索知识库
-function searchKB(query) {
+// 简单的关键词搜索
+function search(query) {
   query = query.toLowerCase();
-  var results = [];
-  
-  for (var disease in KB_DATA) {
-    var item = KB_DATA[disease];
-    var keywords = item.keywords.toLowerCase();
-    var title = item.title.toLowerCase();
-    var content = item.content.toLowerCase();
-    
-    // 关键词匹配
-    if (keywords.indexOf(query) >= 0 || 
-        title.indexOf(query) >= 0 || 
-        content.indexOf(query) >= 0 ||
-        disease.indexOf(query) >= 0) {
-      results.push({name: disease, data: item, score: 10});
+  for (var key in KB) {
+    if (key.indexOf(query) >= 0 || query.indexOf(key) >= 0) {
+      return KB[key];
     }
   }
-  
-  // 按分数排序
-  results.sort(function(a, b) { return b.score - a.score; });
-  
-  return results.slice(0, 3); // 返回最多3个结果
-}
-
-// 格式化结果
-function formatResult(results) {
-  if (results.length === 0) {
-    return '<div class="message ai-msg">抱歉，本地知识库中未找到相关信息。建议您咨询医生或查阅更多资料。</div>';
+  // 部分匹配
+  var q = query.replace(/[^\u4e00-\u9fa5a-z0-9]/g,'');
+  if (q.length < 2) return null;
+  for (var key in KB) {
+    if (key.indexOf(q) >= 0 || KB[key].t.indexOf(q) >= 0) return KB[key];
   }
-  
-  var html = '';
-  results.forEach(function(r) {
-    var item = r.data;
-    html += '<div class="kb-card">';
-    html += '<h3>' + item.title + '</h3>';
-    html += '<div class="kb-section"><strong>概述：</strong>' + item.content + '</div>';
-    if (item.diet) html += '<div class="kb-section"><strong>饮食建议：</strong>' + item.diet + '</div>';
-    if (item.drugs) html += '<div class="kb-section"><strong>常用药物：</strong>' + item.drugs + '</div>';
-    html += '</div>';
-  });
-  
-  html += '<div class="message ai-msg" style="font-size:12px;color:#888;margin-top:10px">⚠️ 以上信息仅供参考，如有不适请及时就医。</div>';
-  
-  return html;
+  return null;
 }
 
-// 发送消息
-function sendMessage() {
-  var input = document.getElementById('userInput');
-  var query = input.value.trim();
-  if (!query) return;
+function sendMsg() {
+  var inp = document.getElementById('msgInput');
+  var q = inp.value.trim();
+  if (!q) return;
   
-  var chatArea = document.getElementById('chatArea');
+  var chat = document.getElementById('chat');
   
-  // 显示用户消息
-  chatArea.innerHTML += '<div class="message user-msg">' + query + '</div>';
-  input.value = '';
+  // 用户消息
+  chat.innerHTML += '<div class="msg user">' + escHtml(q) + '</div>';
+  inp.value = '';
   
-  // 搜索知识库
-  var results = searchKB(query);
-  var response = formatResult(results);
+  // 显示加载中
+  var loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.textContent = '搜索中...';
+  chat.appendChild(loadingEl);
+  chat.scrollTop = chat.scrollHeight;
   
-  // 模拟延迟后显示回复
+  // 搜索知识库（延迟500ms模拟处理）
   setTimeout(function() {
-    chatArea.innerHTML += response;
-    chatArea.scrollTop = chatArea.scrollHeight;
-  }, 300);
-  
-  chatArea.scrollTop = chatArea.scrollHeight;
+    chat.removeChild(loadingEl);
+    
+    var result = search(q);
+    if (result) {
+      var html = '<div class="msg ai"><strong>' + result.t + '</strong><br>' + result.c;
+      if (result.d) html += '<br><br><em>饮食建议：</em>' + result.d;
+      html += '<br><br><small style="color:#888">⚠️ 仅供参考，如有不适请就医</small></div>';
+      chat.innerHTML += html;
+    } else {
+      chat.innerHTML += '<div class="msg ai">抱歉，未找到相关信息。建议咨询医生。</div>';
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }, 500);
 }
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// 回车发送
+document.getElementById('msgInput').onkeypress = function(e) {
+  if (e.key === 'Enter') sendMsg();
+};
 </script>
 </body>
 </html>
