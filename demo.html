@@ -947,6 +947,13 @@ function renderModelBar(){
     c.appendChild(btn);
   });
 }
+
+// DEBUG v2026.05.15d
+window.addEventListener('load', function() {
+  console.log('[DEBUG] Page loaded OK, processQuery exists:', typeof processQuery === 'function');
+  console.log('[DEBUG] WORKER_URL:', WORKER_URL);
+  document.title = document.title + ' [READY]';
+});
 <\/script>
 
 <div id="settingsModal" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
