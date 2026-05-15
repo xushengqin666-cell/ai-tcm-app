@@ -2,921 +2,178 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>岐黄智医 · AI中西医健康助手</title>
-<meta name="description" content="智能中医健康咨询 · 中西医结合 · 科学养生">
-<meta name="theme-color" content="#0f3d2e">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>岐黄智医 - 本地版</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f2ed;
-  --surface:#ffffff;
-  --surface-2:#f9f7f3;
-  --primary:#0f3d2e;
-  --primary-mid:#1a5c3a;
-  --primary-light:#2d7a4f;
-  --accent:#c4943a;
-  --accent-light:#f5ead4;
-  --text:#1a1a1a;
-  --text-2:#5a5a5a;
-  --text-3:#9a9a9a;
-  --border:#e5ddd0;
-  --shadow:0 4px 24px rgba(15,61,46,.1);
-  --shadow-lg:0 12px 48px rgba(15,61,46,.16);
-}
-html,body{height:100%;overflow:hidden}
-body{
-  font-family:'Noto Sans SC','DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-  max-width:800px;
-  margin:0 auto;
-  box-shadow:0 0 60px rgba(0,0,0,.06);
-}
-
-/* ===== HEADER ===== */
-.header{
-  background:linear-gradient(135deg,#0f3d2e 0%,#1a6b45 60%,#2a8a5e 100%);
-  color:#fff;
-  padding:18px 24px 16px;
-  position:relative;
-  overflow:hidden;
-  flex-shrink:0;
-}
-.header::before{
-  content:'';
-  position:absolute;
-  top:-40px;right:-40px;
-  width:180px;height:180px;
-  background:rgba(255,255,255,.06);
-  border-radius:50%;
-}
-.header::after{
-  content:'';
-  position:absolute;
-  bottom:-60px;right:60px;
-  width:120px;height:120px;
-  background:rgba(255,255,255,.04);
-  border-radius:50%;
-}
-.header-title{
-  font-family:'Noto Serif SC',serif;
-  font-size:20px;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  position:relative;
-  z-index:1;
-}
-.header-title .icon{
-  font-size:22px;
-  filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
-}
-.header-sub{
-  font-size:12px;
-  opacity:.75;
-  margin-top:3px;
-  position:relative;
-  z-index:1;
-}
-
-/* ===== MODE TABS ===== */
-.mode-tabs{
-  display:flex;
-  gap:8px;
-  padding:10px 16px;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.mode-tab{
-  flex:1;
-  padding:7px 12px;
-  border:1.5px solid var(--border);
-  border-radius:20px;
-  background:var(--surface);
-  color:var(--text-2);
-  font-size:13px;
-  font-weight:500;
-  cursor:pointer;
-  transition:all .2s;
-  text-align:center;
-  font-family:inherit;
-}
-.mode-tab:hover{border-color:var(--primary-light);color:var(--primary)}
-.mode-tab.active{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:#fff;
-  box-shadow:0 2px 8px rgba(15,61,46,.25);
-}
-
-/* ===== CHAT ===== */
-.chat-area{
-  flex:1;
-  overflow-y:auto;
-  padding:16px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  scroll-behavior:smooth;
-}
-.chat-area::-webkit-scrollbar{width:4px}
-.chat-area::-webkit-scrollbar-track{background:transparent}
-.chat-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-
-.welcome-card{
-  background:var(--surface);
-  border-radius:16px;
-  padding:28px 24px;
-  text-align:center;
-  box-shadow:var(--shadow);
-  margin-bottom:4px;
-}
-.welcome-card .wc-icon{
-  font-size:40px;
-  margin-bottom:12px;
-  display:block;
-}
-.welcome-card h2{
-  font-family:'Noto Serif SC',serif;
-  font-size:18px;
-  color:var(--primary);
-  margin-bottom:8px;
-}
-.welcome-card p{
-  font-size:13px;
-  color:var(--text-2);
-  line-height:1.7;
-}
-.welcome-card .suggestions{
-  margin-top:14px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  justify-content:center;
-}
-.welcome-card .sug-btn{
-  background:var(--accent-light);
-  color:var(--accent);
-  border:none;
-  border-radius:12px;
-  padding:5px 12px;
-  font-size:12px;
-  cursor:pointer;
-  font-family:inherit;
-  transition:all .2s;
-}
-.welcome-card .sug-btn:hover{
-  background:var(--accent);
-  color:#fff;
-}
-
-/* ===== MESSAGE ===== */
-.msg{max-width:85%}
-.msg.user{margin-left:auto}
-.msg-row{display:flex;gap:10px;align-items:flex-end}
-.msg.user .msg-row{flex-direction:row-reverse}
-.msg-avatar{
-  width:30px;height:30px;
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;
-  flex-shrink:0;
-  font-weight:700;
-}
-.msg.user .msg-avatar{background:var(--primary);color:#fff}
-.msg.ai .msg-avatar{background:var(--accent);color:#fff}
-.msg-bubble{
-  max-width:100%;
-  padding:12px 16px;
-  border-radius:18px;
-  font-size:14px;
-  line-height:1.7;
-  word-break:break-word;
-}
-.msg.user .msg-bubble{
-  background:var(--primary);
-  color:#fff;
-  border-bottom-right-radius:4px;
-}
-.msg.ai .msg-bubble{
-  background:var(--surface);
-  color:var(--text);
-  border-bottom-left-radius:4px;
-  box-shadow:var(--shadow);
-}
-.msg.ai .msg-bubble p{margin:0 0 6px}
-.msg.ai .msg-bubble p:last-child{margin:0}
-.msg.ai .msg-bubble strong{color:var(--primary-mid)}
-.msg.ai .msg-bubble em{color:var(--accent);font-style:normal;font-weight:500}
-.msg.ai .msg-bubble code{
-  background:#f0ebe3;
-  padding:2px 6px;
-  border-radius:4px;
-  font-size:.88em;
-}
-
-/* KB Card */
-.kb-results{
-  margin-top:8px;
-  border-radius:12px;
-  overflow:hidden;
-  border:1px solid var(--border);
-}
-.kb-card{
-  background:var(--surface-2);
-  border-radius:12px;
-  margin-top:8px;
-  overflow:hidden;
-  box-shadow:0 2px 8px rgba(15,61,46,.06);
-}
-.kb-card-hdr{
-  padding:10px 14px;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.kb-card-cat{
-  background:var(--primary);
-  color:#fff;
-  font-size:10px;
-  padding:2px 7px;
-  border-radius:10px;
-  font-weight:600;
-}
-.kb-card-title{
-  font-size:13px;
-  font-weight:600;
-  color:var(--text);
-  font-family:'Noto Serif SC',serif;
-}
-.kb-card-body{padding:10px 14px;display:flex;flex-direction:column;gap:8px}
-.kb-section{}
-.kb-sec-title{
-  font-size:11px;
-  font-weight:600;
-  color:var(--text-3);
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  margin-bottom:3px;
-}
-.kb-sec-body{font-size:13px;line-height:1.7;color:var(--text-2)}
-.kb-emergency{
-  background:#fef2f2;
-  border:1px solid #fecaca;
-  border-radius:8px;
-  padding:8px 12px;
-  font-size:12px;
-  color:#dc2626;
-  font-weight:500;
-}
-.kb-results .kb-card:first-child{margin-top:0}
-
-/* ===== TYPING ===== */
-.typing-row{
-  display:flex;gap:10px;align-items:flex-end;
-  animation:fadeIn .3s ease;
-}
-.typing-dot{
-  width:7px;height:7px;
-  background:var(--text-3);
-  border-radius:50%;
-  animation:typingBounce 1.2s infinite;
-}
-.typing-dot:nth-child(2){animation-delay:.2s}
-.typing-dot:nth-child(3){animation-delay:.4s}
-.typing-bubble{
-  background:var(--surface);
-  border-radius:18px;
-  border-bottom-left-radius:4px;
-  padding:14px 18px;
-  box-shadow:var(--shadow);
-  display:flex;gap:5px;align-items:center;
-}
-@keyframes typingBounce{
-  0%,60%,100%{transform:translateY(0);opacity:.4}
-  30%{transform:translateY(-6px);opacity:1}
-}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* ===== INPUT ===== */
-.input-area{
-  padding:10px 16px 12px;
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  flex-shrink:0;
-}
-.input-row{
-  display:flex;
-  gap:10px;
-  align-items:flex-end;
-}
-#userInput{
-  flex:1;
-  border:1.5px solid var(--border);
-  border-radius:24px;
-  padding:10px 16px;
-  font-size:14px;
-  font-family:inherit;
-  resize:none;
-  outline:none;
-  min-height:44px;
-  max-height:120px;
-  overflow-y:auto;
-  transition:border-color .2s;
-  line-height:1.5;
-  background:#faf8f5;
-}
-#userInput:focus{border-color:var(--primary-light);background:#fff}
-.send-btn{
-  width:44px;height:44px;
-  background:var(--primary);
-  border:none;border-radius:50%;
-  color:#fff;
-  font-size:18px;
-  cursor:pointer;
-  flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-  box-shadow:0 2px 8px rgba(15,61,46,.3);
-}
-.send-btn:hover{background:var(--primary-mid);transform:scale(1.05)}
-.send-btn:active{transform:scale(.95)}
-.send-btn:disabled{background:var(--text-3);box-shadow:none;cursor:default;transform:none}
-.chips-bar{
-  display:flex;flex-wrap:wrap;gap:6px;
-  padding-top:8px;
-  min-height:0;
-  transition:max-height .3s,padding .3s,opacity .3s;
-  overflow:hidden;
-  max-height:60px;
-}
-.chips-bar.collapsed{max-height:0;padding-top:0;opacity:0}
-
-/* ===== KB SEARCH ===== */
-.kb-search-row{
-  display:flex;gap:8px;padding:8px 16px 4px;
-  background:var(--surface-2);
-  border-top:1px solid var(--border);
-  flex-shrink:0;
-}
-#kbSearchInput{
-  flex:1;
-  border:1.5px solid var(--border);
-  border-radius:16px;
-  padding:6px 12px;
-  font-size:12px;
-  font-family:inherit;
-  outline:none;
-  background:#fff;
-}
-#kbSearchInput:focus{border-color:var(--accent)}
-#kbSearchInput::placeholder{color:var(--text-3)}
-
-/* ===== TOAST ===== */
-.toast{
-  position:fixed;
-  bottom:80px;
-  left:50%;transform:translateX(-50%) translateY(20px);
-  background:#333;
-  color:#fff;
-  padding:8px 18px;
-  border-radius:20px;
-  font-size:13px;
-  opacity:0;
-  transition:all .3s;
-  pointer-events:none;
-  z-index:9999;
-  white-space:nowrap;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ===== STREAMING CURSOR ===== */
-.stream-cursor {
-  display: inline-block;
-  color: var(--primary);
-  font-weight: bold;
-  animation: cursorBlink 0.8s step-end infinite;
-  margin-left: 1px;
-}
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.ai-text p { margin: 0 0 6px; }
-.ai-text p:last-child { margin: 0; }
-#thinkingBlock{background:linear-gradient(135deg,#f8f6f3,#efe9df);border-left:3px solid #c4943a;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:#555;line-height:1.65;max-height:240px;overflow-y:auto;word-break:break-word}
-#thinkingBlock .thinking-text{white-space:pre-wrap}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f2ed;color:#333;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:20px}
+.header{background:linear-gradient(135deg,#0f3d2e,#2a8a5e);color:#fff;padding:20px;border-radius:12px;margin-bottom:20px}
+.header h1{font-size:24px;margin-bottom:5px}
+.header p{font-size:14px;opacity:0.8}
+.chat-area{background:#fff;border-radius:12px;padding:20px;min-height:400px;margin-bottom:20px}
+.message{padding:12px;margin:10px 0;border-radius:8px}
+.user-msg{background:#e3f2fd;text-align:right;margin-left:20%}
+.ai-msg{background:#f5f5f5;margin-right:20%}
+.input-area{display:flex;gap:10px}
+input{flex:1;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px}
+button{padding:12px 24px;background:#0f3d2e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:16px}
+button:hover{background:#1a5c3a}
+.kb-card{background:#fff8e1;border-left:4px solid #ffa726;padding:15px;margin:10px 0;border-radius:8px}
+.kb-card h3{color:#e65100;margin-bottom:8px}
+.kb-section{margin:8px 0;color:#555}
+.kb-section strong{color:#333}
+.notice{background:#fff3e0;padding:10px;border-radius:8px;margin:10px 0;font-size:14px;color:#e65100}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <div class="header-title"><span class="icon">&#9765;</span>岐黄智医</div><button onclick="openSettings()" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.7);font-size:20px;cursor:pointer;padding:4px" title="API设置">&#9881;</button>
-  <div class="header-sub">AI中西医健康助手 · Powered by Groq LLaMA</div>
-</div>
-
-<div id="modelBar" style="display:flex;gap:8px;padding:8px 16px;background:#f8f5f0;border-bottom:1px solid #e5ddd0;flex-wrap:wrap"></div>
-  <div class="mode-tabs">
-  <button class="mode-tab active" data-mode="ai" onclick="switchMode('ai')">&#127770; AI对话</button>
-  <button class="mode-tab" data-mode="kb" onclick="switchMode('kb')">&#128218; 知识库</button>
-  <button class="mode-tab" data-mode="tcm" onclick="switchMode('tcm')">&#127807; 中医体质</button>
-  <button class="mode-tab" data-mode="diet" onclick="switchMode('diet')">&#127838; 饮食方案</button>
-</div>
-
-<div class="chat-area" id="chatArea">
-  <div class="welcome-card" id="welcomeArea">
-    <span class="wc-icon">&#9765;</span>
-    <h2>您好，我是岐黄智医</h2>
-    <p>告诉我您哪里不舒服，我会先了解您的症状，再给出专业的中西医结合治疗方案</p>
-    <div class="suggestions">
-      <button class="sug-btn" onclick="document.getElementById('userInput').value='最近总是失眠怎么办？';sendMessage()">失眠怎么办</button>
-      <button class="sug-btn" onclick="document.getElementById('userInput').value='胃痛吃什么好？';sendMessage()">胃痛</button>
-      <button class="sug-btn" onclick="document.getElementById('userInput').value='如何提高免疫力？';sendMessage()">提高免疫力</button>
-      <button class="sug-btn" onclick="document.getElementById('userInput').value='湿气重怎么调理？';sendMessage()">湿气调理</button>
+<div class="container">
+  <div class="header">
+    <h1>岐黄智医</h1>
+    <p>中西医结合健康助手（本地知识库版）</p>
+  </div>
+  
+  <div class="notice">
+    ℹ️ 当前为离线模式，使用本地知识库回答。无需网络，无需API Key。
+  </div>
+  
+  <div class="chat-area" id="chatArea">
+    <div class="message ai-msg">
+      您好！我是岐黄智医健康助手。请描述您的症状或健康问题，我会从本地知识库为您查找相关信息。
     </div>
   </div>
-</div>
-
-<div class="input-area">
-  <div class="input-row">
-    <textarea id="userInput" placeholder="描述您的症状或健康问题..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-    <button class="send-btn" id="sendBtn" onclick="sendMessage()">&#10148;</button>
+  
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="输入症状或健康问题..." onkeypress="if(event.key==='Enter')sendMessage()">
+    <button onclick="sendMessage()">发送</button>
   </div>
-  <div class="chips-bar" id="chipsBar"></div>
 </div>
-
-<div class="kb-search-row">
-  <input type="text" id="kbSearchInput" placeholder="&#128269; 搜索知识库..." oninput="searchKBList(this.value)">
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-// ===== Multi-model config =====
-var MODELS = {
-  groq_llama: { name: 'Groq LLaMA (免费)', base: 'https://api.groq.com/openai/v1/chat/completions', key: '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', model: 'llama-3.3-70b-versatile', supportsThinking: false },
-  deepseek: { name: 'DeepSeek-R1 (深度思考)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-reasoner', supportsThinking: true },
-  deepseek_chat: { name: 'DeepSeek-V3 (快速对话)', base: 'https://api.deepseek.com/chat/completions', key: 'sk-9dc0e9f57b234748b2da7f6946151791', model: 'deepseek-chat', supportsThinking: false },
-  openrouter_gemini: { name: 'Gemini 1.5 Flash (媲美GPT)', base: 'https://openrouter.ai/api/v1/chat/completions', key: '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', model: 'google/gemini-flash-1.5:free', supportsThinking: false }
+// 本地知识库
+var KB_DATA = {
+  "感冒": {
+    "cat": "呼吸系统",
+    "title": "普通感冒",
+    "content": "普通感冒是由病毒引起的上呼吸道感染。主要症状包括流鼻涕、鼻塞、咽喉痛、咳嗽、低烧等。通常一周左右自愈。多喝水，注意休息。",
+    "keywords": "感冒 伤风 流鼻涕 鼻塞 咳嗽",
+    "diet": "宜：多喝温水、清淡饮食、蔬菜水果。忌：辛辣刺激、油腻食物。",
+    "drugs": "感冒灵颗粒、板蓝根、对乙酰氨基酚（退烧）。注意：多休息。"
+  },
+  "发烧": {
+    "cat": "全身症状",
+    "title": "发热",
+    "content": "体温超过37.3°C称为发热。38.5°C以下可物理降温，38.5°C以上建议服用退烧药。持续高烧需就医。",
+    "keywords": "发烧 发热 体温高",
+    "diet": "宜：多喝水、流质饮食。忌：油腻辛辣。",
+    "drugs": "布洛芬、对乙酰氨基酚。"
+  },
+  "头痛": {
+    "cat": "神经系统",
+    "title": "头痛",
+    "content": "头痛原因很多，包括紧张性头痛、偏头痛、感冒引起的头痛等。注意休息，必要时服药。",
+    "keywords": "头痛 头疼 偏头痛",
+    "diet": "宜：规律作息、多喝水。忌：过量咖啡因。",
+    "drugs": "布洛芬、对乙酰氨基酚。"
+  },
+  "失眠": {
+    "cat": "神经系统",
+    "title": "失眠",
+    "content": "失眠是指难以入睡或睡眠质量差。可能由压力、焦虑、不良睡眠习惯引起。建议规律作息。",
+    "keywords": "失眠 睡不着 睡眠差",
+    "diet": "宜：睡前喝牛奶、规律作息。忌：睡前剧烈运动、玩手机。",
+    "drugs": "褪黑素（保健品）。严重失眠需就医。"
+  },
+  "胃痛": {
+    "cat": "消化系统",
+    "title": "胃痛",
+    "content": "胃痛可能由胃炎、胃溃疡、消化不良引起。注意饮食规律，避免刺激性食物。",
+    "keywords": "胃痛 胃疼 胃炎",
+    "diet": "宜：清淡饮食、少食多餐。忌：生冷、油腻、酒精。",
+    "drugs": "奥美拉唑、胃舒平。"
+  },
+  "腹泻": {
+    "cat": "消化系统",
+    "title": "腹泻",
+    "content": "腹泻是指排便次数增多、粪便稀薄。注意补充水分和电解质，避免脱水。",
+    "keywords": "腹泻 拉肚子 肚子疼",
+    "diet": "宜：清淡饮食、米粥、面条。忌：生冷、油腻、乳制品。",
+    "drugs": "蒙脱石散、口服补液盐。"
+  }
 };
-var currentModel = localStorage.getItem('selectedModel') || 'groq_llama';
-function getModel() { return MODELS[currentModel] || MODELS.groq_llama; }
-function getApiKey() {
-  var m = getModel();
-  var k = m.key || '';
-  if (!k) k = localStorage.getItem('apiKey_' + currentModel) || '';
-  return k;
-}
-var API_BASE = '';
-var GROQ_API_KEY = '';
-var chatHistory = [];
 
-var WORKER_URL = "https://ai-tcm-api.xushengqin666.workers.dev/";
-
-var KB_DATA = {"KB": {"感冒": {"cat": "呼吸系统", "title": "普通感冒/上呼吸道感染", "content": "普通感冒多由病毒引起。症状：鼻塞、流涕、咽痛、咳嗽、轻度发热。处理：多休息、补充水分、对症用药。若发热>38.5℃持续3天以上，或出现胸闷、呼吸困难，请立即就医。", "emergency": "高热不退（>39℃）、呼吸困难、意识模糊、剧烈头痛", "diet": "宜：清淡易消化（粥、汤面、蒸蛋）；富含维C水果（橙子、猕猴桃）；温开水。忌：辛辣油腻、生冷食物、浓茶咖啡。", "drugs": "解热镇痛：对乙酰氨基酚、布洛芬。通鼻：伪麻黄碱。注意：抗生素对病毒无效，勿滥用。", "synergy": "布洛芬+阿司匹林：增加胃肠道出血风险。多种复方感冒药不要叠加服用。", "food": "布洛芬避免与酒精同服。服用感冒药期间避免驾驶。", "herbs": "金银花、连翘、薄荷、荆芥——疏风清热。", "keywords": "感冒 普通感冒/上呼吸道感染 流感"}, "发热": {"cat": "呼吸系统", "title": "发热/发烧", "content": "发热是机体对感染的正常免疫反应。体温>37.3℃为发热。处理原则：38.5℃以下物理降温；38.5℃以上服用退热药；多饮水。退热是为了缓解不适，不是要把体温降到正常。", "emergency": "体温>39.5℃持续不降、抽搐、皮疹、意识不清、颈部僵硬", "diet": "宜：流质/半流质（粥、汤、果蔬汁）；清淡少油。忌：高蛋白高脂肪、辛辣刺激、生冷。", "drugs": "退热：对乙酰氨基酚（更安全）、布洛芬（抗炎效果好）。儿童：禁用阿司匹林（瑞氏综合征风险）。", "synergy": "多种退热药同时服用可能造成肝损伤，不要叠加。对乙酰氨基酚+酒精显著增加肝毒性。", "food": "发热期间多喝水（1500-2000ml/天）。可喝淡盐水补充电解质。", "herbs": "柴胡、黄芩、生石膏（高热时）——清热泻火。", "keywords": "发热 高烧 体温高 发烧 发热/发烧"}, "咳嗽": {"cat": "呼吸系统", "title": "咳嗽", "content": "咳嗽是呼吸道清除异物和分泌物的保护性反射。干咳：右美沙芬。有痰咳嗽：氨溴索、乙酰半胱氨酸。若咳嗽>3周、咳血、胸痛，请立即就医。", "emergency": "咳血、呼吸困难、胸痛、咳嗽伴随高热", "diet": "宜：梨、百合、蜂蜜（1岁以上）、白萝卜、银耳。忌：甜腻、油炸、寒凉、鱼腥发物。", "drugs": "干咳：右美沙芬（孕妇禁用）。有痰：氨溴索、乙酰半胱氨酸。", "synergy": "中枢镇咳药+抗组胺药：可能引起呼吸抑制。", "food": "蜂蜜（1岁以上）有轻度止咳作用（循证证实）。", "herbs": "川贝、枇杷叶、杏仁、桔梗——润肺止咳化痰。", "keywords": "干咳 咳痰 咳嗽"}, "支气管炎": {"cat": "呼吸系统", "title": "急性支气管炎", "content": "支气管黏膜的急性炎症，常继发于上呼吸道感染。多为病毒引起。症状：持续咳嗽、咳痰（白痰→黄脓痰）、发热。治疗：对症为主，抗生素仅细菌感染时使用。", "emergency": "高热（>39℃）、咳黄脓痰、呼吸困难、胸痛", "diet": "宜：清淡饮食；富含维生素A、C的食物；温开水。忌：辛辣刺激、油腻食物、生冷饮食；戒烟。", "drugs": "咳嗽：痰多时用祛痰药（氨溴索）。发热：用对乙酰氨基酚或布洛芬。细菌感染时使用抗生素。", "herbs": "风寒袭肺：三拗汤合止嗽散。风热犯肺：桑菊饮加减。", "keywords": "支气管炎 急性支气管炎"}, "肺炎": {"cat": "呼吸系统", "title": "肺炎", "content": "肺实质的炎症，由细菌、病毒、支原体等引起。常见病原体：肺炎链球菌。症状：发热、咳嗽、咳黄脓痰或铁锈色痰、胸痛、呼吸困难。需正规抗生素治疗，疗程5-7天。", "emergency": "高热伴呼吸困难、胸痛、意识改变、口唇发绀——立即就医！", "diet": "宜：高热量、高蛋白、易消化；富含维生素C；充足水分。忌：油腻、辛辣刺激、生冷、酒精。", "drugs": "抗生素：阿莫西林/克拉维酸，或大环内酯类（阿奇霉素）。对症：退热、祛痰、氧疗（重症）。", "herbs": "痰热壅肺：鱼腥草、黄芩、瓜蒌皮。正气虚弱：西洋参、黄芪。", "keywords": "肺炎"}, "过敏性鼻炎": {"cat": "呼吸系统", "title": "过敏性鼻炎", "content": "鼻黏膜的过敏性炎症，与IgE介导的变态反应有关。常见过敏原：花粉、尘螨、动物皮屑。症状：阵发性打喷嚏、清水样鼻涕、鼻塞、鼻痒、眼痒。治疗：避免过敏原+药物。", "emergency": "出现哮喘症状或过敏性休克（罕见）", "diet": "宜：均衡饮食；富含维生素C、E的食物。忌：已知过敏的食物；辛辣刺激；酒精。", "drugs": "一线：鼻用糖皮质激素（布地奈德、氟替卡松）。口服抗组胺药（氯雷他定、西替利嗪）。白三烯受体拮抗剂（孟鲁司特）。", "herbs": "肺脾两虚：玉屏风散加减。肾虚：右归丸加减。", "keywords": "过敏性鼻炎"}, "高血压": {"cat": "心血管系统", "title": "原发性高血压", "content": "血压持续>=140/90mmHg。大多数原发性高血压无明确单一病因，与遗传、肥胖、高盐饮食、缺乏运动、压力等相关。早期多无症状或仅有轻微头晕头痛。长期未控制可导致心衰、脑卒中、肾功能损害。治疗以生活方式干预为基础，必要时药物治疗。", "emergency": "血压>=180/120mmHg（高血压急症）、剧烈头痛伴呕吐、胸痛、呼吸困难、视力突然模糊、意识障碍/言语不清——立即急诊！", "diet": "宜：DASH饮食（多蔬果、全谷物、低脂奶、少盐少油）；富钾食物（香蕉、菠菜、土豆）。忌：高盐（每日<5g）、高脂、酒精、加工食品。", "drugs": "一线用药：ACEI/ARB（如氨氯地平、缬沙坦）；钙通道阻滞剂；利尿剂。注意：不可擅自停药！需长期规律服用监测血压。", "synergy": "ACEI+保钾利尿剂：高钾风险。多种降压药叠加：低血压风险。布洛芬等NSAID可削弱降压药效果。", "food": "限钠补钾补钙；超重者减重5-10%可显著降压；规律有氧运动（快走、游泳）每周150分钟。", "herbs": "菊花、决明子、玉米须、葛根——平肝潜阳。钩藤、夏枯草——清肝泻火。", "keywords": "头晕 血压高 原发性高血压 头昏 高血压 高压 高压高"}, "冠心病": {"cat": "心血管系统", "title": "冠状动脉粥样硬化性心脏病", "content": "冠状动脉粥样硬化导致心肌缺血缺氧。类型：稳定型心绞痛、不稳定型心绞痛、急性心肌梗死。治疗：药物、介入（支架）、搭桥手术。", "emergency": "剧烈胸痛持续>20分钟，伴出汗、恶心、呼吸困难、濒死感——急性心梗！立即拨打120！", "diet": "宜：深海鱼、燕麦、豆制品、蔬菜水果、全谷物、坚果。忌：动物内脏、肥肉、蛋黄（每周<3个）、奶油、糕点。", "drugs": "抗血小板：阿司匹林（长期）、氯吡格雷。降脂：他汀类（阿托伐他汀）。抗心肌缺血：硝酸甘油（舌下含服）、美托洛尔。", "synergy": "阿司匹林+华法林：增加出血风险。他汀+贝特（吉非贝齐）：增加肌病风险。", "food": "戒烟（最重要）。适度运动（每周≥150分钟）。", "herbs": "丹参、三七、银杏叶——活血化瘀通络。", "keywords": "心梗 冠状动脉粥样硬化性心脏病 心肌梗死 冠心病 心绞痛"}, "脑卒中": {"cat": "心血管系统", "title": "脑卒中/中风", "content": "分为缺血性（脑梗死，85%）和出血性（15%）。BE FAST识别：B平衡、E眼睛、F面部、A手臂、S语言、T时间。缺血性可在4.5小时内溶栓或取栓。", "emergency": "突然出现的面部下垂、手臂无力、说话不清——立即拨打120！", "diet": "控制钠摄入。增加蔬果、全谷物。限制饱和脂肪。补充叶酸。", "drugs": "缺血性卒中二级预防：抗血小板（阿司匹林/氯吡格雷）、降脂（他汀）、降压、控制血糖。", "synergy": "阿司匹林+华法林/新型口服抗凝药：增加出血风险。", "food": "戒烟限酒。控制体重。适度运动。", "herbs": "补阳还五汤（黄芪、当归、川芎、赤芍）——益气活血通络。", "keywords": "脑卒中 中风 脑卒中/中风 脑梗"}, "心律失常": {"cat": "心血管系统", "title": "心律失常", "content": "心脏传导系统异常导致心跳过快、过慢或不规则。常见类型：房颤、室上性心动过速、室性早搏、房室传导阻滞。症状：心悸、胸闷、头晕、晕厥。", "emergency": "意识丧失、持续胸痛、血压显著下降——立即就医！", "diet": "宜：均衡饮食；避免咖啡因、酒精。忌：刺激性食物；过量饮酒。", "drugs": "抗心律失常药：胺碘酮、美托洛尔、美西律等（需医生处方）。房颤：抗凝（华法林/新型口服抗凝药）+节律控制/心率控制。", "synergy": "胺碘酮与多种药物相互作用，务必告知医生所有用药。", "food": "避免咖啡因（咖啡、浓茶）。戒烟限酒。", "herbs": "炙甘草汤——益气滋阴，通阳复脉。", "keywords": "心悸 心律失常"}, "心力衰竭": {"cat": "心血管系统", "title": "慢性心力衰竭", "content": "心脏泵血功能减退，不能满足机体需求。表现：呼吸困难（活动后加重→休息也有）、水肿（下肢→全身）、乏力、心悸。NYHA分级：I-IV级。", "emergency": "急性加重：呼吸困难加重、不能平卧、咳粉红色泡沫痰——急性左心衰！", "diet": "限钠（<2g/天）：减轻水钠潴留。限液体（<1.5-2L/天）。高蛋白饮食。", "drugs": "金三角：ACEI/ARB（改善预后）+β受体阻滞剂（改善预后）+醛固酮受体拮抗剂（减轻水肿）。利尿剂：呋塞米。", "synergy": "利尿剂+ACEI：注意肾功能。NSAIDs加重水钠潴留，避免使用。", "food": "避免腌制食品。少食多餐。监测体重（每日体重增加>1kg提示水钠潴留）。", "herbs": "生脉散（人参、麦冬、五味子）——益气生津。", "keywords": "心力衰竭 慢性心力衰竭 心衰"}, "糖尿病": {"cat": "内分泌系统", "title": "糖尿病", "content": "诊断标准：空腹血糖≥7.0 mmol/L或餐后2h血糖≥11.1 mmol/L。治疗五驾马车：饮食控制、运动、药物治疗、血糖监测、健康教育。目标：空腹4.4-7.0 mmol/L，餐后<10 mmol/L，HbA1c<7%。", "emergency": "低血糖（<3.9 mmol/L）伴昏迷或不能进食、酮症酸中毒（呼气有烂苹果味）", "diet": "宜：低GI食物（燕麦、糙米、荞麦、全麦）、绿叶蔬菜、优质蛋白。忌：精制糖、白米白面、含糖饮料、粥类。水果每天不超过200g，两餐之间吃。", "drugs": "二甲双胍：一线用药，随餐服用。胰岛素：需冷藏，遵医嘱调整剂量。GLP-1受体激动剂（司美格鲁肽）：减重效果好。", "synergy": "二甲双胍+大量酒精：增加乳酸酸中毒风险。胰岛素+β受体阻滞剂：可能掩盖低血糖症状。", "food": "慎用无糖食品——可能含大量碳水化合物。学会看食品营养标签。", "herbs": "天花粉、葛根、黄芪、山药——益气养阴、健脾生津。", "keywords": "糖尿病 高血糖 血糖高"}, "高血脂": {"cat": "内分泌系统", "title": "高脂血症", "content": "血脂异常：总胆固醇>5.2或LDL>3.4或TG>1.7 mmol/L。治疗：他汀类药物（首选）是核心，可稳定动脉斑块。生活方式：低脂饮食、运动、减重、戒烟限酒。", "emergency": "", "diet": "宜：燕麦（β-葡聚糖降胆固醇）、深海鱼（Omega-3降甘油三酯）、坚果、橄榄油。忌：动物内脏、肥肉、奶油制品、油炸食品、蛋黄。", "drugs": "他汀类：阿托伐他汀（晚间服）、瑞舒伐他汀。贝特类：非诺贝特（高甘油三酯首选）。他汀不与西柚同服。", "synergy": "他汀+贝特（吉非贝齐）：显著增加肌病风险——若需联用，优选非诺贝特。", "food": "植物甾醇可辅助降脂。咖啡每天1-2杯无糖即可。", "herbs": "山楂、荷叶、决明子、绞股蓝——活血降脂。", "keywords": "高脂血症 血脂异常 血脂高 高血脂"}, "甲状腺功能亢进": {"cat": "内分泌系统", "title": "甲状腺功能亢进症", "content": "甲状腺激素分泌过多。常见原因：Graves病。症状：怕热、多汗、心悸、手抖、体重下降、眼球突出、烦躁易怒。需检查甲功五项、甲状腺抗体、甲状腺超声。", "emergency": "甲亢危象：高热（>40℃）、严重心悸、意识障碍、呕吐腹泻——急诊！", "diet": "高热量、高蛋白、高维生素饮食。限制碘摄入（海带、紫菜、海鲜）。忌：咖啡因、辛辣刺激。", "drugs": "抗甲状腺药物（ATD）：甲巯咪唑、丙硫氧嘧啶（备孕/哺乳首选）。β受体阻滞剂：美托洛尔（控制心悸）。", "synergy": "抗甲状腺药+华法林：增强抗凝作用。", "food": "避免富碘食物。保证休息，避免情绪波动。", "herbs": "甲亢阴虚火旺：天花粉、麦冬、生地——滋阴清热。", "keywords": "甲状腺功能亢进症 甲亢 甲状腺功能亢进"}, "甲状腺功能减退": {"cat": "内分泌系统", "title": "甲状腺功能减退症", "content": "甲状腺激素分泌不足。症状：怕冷、乏力、体重增加、记忆力减退、皮肤干燥、便秘、心率减慢。需长期甲状腺激素替代治疗。", "emergency": "黏液性水肿昏迷：严重嗜睡、体温降低、意识障碍——急诊！", "diet": "适量碘摄入（加碘盐）。避免致甲状腺肿食物（卷心菜、萝卜）。高蛋白、高维生素饮食。", "drugs": "左甲状腺素钠（L-T4）：空腹服用（早餐前30分钟），避免与钙、铁同服。起始剂量小，逐渐加量。", "synergy": "左甲状腺素+钙剂/铁剂：减少吸收，间隔4小时以上服用。", "food": "定期复查甲功，根据结果调整药量。", "herbs": "脾肾阳虚：右归丸加减。", "keywords": "甲状腺功能减退 甲状腺功能减退症 甲减"}, "痛风": {"cat": "代谢性疾病", "title": "痛风/高尿酸血症", "content": "尿酸盐结晶沉积在关节引起的炎症性疾病。典型表现：突发单关节剧痛（常为大脚趾根部），红肿热痛，夜间发作。男性多见。诱因：高嘌呤饮食、饮酒、劳累、受凉。长期高尿酸可致痛风石、尿酸性肾病。", "emergency": "多关节同时发作、发热伴关节痛、肾脏绞痛（尿酸结石）——需就医评估是否需要降尿酸治疗。", "diet": "宜：低嘌呤（蔬菜、蛋奶、谷类）、充足饮水（>2000ml/天）、低脂奶、樱桃。忌：内脏、海鲜、浓肉汤、啤酒、果糖饮料。", "drugs": "急性期：秋水仙碱、NSAID（吲哚美辛）、糖皮质激素。缓解期降尿酸：别嘌醇、非布司他、苯溴马隆。注意：急性期不可开始降尿酸治疗！", "synergy": "秋水仙碱+他汀类：肌肉毒性风险。阿司匹林小剂量可升高尿酸。利尿剂（氢氯噻嗪）升高尿酸。", "food": "啤酒最危险（含嘌呤+抑制尿酸排泄）；剧烈运动后和脱水易诱发；控制体重但不宜快速减重（分解产生酮体抑制排泄）。", "herbs": "土茯苓、萆薢、威灵仙——利湿泄浊。薏苡仁、车前子——利水渗湿。", "keywords": "关节红肿 尿酸高 痛风/高尿酸血症 高尿酸 脚趾疼 痛风 尿酸"}, "骨质疏松": {"cat": "骨科/内分泌", "title": "骨质疏松症", "content": "骨量减少、骨微结构破坏导致骨脆性增加的全身性骨骼疾病。早期无症状，往往骨折后才被发现。绝经后妇女和老年男性高发。髋部骨折一年内死亡率可达20-30%。诊断标准基于DXA骨密度测定的T值（T<=-2.5为骨质疏松）。", "emergency": "脆性骨折（轻微外力即骨折）——髋部/脊柱/腕部最常见；背部剧烈疼痛伴身高变短（可能椎体压缩性骨折）。", "diet": "宜：富钙食物（奶制品、深绿蔬菜、豆腐）；维D（晒太阳/补充剂）；适量蛋白；深色蔬果（钾镁有益骨骼）。忌：过量咖啡因（增加钙流失）；过量钠（尿钙排出增加）；过量维生素A（反效果）；酒精（抑制成骨）；吸烟（双倍骨折风险）。", "drugs": "基础补充：钙剂（1000-1200mg/天）+ 维D（800-1000IU/天）。抗骨吸收：双膦酸盐（阿仑膦酸钠——一线）；地舒单抗（皮下注射）；选择性雌激素受体调节剂（雷洛昔芬——女性）。促骨形成：特立帕肽（严重病例）。", "synergy": "双膦酸盐+NSAID：均伤胃，联用胃肠道风险叠加。钙剂+某些抗生素（四环素/喹诺酮）：形成络合物降低吸收。", "food": "负重运动（走路、慢跑、跳舞）比单纯补钙更重要——力学刺激促骨合成；防晒同时也防了维D合成需平衡；跌倒预防（家居防滑、视力检查、停用致晕药物）同等重要。", "herbs": "淫羊藿、杜仲、续断——补肾壮骨。骨碎补——补肾活血。熟地、山茱萸——填精益髓。", "keywords": "身高变矮 骨质疏松 腰背痛 骨质疏松症 容易骨折 骨密度低"}, "肥胖": {"cat": "内分泌系统", "title": "肥胖症", "content": "体质指数（BMI）≥28为肥胖。危害：糖尿病、高血压、冠心病、脑卒中、睡眠呼吸暂停、癌症风险增加。治疗：饮食控制、运动、药物治疗（奥利司他、司美格鲁肽）、代谢手术。", "emergency": "肥胖相关急症：睡眠呼吸暂停综合征、急性心衰", "diet": "每日热量赤字500-750kcal。蛋白质摄入1.2-1.6g/kg体重。限制精制碳水、高脂肪食物。", "drugs": "奥利司他：抑制脂肪吸收，随餐服用。GLP-1受体激动剂（司美格鲁肽）：降糖+减重。", "synergy": "减肥药+酒精：可能增加副作用。", "food": "记录饮食日记。细嚼慢咽（每口>20次）。", "herbs": "山楂、荷叶、决明子、泽泻——利水消脂。", "keywords": "肥胖 体重超标 肥胖症"}, "胃炎": {"cat": "消化系统", "title": "慢性胃炎", "content": "胃黏膜的慢性炎症。最常见病因是幽门螺杆菌(Hp)感染（约50-90%）。其他因素：长期服用NSAID类药物、酒精、吸烟、应激、自身免疫。症状：上腹隐痛/不适、腹胀、嗳气、早饱、恶心。长期可进展为萎缩性胃炎→肠化生→异型增生→胃癌。", "emergency": "呕血（咖啡渣样物）、黑柏油样便、剧烈持续腹痛不能缓解——可能是溃疡出血或穿孔，立即急诊！", "diet": "宜：清淡软食（粥、面条、蒸蛋）；规律进餐；细嚼慢咽。忌：辛辣刺激、生冷冰饮、油炸坚硬、咖啡浓茶、酒精、糯米难消化食物。", "drugs": "Hp根除治疗（四联疗法：PPI+铋剂+2种抗生素14天）；抑酸药（奥美拉唑等PPI）；胃黏膜保护剂（铝碳酸镁、瑞巴派特）；促胃动力药（多潘立酮）。", "synergy": "PPI+氯吡格雷：可能降低抗血小板疗效（CYP2C19竞争）。NSAID+无保护PPI：出血/溃疡高风险。", "food": "Hp主要通过口-口传播（共用餐具、接吻）；分餐制可降低传播风险；胃癌筛查高危人群建议40岁起定期胃镜。", "herbs": "黄芪、白术、茯苓——健脾益气。海螵蛸、瓦楞子——制酸止痛。", "keywords": "肚子胀 慢性胃炎 嗳气 消化不良 烧心 胃炎 肠胃不适 胃疼 腹胀 打嗝 上腹痛 反酸 胃口不好 胃不好 胃不舒服 胃痛"}, "急性胃肠炎": {"cat": "消化系统", "title": "急性胃肠炎", "content": "胃肠道黏膜的急性炎症，多由病毒（诺如病毒、轮状病毒）或细菌（大肠杆菌、沙门菌）引起。症状：腹痛、腹泻、呕吐、发热。", "emergency": "严重脱水（眼窝凹陷、皮肤弹性差）、高热不退、血便", "diet": "宜：清淡流质（粥汤、面汤）、补液盐（防止脱水）。忌：油腻、生冷、辛辣、奶制品（加重腹泻）。", "drugs": "补液盐：补充水分和电解质。止泻：蒙脱石散。调节肠道菌群：益生菌（双歧杆菌、乳酸杆菌）。细菌感染时使用抗生素。", "synergy": "抗生素+益生菌：需间隔2小时以上服用。", "food": "少量多餐。从流质→半流质→正常饮食逐步过渡。", "herbs": "藿香正气散（藿香、紫苏、白芷）——外感风寒，内伤湿滞。", "keywords": "上吐下泻 吃坏肚子 拉稀 食物中毒 窜稀 肚子疼拉稀 水样便 跑肚 急性胃肠炎 吃了坏东西"}, "便秘": {"cat": "消化系统", "title": "便秘", "content": "排便次数减少（每周<3次）、粪便干结、排便困难。分为功能性便秘和器质性便秘。治疗：增加膳食纤维（25-35g/天）、适量饮水（1.5-2L/天）、运动、养成排便习惯。", "emergency": "急性便秘伴腹痛、呕吐——警惕肠梗阻！", "diet": "宜：膳食纤维（粗粮、蔬菜、水果）、足量饮水。忌：精制食品、辛辣刺激。", "drugs": "容积性泻药：麦麸、欧车前。渗透性泻药：乳果糖、聚乙二醇。刺激性泻药：比沙可啶（短期用）。", "synergy": "刺激性泻药长期使用会导致依赖。", "food": "养成定时排便习惯。增加运动。", "herbs": "麻子仁丸——润肠通便。", "keywords": "大便干 拉不出 便秘"}, "腹泻": {"cat": "消化系统", "title": "腹泻", "content": "排便次数增多（>3次/天）、粪便稀薄、水分增加。分为急性和慢性。急性多为感染，慢性需排除器质性疾病。", "emergency": "严重脱水、血便、持续高热", "diet": "宜：清淡流质、补液盐。忌：油腻、生冷、高纤维、奶制品。", "drugs": "补液：补液盐。止泻：蒙脱石散。调节肠道：益生菌。抗感染：氟哌酸（细菌性）。", "synergy": "感染性腹泻禁用止泻药（妨碍毒素排出）。", "food": "BRAT饮食：香蕉、米饭、苹果酱、吐司。", "herbs": "参苓白术散——健脾渗湿止泻。", "keywords": "拉肚子 腹泻"}, "脂肪肝": {"cat": "消化系统", "title": "脂肪肝", "content": "肝细胞脂肪沉积>5%，分酒精性（AFLD）和非酒精性（NAFLD/MASLD）。治疗：减重5-10%可逆转脂肪肝（最有效）、戒酒、控制血糖血脂。", "emergency": "肝区剧痛、黄疸（眼睛和皮肤发黄）", "diet": "宜：地中海饮食（橄榄油、深色蔬菜、全谷、鱼）、绿茶。忌：酒精、果糖饮料、高糖高脂食品、油炸食品。", "drugs": "二甲双胍（合并糖尿病时）。维生素E（400IU/天，对NASH有一定效果，不适用于糖尿病患者）。护肝药（易善复等）只能辅助。", "food": "咖啡（每天2-3杯无糖）可降低肝酶——循证证实的护肝饮食。", "herbs": "丹参、山楂、葛根、五味子——保肝降脂。", "keywords": "肝脂肪 脂肪肝"}, "肝炎": {"cat": "消化系统", "title": "肝炎", "content": "肝脏炎症，常见原因：病毒性（甲、乙、丙、丁、戊肝）、酒精性、非酒精性、药物性。症状：乏力、食欲不振、恶心、右上腹不适、黄疸。", "emergency": "急性重型肝炎：极度乏力、严重黄疸、意识障碍——急诊！", "diet": "宜：高蛋白（肝修复）、易消化、维生素丰富。忌：酒精、高脂肪、辛辣刺激。", "drugs": "病毒性肝炎：抗病毒药（乙肝核苷类似物、丙肝直接抗病毒药）。护肝药：甘草酸制剂、水飞蓟宾。", "synergy": "抗病毒药需足疗程，不要自行停药。", "food": "绝对戒酒。定期复查肝功能、病毒载量。", "herbs": "茵陈、栀子、柴胡、五味子——清热利湿、疏肝解毒。", "keywords": "丙肝 肝炎 乙肝"}, "胆囊炎": {"cat": "消化系统", "title": "胆囊炎", "content": "胆囊的炎症，常与胆结石有关。分为急性和慢性。急性：右上腹剧痛（墨菲征阳性）、发热、恶心呕吐。慢性：右上腹隐痛、饱胀感。", "emergency": "急性化脓性胆囊炎、胆囊穿孔——急诊手术！", "diet": "宜：低脂饮食、清淡易消化。忌：高脂肪饮食（油炸、肥肉、蛋黄）、辛辣刺激。", "drugs": "抗生素：头孢类+甲硝唑。解痉：山莨菪碱。利胆：熊去氧胆酸。", "synergy": "熊去氧胆酸需长期服用，定期复查。", "food": "少量多餐。避免暴饮暴食。", "herbs": "金钱草、茵陈、郁金——利胆排石。", "keywords": "胆囊炎"}, "痔疮": {"cat": "消化系统", "title": "痔疮", "content": "肛门直肠静脉曲张。分为内痔、外痔、混合痔。症状：便血、肛门疼痛、脱出、瘙痒。治疗：保守治疗（坐浴、软化大便、局部用药）、手术。", "emergency": "大量便血导致贫血、痔核嵌顿坏死", "diet": "宜：膳食纤维（25-35g/天）、足量饮水。忌：辛辣刺激、久坐久蹲。", "drugs": "口服：地榆槐角丸、迈之灵。外用：马应龙痔疮膏、栓剂。", "synergy": "便秘加重痔疮，形成恶性循环。", "food": "养成排便好习惯（每天固定时间，不超过5分钟）。温水坐浴。", "herbs": "地榆、槐花、赤小豆——凉血止血、消肿止痛。", "keywords": "肛裂 痔疮"}, "口腔溃疡": {"cat": "五官科", "title": "复发性口腔溃疡", "content": "口腔黏膜反复发作的溃疡。病因复杂：免疫因素、维生素缺乏、机械刺激。", "emergency": "溃疡超过2周不愈或数量增多", "diet": "宜：富含维生素B、C的食物。忌：辛辣、过烫、酸性食物。", "drugs": "局部：口腔溃疡散、西瓜霜。全身：维生素B2、维生素C。反复发作排查系统性疾病。", "synergy": "保持口腔清洁。", "food": "避免咬伤。", "herbs": "导赤散（心脾积热）、玉女煎（阴虚火旺）。", "keywords": "溃疡 口腔溃疡 复发性口腔溃疡"}, "头痛": {"cat": "神经系统", "title": "头痛", "content": "原因众多：紧张性、血管性、偏头痛、鼻窦性、继发性头痛。处理：休息、放松、止痛药。若头痛突然剧烈伴发热/呕吐/视物模糊/偏瘫，请立即就医。", "emergency": "突然剧烈头痛（雷击样）、伴意识变化、颈项强直、视物模糊、偏瘫——立即就医！", "diet": "宜：规律进食（避免低血糖）、坚果、深海鱼。忌：酒精（偏头痛常见诱因）、腌制肉。", "drugs": "止痛：布洛芬（首选）、对乙酰氨基酚。偏头痛：曲普坦类（发作早期服）。注意：每月止痛药>10天可致药物过度使用性头痛。", "synergy": "止痛药+酒精：显著增加胃肠道和肝脏损伤。", "food": "脱水是头痛最常见诱因，确保每日饮水1500-2000ml。", "herbs": "川芎、白芷、天麻、菊花——祛风通络止痛。", "keywords": "头疼 头痛"}, "失眠": {"cat": "神经内科", "title": "失眠", "content": "入睡困难、睡眠维持困难或早醒，导致日间功能损害（疲劳、注意力下降、情绪障碍）。分类：短期失眠（<3个月，常与应激相关）；慢性失眠（>=3个月，一周3次以上）。常见原因：心理压力（焦虑/抑郁）、不良睡眠习惯（睡前屏幕/不规律作息）、躯体疾病（疼痛/呼吸暂停）、药物/物质（咖啡因/酒精/某些药物）。", "emergency": "白天严重嗜睡、突发入睡（可能是嗜睡症）；睡眠呼吸暂停（打鼾伴憋气——需睡眠医学评估）；失眠伴随情绪极度低落/自杀念头——精神科急诊。", "diet": "宜：规律作息时间（固定起床时间，即使周末也不偏差>1小时）；卧室仅用于睡眠（不看手机/电视）；白天适度运动（但睡前3小时避免剧烈运动）；睡前放松仪式（温水澡/阅读/冥想）；富含色氨酸食物（温牛奶、燕麦、香蕉）。", "drugs": "镇静催眠药（苯二氮卓类：BZD如阿普唑仑/氯硝西泮——短期使用<4周，防止依赖）；非苯二氮卓类（Z-drugs如佐匹克隆/唑吡坦——依赖风险低但仍有）；褪黑素受体激动剂（雷美尔通——适合昼夜节律紊乱）；抗抑郁药（多塞平低剂量、米氮平——适合合并抑郁焦虑的失眠）。注意：药物应最低有效剂量最短疗程。", "synergy": "BZD+酒精/阿片类：呼吸抑制风险（致命）。Z-drugs与SSRIs/SNRIs联用：5-HT综合征风险。多种镇静药联用：过度镇静跌倒风险。", "food": "不要在床上醒着超过20分钟——有困意再回床；午后避免咖啡因（半衰期长）；卧室温度18-20℃最佳；光线控制（黑暗促进褪黑素分泌）；睡眠限制疗法（限制躺在床上的时间直到睡眠效率提高）是CBT-I的核心技术。", "herbs": "酸枣仁、茯苓——养心安神。百合、合欢皮——解郁安神。黄连、肉桂——交通心肾（心肾不交型失眠）。", "keywords": "失眠 睡眠不好 多梦 睡眠差 睡不着 早醒 入睡困难"}, "抑郁症": {"cat": "神经系统", "title": "抑郁症", "content": "以持续的情绪低落、兴趣减退为核心症状，常伴有睡眠障碍、食欲改变、注意力下降、自责自罪。需专业诊断和治疗。", "emergency": "有自杀念头或行为——立即就医或拨打心理危机干预热线！", "diet": "宜：富含Omega-3（深海鱼）、叶酸（绿叶蔬菜）、维生素D的食物。忌：酒精（加重抑郁）、咖啡因过量。", "drugs": "SSRI类（首选）：舍曲林、帕罗西汀、艾司西酞普兰。SNRI类：文拉法辛、米那普仑。需足疗程（至少6-12个月）。", "synergy": "抗抑郁药+酒精：增加镇静作用。", "food": "规律饮食。适度运动（对抑郁有治疗作用）。", "herbs": "柴胡疏肝散、逍遥散——疏肝解郁。", "keywords": "抑郁症 抑郁"}, "焦虑症": {"cat": "神经系统", "title": "焦虑症", "content": "以过度的担忧、紧张、恐惧为特征，常伴有心悸、出汗、颤抖、胸闷、呼吸困难等躯体症状。分为广泛性焦虑和惊恐障碍。", "emergency": "惊恐发作（强烈恐惧感伴严重躯体症状）——需排除心脏疾病", "diet": "宜：富含B族维生素的食物、镁（坚果、深绿叶菜）。忌：咖啡因、酒精。", "drugs": "SSRI类：帕罗西汀、舍曲林。短效苯二氮卓类：阿普唑仑（短期使用，成瘾性）。", "synergy": "苯二氮卓类+酒精：呼吸抑制风险。", "food": "规律作息。深呼吸练习。瑜伽、冥想。", "herbs": "天王补心丹——滋阴养血、补心安神。", "keywords": "焦虑 焦虑症"}, "眩晕": {"cat": "神经系统", "title": "眩晕", "content": "感觉自身或周围环境旋转/晃动感。常见原因：耳石症（良性阵发性位置性眩晕）、前庭神经炎、梅尼埃病、颈椎病、脑血管病。", "emergency": "眩晕伴剧烈头痛、视力障碍、肢体无力——警惕脑卒中！", "diet": "宜：清淡饮食、富含维生素。忌：辛辣刺激、浓茶咖啡。", "drugs": "耳石症：手法复位（首选）。前庭神经炎：激素、前庭抑制剂（苯海拉明）。梅尼埃病：利尿剂、前庭抑制剂。", "synergy": "前庭抑制剂长期使用延缓前庭功能代偿。", "food": "发作时卧床休息，避免头部快速运动。", "herbs": "天麻钩藤饮——平肝潜阳、熄风止眩。", "keywords": "眩晕 头晕"}, "颈椎病": {"cat": "骨科", "title": "颈椎病", "content": "颈椎椎间盘退行性变及其继发性椎间关节退行性变所致邻近组织（脊髓、神经根、椎动脉、交感神经）受累而表现出相应的临床症状。类型：神经根型（最常见~60%，上肢放射痛/麻木）、脊髓型（最危险，四肢无力/踩棉花感）、椎动脉型（眩晕/猝倒）、交感神经型（头昏/心慌/出汗异常）。", "emergency": "脊髓型出现行走不稳/手持物落地/系扣困难——脊髓受压征象，需尽早手术评估！；大小便功能障碍——马尾综合征equivalent，急诊。", "diet": "宜：抗炎食物（深海鱼、坚果、橄榄油）；钙+维D（骨骼健康）；维生素B族（神经健康）。忌：无特殊饮食禁忌，但需控制体重（减轻颈椎负荷）。", "drugs": "非甾体抗炎药（塞来昔布/布洛芬——消炎镇痛）；肌肉松弛剂（乙哌立松——肌肉痉挛时）；神经营养药（甲钴胺——神经根受压麻木时）。注意：药物只缓解症状，不能逆转退变。", "synergy": "长期服用NSAID：胃肠道/心血管风险。肌肉松弛剂+酒精/中枢抑制药：过度镇静。", "food": "手机使用时抬高至视线水平（不用低头）；电脑屏幕与眼睛平齐；每30-45分钟起来活动颈部；选择合适枕头（高度约一拳高，支撑颈椎生理曲度）；避免长时间空调直吹颈部。", "herbs": "葛根——解肌舒颈（葛根汤核心药）。羌活、防风——祛风胜湿。威灵仙、木瓜——舒筋通络。", "keywords": "肩颈酸痛 落枕 颈椎病 手麻 脖子疼 脖子僵硬 颈椎疼"}, "腰椎间盘突出": {"cat": "神经系统", "title": "腰椎间盘突出症", "content": "椎间盘纤维环破裂，髓核突出压迫神经根。症状：腰痛伴下肢放射痛（坐骨神经痛）、麻木、肌力下降。", "emergency": "出现马尾综合征（大小便失禁、鞍区麻木）——急诊手术！", "diet": "宜：富含钙、蛋白质的食物。忌：辛辣刺激。", "drugs": "止痛：NSAIDs（布洛芬、塞来考昔）。神经根水肿：甘露醇+地塞米松。营养神经：甲钴胺。", "synergy": "保守治疗无效或出现肌力下降需考虑手术。", "food": "睡硬板床。避免久坐久站。", "herbs": "独活寄生汤——祛风湿、止痹痛、益肝肾。", "keywords": "腰椎间盘突出症 腰突 腰椎间盘突出"}, "面瘫": {"cat": "神经系统", "title": "面神经麻痹（面瘫）", "content": "面神经受损导致面部肌肉瘫痪。分为中枢性（脑血管病引起）和周围性（Bell麻痹最常见）。表现：额纹消失、眼睑闭合不全、口角歪斜。", "emergency": "突然出现面瘫伴其他神经系统症状——警惕脑卒中！", "diet": "宜：清淡易消化、高维生素饮食。忌：辛辣刺激。", "drugs": "急性期：糖皮质激素（强的松，早期使用可减轻水肿）、维生素B1、B12。眼睑闭合不全：眼药水、人工泪液。", "synergy": "早期（72小时内）使用激素效果最好。", "food": "保持面部保暖。进行面部肌肉康复训练。", "herbs": "牵正散（白附子、僵蚕、全蝎）——祛风化痰、通络止痉。", "keywords": "面瘫 面神经麻痹（面瘫） 面神经麻痹"}, "类风湿关节炎": {"cat": "风湿免疫系统", "title": "类风湿关节炎", "content": "自身免疫性关节炎症，表现为对称性多关节肿胀疼痛、晨僵（>1小时）。可导致关节畸形和功能丧失。", "emergency": "出现发热、胸闷、呼吸困难——警惕间质性肺炎！", "diet": "宜：富含Omega-3（深海鱼）、抗氧化物质（水果蔬菜）。忌：烟酒。", "drugs": "DMARDs（改变病情抗风湿药）：甲氨蝶呤（首选）、来氟米特、羟氯喹。生物制剂：TNF-α抑制剂。", "synergy": "甲氨蝶呤+叶酸：减少副作用。", "food": "适度运动保持关节功能。", "herbs": "独活、桑寄生、秦艽——祛风湿、止痹痛。", "keywords": "类风湿 类风湿关节炎 风湿性关节炎"}, "骨关节炎": {"cat": "风湿免疫系统", "title": "骨关节炎", "content": "关节软骨退变，常见于膝、髋、手关节。症状：关节疼痛（活动后加重）、僵硬（<30分钟）、肿胀、骨擦感。", "emergency": "急性关节红肿热痛伴发热——警惕感染性关节炎！", "diet": "宜：富含胶原蛋白、钙的食物。忌：肥胖（增加关节负担）。", "drugs": "止痛：NSAIDs（外用+口服）、对乙酰氨基酚。关节腔注射：玻璃酸钠、糖皮质激素。", "synergy": "氨基葡萄糖和硫酸软骨素：证据不一，可尝试。", "food": "控制体重。适度运动（游泳、骑车）。", "herbs": "骨碎补、续断、威灵仙——补肾强骨、祛风通络。", "keywords": "骨关节炎 退化性关节炎"}, "系统性红斑狼疮": {"cat": "风湿免疫系统", "title": "系统性红斑狼疮", "content": "系统性自身免疫病，多见于年轻女性。表现：面部蝶形红斑、关节痛、口腔溃疡、光敏感、乏力。可累及肾、心、肺、脑。", "emergency": "出现抽搐、意识障碍、胸闷尿少——累及重要脏器！", "diet": "宜：均衡饮食、富含维生素D。忌：光敏食物（芹菜、香菜）、辛辣刺激。", "drugs": "基础治疗：羟氯喹。免疫抑制：糖皮质激素、硫唑嘌呤、霉酚酸酯。生物制剂：贝利木单抗。", "synergy": "羟氯喹需定期眼科检查（视网膜病变）。", "food": "避免日晒。戒烟。", "herbs": "六味地黄丸、知柏地黄丸——滋阴清热。", "keywords": "系统性红斑狼疮"}, "干燥综合征": {"cat": "风湿免疫系统", "title": "干燥综合征", "content": "外分泌腺受累的自身免疫病。表现：口干眼干、牙齿片状脱落、关节痛。可伴其他自身免疫病。", "emergency": "出现乏力、低热、淋巴结肿大——警惕淋巴瘤！", "diet": "宜：滋阴润燥。忌：辛辣刺激、烟酒。", "drugs": "对症：人工泪液、唾液替代品。免疫调节：羟氯喹。累及脏器：糖皮质激素+免疫抑制剂。", "food": "保持口腔湿润。避免服用引起口干的药物。", "herbs": "沙参、麦冬、玉竹——养阴润燥。", "keywords": "干燥综合征"}, "荨麻疹": {"cat": "皮肤科", "title": "荨麻疹(风疹块)", "content": "皮肤黏膜小血管扩张及渗透性增加出现的局限性水肿反应。表现为大小不等的风团（红色/肤色隆起皮面），剧痒，24小时内消退不留痕迹，但反复新旧交替。急性<6周，慢性>=6周。病因：急性多与感染/食物/药物过敏有关；慢性病因复杂（自身免疫、物理因素、精神因素等，约50-70%找不到明确原因）。", "emergency": "喉头水肿（声音改变/呼吸困难/舌咽肿胀）——过敏性休克的前兆，立即急诊并使用肾上腺素！；伴发热关节痛（可能为荨麻疹性血管炎）。", "diet": "宜：记录发病日记找trigger；急性期清淡饮食；排除法逐步添加食物。忌：个体已明确的过敏原；常见致敏物（海鲜、坚果、蛋奶、草莓、番茄、巧克力、酒精）；伪过敏原（含阿司匹林的药物、某些食品添加剂如亚硫酸盐、苯甲酸）。", "drugs": "二代抗组胺药（西替利嗪/氯雷他定/非索非那定——一线，不易嗜睡）；一代抗组胺药（扑尔敏/异丙嗪——晚间用，有镇静作用利于止痒和睡眠）。急性重症：肾上腺素（喉头水肿/休克时）；糖皮质激素（重症急性荨麻疹）。慢性荨麻疹：抗组胺药常规剂量加倍甚至4倍（指南推荐）；奥马珠单抗（抗IgE——难治性有效）。", "synergy": "抗组胺药+中枢抑制药（酒精/安定/阿片类）：加强嗜睡。ACEI类降压药（普利类）：可能诱发血管性水肿（类似但非荨麻疹）。", "food": "物理性荨麻疹（寒冷性/胆碱能性/日光性/压力性）需针对性避免触发；紧身衣物/搔抓/热水澡可加重（人工荨麻疹/皮肤划痕症）；慢性荨麻疹病程平均2-5年（需做好长期管理心理准备）。", "herbs": "防风、蝉蜕、荆芥——疏风止痒（消风散）。白鲜皮、地肤子——燥湿。生地、赤芍——凉血。", "keywords": "风疹块 荨麻疹(风疹块) 起风团 风团 身上起包 皮肤过敏 荨麻疹"}, "湿疹": {"cat": "皮肤科", "title": "湿疹/特应性皮炎", "content": "慢性复发性炎症性皮肤病。特征：剧烈瘙痒、多形性皮疹（红斑、丘疹、水疱、渗出、结痂、苔藓化）、边界不清、对称分布。婴儿多发面部/伸侧，成人多发屈侧（肘窝/腘窝）。病因复杂：遗传（丝聚蛋白突变）、免疫失调（Th2优势）、皮肤屏障缺陷、环境triggers（尘螨、花粉、食物、压力）。", "emergency": "广泛红皮病（>90%体表面积）；继发细菌感染（脓疱、黄色痂皮、发热）；严重水肿影响眼睑/嘴唇；瘙痒严重影响睡眠和生活质量——需皮肤科就诊。", "diet": "宜：记录饮食日记找trigger；抗炎食物（深海鱼Omega-3）；益生元/益生菌（肠道-皮肤轴）。忌：个体已知的食物过敏原；常见致敏食物试探性排除（牛奶、鸡蛋、花生、海鲜、小麦、坚果）；辛辣刺激（可加重瘙痒）；酒精。", "drugs": "基础治疗（cornerstone）：润肤剂/保湿霜（每天多次，洗澡后3分钟内涂抹——最重要的一步！）。外用激素（根据部位/年龄选弱-中-强效）；钙调神经磷酸酶抑制剂（他克莫司——敏感部位）。系统治疗：生物制剂（度普利尤单抗——中重度特效）；JAK抑制剂（乌帕替希）；抗组胺药（止痒，对皮炎本身无效）。", "synergy": "外用激素+他克莫司：不应同一部位同时用。多种抗组胺药联用：嗜睡累积。生物制剂+活疫苗：禁用。", "food": "洗澡水温不宜过高（37℃左右）；每次5-10分钟；选用温和无皂清洁剂；洗后3分钟内涂润肤剂（黄金窗口期）；纯棉宽松衣物；勤换洗衣物（残留洗涤剂也可刺激）。", "herbs": "苦参、黄柏、地肤子——清热燥湿止痒。生地、丹皮——凉血。甘草、白鲜皮——解毒祛风。", "keywords": "湿疹/特应性皮炎 起皮疹 特应性皮炎 湿疹 过敏性皮炎 皮肤干燥 皮肤痒"}, "银屑病": {"cat": "风湿免疫系统", "title": "银屑病", "content": "慢性炎症性皮肤病，典型表现：鳞屑性红斑、薄膜现象、点状出血。分为寻常型、关节型、脓疱型、红皮病型。", "emergency": "关节剧烈疼痛、红皮病型、脓疱型——需住院治疗！", "diet": "宜：富含维生素A、E的食物。忌：辛辣刺激、酒精、海鲜。", "drugs": "外用：糖皮质激素、维生素D3衍生物。系统治疗：甲氨蝶呤、环孢素。生物制剂：TNF-α抑制剂、IL-17抑制剂。", "synergy": "感染可诱发或加重银屑病。", "food": "保持皮肤湿润。避免外伤。", "herbs": "血热型：犀角地黄汤加减。血瘀型：桃红四物汤加减。", "keywords": "银屑病 牛皮癣"}, "带状疱疹": {"cat": "感染科/皮肤科", "title": "带状疱疹(蛇盘疮)", "content": "水痘-带状疱疹病毒(VZV)再激活引起的急性感染性皮肤病。典型表现：身体单侧成簇水疱、剧烈疼痛（灼痛/刺痛/电击样）、皮疹沿神经走向带状分布。好发于胸腰部（占50%以上），也可累及面部（眼支危险！）。老年人和免疫低下者病情更重，后遗神经痛(PHN)风险更高。", "emergency": "眼部受累（眼支带状疱疹——可致失明）；耳部受累伴面瘫/眩晕（Ramsay Hunt综合征）；广泛皮疹+高热（免疫功能低下征象）；头部颈部皮疹——尽快就医。", "diet": "宜：高蛋白（促进修复）；富含维B族食物（糙米、瘦肉、蛋、奶）；新鲜果蔬（增强免疫）。忌：辛辣发物（辣椒、羊肉、海鲜）；烟酒；搔抓摩擦。", "drugs": "抗病毒（阿昔洛韦/伐昔洛韦/泛昔洛韦——72小时内使用效果最佳）；镇痛（加巴喷丁/普瑞巴林——神经病理性疼痛首选）；营养神经（维生素B1/B12）；外用炉甘石洗剂/阿昔洛韦乳膏。", "synergy": "加巴喷丁+中枢抑制药（阿片类/苯二氮卓类）：呼吸抑制风险。免疫抑制剂使用者病情更重需积极抗病毒。", "food": "接触传染性（对未患过水痘者可传播水痘）；皮疹结痂前具有传染性；50岁以上可接种重组带状疱疹疫苗（Shingrix）有效预防。", "herbs": "龙胆草、栀子——清肝胆湿热。板蓝根、大青叶——清热解毒。延胡索、乳香没药——活血止痛。", "keywords": "蛇缠腰 带状疱疹 肋间神经痛 起水泡 带状疱疹(蛇盘疮) 蛇盘疮"}, "慢性肾病": {"cat": "泌尿系统", "title": "慢性肾脏病", "content": "肾脏结构/功能异常>3个月。分为1-5期。常见原因：糖尿病、高血压、慢性肾小球肾炎。", "emergency": "尿量显著减少或无尿、严重水肿、意识障碍——尿毒症！", "diet": "优质低蛋白饮食（0.6-0.8g/kg/天）。限钠（<2g/天）。限钾、磷（晚期）。", "drugs": "控制原发病：降压（ACEI/ARB首选，保护肾脏）、降糖。并发症：利尿剂、纠酸、补钙、骨病治疗。", "synergy": "ACEI/ARB+钾盐：可能导致高钾血症。", "food": "定期监测肾功能和电解质。避免肾毒性药物（NSAIDs、造影剂）。", "herbs": "大黄、丹参、积雪草——通腑泄浊、活血化瘀。", "keywords": "慢性肾脏病 肾炎 肾病 慢性肾病"}, "尿路感染": {"cat": "泌尿系统", "title": "尿路感染", "content": "细菌侵入泌尿系统引起的炎症。分为上尿路感染（肾盂肾炎）和下尿路感染（膀胱炎、尿道炎）。症状：尿频、尿急、尿痛、发热。", "emergency": "高热伴腰痛——肾盂肾炎，需抗生素治疗！", "diet": "宜：清淡饮食、足量饮水（>1500ml/天）。忌：辛辣刺激、酒精。", "drugs": "下尿路感染：磷霉素、呋喃妥因、头孢类（3-7天）。上尿路感染：喹诺酮类、头孢类（10-14天）。", "synergy": "多喝水、按时排尿是预防关键。", "food": "注意个人卫生。", "herbs": "八正散（车前子、瞿麦、萹蓄）——清热利湿、通淋止痛。", "keywords": "尿道炎 尿路感染"}, "前列腺增生": {"cat": "泌尿外科", "title": "前列腺增生(BPH)", "content": "中老年男性常见疾病，50岁以上发病率约50%，80岁以上达90%。前列腺增大压迫尿道导致排尿困难。症状：尿频（尤其夜尿增多）、尿急、尿线变细、排尿费力、尿不尽感、尿潴留。严重时可导致膀胱结石、反复尿路感染、肾功能损害。", "emergency": "完全无法排尿（尿潴留）——需急诊导尿；肉眼血尿伴血块——可能需膀胱冲洗。", "diet": "宜：番茄（番茄红素）；南瓜子（锌元素）；均衡饮食；控制体重。忌：辛辣刺激（加重充血）；酒精（尤其是啤酒）；久坐憋尿；过量咖啡因。", "drugs": "α受体阻滞剂（坦索罗辛/多沙唑嗪——松弛平滑肌，快速起效）；5α还原酶抑制剂（非那雄胺——缩小前列腺，需长期服用3-6月见效）。联合用药效果更佳。", "synergy": "α受体阻滞剂+PDE5抑制剂（伟哥类）：可能引起直立性低血压。坦索罗辛+某些降压药：协同降压效应。", "food": "避免长时间骑行（压迫前列腺）；适度性生活（规律排腺）；夜间限制饮水（减少夜尿）；保暖（寒冷刺激加重症状）。", "herbs": "益智仁、乌药、山药——缩泉止遗。王不留行、皂角刺——活血通淋。", "keywords": "前列腺肥大 尿线细 尿不尽 排尿困难 尿急 前列腺增生 尿频 前列腺增生(BPH) 夜尿多 前列腺"}, "肾结石": {"cat": "泌尿系统", "title": "泌尿系结石", "content": "泌尿系统形成的坚硬物质。表现为突然出现的剧烈腰痛（肾绞痛）、血尿、尿频尿急。", "emergency": "结石伴发热——警惕脓肾！", "diet": "根据结石成分调整。普遍：多喝水（>2000ml/天）、均衡饮食。", "drugs": "止痛：NSAIDs、阿片类。排石：α受体阻滞剂（坦索罗辛）、利尿剂（噻嗪类）。", "synergy": "体外冲击波碎石、输尿管镜取石——根据结石大小位置选择。", "food": "根据结石成分分析结果调整饮食。", "herbs": "金钱草、海金沙、鸡内金——利尿排石。", "keywords": "肾结石 尿路结石 泌尿系结石"}, "贫血": {"cat": "血液系统", "title": "贫血", "content": "外周血红细胞容量减少，低于正常范围下限。最常见类型为缺铁性贫血（占50%以上）。症状：乏力、头晕、面色苍白、心悸气短、注意力下降。女性（月经/妊娠）、儿童（生长发育）、老年人（吸收不良）为高危人群。", "emergency": "极重度贫血（Hb<60g/L）伴心率>100次/分、呼吸困难、晕厥——需紧急输血评估。", "diet": "宜：富铁食物（红肉、动物血/肝、黑木耳）；搭配维C（促进铁吸收）；B12（动物性食品）；叶酸（绿叶菜）。忌：浓茶咖啡（鞣酸阻碍铁吸收）；钙片与铁剂同服。", "drugs": "口服铁剂（硫酸亚铁、多糖铁复合物）；静脉铁（口服不耐受时）；B12注射（恶性贫血）；叶酸片（巨幼贫）。注意：铁剂空腹吸收好但胃肠道反应大，餐间服用折中。", "synergy": "铁剂+四环素/喹诺酮类抗生素：相互螯合降低吸收。铁剂+抗酸药：铁吸收减少。", "food": "素食者缺铁风险高（植物铁吸收率5-15% vs 动物铁20-30%）；月经量过多女性需重点关注；长期喝浓茶人群贫血风险升高。", "herbs": "当归、熟地、阿胶、枸杞——补血养血。黄芪、党参——益气生血（气血互生）。", "keywords": "气血不足 头晕乏力 脸色苍白 贫血 缺铁 血红蛋白低"}, "肺癌": {"cat": "肿瘤", "title": "肺癌", "content": "我国发病率和死亡率最高的恶性肿瘤。分为小细胞肺癌和非小细胞肺癌。危险因素：吸烟（最重要）、空气污染、职业暴露。", "emergency": "出现咯血、胸痛加重、呼吸困难——可能晚期！", "diet": "宜：高蛋白、高热量、易消化。忌：辛辣刺激、腌制食品。", "drugs": "手术：早期首选。化疗：铂类为基础。靶向治疗：针对EGFR、ALK等突变。免疫治疗：PD-1/PD-L1抑制剂。", "synergy": "基因检测指导靶向治疗选择。", "food": "戒烟（最重要）。定期体检（低剂量CT）。", "herbs": "扶正固本：参芪扶正注射液、贞芪扶正颗粒。", "keywords": "肺肿瘤 肺癌"}, "胃癌": {"cat": "肿瘤", "title": "胃癌", "content": "常见消化道恶性肿瘤。危险因素：幽门螺杆菌感染、腌制食品、烟熏食品、遗传。早期无症状或非特异性消化不良。", "emergency": "出现呕血、黑便、体重明显下降——警惕晚期！", "diet": "宜：新鲜蔬果、少盐少腌渍。忌：腌制、烟熏、高盐、辛辣。", "drugs": "手术：根治关键。化疗：氟尿嘧啶类+铂类。靶向：曲妥珠单抗（HER2阳性）。免疫治疗：PD-1抑制剂。", "synergy": "根除幽门螺杆菌可降低胃癌风险。", "food": "根治幽门螺杆菌。定期胃镜检查（高危人群）。", "herbs": "健脾益气：四君子汤加减。", "keywords": "胃肿瘤 胃癌"}, "结直肠癌": {"cat": "肿瘤", "title": "结直肠癌", "content": "常见消化道恶性肿瘤。危险因素：高脂肪低纤维饮食、肥胖、吸烟、家族史。表现：大便习惯改变、便血、腹痛、贫血。", "emergency": "急性肠梗阻、穿孔——急诊手术！", "diet": "宜：高纤维、低脂肪饮食。忌：红肉、加工肉制品、高脂肪饮食。", "drugs": "手术：根治关键。化疗：CAPOX、FOLFOX方案。靶向：贝伐单抗、西妥昔单抗。免疫治疗：PD-1（dMMR/MSI-H）。", "synergy": "结肠镜筛查早期发现癌前病变（腺瘤）。", "food": "定期筛查（结肠镜）。", "herbs": "槐花、地榆、赤芍——凉血止血、化瘀解毒。", "keywords": "肠癌 直肠癌 结直肠癌 结肠癌"}, "乳腺癌": {"cat": "肿瘤", "title": "乳腺癌", "content": "女性最常见恶性肿瘤。危险因素：遗传（BRCA1/2突变）、雌激素暴露、生育因素。表现：无痛肿块、乳头溢液、皮肤橘皮样改变。", "emergency": "出现骨痛、咳嗽——警惕转移！", "diet": "宜：富含蔬菜水果、全谷物。忌：高脂肪饮食、酒精。", "drugs": "手术：保乳或全切。化疗：蒽环类+紫杉类。内分泌治疗：他莫昔芬、芳香酶抑制剂。靶向：曲妥珠单抗（HER2+）。", "synergy": "定期乳腺超声/钼靶筛查。", "food": "母乳喂养可降低风险。", "herbs": "疏肝理气：逍遥散加减。", "keywords": "乳腺肿瘤 乳腺癌"}, "甲状腺癌": {"cat": "肿瘤", "title": "甲状腺癌", "content": "内分泌系统最常见恶性肿瘤，预后较好。病理类型：乳头状癌（最常见）、滤泡癌、髓样癌、未分化癌。", "emergency": "出现声音嘶哑、呼吸困难——警惕气管侵犯！", "diet": "宜：均衡饮食。忌：辛辣刺激。", "drugs": "手术：甲状腺全切/次全切。碘131治疗：分化型甲状腺癌。TSH抑制治疗：左甲状腺素。", "synergy": "定期复查甲状腺球蛋白。", "food": "甲状腺全切后需补钙和维生素D。", "herbs": "夏枯草、浙贝母——化痰散结。", "keywords": "甲状腺癌 甲状腺肿瘤"}, "月经不调": {"cat": "妇产科", "title": "月经不调", "content": "月经周期、经期、经量异常。常见原因：内分泌失调（多囊卵巢综合征、甲状腺功能异常）、子宫病变、情绪压力。", "emergency": "月经量过多导致贫血或停经后出血——警惕子宫内膜癌！", "diet": "宜：富含铁、蛋白质的食物。忌：生冷、辛辣刺激。", "drugs": "调经：雌孕激素周期治疗。排卵障碍：克罗米芬、来曲唑。多囊卵巢综合征：二甲双胍、达英-35。", "synergy": "长期月经不调需排查多囊卵巢综合征、甲状腺疾病。", "food": "记录月经周期。", "herbs": "四物汤、乌鸡白凤丸——补血调经。", "keywords": "月经不调 月经紊乱"}, "痛经": {"cat": "妇产科", "title": "痛经", "content": "月经期下腹部疼痛。分为原发性（无器质性病变）和继发性（子宫内膜异位症、子宫腺肌病等）。", "emergency": "疼痛加重或与以往不同——排查器质性疾病！", "diet": "宜：温热、易消化食物。忌：生冷、辛辣、咖啡因。", "drugs": "止痛：NSAIDs（布洛芬、月经前预防性服用）。避孕药：抑制排卵。原发性痛经效果良好。", "synergy": "热敷可缓解疼痛。", "food": "适度运动。保持温暖。", "herbs": "益母草、当归、川芎——活血化瘀、调经止痛。", "keywords": "经期腹痛 痛经"}, "更年期综合征": {"cat": "妇产科", "title": "更年期综合征", "content": "女性绝经前后因雌激素水平下降出现的一系列症状。表现：潮热出汗、情绪波动、失眠、骨关节痛、阴道干涩。", "emergency": "出现异常子宫出血——排查子宫内膜病变！", "diet": "宜：富含钙、维生素D的食物。忌：辛辣刺激、咖啡因、酒精。", "drugs": "激素替代治疗（MHT）：窗口期（60岁前或绝经10年内）使用利大于弊。需个体化方案。", "synergy": "MHT需定期复查评估利弊。", "food": "补充钙剂（1200mg/天）和维生素D（800-1000IU/天）。", "herbs": "更年安、六味地黄丸——滋阴补肾、宁心安神。", "keywords": "绝经 更年期综合征 更年期"}, "乳腺增生": {"cat": "妇产科", "title": "乳腺增生症", "content": "乳腺组织增生和退行性改变，与雌激素水平波动有关。表现：乳房胀痛、肿块（随月经周期变化）。", "emergency": "出现固定肿块或乳头溢血——排查乳腺癌！", "diet": "宜：富含维生素E、纤维的食物。忌：辛辣刺激、咖啡因、高脂肪饮食。", "drugs": "止痛：逍遥丸、乳癖消。调节内分泌：他莫昔芬（重度）。", "synergy": "定期乳腺超声/钼靶复查。", "food": "保持心情舒畅。", "herbs": "橘核、橘叶、夏枯草——疏肝散结。", "keywords": "乳腺结节 乳腺增生 乳腺增生症"}, "阴道炎": {"cat": "妇产科", "title": "阴道炎", "content": "阴道黏膜炎症。类型：细菌性（最常见）、念珠菌性（霉菌性）、滴虫性。表现：瘙痒、异味、分泌物异常。", "emergency": "反复发作或伴随全身症状", "diet": "宜：清淡饮食、富含益生菌的食物。忌：辛辣刺激、甜食。", "drugs": "细菌性：甲硝唑。念珠菌性：克霉唑、氟康唑。滴虫性：甲硝唑（夫妻同治）。", "synergy": "长期使用抗生素破坏阴道菌群。", "food": "保持外阴清洁干燥。避免过度清洗。", "herbs": "苦参、黄柏、蛇床子——清热燥湿、杀虫止痒。", "keywords": "阴道炎症 阴道炎"}, "小儿发热": {"cat": "儿科", "title": "儿童发热", "content": "儿童常见症状。体温>38℃为发热。常见原因：感染（病毒为主）。处理：38.5℃以下物理降温，38.5℃以上用退热药。", "emergency": "3个月以下婴儿发热、持续高热不退、出现抽搐、皮疹——立即就医！", "diet": "宜：清淡流质、补充水分。忌：辛辣、油腻。", "drugs": "对乙酰氨基酚（首选，3个月以上）、布洛芬（6个月以上）。禁用：阿司匹林（瑞氏综合征）、尼美舒利（儿童禁用）。", "synergy": "退热药不要叠加使用。", "food": "少量多次喂水。", "herbs": "小儿推拿：清天河水、退六腑。", "keywords": "儿童发热 小儿发热"}, "小儿腹泻": {"cat": "儿科", "title": "儿童腹泻", "content": "大便次数增多、性状改变。常见原因：病毒性（轮状病毒）、细菌性。治疗：补液（关键）、调节肠道菌群、对症治疗。", "emergency": "出现脱水表现（眼窝凹陷、皮肤弹性差、尿少）、血便、高热", "diet": "宜：补液盐、米汤、稀粥。忌：油腻、生冷、果汁（含糖高）。", "drugs": "补液盐III：补充水分和电解质。蒙脱石散：保护肠黏膜。益生菌：布拉氏酵母菌、双歧杆菌。", "synergy": "不建议使用强力止泻药（妨碍毒素排出）。", "food": "继续母乳喂养。配方奶喂养可暂时换无乳糖奶粉。", "herbs": "推拿：摩腹、揉脐。", "keywords": "儿童腹泻 小儿腹泻"}, "手足口病": {"cat": "儿科", "title": "手足口病", "content": "肠道病毒引起的急性传染病。5岁以下儿童多见。表现：手、足、口腔疱疹，伴发热。", "emergency": "出现高热不退、嗜睡、呕吐、肌阵挛——警惕重症手足口病！", "diet": "宜：清淡、易消化、温凉流质。忌：辛辣、咸酸、刺激性食物。", "drugs": "对症治疗：无特效抗病毒药。退热：布洛芬/对乙酰氨基酚。口腔疼痛：开喉剑喷雾。", "synergy": "隔离至疱疹消退（通常1周）。", "food": "保持口腔清洁。", "herbs": "金银花、连翘、板蓝根——清热解毒。", "keywords": "手足口病 手足口"}, "水痘": {"cat": "儿科", "title": "水痘", "content": "水痘-带状疱疹病毒引起。表现：发热、瘙痒性皮疹（红斑→丘疹→水疱→结痂）。传染性强。", "emergency": "出现高热、头痛、呕吐——警惕脑炎！", "diet": "宜：清淡、易消化饮食。忌：辛辣、发性食物（鱼虾羊肉）。", "drugs": "抗病毒：阿昔洛韦（早期使用）。对症：退热、止痒。", "synergy": "隔离至全部结痂（通常1周）。", "food": "剪指甲避免抓破。", "herbs": "银翘散——疏风清热、解毒透疹。", "keywords": "水痘"}, "近视": {"cat": "五官科", "title": "近视", "content": "眼球过度生长导致远处物体成像在视网膜前。分为轴性近视和屈光性近视。高度近视（>600度）增加眼底病变风险。", "emergency": "出现飞蚊症、闪光感、视野缺损——警惕视网膜脱离！", "diet": "宜：富含维生素A、C、E，叶黄素的食物（胡萝卜、蓝莓、绿叶蔬菜）。", "drugs": "框架眼镜：最安全。角膜塑形镜（OK镜）：控制近视进展。滴眼液：低浓度阿托品（0.01%）。", "synergy": "每天户外活动>2小时可预防近视。", "food": "保持正确读写姿势（33cm以上）。", "herbs": "杞菊地黄丸——滋肾养肝、明目。", "keywords": "散光 近视"}, "干眼症": {"cat": "五官科", "title": "干眼症", "content": "泪液分泌减少或蒸发过快导致眼表不适。症状：眼干、眼红、异物感、视疲劳。", "emergency": "出现严重眼痛、视力下降", "diet": "宜：富含Omega-3（深海鱼）、维生素A的食物。忌：长时间使用电子产品。", "drugs": "人工泪液：玻璃酸钠滴眼液（首选）。抗炎：环孢素滴眼液。", "synergy": "眨眼练习、热敷可缓解。", "food": "避免长时间佩戴隐形眼镜。", "herbs": "菊花、枸杞、决明子——清肝明目。", "keywords": "干眼症 眼睛干涩 干眼 眼干"}, "中耳炎": {"cat": "五官科", "title": "中耳炎", "content": "中耳腔炎症。分为分泌性中耳炎（积液）和化脓性中耳炎。常见表现：耳痛、听力下降、耳鸣。", "emergency": "出现高热、头痛、呕吐——警惕脑膜炎！", "diet": "宜：清淡饮食。忌：辛辣刺激。", "drugs": "抗生素：阿莫西林/头孢类。减充血剂：麻黄碱滴鼻。", "synergy": "擤鼻涕时不要两侧同时擤。", "food": "避免水进入耳朵。", "herbs": "龙胆草、柴胡、黄芩——清肝泻火。", "keywords": "中耳炎 耳朵疼"}, "鼻炎": {"cat": "五官科", "title": "鼻炎", "content": "鼻黏膜炎症。分为过敏性鼻炎（见相关词条）和非过敏性鼻炎。症状：鼻塞、流涕、打喷嚏、鼻痒。", "emergency": "出现嗅觉丧失、头痛、鼻出血", "diet": "宜：清淡饮食。忌：辛辣刺激、已知过敏原。", "drugs": "鼻用糖皮质激素：布地奈德、氟替卡松。抗组胺药：氯雷他定、西替利嗪。生理盐水冲洗。", "synergy": "避免接触过敏原和刺激物。", "food": "保持室内清洁。", "herbs": "苍耳子、辛夷、白芷——宣肺通窍。", "keywords": "鼻炎"}, "咽炎": {"cat": "五官科", "title": "咽炎", "content": "咽部黏膜炎症。分为急性和慢性。症状：咽痛、咽干、异物感、咳嗽。", "emergency": "出现高热、呼吸困难——警惕急性会厌炎！", "diet": "宜：清淡、温凉饮食。忌：辛辣刺激、过烫食物、烟酒。", "drugs": "含片：西地碘、胖大海含片。咽部喷雾：开喉剑。细菌感染时使用抗生素。", "synergy": "多喝水、保持口腔清洁。", "food": "避免过度用嗓。", "herbs": "金银花、胖大海、麦冬——清热利咽。", "keywords": "喉咙痛 咽炎"}, "痤疮": {"cat": "皮肤科", "title": "痤疮/青春痘", "content": "毛囊皮脂腺慢性炎症。与激素水平、皮脂分泌过多、毛囊角化、痤疮丙酸杆菌感染有关。", "emergency": "出现囊肿、结节", "diet": "宜：清淡饮食、富含维生素A的食物。忌：辛辣刺激、高糖高脂饮食（加重皮脂分泌）。", "drugs": "外用：维A酸类（阿达帕林）、过氧化苯甲酰、抗生素（克林霉素）。口服：抗生素（多西环素）、异维A酸（重度）。", "synergy": "维A酸+抗生素：协同作用。", "food": "不要用手挤压。保持面部清洁。", "herbs": "枇杷叶、桑白皮、黄芩——清肺泻火。", "keywords": "额头长痘 闭口 粉刺 痤疮/青春痘 黑头 青春痘 下巴长痘 痤疮"}, "亚健康": {"cat": "中医", "title": "亚健康状态", "content": "介于健康与疾病之间的灰色状态。表现：疲劳乏力、失眠、情绪低落、注意力不集中、各种躯体不适，但检查无器质性病变。", "emergency": "", "diet": "宜：均衡营养、彩色蔬果（每天5种颜色以上）、优质蛋白、五谷杂粮。忌：熬夜（23点后睡）、久坐不动。", "drugs": "无特异性药物，针对症状治疗——均需医生处方。", "synergy": "", "food": "枸杞菊花茶养肝明目；山药健脾益气。", "herbs": "黄芪、党参、枸杞、菊花——益气养阴、清肝明目。", "keywords": "亚健康 亚健康状态"}, "体质辨识": {"cat": "中医", "title": "中医九种体质辨识", "content": "平和质：精力充沛，睡眠安，食欲好。<br>气虚质：气短乏力、易感冒——宜补气（人参、黄芪）。<br>阳虚质：畏寒怕冷、手足冰凉——宜温阳（羊肉、桂圆）。<br>阴虚质：口干咽燥、手足心热——宜滋阴（银耳、百合）。<br>痰湿质：体胖痰多、腹部肥满——宜化痰祛湿（陈皮、薏米）。<br>湿热质：面油腻、口苦、长痘——宜清热利湿（苦瓜、绿豆）。<br>血瘀质：面色晦暗、疼痛固定——宜活血化瘀（三七、丹参）。<br>气郁质：情绪抑郁、焦虑胁胀——宜疏肝解郁（玫瑰花茶）。<br>特禀质：容易过敏——查明并避免过敏原。", "emergency": "", "diet": "根据体质类型选择食物。气虚宜补，痰湿宜祛，湿热宜清，阴虚宜滋，阳虚宜温。", "drugs": "", "synergy": "", "food": "", "herbs": "九种体质各有对应调理方案，具体用药请咨询中医师。", "keywords": "体质辨识 血瘀 中医九种体质辨识 气虚 特禀 气郁 平和 体质 痰湿 湿热 阴虚 阳虚"}, "术后调理": {"cat": "中医", "title": "手术后中医调理", "content": "手术后身体虚弱，中医调理促进恢复。原则：扶正固本、活血化瘀。", "emergency": "", "diet": "宜：易消化、高蛋白、高维生素。忌：生冷、油腻、辛辣。", "drugs": "", "synergy": "", "food": "根据手术类型调整。", "herbs": "四君子汤（气虚）+桃红四物汤（血瘀）——益气活血。", "keywords": "手术后中医调理 术后调理"}, "肿瘤康复": {"cat": "中医", "title": "肿瘤康复期调理", "content": "手术/放化疗后中医调理，减轻副作用，提高生活质量。", "emergency": "", "diet": "宜：富含营养、易消化。忌：辛辣刺激、腌制食品。", "drugs": "", "synergy": "", "food": "定期复查。", "herbs": "扶正固本：黄芪、党参、灵芝——增强免疫。", "keywords": "肿瘤康复期调理 肿瘤康复"}, "诺如病毒感染": {"cat": "消化系统", "title": "诺如病毒性胃肠炎(病毒性腹泻)", "content": "诺如病毒是全球范围内引起非细菌性急性胃肠炎暴发的最主要病原体，俗称'冬季呕吐病'。传播极强，极少量病毒颗粒即可感染。潜伏期12-48小时。典型症状：突起剧烈呕吐（儿童更突出）、水样腹泻、腹痛、低热、全身肌肉酸痛、乏力。病程自限性，通常2-3天自愈。重点风险：脱水——尤其是婴幼儿和老人。处理：补液是核心——口服补液盐(ORS)少量多次饮用；暂缓进食固体食物，呕吐停止后从清淡流质开始（米汤、稀释苹果汁）；避免使用抗生素（无效且可能延长排毒期）；避免使用止泻药洛哌丁胺（会延缓病毒排出）。家庭护理：充分休息、勤洗手、对呕吐物/排泄物用含氯消毒剂消毒。", "emergency": "严重脱水（无尿超过8小时、哭无泪、囟门凹陷婴儿）、持续呕吐超过24小时无法进食、便血、高热>39℃、精神状态改变", "diet": "宜：米汤、BRAT饮食（香蕉、米饭、苹果酱、吐司）、白粥、面条、蒸蛋\n忌：乳制品、高纤维食物、油腻、辛辣、咖啡因、含糖果汁", "keywords": "诺如病毒 冬季呕吐病 秋季腹泻 病毒性腹泻 诺如病毒性胃肠炎(病毒性腹泻) 轮状病毒 诺如病毒感染"}, "肠易激综合征": {"cat": "消化系统", "title": "肠易激综合征(IBS)", "content": "肠易激综合征是一种功能性肠道疾病，表现为反复腹痛/腹部不适伴排便习惯改变，但无器质性病变。多见于20-40岁女性。主要类型：腹泻型（IBS-D）、便秘型（IBS-C）、混合型（IBS-M）。腹泻型症状：腹痛/不适在排便后缓解、排便频率增加、大便稀软或水样、急迫感（憋不住）、黏液便。常伴随腹胀、胀气、恶心、疲劳、焦虑/抑郁。处理：识别并避免个人触发食物（常见诱因：乳制品、FODMAPs食物如洋葱大蒜、高脂食物、辛辣、咖啡因、酒精）；规律进餐；管理压力；适量有氧运动。药物需医生处方：解痉剂、止泻药、益生菌。", "emergency": "便血、不明原因体重下降>5%、夜间腹泻醒起、50岁以上新发症状、贫血、发热", "diet": "宜：白米饭、白面包、香蕉、煮熟的胡萝卜、南瓜、土豆、去皮鸡肉/鱼、鸡蛋、燕麦片\n忌：乳制品（乳糖不耐受者）、洋葱、大蒜、花椰菜、豆类、人工甜味剂、油炸物、辣椒、咖啡、酒精", "keywords": "肚子疼想上厕所 肠易激综合征(IBS) 一紧张就拉肚子 肠易激综合征 IBS 肠胃敏感 肠易激"}, "糖尿病饮食": {"cat": "内分泌系统", "title": "糖尿病饮食管理", "content": "糖尿病饮食管理的核心是控制血糖波动、维持理想体重、预防并发症。三大原则：①控制碳水化合物总量和质量（优先选择低GI食物）；②均衡营养（蛋白质、健康脂肪、膳食纤维）；③定时定量进餐。主食建议：全谷物替代精制碳水（糙米、燕麦、荞麦、全麦面包），每餐主食约拳头大小。蛋白质：鱼、禽肉、豆制品、蛋类，每日手掌大小。蔬菜：大量非淀粉类蔬菜（绿叶菜、西兰花、黄瓜、西红柿），每日至少500g。水果：选择低糖水果（草莓、蓝莓、柚子、苹果），两餐之间少量食用。避免：含糖饮料、精制糖、甜点、高GI水果（西瓜、葡萄、荔枝）、油炸食品、加工肉类。进餐顺序：先吃蔬菜→再吃蛋白质→最后吃主食，有助于平稳餐后血糖。", "emergency": "低血糖（心慌、手抖、出冷汗、头晕）— 立即补充15-20g快糖（糖果/果汁/蜂蜜水）；高血糖危象（血糖>16.7mmol/L伴恶心呕吐、腹痛、呼吸深快）— 立即就医", "diet": "宜：全谷物（燕麦、糙米、荞麦、全麦面包）、大量绿叶蔬菜、豆类、鱼类、去皮禽肉、蛋类、坚果（每日一小把）、低糖水果（草莓、蓝莓、柚子）\n忌：含糖饮料（可乐、奶茶、果汁饮料）、精制糖（白糖、红糖、蜂蜜）、甜点（蛋糕、饼干、冰淇淋）、高GI主食（白粥、白米饭、白面包）、油炸食品、加工肉类、高糖水果", "keywords": "糖尿病饮食 血糖高怎么吃 糖尿病饮食管理 糖尿病吃什么 控糖饮食 低GI食物 糖友饮食 糖尿病人饮食 糖尿病食谱"}, "哮喘": {"cat": "呼吸系统", "title": "支气管哮喘", "content": "哮喘是一种慢性气道炎症性疾病，特征为气道高反应性和可逆性气流受限。病因：遗传过敏体质+环境触发因素（尘螨、花粉、宠物皮屑、烟草烟雾、冷空气、运动、某些药物）。典型症状：反复发作性喘息（呼气时高调哨鸣音）、胸闷、咳嗽（夜间/清晨干咳）、气短。发作可在数分钟至数小时内自行或经治疗后缓解，严重发作（哮喘持续状态）可致死。诊断：肺功能检查（支气管舒张试验/激发试验）、呼出气一氧化氮(FeNO)。治疗：缓解药物（速效β2受体激动剂如沙丁胺醇）急救吸入；控制药物（吸入性糖皮质激素如布地奈德）长期使用。预防：避免已知过敏原、戒烟、每年接种流感疫苗和肺炎疫苗。", "emergency": "哮喘持续状态（吸入急救药物后症状不缓解甚至加重、说话断续、大汗淋漓、端坐呼吸、口唇/指甲发绀）、意识模糊、沉默胸", "diet": "宜：富含维生素C的水果、深海鱼（omega-3）、生姜、蜂蜜水\n忌：已知过敏食物、过冷过烫、辛辣刺激、亚硫酸盐（葡萄酒、干果、腌制食品）", "keywords": "胸闷气短 支气管哮喘 喘不上气 气管哮喘 夜里咳嗽 气喘 过敏性哮喘 哮喘 喘息"}, "流感": {"cat": "呼吸系统", "title": "流行性感冒", "content": "流感是由流感病毒（甲型/乙型）引起的急性呼吸道传染病，与普通感冒完全不同——来得更快更猛，并发症更危险。典型症状：突发高热（39-40℃）、剧烈头痛、全身肌肉关节酸痛、极度疲乏、干咳、咽痛、鼻塞流涕。与普通感冒的区别：感冒渐进发病、低热或不发热、以局部症状为主；流感骤然发病、高热、全身症状重、可致肺炎等严重并发症。高危人群：65岁以上老人、5岁以下儿童、孕妇、慢性病患者、肥胖者。治疗：发病48小时内口服奥司他韦可缩短病程降低重症风险；对症退热；充分休息补水。预防：每年接种流感疫苗（最有效）、戴口罩、勤洗手、室内通风。", "emergency": "呼吸困难（静息呼吸>30次/分）、胸痛、意识模糊、持续高热>3天、唇甲发绀", "diet": "宜：温热流质（稀粥、面条汤、蛋花汤）、富含维生素C的水果、蜂蜜柠檬温水\n忌：油腻、辛辣、过甜过咸、酒精、咖啡因", "keywords": "乙流 甲流 浑身酸痛 高烧不退 得了流感 流行性感冒 流感"}, "肩周炎": {"cat": "骨科", "title": "肩关节周围炎(五十肩/冻结肩)", "content": "肩周炎是肩关节囊及周围组织的慢性炎症，俗称'五十肩'。特征：肩关节疼痛+主动/被动活动均受限。病程分期：①冻结期（2-9个月）：肩部阵发性疼痛，夜间尤甚；②僵硬期（4-12个月）：疼痛减轻但关节僵硬明显——抬不起胳膊、梳不了头、扣不上背后内衣扣；③缓解期（5-26个月）：逐渐自愈。危险因素：50岁左右、糖尿病、甲状腺疾病、肩部制动过久。治疗：功能锻炼是核心（爬墙练习、钟摆运动、毛巾拉伸，坚持3-6个月）；止痛（NSAIDs）；物理治疗；封闭注射（一年不超过3次）。关键是坚持锻炼——越动越好，'痛也要动'。", "emergency": "肩部外伤后突然完全无法抬起（排除骨折/肩袖撕裂）、伴有发热红肿", "diet": "宜：胶原蛋白食物（猪蹄、鸡爪、鱼皮）、钙、维生素D、抗炎食物（深海鱼omega-3）", "keywords": "肩关节周围炎(五十肩/冻结肩) 肩膀疼 梳不了头 抬不起胳膊 冻结肩 五十肩 肩周炎 肩膀僵硬"}, "足底筋膜炎": {"cat": "骨科", "title": "足底筋膜炎", "content": "足底筋膜炎是足跟痛的最常见原因。典型症状：晨起第一步足跟剧痛（下床踩地时刺痛，行走几步后稍缓解，久坐站起后再痛——'起始痛'）；足跟内侧前方压痛最明显；长时间站立或行走后加重。危险因素：扁平足/高弓足、肥胖、长期站立工作、突然增加运动量、穿着不当。治疗：休息+更换鞋子（足弓支撑良好/后跟cushioned的运动鞋）、冰敷、小腿/足底筋膜拉伸（关键！每次30秒，每日多次）、足底滚网球/冷冻水瓶按摩、矫形鞋垫、NSAIDs止痛。", "emergency": "足跟部红肿热痛（排除骨折/感染）、双侧对称性足跟痛（需排除强直性脊柱炎）", "diet": "宜：控制体重（减重直接减少足跟负荷）、抗炎食物（omega-3）、钙和维生素D", "keywords": "早晨起来脚跟疼 足底筋膜炎 足跟痛 脚跟痛 脚后跟疼 脚底疼"}, "脱发": {"cat": "皮肤科", "title": "脱发(斑秃/雄激素性脱发)", "content": "脱发主要类型：(1)雄激素性脱发(AGA)：最常见，男性表现为前额发际线后移(M型)+头顶稀疏；女性表现为头顶弥散性稀疏。(2)斑秃(AA)：自身免疫性，头皮圆形秃发斑，'鬼剃头'。(3)休止期脱发：产后/重大疾病/手术后2-3个月大量脱发，通常可逆。(4)牵拉性脱发：长期扎马尾导致。AGA治疗：男性——非那雄胺（口服）+米诺地尔（外用）；女性——米诺地尔±螺内酯。日常护理：温和洗发、避免高温造型工具、均衡营养（蛋白质/铁/锌/B族维生素）、管理压力、充足睡眠。", "emergency": "突然大面积脱发（全秃/普秃）、脱发区皮肤红肿破溃渗液、伴有其他自身免疫症状", "diet": "宜：优质蛋白质（鸡蛋、瘦肉、鱼类）、铁（红肉、菠菜、动物肝脏）、锌（牡蛎、牛肉、南瓜籽）、B族维生素、生物素、维生素C\n忌：极端低热量节食减肥、过量维生素A、高糖高脂饮食", "keywords": "斑秃 秃顶 生发 鬼剃头 头发稀疏 产后脱发 发际线后移 脱发 脱发(斑秃/雄激素性脱发) 掉头发"}, "新冠感染": {"cat": "感染科", "title": "新型冠状病毒感染", "content": "COVID-19由SARS-CoV-2病毒引起。当前主流变异株（Omicron亚型）致病力较原始株明显减弱。常见症状：发热、咽痛（'刀片嗓'）、干咳、乏力、肌肉酸痛、头痛、鼻塞流涕、味觉/嗅觉减退、腹泻（部分人）。大多数人在5-7天内自愈。高危人群：未全程接种疫苗的老年人、未接种疫苗+有基础疾病者。预警信号：血氧饱和度≤93%、呼吸困难、持续高热>3天、胸痛、意识模糊、唇面发紫。治疗：轻症居家——对症退热、充分休息补水、含片缓解咽痛、监测血氧。抗病毒药物（Paxlovid）适用于高危人群早期使用。预防：接种疫苗加强针、室内通风、密集场所佩戴口罩。", "emergency": "血氧≤93%、呼吸困难（静息呼吸>30次/分）、胸痛压迫感、意识模糊、唇面发紫、持续高热>3天", "diet": "宜：高蛋白易消化（鸡蛋羹、清蒸鱼、瘦肉粥、豆腐脑）、富含维生素C、电解质水\n忌：油腻煎炸、辛辣刺激、过冷过烫、酒精、加工食品", "keywords": "二阳 新型冠状病毒感染 COVID 阳了 新冠感染 刀片嗓 新冠"}, "甲状腺结节": {"cat": "内分泌系统", "title": "甲状腺结节", "content": "甲状腺内局限性肿块，超声检出率高达20-70%。绝大多数（>95%）为良性，仅约5%为恶性。发现途径多为体检超声偶然发现。TI-RADS分类用于评估恶性风险（1-5类，越高越危险）。", "emergency": "结节短期内迅速增大、声音嘶哑/吞咽困难/呼吸困难（压迫症状）、颈部淋巴结肿大——需尽快就医排除恶性。", "diet": "宜：适量碘摄入（既不足也不过量）；均衡饮食；硒元素（巴西坚果、海鲜）。忌：碘过量（大量海带紫菜——尤其桥本氏甲状腺炎）；致甲状腺肿物质（十字花科生食大量摄入）。", "drugs": "良性结节无需药物治疗。甲功异常时：甲减用左甲状腺素（优甲乐）；甲亢用甲巯咪唑/丙硫氧嘧啶。注意：良性结节不要盲目吃药消散。", "synergy": "左甲状腺素+钙剂/铁剂/抗酸药：间隔4小时以上服用（相互影响吸收）。含碘造影剂影响甲功检测结果。", "food": "大多数甲状腺结节不需要忌碘，除非合并甲亢或桥本；十字花科蔬菜（西兰花、卷心菜）煮熟后食用安全；定期复查超声（6-12个月一次）。", "herbs": "夏枯草、浙贝母、牡蛎——软坚散结。柴胡、郁金——疏肝理气（情志相关）。", "keywords": "脖子肿 甲状腺 甲状腺结节 甲亢 甲减"}, "偏头痛": {"cat": "神经内科", "title": "偏头痛", "content": "常见的原发性头痛疾病，女性多见（男女比约1:3）。典型表现为单侧搏动性中重度头痛，持续4-72小时，日常活动加重，常伴恶心/呕吐/畏光/畏声。可有先兆（视觉闪光/暗点/麻木——约25%患者）。机制涉及三叉神经血管系统激活、CGRP释放、皮质扩散性抑制。", "emergency": "突然发生的最剧烈头痛（thunderclap headache——警惕蛛网膜下腔出血）；头痛伴发热颈项强直（脑膜炎）；头痛伴神经系统定位体征（卒中）；头痛模式发生显著变化——立即急诊/神经内科。", "diet": "宜：规律进餐（低血糖可诱发）；镁元素（绿叶菜、坚果、黑巧克力——预防性补充证据较好）；规律作息。忌：已知个体trigger食物（常见：红酒、陈年奶酪、巧克力、含亚硝酸盐食品/腊肉/热狗）；咖啡因（过量或突然戒断均可触发）；MSG（味精——部分敏感者）；脱水/漏餐。", "drugs": "急性期：非特异性止痛（布洛芬/对乙酰氨基酚——轻度发作）；曲普坦类（舒马曲普坦——特异性，中重度首选）；麦角胺（老药，副作用多）。预防性（每月>=4次发作）：β受体阻滞剂（普萘洛尔）；抗癫痫药（托吡酯/丙戊酸钠）；CGRP单克隆抗体（依瑞奈尤单抗——新型靶向药效果好）；阿米替林（三环类）。", "synergy": "曲普坦类+SSRI/SNRI：5-HT综合征风险。麦角胺+大环内酯类抗生素：麦角中毒风险。多种止痛药每周>2次：药物过度使用性头痛（MOH）！", "food": "头痛日记是最有用的诊断工具（记录时间/持续时间/trigger/药物效果/月径周期关联）；规律睡眠（周末也不要大幅改变作息）；有氧运动预防但发作期休息；放松训练/CBT也有循证支持。", "herbs": "川芎、白芷、细辛——祛风止痛（川芎茶调散）。天麻、钩藤——平肝熄风。全蝎、蜈蚣——搜风通络（顽固性）。", "keywords": "头痛 恶心想吐 偏头痛 血管性头痛 头疼 半边头疼"}}, "DIET": {"湿气": {"f": "薏米（炒）、赤小豆、茯苓、冬瓜、荷叶、陈皮、山药", "a": "甜食、油腻、生冷、酒类、浓茶", "r": "早餐：薏米红豆粥\n午餐：冬瓜排骨汤+清炒芹菜+米饭\n晚餐：清蒸鱼+凉拌苦瓜\n茶饮：玉米须茶", "title": "湿气", "rec": "薏米（炒）、赤小豆、茯苓、冬瓜、荷叶、陈皮、山药", "avoid": "甜食、油腻、生冷、酒类、浓茶", "tips": "早餐：薏米红豆粥\n午餐：冬瓜排骨汤+清炒芹菜+米饭\n晚餐：清蒸鱼+凉拌苦瓜\n茶饮：玉米须茶", "keywords": "湿气"}, "失眠": {"f": "酸枣仁、百合、莲子、小米、核桃、牛奶（温热睡前1小时）", "a": "咖啡、浓茶（下午2点后禁饮）、酒精、辛辣", "r": "早餐：小米粥+核桃包+牛奶\n晚餐：酸枣仁粥+馒头\n睡前：温热牛奶200ml", "title": "失眠", "rec": "酸枣仁、百合、莲子、小米、核桃、牛奶（温热睡前1小时）", "avoid": "咖啡、浓茶（下午2点后禁饮）、酒精、辛辣", "tips": "早餐：小米粥+核桃包+牛奶\n晚餐：酸枣仁粥+馒头\n睡前：温热牛奶200ml", "keywords": "失眠 睡眠不好 多梦 睡眠差 睡不着 早醒 入睡困难"}, "养胃": {"f": "山药、小米、南瓜、莲子、芡实、红枣、蒸蛋、软面条", "a": "辛辣、生冷、油腻、过甜、过酸、咖啡、酒精", "r": "早餐：小米粥+馒头+蒸蛋\n午餐：山药排骨汤+清炒南瓜+米饭\n晚餐：清蒸鱼+软面条", "title": "养胃", "rec": "山药、小米、南瓜、莲子、芡实、红枣、蒸蛋、软面条", "avoid": "辛辣、生冷、油腻、过甜、过酸、咖啡、酒精", "tips": "早餐：小米粥+馒头+蒸蛋\n午餐：山药排骨汤+清炒南瓜+米饭\n晚餐：清蒸鱼+软面条", "keywords": "养胃"}, "高血压": {"f": "芹菜、燕麦、香蕉、黑木耳、荞麦、深海鱼、绿叶蔬菜", "a": "腌制品、高盐零食、加工食品、浓茶", "r": "早餐：燕麦粥+全麦面包+香蕉\n午餐：芹菜炒肉+番茄蛋汤+米饭\n晚餐：清蒸鸡胸+凉拌木耳+荞麦面", "title": "高血压", "rec": "芹菜、燕麦、香蕉、黑木耳、荞麦、深海鱼、绿叶蔬菜", "avoid": "腌制品、高盐零食、加工食品、浓茶", "tips": "早餐：燕麦粥+全麦面包+香蕉\n午餐：芹菜炒肉+番茄蛋汤+米饭\n晚餐：清蒸鸡胸+凉拌木耳+荞麦面", "keywords": "血压高 高血压 高压 高压高"}, "减肥": {"f": "鸡胸肉、西兰花、糙米、燕麦、黄瓜、番茄、鱼、豆腐", "a": "油炸食品、甜饮料、零食、酒精、白米白面", "r": "早餐：全麦吐司+水煮蛋+脱脂牛奶\n午餐：鸡胸肉沙拉+糙米饭\n晚餐：清蒸鱼+蔬菜汤+杂粮粥", "title": "减肥", "rec": "鸡胸肉、西兰花、糙米、燕麦、黄瓜、番茄、鱼、豆腐", "avoid": "油炸食品、甜饮料、零食、酒精、白米白面", "tips": "早餐：全麦吐司+水煮蛋+脱脂牛奶\n午餐：鸡胸肉沙拉+糙米饭\n晚餐：清蒸鱼+蔬菜汤+杂粮粥", "keywords": "减肥"}, "补气血": {"f": "红枣、桂圆、当归、乌鸡、菠菜、牛肉、枸杞、黑木耳", "a": "生冷、浓茶、咖啡、辛辣刺激", "r": "早餐：红枣桂圆粥+煮鸡蛋+核桃\n午餐：当归羊肉汤+清炒菠菜+米饭\n晚餐：乌鸡汤+馒头+红豆粥", "title": "补气血", "rec": "红枣、桂圆、当归、乌鸡、菠菜、牛肉、枸杞、黑木耳", "avoid": "生冷、浓茶、咖啡、辛辣刺激", "tips": "早餐：红枣桂圆粥+煮鸡蛋+核桃\n午餐：当归羊肉汤+清炒菠菜+米饭\n晚餐：乌鸡汤+馒头+红豆粥", "keywords": "补气血"}, "痛风": {"f": "冬瓜、黄瓜、樱桃（每天10颗）、芹菜、低脂牛奶、鸡蛋", "a": "动物内脏、海鲜（尤其贝类）、啤酒白酒、浓肉汤", "r": "早餐：小米粥+鸡蛋\n午餐：清炒时蔬+番茄蛋汤+米饭\n晚餐：冬瓜汤+清蒸蛋+杂粮粥", "title": "痛风", "rec": "冬瓜、黄瓜、樱桃（每天10颗）、芹菜、低脂牛奶、鸡蛋", "avoid": "动物内脏、海鲜（尤其贝类）、啤酒白酒、浓肉汤", "tips": "早餐：小米粥+鸡蛋\n午餐：清炒时蔬+番茄蛋汤+米饭\n晚餐：冬瓜汤+清蒸蛋+杂粮粥", "keywords": "关节红肿 尿酸高 高尿酸 痛风 脚趾疼 尿酸"}, "糖尿病": {"f": "燕麦、糙米、苦瓜、西兰花、黄瓜、黑木耳、鱼、豆腐", "a": "白米饭、白面包、甜食、含糖饮料、西瓜（高GI）", "r": "早餐：燕麦粥+水煮蛋+黄瓜\n午餐：清蒸鱼+炒西兰花+糙米饭\n晚餐：豆腐汤+凉拌苦瓜+杂粮饭", "title": "糖尿病", "rec": "燕麦、糙米、苦瓜、西兰花、黄瓜、黑木耳、鱼、豆腐", "avoid": "白米饭、白面包、甜食、含糖饮料、西瓜（高GI）", "tips": "早餐：燕麦粥+水煮蛋+黄瓜\n午餐：清蒸鱼+炒西兰花+糙米饭\n晚餐：豆腐汤+凉拌苦瓜+杂粮饭", "keywords": "糖尿病 高血糖 血糖高"}, "养肝": {"f": "枸杞、菊花、绿茶、燕麦、深海鱼、蓝莓", "a": "酒精、高脂饮食、腌制食品、霉变食物", "r": "早餐：枸杞菊花茶+全麦面包\n午餐：清蒸鱼+凉拌木耳+米饭\n晚餐：山楂绿茶+杂粮饭", "title": "养肝", "rec": "枸杞、菊花、绿茶、燕麦、深海鱼、蓝莓", "avoid": "酒精、高脂饮食、腌制食品、霉变食物", "tips": "早餐：枸杞菊花茶+全麦面包\n午餐：清蒸鱼+凉拌木耳+米饭\n晚餐：山楂绿茶+杂粮饭", "keywords": "养肝"}, "补肾": {"f": "黑豆、黑芝麻、核桃、枸杞、山药、羊肉", "a": "生冷、辛辣、咖啡、酒精", "r": "早餐：黑芝麻糊+核桃包\n午餐：山药炖排骨+炒青菜+米饭\n晚餐：羊肉汤+杂粮饭", "title": "补肾", "rec": "黑豆、黑芝麻、核桃、枸杞、山药、羊肉", "avoid": "生冷、辛辣、咖啡、酒精", "tips": "早餐：黑芝麻糊+核桃包\n午餐：山药炖排骨+炒青菜+米饭\n晚餐：羊肉汤+杂粮饭", "keywords": "补肾"}, "润肺": {"f": "梨、百合、银耳、蜂蜜、麦冬、沙参", "a": "辛辣刺激、烟酒、干燥环境", "r": "早餐：百合粥+蜂蜜\n午餐：银耳莲子羹+主食\n晚餐：梨汤+清淡菜品", "title": "润肺", "rec": "梨、百合、银耳、蜂蜜、麦冬、沙参", "avoid": "辛辣刺激、烟酒、干燥环境", "tips": "早餐：百合粥+蜂蜜\n午餐：银耳莲子羹+主食\n晚餐：梨汤+清淡菜品", "keywords": "润肺"}, "护心": {"f": "深海鱼、燕麦、坚果、蓝莓、黑木耳、山楂", "a": "高盐、高脂肪、腌制食品、酒精", "r": "早餐：燕麦粥+坚果\n午餐：清蒸鱼+凉拌木耳+米饭\n晚餐：山楂茶+杂粮蔬菜", "title": "护心", "rec": "深海鱼、燕麦、坚果、蓝莓、黑木耳、山楂", "avoid": "高盐、高脂肪、腌制食品、酒精", "tips": "早餐：燕麦粥+坚果\n午餐：清蒸鱼+凉拌木耳+米饭\n晚餐：山楂茶+杂粮蔬菜", "keywords": "护心"}, "健脾": {"f": "山药、莲子、芡实、茯苓、小米、红枣", "a": "生冷、油腻、辛辣、暴饮暴食", "r": "早餐：山药粥+红枣\n午餐：莲子炖鸡+炒青菜+米饭\n晚餐：小米粥+蒸蛋", "title": "健脾", "rec": "山药、莲子、芡实、茯苓、小米、红枣", "avoid": "生冷、油腻、辛辣、暴饮暴食", "tips": "早餐：山药粥+红枣\n午餐：莲子炖鸡+炒青菜+米饭\n晚餐：小米粥+蒸蛋", "keywords": "健脾"}, "调理月经": {"f": "红枣、桂圆、黑豆、红糖、山药", "a": "生冷、辛辣、咖啡、酒精", "r": "早餐：红枣桂圆粥\n午餐：黑豆猪蹄汤+蔬菜+米饭\n晚餐：红糖姜茶+杂粮", "title": "调理月经", "rec": "红枣、桂圆、黑豆、红糖、山药", "avoid": "生冷、辛辣、咖啡、酒精", "tips": "早餐：红枣桂圆粥\n午餐：黑豆猪蹄汤+蔬菜+米饭\n晚餐：红糖姜茶+杂粮", "keywords": "调理月经"}, "儿童增强免疫": {"f": "鸡蛋、牛奶、瘦肉、胡萝卜、蓝莓、猕猴桃", "a": "零食、饮料、油炸食品", "r": "早餐：鸡蛋+牛奶+水果\n午餐：胡萝卜炒肉+蔬菜+米饭\n晚餐：清蒸鱼+杂粮粥", "title": "儿童增强免疫", "rec": "鸡蛋、牛奶、瘦肉、胡萝卜、蓝莓、猕猴桃", "avoid": "零食、饮料、油炸食品", "tips": "早餐：鸡蛋+牛奶+水果\n午餐：胡萝卜炒肉+蔬菜+米饭\n晚餐：清蒸鱼+杂粮粥", "keywords": "儿童增强免疫"}, "腹泻饮食": {"f": "米汤、白粥、面条、蒸蛋、香蕉、煮熟的胡萝卜、土豆泥、淡盐鸡汤、吐司、苹果酱", "a": "乳制品、高纤维食物（粗粮、豆类、绿叶菜）、油腻、辛辣、咖啡因、含糖果汁、酒精", "r": "呕吐停止后第1天：米汤、藕粉、稀释苹果汁\n第2天：白粥、蒸蛋、吐司\n第3天：面条、煮烂的胡萝卜、鸡肉泥\n恢复正常后逐步添加：香蕉、土豆泥、清蒸鱼", "title": "腹泻饮食", "rec": "米汤、白粥、面条、蒸蛋、香蕉、煮熟的胡萝卜、土豆泥、淡盐鸡汤、吐司、苹果酱", "avoid": "乳制品、高纤维食物（粗粮、豆类、绿叶菜）、油腻、辛辣、咖啡因、含糖果汁、酒精", "tips": "呕吐停止后第1天：米汤、藕粉、稀释苹果汁\n第2天：白粥、蒸蛋、吐司\n第3天：面条、煮烂的胡萝卜、鸡肉泥\n恢复正常后逐步添加：香蕉、土豆泥、清蒸鱼", "keywords": "腹泻饮食"}, "糖尿病饮食": {"f": "全谷物（燕麦、糙米、荞麦、全麦面包）、大量绿叶蔬菜、豆类、鱼类、去皮禽肉、蛋类、坚果（每日一小把）、低糖水果（草莓、蓝莓、柚子）", "a": "含糖饮料、精制糖、甜点、高GI主食（白粥、白米饭、白面包）、油炸食品、加工肉类、高糖水果（西瓜、葡萄、荔枝）", "r": "早餐：全麦面包+鸡蛋+无糖豆浆\n午餐：糙米饭+清炒西兰花+清蒸鱼+豆腐汤\n晚餐：荞麦面+凉拌黄瓜+去皮鸡胸肉\n加餐：一小把坚果或低糖水果\n进餐顺序：先吃蔬菜→再吃蛋白质→最后吃主食", "title": "糖尿病饮食", "rec": "全谷物（燕麦、糙米、荞麦、全麦面包）、大量绿叶蔬菜、豆类、鱼类、去皮禽肉、蛋类、坚果（每日一小把）、低糖水果（草莓、蓝莓、柚子）", "avoid": "含糖饮料、精制糖、甜点、高GI主食（白粥、白米饭、白面包）、油炸食品、加工肉类、高糖水果（西瓜、葡萄、荔枝）", "tips": "早餐：全麦面包+鸡蛋+无糖豆浆\n午餐：糙米饭+清炒西兰花+清蒸鱼+豆腐汤\n晚餐：荞麦面+凉拌黄瓜+去皮鸡胸肉\n加餐：一小把坚果或低糖水果\n进餐顺序：先吃蔬菜→再吃蛋白质→最后吃主食", "keywords": "糖尿病饮食 血糖高怎么吃 糖尿病吃什么 控糖饮食 低GI食物 糖友饮食 糖尿病人饮食 糖尿病食谱"}, "便秘饮食": {"f": "全谷物（燕麦、糙米、全麦面包）、大量蔬菜（芹菜、菠菜、西兰花）、水果（火龙果、猕猴桃、西梅、梨）、豆类、坚果、充足饮水（每日2000ml）、酸奶（含益生菌）", "a": "精细加工食品、油炸食品、辛辣刺激、酒精、咖啡因过量", "r": "早餐：全麦面包+酸奶+火龙果\n午餐：糙米饭+芹菜炒肉+菠菜汤\n晚餐：燕麦粥+凉拌黄瓜+蒸蛋\n全天饮水2000ml以上\n可选：西梅汁或益生菌饮品", "title": "便秘饮食", "rec": "全谷物（燕麦、糙米、全麦面包）、大量蔬菜（芹菜、菠菜、西兰花）、水果（火龙果、猕猴桃、西梅、梨）、豆类、坚果、充足饮水（每日2000ml）、酸奶（含益生菌）", "avoid": "精细加工食品、油炸食品、辛辣刺激、酒精、咖啡因过量", "tips": "早餐：全麦面包+酸奶+火龙果\n午餐：糙米饭+芹菜炒肉+菠菜汤\n晚餐：燕麦粥+凉拌黄瓜+蒸蛋\n全天饮水2000ml以上\n可选：西梅汁或益生菌饮品", "keywords": "便秘饮食 便秘吃什么"}, "养胃饮食": {"f": "小米粥、山药、南瓜、面条、馒头、蒸蛋羹、清炖鱼、豆腐、西兰花、胡萝卜、香蕉、蜂蜜水", "a": "浓茶、咖啡、酒精、辛辣、油炸、过硬食物、生冷、过烫、过酸（柑橘类）", "r": "早餐：小米粥+蒸蛋羹+馒头片\n午餐：面条+清炒西兰花+清蒸鱼\n晚餐：山药粥+豆腐汤+南瓜\n两餐之间：蜂蜜水或淡盐温水\n注意：细嚼慢咽、少食多餐", "title": "养胃饮食", "rec": "小米粥、山药、南瓜、面条、馒头、蒸蛋羹、清炖鱼、豆腐、西兰花、胡萝卜、香蕉、蜂蜜水", "avoid": "浓茶、咖啡、酒精、辛辣、油炸、过硬食物、生冷、过烫、过酸（柑橘类）", "tips": "早餐：小米粥+蒸蛋羹+馒头片\n午餐：面条+清炒西兰花+清蒸鱼\n晚餐：山药粥+豆腐汤+南瓜\n两餐之间：蜂蜜水或淡盐温水\n注意：细嚼慢咽、少食多餐", "keywords": "养胃吃什么 养胃饮食"}, "护眼饮食": {"f": "深海鱼（三文鱼、金枪鱼，富含DHA）、胡萝卜（β-胡萝卜素）、菠菜、西兰花、玉米（叶黄素）、蓝莓（花青素）、鸡蛋（蛋黄含叶黄素）、坚果", "a": "高糖饮食、油炸食品、过量酒精", "r": "早餐：全麦面包+鸡蛋+蓝莓\n午餐：糙米饭+清蒸三文鱼+炒菠菜\n晚餐：玉米+西兰花+豆腐汤\n零食：一小把坚果\n注意：充足睡眠+用眼卫生同样重要", "title": "护眼饮食", "rec": "深海鱼（三文鱼、金枪鱼，富含DHA）、胡萝卜（β-胡萝卜素）、菠菜、西兰花、玉米（叶黄素）、蓝莓（花青素）、鸡蛋（蛋黄含叶黄素）、坚果", "avoid": "高糖饮食、油炸食品、过量酒精", "tips": "早餐：全麦面包+鸡蛋+蓝莓\n午餐：糙米饭+清蒸三文鱼+炒菠菜\n晚餐：玉米+西兰花+豆腐汤\n零食：一小把坚果\n注意：充足睡眠+用眼卫生同样重要", "keywords": "护眼饮食 护眼"}, "护发饮食": {"f": "优质蛋白质（鸡蛋、瘦肉、鱼类、大豆）、铁（红肉、菠菜、动物肝脏）、锌（牡蛎、牛肉、南瓜籽）、B族维生素（全谷物、蛋类）、生物素（蛋黄、坚果）、维生素C（促进铁吸收）", "a": "极端低热量节食减肥、过量维生素A、高糖高脂饮食", "r": "早餐：鸡蛋+全麦面包+牛奶\n午餐：糙米饭+牛肉炒菠菜+豆腐汤\n晚餐：清蒸鱼+炒西兰花+米饭\n零食：南瓜籽或坚果\n注意：充足睡眠+减少压力", "title": "护发饮食", "rec": "优质蛋白质（鸡蛋、瘦肉、鱼类、大豆）、铁（红肉、菠菜、动物肝脏）、锌（牡蛎、牛肉、南瓜籽）、B族维生素（全谷物、蛋类）、生物素（蛋黄、坚果）、维生素C（促进铁吸收）", "avoid": "极端低热量节食减肥、过量维生素A、高糖高脂饮食", "tips": "早餐：鸡蛋+全麦面包+牛奶\n午餐：糙米饭+牛肉炒菠菜+豆腐汤\n晚餐：清蒸鱼+炒西兰花+米饭\n零食：南瓜籽或坚果\n注意：充足睡眠+减少压力", "keywords": "护发饮食 护发"}, "高血压饮食": {"title": "高血压饮食", "rec": "新鲜蔬菜（菠菜、芹菜、西兰花）；富含钾的食物（香蕉、土豆、菌菇）；全谷物（燕麦、糙米）；低脂蛋白（鱼肉、鸡胸肉、豆制品）；低脂奶制品；大蒜、洋葱；坚果少量（核桃、杏仁）。", "avoid": "高盐食品（咸菜、腊肉、酱豆腐、方便面）；高脂肪肉类（肥肉、内脏、油炸）；酒精（白酒/啤酒）；浓咖啡/浓茶；加工食品（含隐形钠）；甜品蛋糕；动物油脂。", "tips": "每日盐摄入<5g（约一啤酒瓶盖）；DASH饮食模式推荐；控制体重（BMI<24）；每周中等强度运动150分钟；戒烟限酒；定期监测血压。", "keywords": "高血压吃什么 高血压饮食 高血压饮食方案"}, "痛风饮食": {"title": "痛风饮食", "rec": "低嘌呤食物为主：新鲜蔬菜（除菠菜、芦笋外大部分蔬菜可吃）；低脂奶及奶制品；鸡蛋；水果（樱桃尤其推荐，有助于降尿酸）；谷物类（大米、小麦、面条）；充足饮水（>2000ml/天）。", "avoid": "高嘌呤食物：动物内脏（肝、肾、脑、肠）；海鲜（沙丁鱼、凤尾鱼、贝类、虾蟹）；浓肉汤/火锅汤；啤酒+烈酒（啤酒最危险）；果糖饮料（可乐、果汁饮料）；酵母制品。", "tips": "急性发作期严格限制嘌呤<150mg/天；缓解期可适度放宽但避免高嘌呤；控制体重（肥胖加重痛风）；避免剧烈运动和突然受凉；定期检测血尿酸。", "keywords": "痛风/高尿酸血症饮食方案 痛风饮食 痛风吃什么"}, "胃病饮食": {"title": "胃病饮食", "rec": "温和易消化食物：小米粥、南瓜粥、山药粥；蒸蛋羹、蛋花汤；面条、馄饨（少油清炖）；香蕉、木瓜（含酶助消化）；去皮鸡肉/鱼肉（清蒸或煮）；发酵食品（酸奶、馒头）。", "avoid": "辛辣刺激（辣椒、花椒、胡椒、生蒜）；生冷冰饮；油炸坚硬食物（炸鸡、硬饼、坚果）；咖啡浓茶（刺激胃酸）；高糖甜食（产酸发酵）；酒精（直接损伤胃黏膜）；糯米类（难消化）。", "tips": "少食多餐（一日4-6餐，每餐七分饱）；细嚼慢咽（每口嚼20次以上）；定时定量进餐；饭后不立即躺下（至少坐30分钟）；注意腹部保暖；情绪稳定（胃是情绪器官）。", "keywords": "胃炎吃什么 胃病饮食 胃病吃什么 慢性胃炎/胃病饮食方案"}, "减脂饮食": {"title": "减脂饮食", "rec": "高纤维蔬菜（绿叶菜、十字花科、黄瓜、冬瓜）；优质蛋白（鸡胸肉、鱼虾、瘦牛肉、蛋清、豆腐）；复合碳水（燕麦、糙米、红薯、玉米、藜麦）；低糖水果（苹果、柚子、莓果）；水煮/清蒸/凉拌烹饪方式。", "avoid": "精制碳水（白面包、蛋糕、饼干、油条）；含糖饮料（奶茶、可乐、果汁）；油炸食品（薯条、炸鸡、春卷）；高脂加工食品（香肠、培根、午餐肉）；奶油甜点；酒精（空热量）；夜宵零食。", "tips": "制造热量缺口300-500kcal/天（不过度节食）；蛋白质占比25-30%（保肌减脂）；每餐手掌法则：一掌蛋白、一拳碳水、两拳蔬菜、一拇指脂肪；不要完全断碳（会反弹）；配合力量训练；每周称重1-2次即可。", "keywords": "瘦身 减肥 减脂饮食 减脂 健康减脂饮食方案"}, "补血饮食": {"title": "补血饮食", "rec": "富含铁食物：红瘦肉（牛肉、羊肉）、动物肝脏（猪肝/鸡肝适量）、动物血（鸭血/猪血）、黑木耳、紫菜、芝麻；富含维C水果（橙子、猕猴桃、鲜枣）；红肉+维C同吃效果翻倍；红豆、红枣、桂圆、枸杞（中医补血食材）。", "avoid": "浓茶和咖啡（鞣酸阻碍铁吸收，餐前后1小时不喝）；高钙奶制品与富铁餐同时食用（钙竞争吸收）；过量粗纤维（影响铁吸收）；精制糖（消耗B族维生素影响造血）。", "tips": "缺铁性贫血最常见——优先补铁+维C组合；植物铁吸收率低需搭配维C；女性月经期额外关注铁摄入；严重贫血需就医检查（可能不只是缺铁）；中医讲气血同源，补血兼顾健脾。", "keywords": "贫血/补血饮食方案 贫血吃什么 补血饮食 补血吃什么"}, "老人饮食": {"title": "老人饮食", "rec": "易咀嚼消化：软烂米饭/粥、蒸蛋、豆腐、鱼肉泥、炖烂的蔬菜；优质蛋白（鱼、虾、蛋、奶、豆制品——预防肌少症）；深色蔬菜水果（抗氧化、通便）；全谷物适量（燕麦片、小米、红薯）；少量多餐（3主餐+2加餐）。", "avoid": "过硬过黏（年糕、糯米团、整粒坚果——噎呛风险）；过咸（增加高血压和心血管风险）；过甜（血糖波动大）；生冷生鲜（消化能力弱，寄生虫风险）；油腻油炸（胆囊负担）；大量补品（增加肝肾代谢负担）。", "tips": "65岁以上每日蛋白1.0-1.2g/kg体重；钙1200mg/天+维D（防骨质疏松）；维生素B12补充（吸收率下降）；每口水送服固体药物（防噎呛）；独居老人注意规律进食；定期体检营养指标。", "keywords": "老年人营养饮食方案 老人饮食 老年人 老人"}, "儿童饮食": {"title": "儿童饮食", "rec": "均衡三餐：主食（米饭/面条/面包）+蛋白（蛋/肉/鱼/豆）+蔬菜水果；奶制品300-500ml/天（钙质来源）；鸡蛋每天1个；每周2-3次鱼（DHA大脑发育）；多样化蔬果（5种以上颜色）；健康零食（坚果、酸奶、水果）。", "avoid": "含糖饮料（可乐、果汁饮料、奶茶——龋齿+肥胖）；油炸快餐（薯条、炸鸡、汉堡）；过度加工食品（香肠、火腿、膨化食品）；挑食偏食（导致微量营养素缺乏）；早餐不吃（影响上午学习注意力）；边看电子设备边吃（过量进食）。", "tips": "培养不挑食习惯（新食物需尝试10-15次才接受）；控制屏幕前零食时间；全家一起吃饭的氛围很重要；不把甜食当奖励；学龄期保证早餐质量（蛋白+碳水+蔬果）；青春期前储备足够钙和铁。", "keywords": "孩子 儿童饮食 学龄儿童成长饮食方案 小孩 儿童"}, "失眠饮食": {"title": "失眠饮食", "rec": "富含色氨酸食物：牛奶（温热）、香蕉、燕麦、蜂蜜、坚果（核桃、杏仁）、鸡蛋、大豆；富含镁的食物：绿叶菜、南瓜子、黑巧克力（少量）；复合碳水（帮助色氨酸入脑）；花草茶（洋甘菊茶、薰衣草茶、酸枣仁茶）。", "avoid": "晚餐过饱（消化活动干扰睡眠）；咖啡因（下午4点后不喝咖啡/茶/可乐）；酒精（助眠假象，破坏睡眠结构）；辛辣刺激（体温升高影响入睡）；高糖甜食（血糖波动导致夜间醒）；大量饮水（夜间起夜）。", "tips": "睡前2-3小时完成最后一餐；晚餐占全天30%左右；睡前一杯热牛奶有心理+生理双重作用；避免把卧室当成餐厅；规律作息比任何食物都重要；长期失眠需就医排查原因。", "keywords": "失眠饮食 改善睡眠饮食方案"}, "过敏饮食": {"title": "过敏饮食", "rec": "抗炎食物：深海鱼（三文鱼、鲭鱼——Omega-3）；多彩蔬菜水果（富含抗氧化剂）；姜黄、生姜（天然抗炎）；益生菌食品（酸奶、酸菜、味噌）；橄榄油（单不饱和脂肪酸）；富含维C的水果（猕猴桃、橙子、草莓）。", "avoid": "个人已知过敏原（必须严格回避）；组胺含量高的食物（陈年奶酪、腌制食品、红酒、菠菜、番茄——对部分敏感者）；加工食品中的添加剂（人工色素、防腐剂）；常见致敏物试探性引入（花生、贝类、芒果、牛乳）需谨慎。", "tips": "记录饮食日记找出触发食物；轮替饮食（避免连续3天吃同一种食物）；烹饪方式影响（煮熟通常比生的致敏性低）；肠道健康与免疫密切相关——重视益生菌；儿童过敏部分随年龄好转，成人新发需重视。", "keywords": "过敏 过敏体质 过敏饮食 过敏性体质/过敏调理饮食"}, "护肝饮食": {"title": "护肝饮食", "rec": "十字花科蔬菜（西兰花、甘蓝——支持肝脏解毒）；优质蛋白（蛋、鱼、豆制品——肝细胞修复）；苦瓜、黄瓜（清热降火）；山楂、柠檬（促进胆汁分泌）；杂粮薯类（B族维生素供能）；绿茶（儿茶素护肝）。", "avoid": "酒精（肝脏最大敌人，绝对禁忌）；霉变食物（黄曲霉素——强致癌）；高脂肪/油炸（脂肪肝风险）；加工肉制品（亚硝酸盐负担）；生食海鲜（肝炎病毒/寄生虫风险）；滥用药物/保健品（药物性肝损伤）；过甜饮食（NAFLD风险）。", "tips": "脂肪肝是最常见的肝病——控体重+控脂+运动最有效；乙肝/丙肝患者需专科随访；不盲目吃护肝药——生活方式改变才是根本；熬夜伤肝（中医肝经凌晨1-3点当令）；服药前咨询医生肝毒性。", "keywords": "肝脏保健/护肝饮食方案 护肝饮食 护肝 养肝"}}, "TCM": {"气虚": {"s": ["容易疲乏", "气短懒言", "动则汗出", "容易感冒", "声音低弱"], "d": ["山药", "黄芪", "大枣", "鸡肉", "牛肉", "糯米"], "a": ["生冷食物", "辛辣刺激", "油腻食物"], "l": ["适度运动（太极拳）", "保证睡眠", "避免过度劳累"]}, "阳虚": {"s": ["畏寒肢冷", "腰膝酸软", "夜尿多", "面色苍白", "四肢不温"], "d": ["羊肉", "韭菜", "核桃", "生姜", "肉桂", "桂圆"], "a": ["生冷食物", "冰凉饮料"], "l": ["多晒太阳", "适度运动", "睡前泡脚"]}, "阴虚": {"s": ["口干咽燥", "手足心热", "盗汗", "便秘", "失眠多梦", "舌红少苔"], "d": ["银耳", "百合", "梨", "蜂蜜", "麦冬", "沙参", "玉竹"], "a": ["辛辣食物", "油炸食品", "烟酒", "咖啡"], "l": ["保证睡眠", "避免熬夜", "练习静坐"]}, "痰湿": {"s": ["体胖痰多", "腹部肥满", "面部油腻", "身重困倦", "舌苔厚腻"], "d": ["薏苡仁", "冬瓜", "赤小豆", "荷叶", "陈皮", "山楂", "茯苓"], "a": ["甜食", "油腻食物", "生冷食物", "酒"], "l": ["增加运动", "控制饮食", "少食多餐"]}, "湿热": {"s": ["面部油腻", "口苦", "容易长痘", "烦躁易怒", "小便黄", "舌红苔黄"], "d": ["绿豆", "苦瓜", "冬瓜", "芹菜", "莲子心", "菊花"], "a": ["辛辣食物", "油炸食品", "酒精", "甜食"], "l": ["增加运动", "多喝水", "避免熬夜"]}, "血瘀": {"s": ["疼痛固定", "面色晦暗", "皮肤青紫", "健忘", "月经血块", "舌质紫暗"], "d": ["黑木耳", "山楂", "桃仁", "红花", "三七", "丹参"], "a": ["生冷", "油腻", "烟酒"], "l": ["适度运动", "保持温暖", "按摩经络"]}, "气郁": {"s": ["情绪低落", "焦虑不安", "胁胀", "咽部异物感", "胸闷善太息"], "d": ["玫瑰花", "佛手", "山楂", "陈皮", "香蕉", "小麦"], "a": ["辛辣", "咖啡因", "酒精"], "l": ["保持心情舒畅", "社交活动", "练习深呼吸"]}, "特禀": {"s": ["过敏性鼻炎", "荨麻疹", "哮喘", "食物过敏", "皮肤瘙痒"], "d": ["富含维C", "富含Omega-3", "益生菌"], "a": ["已知过敏原", "辛辣", "发物"], "l": ["查明过敏原", "避免接触", "增强体质"]}, "平和": {"s": ["精力充沛", "面色润泽", "睡眠安", "食欲好", "适应力强", "舌淡红苔薄白"], "d": ["均衡饮食", "五谷杂粮", "新鲜蔬果", "适量蛋白质"], "a": ["偏食", "暴饮暴食"], "l": ["规律作息", "适度运动", "心态平和"]}}, "symptomKeywords": {"发烧": "发热", "高烧": "发热", "体温高": "发热", "头疼": "头痛", "头痛": "头痛", "头晕": "眩晕", "胃疼": "胃炎", "胃痛": "胃炎", "胃不舒服": "胃炎", "肠胃不适": "胃炎", "咳嗽": "咳嗽", "咳痰": "咳嗽", "干咳": "咳嗽", "睡不着": "失眠", "睡眠不好": "失眠", "失眠": "失眠", "高血压": "高血压", "血压高": "高血压", "高压高": "高血压", "糖尿病": "糖尿病", "血糖高": "糖尿病", "高血糖": "糖尿病", "血脂高": "高血脂", "高血脂": "高血脂", "血脂异常": "高血脂", "膝盖疼": "关节痛", "关节疼": "关节痛", "关节痛": "关节痛", "腰疼": "腰痛", "腰酸": "腰痛", "腰痛": "腰痛", "颈椎疼": "颈椎病", "脖子疼": "颈椎病", "脖子僵硬": "颈椎病", "长痘": "皮肤问题", "痘痘": "皮肤问题", "痤疮": "皮肤问题", "眼睛干": "眼疲劳", "眼睛疲劳": "眼疲劳", "眼疲劳": "眼疲劳", "视力模糊": "眼疲劳", "疲劳": "疲劳", "乏力": "疲劳", "没精神": "疲劳", "体质": "体质辨识", "阳虚": "体质辨识", "阴虚": "体质辨识", "气虚": "体质辨识", "痰湿": "体质辨识", "湿热": "体质辨识", "血瘀": "体质辨识", "气郁": "体质辨识", "特禀": "体质辨识", "平和": "体质辨识", "亚健康": "亚健康", "感冒": "感冒", "流感": "感冒", "痛风": "痛风", "尿酸高": "痛风", "高尿酸": "痛风", "骨质疏松": "骨质疏松", "骨密度低": "骨质疏松", "脂肪肝": "脂肪肝", "肝脂肪": "脂肪肝", "腹泻": "腹泻", "拉肚子": "腹泻", "便秘": "便秘", "大便干": "便秘", "乙肝": "肝炎", "丙肝": "肝炎", "肝炎": "肝炎", "肺炎": "肺炎", "支气管炎": "支气管炎", "鼻炎": "鼻炎", "过敏性鼻炎": "过敏性鼻炎", "咽炎": "咽炎", "喉咙痛": "咽炎", "中耳炎": "中耳炎", "耳朵疼": "中耳炎", "近视": "近视", "散光": "近视", "干眼": "干眼症", "眼干": "干眼症", "口腔溃疡": "口腔溃疡", "溃疡": "口腔溃疡", "荨麻疹": "荨麻疹", "风团": "荨麻疹", "湿疹": "湿疹", "特应性皮炎": "湿疹", "银屑病": "银屑病", "牛皮癣": "银屑病", "类风湿": "类风湿关节炎", "风湿性关节炎": "类风湿关节炎", "骨关节炎": "骨关节炎", "退化性关节炎": "骨关节炎", "冠心病": "冠心病", "心绞痛": "冠心病", "心梗": "冠心病", "心肌梗死": "冠心病", "脑卒中": "脑卒中", "中风": "脑卒中", "脑梗": "脑卒中", "心律失常": "心律失常", "心悸": "心律失常", "心衰": "心力衰竭", "心力衰竭": "心力衰竭", "甲亢": "甲状腺功能亢进", "甲状腺功能亢进": "甲状腺功能亢进", "甲减": "甲状腺功能减退", "甲状腺功能减退": "甲状腺功能减退", "肥胖": "肥胖", "体重超标": "肥胖", "贫血": "贫血", "血红蛋白低": "贫血", "肾炎": "慢性肾病", "肾病": "慢性肾病", "肾结石": "肾结石", "尿路结石": "肾结石", "尿路感染": "尿路感染", "尿道炎": "尿路感染", "前列腺增生": "前列腺增生", "前列腺肥大": "前列腺增生", "月经不调": "月经不调", "月经紊乱": "月经不调", "痛经": "痛经", "经期腹痛": "痛经", "更年期": "更年期综合征", "绝经": "更年期综合征", "乳腺增生": "乳腺增生", "乳腺结节": "乳腺增生", "阴道炎": "阴道炎", "阴道炎症": "阴道炎", "手足口": "手足口病", "手足口病": "手足口病", "水痘": "水痘", "痔疮": "痔疮", "肛裂": "痔疮", "抑郁症": "抑郁症", "抑郁": "抑郁症", "焦虑": "焦虑症", "焦虑症": "焦虑症", "眩晕": "眩晕", "面瘫": "面瘫", "面神经麻痹": "面瘫", "腰椎间盘突出": "腰椎间盘突出", "腰突": "腰椎间盘突出", "肺癌": "肺癌", "肺肿瘤": "肺癌", "胃癌": "胃癌", "胃肿瘤": "胃癌", "肠癌": "结直肠癌", "结肠癌": "结直肠癌", "直肠癌": "结直肠癌", "乳腺癌": "乳腺癌", "乳腺肿瘤": "乳腺癌", "甲状腺癌": "甲状腺癌", "甲状腺肿瘤": "甲状腺癌", "拉稀": "急性胃肠炎", "跑肚": "急性胃肠炎", "窜稀": "急性胃肠炎", "水样便": "急性胃肠炎", "肚子疼拉稀": "急性胃肠炎", "上吐下泻": "急性胃肠炎", "吃了坏东西": "急性胃肠炎", "吃坏肚子": "急性胃肠炎", "食物中毒": "急性胃肠炎", "病毒性腹泻": "诺如病毒感染", "诺如病毒": "诺如病毒感染", "轮状病毒": "诺如病毒感染", "秋季腹泻": "诺如病毒感染", "冬季呕吐病": "诺如病毒感染", "糖尿病吃什么": "糖尿病饮食", "糖尿病人饮食": "糖尿病饮食", "血糖高怎么吃": "糖尿病饮食", "控糖饮食": "糖尿病饮食", "低GI食物": "糖尿病饮食", "糖尿病食谱": "糖尿病饮食", "糖友饮食": "糖尿病饮食", "气喘": "哮喘", "喘不上气": "哮喘", "喘息": "哮喘", "气管哮喘": "哮喘", "过敏性哮喘": "哮喘", "胸闷气短": "哮喘", "夜里咳嗽": "哮喘", "得了流感": "流感", "甲流": "流感", "乙流": "流感", "高烧不退": "流感", "浑身酸痛": "流感", "肩膀疼": "肩周炎", "五十肩": "肩周炎", "冻结肩": "肩周炎", "抬不起胳膊": "肩周炎", "梳不了头": "肩周炎", "肩膀僵硬": "肩周炎", "足跟痛": "足底筋膜炎", "脚底疼": "足底筋膜炎", "脚跟痛": "足底筋膜炎", "早晨起来脚跟疼": "足底筋膜炎", "脚后跟疼": "足底筋膜炎", "掉头发": "脱发", "秃顶": "脱发", "斑秃": "脱发", "鬼剃头": "脱发", "发际线后移": "脱发", "头发稀疏": "脱发", "产后脱发": "脱发", "青春痘": "痤疮", "粉刺": "痤疮", "闭口": "痤疮", "黑头": "痤疮", "额头长痘": "痤疮", "下巴长痘": "痤疮", "阳了": "新冠感染", "二阳": "新冠感染", "刀片嗓": "新冠感染", "新冠": "新冠感染", "COVID": "新冠感染", "一紧张就拉肚子": "肠易激综合征", "肚子疼想上厕所": "肠易激综合征", "IBS": "肠易激综合征", "肠易激": "肠易激综合征", "肠胃敏感": "肠易激综合征", "便秘吃什么": "便秘饮食", "拉不出": "便秘", "养胃吃什么": "养胃饮食", "胃不好": "胃炎", "护眼": "护眼饮食", "眼睛干涩": "干眼症", "护发": "护发饮食", "生发": "脱发", "高压": "高血压", "尿酸": "痛风", "脚趾疼": "痛风", "关节红肿": "痛风", "脸色苍白": "贫血", "气血不足": "贫血", "头晕乏力": "贫血", "缺铁": "贫血", "肚子胀": "胃炎", "腹胀": "胃炎", "反酸": "胃炎", "烧心": "胃炎", "打嗝": "胃炎", "嗳气": "胃炎", "胃口不好": "胃炎", "消化不良": "胃炎", "上腹痛": "胃炎", "甲状腺": "甲状腺结节", "脖子肿": "甲状腺结节", "前列腺": "前列腺增生", "尿频": "前列腺增生", "尿急": "前列腺增生", "夜尿多": "前列腺增生", "排尿困难": "前列腺增生", "尿不尽": "前列腺增生", "尿线细": "前列腺增生", "带状疱疹": "带状疱疹", "蛇盘疮": "带状疱疹", "蛇缠腰": "带状疱疹", "起水泡": "带状疱疹", "肋间神经痛": "带状疱疹", "容易骨折": "骨质疏松", "腰背痛": "骨质疏松", "身高变矮": "骨质疏松", "皮肤痒": "湿疹", "起皮疹": "湿疹", "过敏性皮炎": "湿疹", "皮肤干燥": "湿疹", "偏头痛": "偏头痛", "半边头疼": "偏头痛", "血管性头痛": "偏头痛", "恶心想吐": "偏头痛", "颈椎病": "颈椎病", "手麻": "颈椎病", "肩颈酸痛": "颈椎病", "落枕": "颈椎病", "风疹块": "荨麻疹", "起风团": "荨麻疹", "皮肤过敏": "荨麻疹", "身上起包": "荨麻疹", "睡眠差": "失眠", "入睡困难": "失眠", "早醒": "失眠", "多梦": "失眠", "过敏体质": "过敏饮食", "过敏": "过敏饮食", "减脂": "减脂饮食", "减肥": "减脂饮食", "瘦身": "减脂饮食", "老人": "老人饮食", "老年人": "老人饮食", "儿童": "儿童饮食", "小孩": "儿童饮食", "孩子": "儿童饮食", "高血压吃什么": "高血压饮食", "痛风吃什么": "痛风饮食", "胃病吃什么": "胃病饮食", "胃炎吃什么": "胃病饮食", "补血吃什么": "补血饮食", "贫血吃什么": "补血饮食", "养肝": "护肝饮食", "护肝": "护肝饮食"}};;;
-var CHIPS_DATA = {"consult": ["感冒", "发热", "咳嗽", "头痛", "高血压", "糖尿病", "胃炎", "失眠", "过敏", "痛风"], "tcm": ["体质辨识", "阴虚", "阳虚", "气虚", "痰湿", "湿热", "血瘀", "气郁", "特禀"], "diet": ["高血压饮食", "糖尿病饮食", "痛风饮食", "胃病饮食", "减肥饮食", "贫血饮食", "老人饮食", "儿童饮食"], "knowledge": ["感冒", "高血压", "糖尿病", "冠心病", "高血脂", "骨质疏松", "脂肪肝", "贫血", "焦虑", "痛风"]};
-var currentMode = 'ai';
-var isTyping = false;
-var currentResults = [];
-var streamingEl = null;
-var streamBuf = '';
-var streamTimer = null;
-var streamFullText = '';
-
-// Init
-window.addEventListener('DOMContentLoaded', function(){ renderChips(); });
-
-function switchMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.mode-tab').forEach(function(t){
-    t.classList.toggle('active', t.dataset.mode === mode);
-  });
-  renderChips();
-}
-
-function renderChips() {
-  var bar = document.getElementById('chipsBar');
-  bar.innerHTML = '';
-  var chips = CHIPS_DATA[currentMode] || [];
-  chips.forEach(function(kw){
-    var btn = document.createElement('button');
-    btn.className = 'mode-tab';
-    btn.style.flex = 'none';
-    btn.style.padding = '4px 12px';
-    btn.style.fontSize = '12px';
-    btn.textContent = kw;
-    btn.onclick = function(){ document.getElementById('userInput').value = kw; sendMessage(); };
-    bar.appendChild(btn);
-  });
-}
-
-function sendMessage() {
-  var inp = document.getElementById('userInput');
-  var query = inp.value.trim();
-  if (!query || isTyping) return;
-  addUserMessage(query);
-  inp.value = '';
-  inp.style.height = 'auto';
-  processQuery(query);
-}
-
-function addUserMessage(text) {
-  var chat = document.getElementById('chatArea');
-  var w = document.getElementById('welcomeArea');
-  if (w) w.style.display = 'none';
-  var div = document.createElement('div');
-  div.className = 'msg user';
-  div.innerHTML = '<div class="msg-row"><div class="msg-avatar">&#128104;</div><div class="msg-bubble">' + escapeHtml(text) + '</div></div>';
-  chat.appendChild(div);
-  scrollToBottom();
-}
-
-function addAIMessage(text, cardHtml) {
-  var chat = document.getElementById('chatArea');
-  var div = document.createElement('div');
-  div.className = 'msg ai';
-  div.innerHTML = '<div class="msg-row"><div class="msg-avatar">&#9765;</div><div class="msg-bubble"><div class="ai-text">' + text + '</div>' + (cardHtml || '') + '</div></div>';
-  chat.appendChild(div);
-  scrollToBottom();
-  return div;
-}
-
-function createStreamingBubble() {
-  var chat = document.getElementById('chatArea');
-  var w = document.getElementById('welcomeArea');
-  if (w) w.style.display = 'none';
-  var div = document.createElement('div');
-  div.className = 'msg ai';
-  div.innerHTML = '<div class="msg-row"><div class="msg-avatar">&#9765;</div><div class="msg-bubble"><div class="ai-text"><span class="stream-cursor">&#9646;</span></div></div></div>';
-  chat.appendChild(div);
-  scrollToBottom();
-  streamingEl = div.querySelector('.ai-text');
-  streamFullText = '';
-  return div;
-}
-
-function appendStreamChar(text) {
-  if (!streamingEl) return;
-  streamFullText += text;
-  if (!streamBuf) streamBuf = '';
-  streamBuf += text;
-  var shouldFlush = streamBuf.length >= 8 || /[。！？，、；：.!?,;:\n]/.test(streamBuf);
-  if (shouldFlush) {
-    streamingEl.innerHTML = formatText(streamFullText) + '<span class="stream-cursor">&#9646;</span>';
-    scrollToBottom();
-    streamBuf = '';
-  } else if (!streamTimer) {
-    streamTimer = setTimeout(function(){
-      if (streamingEl && streamFullText) {
-        streamingEl.innerHTML = formatText(streamFullText) + '<span class="stream-cursor">&#9646;</span>';
-        scrollToBottom();
-      }
-      streamBuf = '';
-      streamTimer = null;
-    }, 120);
-  }
-}
-
-function finishStream() {
-  if (streamTimer) { clearTimeout(streamTimer); streamTimer = null; }
-  streamBuf = '';
-  if (!streamingEl) return;
-  streamingEl.innerHTML = formatText(streamFullText);
-  scrollToBottom();
-  var el = streamingEl;
-  streamingEl = null;
-  return el;
-}
-
-function showTyping() {
-  var chat = document.getElementById('chatArea');
-  var div = document.createElement('div');
-  div.id = 'typingEl';
-  div.className = 'msg ai';
-  div.innerHTML = '<div class="typing-row"><div class="msg-avatar">&#9765;</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-  chat.appendChild(div);
-  scrollToBottom();
-}
-function hideTyping() {
-  var t = document.getElementById('typingEl');
-  if (t) t.remove();
-}
-
-function processQuery(query) {
-  if (currentMode !== 'ai') {
-    // Use local KB for non-AI modes
-    isTyping = true;
-    showTyping();
-    setTimeout(function(){
-      isTyping = false;
-      hideTyping();
-      var result = searchKB(query);
-      addAIMessage(formatText(result.text), result.cardHtml);
-    }, 500);
-    return;
-  }
-  
-  // AI mode - use Worker proxy
-  isTyping = true;
-  createStreamingBubble();
-  
-  var modelCfg = getModel();
-  console.log('[DEBUG] processQuery called, model:', modelCfg.model);
-  
-  var systemPrompt = "You are a professional Chinese-Western Medicine AI health assistant. Answer in Chinese.";
-  var allMsgs = [
-    {role:"system",content:systemPrompt},
-    {role:"user",content:query}
-  ];
-  
-  fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + modelCfg.key
-    },
-    body: JSON.stringify({model:modelCfg.model,messages:allMsgs,stream:true})
-  })
-  .then(function(r){return r.text();})
-  .then(function(text){
-    console.log('[DEBUG] Response received, length:', text.length);
-    // Simple SSE parsing
-    var content = '';
-    var lines = text.split('\n');
-    for (var i=0; i<lines.length; i++) {
-      var line = lines[i].trim();
-      if (!line || line.indexOf('data:') !== 0) continue;
-      var data = line.substring(5).trim();
-      if (data === '[DONE]' || data === '') continue;
-      try {
-        var json = JSON.parse(data);
-        var delta = json.choices && json.choices[0] ? json.choices[0].delta : null;
-        if (delta && delta.content) {
-          content += delta.content;
-        }
-      } catch(e){}
-    }
-    isTyping = false;
-    if (streamingEl) streamingEl.remove();
-    chatHistory.push({role:'user',content:query});
-    chatHistory.push({role:'assistant',content:content});
-    addAIMessage(formatText(content), '');
-  })
-  .catch(function(err){
-    console.log('[DEBUG] Error:', err.message);
-    isTyping = false;
-    if (streamingEl) streamingEl.remove();
-    // Fallback to KB
-    var result = searchKB(query);
-    addAIMessage(formatText(result.text) + '<br><span style="color:#999;font-size:12px">(AI failed, local KB)</span>', result.cardHtml);
-  });
-}
-
-function updateThinking(text) {
-  if (!text || !streamingEl) return;
-  var msgRow = streamingEl.closest('.msg-row');
-  if (!msgRow) return;
-  var tb = document.getElementById('thinkingBlock');
-  if (!tb) {
-    tb = document.createElement('div');
-    tb.id = 'thinkingBlock';
-    tb.style.cssText = 'background:linear-gradient(135deg,#f8f6f3,#efe9df);border-left:3px solid #c4943a;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:#555;line-height:1.65;max-height:240px;overflow-y:auto';
-    tb.innerHTML = '<div style="font-weight:600;color:#0f3d2e;margin-bottom:4px;font-size:12px">\U0001F916 \u6DF1\u5EA6\u601D\u8003\u4E2D...</div><div class="thinking-text" style="white-space:pre-wrap;word-break:break-word"></div>';
-    msgRow.insertBefore(tb, msgRow.firstChild.nextSibling);
-  }
-  var tt = tb.querySelector('.thinking-text');
-  if (tt) tt.textContent = text;
-  msgRow.parentNode.scrollTop = msgRow.parentNode.scrollHeight;
-}
-
-function finishStreamWithThinking(thinkingText) {
-  if (streamTimer) { clearTimeout(streamTimer); streamTimer = null; }
-  streamBuf = '';
-  if (!streamingEl) return;
-  streamingEl.innerHTML = formatText(streamFullText);
-  var tb = document.getElementById('thinkingBlock');
-  if (tb && thinkingText) {
-    var hdr = tb.querySelector('div:first-child');
-    if (hdr) hdr.innerHTML = '\U0001F916 \u6DF1\u5EA6\u601D\u8003\u8FC7\u7A0B <button onclick="this.parentNode.parentNode.style.display=\'none\'" style="float:right;background:none;border:none;font-size:16px;cursor:pointer;color:#999;margin-left:8px">\u2212</button>';
-    var tt = tb.querySelector('.thinking-text');
-    if (tt) tt.textContent = thinkingText;
-  }
-  scrollToBottom();
-  var el = streamingEl;
-  streamingEl = null;
-  return el;
-}
-
-function formatText(text) {
-  if (!text) return '';
-  text = escapeHtml(text);
-  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  text = text.replace(/`(.+?)`/g, '<code>$1</code>');
-  text = text.replace(/\n\n/g, '</p><p style="margin:6px 0">');
-  text = text.replace(/\n/g, '<br>');
-  return '<p style="margin:0">' + text + '</p>';
-}
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function scrollToBottom() {
-  var chat = document.getElementById('chatArea');
-  setTimeout(function(){ chat.scrollTop = chat.scrollHeight; }, 50);
-}
-
-function clearChat() {
-  var chat = document.getElementById('chatArea');
-  chat.innerHTML = '';
-  chat.innerHTML = '<div class="welcome-card" id="welcomeArea"><span class="wc-icon">&#9765;</span><h2>您好，我是岐黄智医</h2><p>告诉我您哪里不舒服，我会先了解您的症状，再给出专业的中西医结合治疗方案</p><div class="suggestions"><button class="sug-btn" onclick="document.getElementById(\'userInput\').value=\'最近总是失眠怎么办？\';sendMessage()">失眠怎么办</button><button class="sug-btn" onclick="document.getElementById(\'userInput\').value=\'胃痛吃什么好？\';sendMessage()">胃痛</button><button class="sug-btn" onclick="document.getElementById(\'userInput\').value=\'如何提高免疫力？\';sendMessage()">提高免疫力</button><button class="sug-btn" onclick="document.getElementById(\'userInput\').value=\'湿气重怎么调理？\';sendMessage()">湿气调理</button></div></div>';
-  showToast('对话已清空');
-}
-
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show';
-  setTimeout(function(){ t.className = 'toast'; }, 2500);
-}
-
-// ===== SEARCH KB =====
+// 搜索知识库
 function searchKB(query) {
-  var ql = query.toLowerCase();
-  // Use symptomKeywords to map synonyms to canonical names
-  var symMap = KB_DATA.symptomKeywords || {};
-  var mappedQuery = symMap[ql] || ql;
-  var ql2 = mappedQuery.toLowerCase();
-  var searchTerms = [ql, ql2].filter(function(v,i,a){return a.indexOf(v)===i;});
-  var words = [];
-  searchTerms.forEach(function(q){ words = words.concat(q.split(/\s+/)); });
-  var scored = [];
-  var keys = ['title','symptoms','diet','drugs','herbs','desc','rec','avoid','tips','keywords','content'];
-  var _kbSrc = KB_DATA.KB || {};
-  if (currentMode === 'tcm') _kbSrc = KB_DATA.TCM || {};
-  if (currentMode === 'diet') _kbSrc = KB_DATA.DIET || {};
-  var allItems = Array.isArray(_kbSrc) ? _kbSrc : Object.values(_kbSrc);
-  if (!allItems.length) return {text: '未找到相关知识库条目，请尝试其他关键词或切换到"AI对话"模式咨询在线AI。', cardHtml: ''};
-
-  allItems.forEach(function(item) {
-    var score = 0;
-    searchTerms.forEach(function(qi) {
-      keys.forEach(function(k) {
-        var v = (item[k] || '').toLowerCase();
-        if (v.indexOf(qi) !== -1) score += (qi === ql && qi.length >= 2 ? 5 : (k === 'title' ? 3 : 1));
-      });
-    });
-    if (score > 0) scored.push({item: item, score: score});
-  });
-
-  scored.sort(function(a, b){ return b.score - a.score; });
-  var top = scored.slice(0, 3);
-
-  if (top.length === 0) {
-    return {text: '未找到相关知识库条目，请尝试其他关键词或切换到"AI对话"模式咨询在线AI。', cardHtml: ''};
-  }
-
-  var text = top.map(function(r){
-    var item = r.item;
-    if (currentMode === 'tcm') {
-      var body = (item.desc ? '<div class="kb-sec-body">'+item.desc+'</div>' : '') +
-                 (item.symptoms ? '<div class="kb-sec-title">典型症状</div><div class="kb-sec-body">'+item.symptoms+'</div>' : '') +
-                 (item.diet ? '<div class="kb-sec-title">饮食调养</div><div class="kb-sec-body">'+item.diet+'</div>' : '');
-      return '<div class="kb-card"><div class="kb-card-hdr"><span class="kb-card-cat">中医体质</span><span class="kb-card-title">'+escapeHtml(item.title||'')+'</span></div><div class="kb-card-body">'+body+'</div></div>';
-    } else if (currentMode === 'diet') {
-      var body = (item.rec ? '<div class="kb-sec-title" style="color:#16a34a">推荐食物</div><div class="kb-sec-body" style="color:#16a34a">'+item.rec+'</div>' : '') +
-                 (item.avoid ? '<div class="kb-sec-title" style="color:#dc2626">避免食物</div><div class="kb-sec-body" style="color:#dc2626">'+item.avoid+'</div>' : '') +
-                 (item.tips ? '<div class="kb-sec-title">饮食贴士</div><div class="kb-sec-body">'+item.tips+'</div>' : '');
-      return '<div class="kb-card"><div class="kb-card-hdr"><span class="kb-card-cat">饮食方案</span><span class="kb-card-title">'+escapeHtml(item.title||'')+'</span></div><div class="kb-card-body">'+body+'</div></div>';
-    } else {
-      var body = (item.diet ? '<div class="kb-sec-title">饮食建议</div><div class="kb-sec-body">'+item.diet+'</div>' : '') +
-                 (item.drugs ? '<div class="kb-sec-title">用药参考</div><div class="kb-sec-body">'+item.drugs+'</div>' : '') +
-                 (item.herbs ? '<div class="kb-sec-title">中药参考</div><div class="kb-sec-body">'+item.herbs+'</div>' : '') +
-                 (item.emergency ? '<div class="kb-emergency">&#9888; '+item.emergency+'</div>' : '');
-      return '<div class="kb-card"><div class="kb-card-hdr"><span class="kb-card-cat">'+(item.cat||'常见问题')+'</span><span class="kb-card-title">'+escapeHtml(item.title||'')+'</span></div><div class="kb-card-body">'+body+'</div></div>';
+  query = query.toLowerCase();
+  var results = [];
+  
+  for (var disease in KB_DATA) {
+    var item = KB_DATA[disease];
+    var keywords = item.keywords.toLowerCase();
+    var title = item.title.toLowerCase();
+    var content = item.content.toLowerCase();
+    
+    // 关键词匹配
+    if (keywords.indexOf(query) >= 0 || 
+        title.indexOf(query) >= 0 || 
+        content.indexOf(query) >= 0 ||
+        disease.indexOf(query) >= 0) {
+      results.push({name: disease, data: item, score: 10});
     }
-  }).join('');
-
-  return {
-    text: '找到 ' + top.length + ' 条相关知识：',
-    cardHtml: '<div class="kb-results">' + text + '</div>'
-  };
-}
-
-// KB Search list
-var symptomKeywords = KB_DATA.symptomKeywords || [];
-
-function searchKBList(query) {
-  if (!query || query.length < 1) {
-    document.getElementById('kbSearchInput').style.outline = '';
-    return;
   }
-  var result = searchKB(query);
-  var chat = document.getElementById('chatArea');
-  var w = document.getElementById('welcomeArea');
-  if (w) w.style.display = 'none';
-  var div = document.createElement('div');
-  div.className = 'msg ai';
-  div.innerHTML = '<div class="msg-row"><div class="msg-avatar">&#9765;</div><div class="msg-bubble"><p style="margin:0 0 8px;font-size:12px;color:#9a9a9a">知识库搜索: ' + escapeHtml(query) + '</p>' + result.text + result.cardHtml + '</div></div>';
-  chat.appendChild(div);
-  scrollToBottom();
-  document.getElementById('kbSearchInput').value = '';
+  
+  // 按分数排序
+  results.sort(function(a, b) { return b.score - a.score; });
+  
+  return results.slice(0, 3); // 返回最多3个结果
 }
-function saveKey(){var k=document.getElementById('groqKeyInput').value.trim();if(!k){document.getElementById('keySaveStatus').textContent='请输入 Key';return}localStorage.setItem('GROQ_API_KEY',k);GROQ_API_KEY=k;document.getElementById('keySaveStatus').textContent='已保存，重新发送消息即可生效'}
-function openSettings(){
-  var m=document.getElementById('settingsModal');
-  renderModelBar();renderModelSelector();
-  updateModelKeyLabel(currentModel);
-  document.getElementById('keySaveStatus').textContent='';
-  m.style.display='flex';
-}
-function renderModelSelector(){
-  var c=document.getElementById('modelSelector');c.innerHTML='';
-  Object.keys(MODELS).forEach(function(key){
-    var info=MODELS[key],btn=document.createElement('button');
-    btn.type='button';btn.dataset.model=key;
-    var active=currentModel===key;
-    btn.style.cssText='padding:10px 14px;border:2px solid '+((active ? '#0f3d2e' : '#e5ddd0'))+';border-radius:10px;background:'+((active ? '#f0faf4' : '#fff'))+';cursor:pointer;text-align:left;font-size:13px;color:#333;transition:all .2s';
-    var tags='';
-    if(info.supportsThinking) tags+='<span style="display:inline-block;background:#c4943a;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px">\ud83e\udd14 \u6df1\u5ea6\u601d\u8003</span>';
-    if(info.key&&!localStorage.getItem('apiKey_'+key)) tags+='<span style="display:inline-block;background:#2d7a4f;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">\u2705 \u514d\u8d39</span>';
-    if(key==='openrouter_gemini') tags+='<span style="display:inline-block;background:#4285f4;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">\u26a1 \u5982 GPT-3.5</span>';
-    btn.innerHTML='<div style="font-weight:600">'+info.name+tags+'</div>';
-    btn.onclick=function(){currentModel=this.dataset.model;localStorage.setItem('selectedModel',currentModel);renderModelSelector();updateModelKeyLabel(currentModel);};
-    c.appendChild(btn);
+
+// 格式化结果
+function formatResult(results) {
+  if (results.length === 0) {
+    return '<div class="message ai-msg">抱歉，本地知识库中未找到相关信息。建议您咨询医生或查阅更多资料。</div>';
+  }
+  
+  var html = '';
+  results.forEach(function(r) {
+    var item = r.data;
+    html += '<div class="kb-card">';
+    html += '<h3>' + item.title + '</h3>';
+    html += '<div class="kb-section"><strong>概述：</strong>' + item.content + '</div>';
+    if (item.diet) html += '<div class="kb-section"><strong>饮食建议：</strong>' + item.diet + '</div>';
+    if (item.drugs) html += '<div class="kb-section"><strong>常用药物：</strong>' + item.drugs + '</div>';
+    html += '</div>';
   });
-}
-function updateModelKeyLabel(mk){
-  var info=MODELS[mk];
-  document.getElementById('modelKeyName').textContent=info?info.name:'\u672a\u77e5';
-  var de=document.getElementById('modelDesc');
-  if(de){var d='';if(mk==='groq_llama') d='\u514d\u8d39\u4f7f\u7528\uff0c\u65e0\u9700\u914d\u7f6eKey\u3002Groq\u6278\u7ba1\u7684 LLaMA 3.3 70B\u3002';else if(mk==='deepseek') d='\u6df1\u5ea6\u63a8\u7406\u6a21\u578b\uff0c\u652f\u6301\u590d\u6742\u533b\u5b66\u5206\u6790\u3002';else if(mk==='deepseek_chat') d='\u5feb\u901f\u5bf9\u8bdd\u6a21\u578b\uff0c\u54cd\u5e94\u901f\u5ea6\u5feb\u3002';de.textContent=d;}
-  var k=localStorage.getItem('apiKey_'+mk)||(info&&info.key)||'';document.getElementById('groqKeyInput').value=k;
-}
-function saveKey(){
-  var key=document.getElementById('groqKeyInput').value.trim();
-  if(!key&&!MODELS[currentModel].key){document.getElementById('keySaveStatus').textContent='\u26a0 \u8bf7\u8f93\u5165 API Key';return;}
-  localStorage.setItem('apiKey_'+currentModel,key);
-  document.getElementById('keySaveStatus').textContent='\u2705 \u5df2\u4fdd\u5b58 ('+MODELS[currentModel].name+')';
-  document.getElementById('keySaveStatus').style.color='#2d7a4f';
+  
+  html += '<div class="message ai-msg" style="font-size:12px;color:#888;margin-top:10px">⚠️ 以上信息仅供参考，如有不适请及时就医。</div>';
+  
+  return html;
 }
 
-function renderModelBar(){
-  var c=document.getElementById('modelBar'); if(!c) return; c.innerHTML='';
-  Object.keys(MODELS).forEach(function(key){
-    var info=MODELS[key],btn=document.createElement('button');
-    btn.type='button'; btn.dataset.model=key;
-    var active=currentModel===key;
-    btn.style.cssText='padding:6px 14px;border:2px solid '+((active ? '#0f3d2e' : '#ddd'))+';border-radius:20px;background:'+((active ? '#0f3d2e' : '#fff'))+';color:'+((active ? '#fff' : '#555'))+';cursor:pointer;font-size:12px;font-weight:600;transition:all .2s';
-    var tags=info.supportsThinking?' \ud83e\udd14':'';
-    btn.textContent=info.name+tags;
-    btn.onclick=function(){currentModel=this.dataset.model;localStorage.setItem('selectedModel',currentModel);renderModelBar();renderModelSelector();updateModelKeyLabel(currentModel);};
-    c.appendChild(btn);
-  });
+// 发送消息
+function sendMessage() {
+  var input = document.getElementById('userInput');
+  var query = input.value.trim();
+  if (!query) return;
+  
+  var chatArea = document.getElementById('chatArea');
+  
+  // 显示用户消息
+  chatArea.innerHTML += '<div class="message user-msg">' + query + '</div>';
+  input.value = '';
+  
+  // 搜索知识库
+  var results = searchKB(query);
+  var response = formatResult(results);
+  
+  // 模拟延迟后显示回复
+  setTimeout(function() {
+    chatArea.innerHTML += response;
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }, 300);
+  
+  chatArea.scrollTop = chatArea.scrollHeight;
 }
-
-// DEBUG v2026.05.15d
-window.addEventListener('load', function() {
-  console.log('[DEBUG] Page loaded OK, processQuery exists:', typeof processQuery === 'function');
-  console.log('[DEBUG] WORKER_URL:', WORKER_URL);
-  document.title = document.title + ' [READY]';
-});
-<\/script>
-
-<div id="settingsModal" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:16px;padding:28px 24px;width:min(520px,92vw);max-height:85vh;overflow-y:auto;font-family:sans-serif">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h2 style="font-size:18px;color:#0f3d2e;margin:0">&#9881; 模型与API设置</h2>
-      <button onclick="document.getElementById('settingsModal').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:#999">&#10005;</button>
-    </div>
-    <label style="font-size:13px;color:#444;display:block;margin-bottom:6px;font-weight:600">选择模型：</label>
-    <div id="modelSelector" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px"></div>
-    <label style="font-size:13px;color:#444;display:block;margin-bottom:6px;font-weight:600">API Key (<span id="modelKeyName">Groq LLaMA</span>)：</label>
-    <input id="groqKeyInput" type="password" placeholder="输入API Key..." style="width:100%;padding:10px 12px;border:1.5px solid #e5ddd0;border-radius:10px;font-size:14px;box-sizing:border-box;outline:none">
-    <p id="modelDesc" style="font-size:12px;color:#999;margin:6px 0 14px"></p>
-    <div id="keySaveStatus" style="font-size:12px;color:#c4943a;margin:0 0 16px;min-height:18px"></div>
-    <div style="display:flex;gap:10px">
-      <button onclick="saveKey()" style="flex:1;background:#0f3d2e;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;cursor:pointer">保存</button>
-      <button onclick="document.getElementById('settingsModal').style.display='none'" style="flex:1;background:#f5f2ed;color:#666;border:none;border-radius:10px;padding:10px;font-size:14px;cursor:pointer">取消</button>
-    </div>
-    <p style="font-size:11px;color:#bbb;margin:14px 0 0;text-align:center">
-      Groq <a href="https://console.groq.com/keys" target="_blank" style="color:#0f3d2e">console.groq.com/keys</a> &nbsp;|&nbsp;
-      DeepSeek <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#0f3d2e">platform.deepseek.com/api_keys</a> &nbsp;|&nbsp;
-      OpenRouter <a href="https://openrouter.ai/keys" target="_blank" style="color:#0f3d2e">openrouter.ai/keys</a>
-    </p></body>
+</script>
+</body>
 </html>
