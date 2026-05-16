@@ -150,93 +150,101 @@ return bestScore>=3?best:null;
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function addMsg(cls,html){var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;document.getElementById('chat').appendChild(d);document.getElementById('chat').scrollTop=99999;}
 
-function send(){
+async function send(){
 var inp=document.getElementById('inp'),q=inp.value.trim();
 if(!q)return;
 addMsg('user-msg',esc(q));
 inp.value='';
 var ld=document.createElement('div');ld.className='msg ai-msg loading';ld.textContent='正在查询...';document.getElementById('chat').appendChild(ld);
 document.getElementById('chat').scrollTop=99999;
-setTimeout(function(){
 var r=search(q);
 if(r){
 document.getElementById('chat').removeChild(ld);
 addMsg('ai-msg','<div class="title">'+r.t+'</div><div class="section">'+r.c+'</div><div class="section"><strong>饮食建议：</strong>'+r.d+'</div><div class="section"><strong>常用药物：</strong>'+r.m+'</div><span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>');
-}else{
-// 本地KB无匹配，尝试调用OpenClaw本地API
-callOpenClawAPI(q,ld);
+return;
 }
-},300);
+// 本地KB无匹配，移除loading，尝试AI
+document.getElementById('chat').removeChild(ld);
+try{
+await callOpenClawAPI(q);
+}catch(e1){
+var groqKey=localStorage.getItem('groq_api_key');
+if(groqKey){
+try{
+await callGroqAPI(q,groqKey);
+}catch(e2){
+addMsg('ai-msg','AI 调用失败：'+e2.message+'<br><br>请检查 API Key 或稍后重试。');
+}
+}else{
+addMsg('ai-msg','抱歉，知识库暂未收录此问题。<br><br><b>想要 AI 智能回答？</b><br>1. <b>同设备</b>（推荐）：确保 OpenClaw 正在运行<br>2. <b>不同设备</b>：在设置中配置 <a href="https://console.groq.com/keys" target="_blank">免费 Groq API Key</a>');
+}
+}
 }
 
-function callOpenClawAPI(q,ld){
+async function callOpenClawAPI(q){
 var OPENCLAW_URL='http://127.0.0.1:28789/v1/chat/completions';
 var systemPrompt='你是岐黄智医，一个AI中西医结合健康助手。回答要：1)简洁易懂 2)结合中西医视角 3)给出饮食和生活建议 4)提醒严重情况需就医。';
 var body=JSON.stringify({model:'gpt-3.5-turbo',messages:[{role:'system',content:systemPrompt},{role:'user',content:q}],stream:true});
-fetch(OPENCLAW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
-.then(function(resp){
-if(!resp.ok)throw new Error('API error:'+resp.status);
-document.getElementById('chat').removeChild(ld);
+var resp=await fetch(OPENCLAW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:body});
+if(!resp.ok)throw new Error('OpenClaw API error: '+resp.status);
 var msgDiv=document.createElement('div');msgDiv.className='msg ai-msg';document.getElementById('chat').appendChild(msgDiv);
 var reader=resp.body.getReader();
 var decoder=new TextDecoder();
 var fullText='';
-function read(){reader.read().then(function(result){
+while(true){
+var result=await reader.read();
 if(result.done){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
 var chunk=decoder.decode(result.value,{stream:true});
 var lines=chunk.split('\n');
-lines.forEach(function(line){
+for(var i=0;i<lines.length;i++){
+var line=lines[i];
 if(line.startsWith('data: ')){
 var data=line.slice(6);
-if(data==='[DONE]')return;
-try{var json=JSON.parse(data);if(json.choices&&json.choices[0].delta&&json.choices[0].delta.content){fullText+=json.choices[0].delta.content;msgDiv.innerHTML=fullText;}}catch(e){}
+if(data==='[DONE]'){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
+try{
+var json=JSON.parse(data);
+if(json.choices&&json.choices[0].delta&&json.choices[0].delta.content){
+fullText+=json.choices[0].delta.content;
+msgDiv.innerHTML=fullText;document.getElementById('chat').scrollTop=99999;
 }
-});
-read();
-});}
-read();
-})
-.catch(function(e){
-document.getElementById('chat').removeChild(ld);
-// OpenClaw API失败，尝试Groq
-var groqKey=localStorage.getItem('groq_api_key');
-if(groqKey){
-callGroqAPI(q,groqKey);
-}else{
-addMsg('ai-msg','抱歉，知识库暂未收录此问题。<br><br><b>想要 AI 智能回答？</b><br>请在设置中配置 API Key，或确保 OpenClaw 正在运行。<br><br><a href="https://console.groq.com/keys" target="_blank">获取免费 API Key</a>');
+}catch(e){}
 }
-});
 }
-
-function callGroqAPI(q,key){
+}
+}async function callGroqAPI(q,key){
 var GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
 var systemPrompt='你是岐黄智医，一个AI中西医结合健康助手。回答要：1)简洁易懂 2)结合中西医视角 3)给出饮食和生活建议 4)提醒严重情况需就医。';
 var body=JSON.stringify({model:'llama-3.1-8b-instant',messages:[{role:'system',content:systemPrompt},{role:'user',content:q}],stream:true});
-fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:body})
-.then(function(resp){
-if(!resp.ok)throw new Error('Groq error:'+resp.status);
+var resp=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:body});
+if(!resp.ok){
+if(resp.status===401)throw new Error('Groq Key无效，请检查设置中的API Key');
+if(resp.status===429)throw new Error('Groq 请求过于频繁，请稍后再试');
+throw new Error('Groq API错误: '+resp.status);
+}
 var msgDiv=document.createElement('div');msgDiv.className='msg ai-msg';document.getElementById('chat').appendChild(msgDiv);
 var reader=resp.body.getReader();
 var decoder=new TextDecoder();
 var fullText='';
-function read(){reader.read().then(function(result){
+while(true){
+var result=await reader.read();
 if(result.done){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
 var chunk=decoder.decode(result.value,{stream:true});
 var lines=chunk.split('\n');
-lines.forEach(function(line){
+for(var i=0;i<lines.length;i++){
+var line=lines[i];
 if(line.startsWith('data: ')){
 var data=line.slice(6);
-if(data==='[DONE]')return;
-try{var json=JSON.parse(data);if(json.choices&&json.choices[0].delta&&json.choices[0].delta.content){fullText+=json.choices[0].delta.content;msgDiv.innerHTML=fullText;}}catch(e){}
+if(data==='[DONE]'){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
+try{
+var json=JSON.parse(data);
+if(json.choices&&json.choices[0].delta&&json.choices[0].delta.content){
+fullText+=json.choices[0].delta.content;
+msgDiv.innerHTML=fullText;document.getElementById('chat').scrollTop=99999;
 }
-});
-read();
-});}
-read();
-})
-.catch(function(e){
-addMsg('ai-msg','API 调用失败：'+e.message+'<br><br>请检查 API Key 是否正确，或稍后重试。');
-});
+}catch(e){}
+}
+}
+}
 }
 
 document.getElementById('inp').onkeypress=function(e){if(e.key==='Enter')send();};
