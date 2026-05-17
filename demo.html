@@ -394,9 +394,14 @@ async function generateAdvice(){
   chatArea.scrollTop=99999;
 
   try{
-    var resp=await callAI_Once('你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n已知信息：\n- 症状/疾病：'+kb.t+'\n- 患者过敏史：'+md.drugAllergyText+'\n- 慢性病史：'+md.chronicDiseaseText+'\n- 当前用药：'+md.currentMeds+'\n\n请分两大部分回复：\n\n## 🍎 食疗方案\n请给出：\n1. 【中医辨证分型】根据症状描述，判断最可能的证型\n2. 【药膳推荐】3-5款家常药膳，包含食材、做法、功效（注意根据过敏史和慢病史调整）\n3. 【时辰食疗】根据中医子午流注，推荐早中晚各适宜的食物\n4. 【饮食禁忌】列出需要避免的食物和原因\n5. 【药物-食物相互作用提醒】（如华法林忌菠菜、抗凝药忌银杏等）\n\n## 💊 用药建议\n请给出：\n1. 【常用药物】（西药+中成药），括号内注明主要注意事项\n2. 【药物相互作用】（如正在服用XX时，不能与XX同用）\n3. 【中药-西药同用注意】（如阿司匹林与活血化瘀中药同用风险）\n4. 【就医指征】（出现哪些情况必须立即就医）\n\n注意事项：\n- 结合患者的过敏史和慢病史给出个性化调整\n- 涉及慢性病用药时提醒\"遵医嘱，不可自行停药\"\n- 药膳以家常易行为主\n- 总字数控制在600字以内，分点清晰\n\n参考知识：\n'+kb.c+'\n\n'+kb.d+'\n\n'+kb.m);
+    // Create message div for streaming output
+    var adviceDiv=addMsg('ai','');
+    await callAI_Once('你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n已知信息：\n- 症状/疾病：'+kb.t+'\n- 患者过敏史：'+md.drugAllergyText+'\n- 慢性病史：'+md.chronicDiseaseText+'\n- 当前用药：'+md.currentMeds+'\n\n请分两大部分回复：\n\n## 🍎 食疗方案\n请给出：\n1. 【中医辨证分型】根据症状描述，判断最可能的证型\n2. 【药膳推荐】3-5款家常药膳，包含食材、做法、功效（注意根据过敏史和慢病史调整）\n3. 【时辰食疗】根据中医子午流注，推荐早中晚各适宜的食物\n4. 【饮食禁忌】列出需要避免的食物和原因\n5. 【药物-食物相互作用提醒】（如华法林忌菠菜、抗凝药忌银杏等）\n\n## 💊 用药建议\n请给出：\n1. 【常用药物】（西药+中成药），括号内注明主要注意事项\n2. 【药物相互作用】（如正在服用XX时，不能与XX同用）\n3. 【中药-西药同用注意】（如阿司匹林与活血化瘀中药同用风险）\n4. 【就医指征】（出现哪些情况必须立即就医）\n\n注意事项：\n- 结合患者的过敏史和慢病史给出个性化调整\n- 涉及慢性病用药时提醒\"遵医嘱，不可自行停药\"\n- 药膳以家常易行为主\n- 总字数控制在600字以内，分点清晰\n\n参考知识：\n'+kb.c+'\n\n'+kb.d+'\n\n'+kb.m, adviceDiv);
     chatArea.removeChild(ld);
-    addMsg('ai',resp+'<span class="disclaimer">⚠️ 以上内容仅供参考，如有不适请及时就医。</span>');
+    // callAI_Once already rendered into adviceDiv with typewriter + disclaimer
+    if(adviceDiv && !adviceDiv.innerHTML.includes('disclaimer')){
+      adviceDiv.innerHTML+='<span class="disclaimer">⚠️ 以上内容仅供参考，如有不适请及时就医。</span>';
+    }
     consultState='init';
     consultKB=null;
   }catch(e){
@@ -527,7 +532,7 @@ async function callAI(q){
 
 
 // Non-streaming AI call for structured advice
-async function callAI_Once(prompt){
+async function callAI_Once(prompt, msgDiv){
   var cfg=MODELS[curModel];
   var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
   if(!key)key=document.getElementById(cfg.keyField).value||null;
@@ -536,7 +541,21 @@ async function callAI_Once(prompt){
   var headers={'Content-Type':'application/json'};
   if(key)headers['Authorization']='Bearer '+key;
 
-  var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sys},{role:'user',content:prompt}],stream:false});
+  var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sys},{role:'user',content:prompt}],stream:true});
+
+  // Show loading with thinking indicator
+  if(msgDiv){
+    if(cfg.think){
+      msgDiv.innerHTML='<div id="ti2" style="color:#999;font-size:13px;padding:8px">🧠 正在辨证分析中</div>';
+      var dc=0;
+      window._ti2int=setInterval(function(){
+        dc=(dc+1)%4;var d='';for(var j=0;j<dc;j++)d+='.';
+        var t=document.getElementById('ti2');if(t)t.textContent='🧠 正在辨证分析中'+d;
+      },500);
+    } else {
+      msgDiv.innerHTML='<div style="color:#999;font-size:13px;padding:8px">⏳ 正在生成个性化方案...</div>';
+    }
+  }
 
   var resp=await fetch(cfg.base,{method:'POST',headers:headers,body:body});
   if(!resp.ok){
@@ -544,17 +563,56 @@ async function callAI_Once(prompt){
     try{errTxt=await resp.text();}catch(e){}
     if(resp.status===401)throw new Error('API Key无效，请检查设置');
     if(resp.status===402)throw new Error('API余额不足');
-    if(resp.status===429)throw new Error('请求过于频繁');
+    if(resp.status===429)throw new Error('请求过于频繁，请稍后重试');
     throw new Error('HTTP '+resp.status);
   }
 
-  var data=await resp.json();
-  var content=data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
-  if(!content)throw new Error('无效响应');
-  // Basic formatting
-  content=content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
-  return content;
+  var reader=resp.body.getReader();
+  var decoder=new TextDecoder();
+  var full='',thinking='';
+
+  while(true){
+    var result=await reader.read();
+    if(result.done)break;
+    var chunk=decoder.decode(result.value,{stream:true});
+    var lines=chunk.split('\n');
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i];
+      if(!line.startsWith('data: '))continue;
+      var data=line.slice(6).trim();
+      if(data==='[DONE]')continue;
+      try{
+        var json=JSON.parse(data);
+        var delta=json.choices&&json.choices[0]&&json.choices[0].delta;
+        if(!delta)continue;
+        if(cfg.think&&delta.reasoning_content){thinking+=delta.reasoning_content;continue;}
+        if(delta.content)full+=delta.content;
+      }catch(e){}
+    }
+  }
+
+  // Clear thinking indicator
+  if(window._ti2int){clearInterval(window._ti2int);window._ti2int=null;}
+  var ti2=document.getElementById('ti2');if(ti2)ti2.remove();
+
+  // Build HTML
+  var html='';
+  if(thinking){
+    html='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">🧠 辨证思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(thinking)+'</div></details>';
+  }
+  
+  // Format content
+  full=full.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+
+  // Typewriter effect
+  if(msgDiv){
+    await typewriter(msgDiv, full, html);
+    return null; // already rendered in msgDiv
+  }
+  return html+full; // fallback: return as string
 }
+
+
 
 // Intercept Enter in history-asking state
 document.getElementById('inp').addEventListener('keypress',function(e){
