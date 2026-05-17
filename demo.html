@@ -69,6 +69,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .quick-btns button{padding:6px 14px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;font-size:13px;cursor:pointer;transition:.2s;color:var(--txt)}
 .quick-btns button:hover{border-color:var(--pri-l);background:#e3f2fd;color:var(--pri)}
 </style>
+<script>
+window.addEventListener('error', function(e) {
+    var chatArea = document.getElementById('chatArea');
+    if (chatArea) {
+        chatArea.innerHTML += '<div class="msg ai" style="background:#fff3f3;border-color:#f44336"><b>! page error: </b>' + e.message + '<br><small>ctrl+shift+r</small></div>';
+    }
+});
+window.addEventListener('unhandledrejection', function(e) {
+    var chatArea = document.getElementById('chatArea');
+    if (chatArea) {
+        chatArea.innerHTML += '<div class="msg ai" style="background:#fff3f3;border-color:#f44336"><b>! async error: </b>' + String(e.reason) + '</div>';
+    }
+});
+<\/script>
 </head>
 <body>
 <div class="hd">
@@ -272,8 +286,9 @@ document.addEventListener('DOMContentLoaded',function(){try{
 }catch(e){console.error('Init error:',e);}});
 
 async function send(){
+  try {
   var inp=document.getElementById('inp'),q=inp.value.trim();
-  if(!q)return;
+  if(!q){return;}
   addMsg('user',esc(q));
   inp.value='';
 
@@ -302,6 +317,8 @@ async function send(){
   }catch(e){
     chatArea.removeChild(ld);
     addMsg('ai','😅 暂时无法连接AI服务<br><br>📋 知识库暂未收录「'+esc(q)+'」<br><br>💡 建议：<br>1. <b>换个说法</b>（如"头痛"而非"太阳穴不舒服"）<br>2. 配置免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a><br>3. 在电脑运行OpenClaw可免费用本地AI');
+  } catch(e) {
+    addMsg('ai', '<b>! error: </b>' + e.message);
   }
 }
 
