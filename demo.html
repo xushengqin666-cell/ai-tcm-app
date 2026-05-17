@@ -209,8 +209,6 @@ function renderModelBar(){
     bar.appendChild(b);
   }
 }
-renderModelBar();
-
 // ========== KB Search ==========
 function searchKB(q){
   q=q.toLowerCase();
@@ -266,7 +264,7 @@ function showWelcome(){
   chatArea.innerHTML='';
   addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">🏥</div><h2 style="color:#0d47a1;margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:#5f6368;line-height:1.8">AI中西医结合健康助手<br>请描述您的症状或健康问题，我将为您辨证论治</p><div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center"><span class="tag">🤖 智能问诊</span><span class="tag">🍎 个性化食疗</span><span class="tag">💊 安全用药</span><span class="tag">🔄 体质辨识</span></div></div>');
 }
-showWelcome();
+document.addEventListener('DOMContentLoaded',function(){try{showWelcome();renderModelBar();}catch(e){console.error('Init error:',e);}});
 
 async function send(){
   var inp=document.getElementById('inp'),q=inp.value.trim();
