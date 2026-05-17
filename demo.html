@@ -2,384 +2,397 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>岐黄智医 - AI中西医健康助手</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>岐黄智医 — AI中西医结合健康助手</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f2ed;color:#333;min-height:100vh}
-.container{max-width:680px;margin:0 auto;padding:20px 16px}
-.header{background:linear-gradient(135deg,#0f3d2e,#1a7a52);color:#fff;padding:24px;border-radius:16px;margin-bottom:20px;text-align:center;box-shadow:0 4px 15px rgba(15,61,46,0.25)}
-.header h1{font-size:26px;letter-spacing:4px;margin-bottom:6px}
-.header .subtitle{font-size:13px;opacity:.85}
-.nav{display:flex;gap:8px;margin-bottom:16px}
-.nav button{flex:1;padding:10px;background:#fff;border:2px solid #e0ddd5;border-radius:10px;cursor:pointer;font-size:14px;color:#666;transition:all .2s}
-.nav button.active{background:#0f3d2e;color:#fff;border-color:#0f3d2e}
-.chat-area{background:#fff;border-radius:16px;padding:20px;min-height:380px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:none}
-.chat-area.active{display:block}
-.msg{padding:12px 16px;margin:10px 0;border-radius:12px;line-height:1.6;font-size:15px;max-width:85%;word-break:break-word}
-.user-msg{background:#e8f5e9;margin-left:auto;border-bottom-right-radius:4px}
-.ai-msg{background:#f0f4f8;border-bottom-left-radius:4px}
-.ai-msg .title{font-weight:700;color:#0f3d2e;font-size:16px;margin-bottom:6px}
-.ai-msg .section{margin:6px 0;color:#444}
-.ai-msg .section strong{color:#0f3d2e}
-.ai-msg .disclaimer{font-size:12px;color:#aaa;margin-top:8px;display:block}
-.input-row{display:flex;gap:10px}
-input{flex:1;padding:14px 18px;border:2px solid #e0ddd5;border-radius:12px;font-size:16px;outline:none;transition:border-color .2s;background:#fff}
-input:focus{border-color:#0f3d2e}
-button.send{padding:14px 28px;background:linear-gradient(135deg,#0f3d2e,#1a7a52);color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:16px;font-weight:600}
-.loading{color:#999;font-style:italic;font-size:14px}
-.badge{display:inline-block;background:#fff3e0;color:#e65100;padding:2px 10px;border-radius:10px;font-size:12px;margin:3px 3px 3px 0}
-
-/* 体质问卷样式 */
-.quiz-area{display:none;padding:10px}
-.quiz-area.active{display:block}
-.quiz-progress{height:6px;background:#e0ddd5;border-radius:3px;margin-bottom:16px;overflow:hidden}
-.quiz-progress-bar{height:100%;background:linear-gradient(90deg,#0f3d2e,#1a7a52);transition:width .3s}
-.quiz-question{font-size:18px;font-weight:600;margin-bottom:20px;color:#0f3d2e}
-.quiz-options{display:flex;flex-direction:column;gap:12px}
-.quiz-option{padding:14px 18px;background:#fff;border:2px solid #e0ddd5;border-radius:12px;cursor:pointer;font-size:15px;transition:all .2s}
-.quiz-option:hover{border-color:#0f3d2e;background:#f0f8f5}
-.quiz-option.selected{background:#0f3d2e;color:#fff;border-color:#0f3d2e}
-.quiz-result{display:none;padding:20px;background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.quiz-result.active{display:block}
-.result-type{font-size:24px;font-weight:700;color:#0f3d2e;margin-bottom:16px}
-.result-section{margin:16px 0;padding-top:16px;border-top:1px solid #eee}
-.result-section h3{font-size:16px;color:#0f3d2e;margin-bottom:10px}
-
-/* 设置面板 */
-.settings-panel{display:none;padding:20px;background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.settings-panel.active{display:block}
-.setting-row{margin:16px 0}
-.setting-row label{display:block;font-size:14px;color:#666;margin-bottom:8px}
-.setting-row input{width:100%}
-.setting-note{font-size:13px;color:#888;margin-top:16px;padding:12px;background:#f5f5f5;border-radius:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--pri:#1565c0;--pri-l:#42a5f5;--pri-d:#0d47a1;--acc:#ff6f00;--bg:#f5f7fa;--card:#fff;--txt:#1a1a2e;--txt2:#5f6368;--sh:0 2px 12px rgba(0,0,0,.08);--r:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+/* Header */
+.hd{background:linear-gradient(135deg,var(--pri-d),var(--pri),var(--pri-l));color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(21,101,192,.3);z-index:10}
+.hd .logo{font-size:22px;font-weight:700;letter-spacing:1px}
+.hd .logo span{font-size:13px;font-weight:400;opacity:.85;margin-left:8px}
+.hd .spacer{flex:1}
+.hd .gear{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;transition:.2s}
+.hd .gear:hover{opacity:1;transform:rotate(30deg)}
+/* Tabs */
+.tabs{display:flex;background:#fff;border-bottom:1px solid #e0e0e0}
+.tabs button{flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;color:var(--txt2);cursor:pointer;border-bottom:3px solid transparent;transition:.2s}
+.tabs button.active{color:var(--pri);border-bottom-color:var(--pri)}
+.tabs button:hover{background:#f0f4ff}
+/* Panels */
+.panel{display:none;flex:1;overflow-y:auto;padding:16px}
+.panel.active{display:flex;flex-direction:column}
+/* Chat */
+.chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:85%;padding:12px 16px;border-radius:var(--r);line-height:1.6;font-size:15px;animation:fadeUp .3s ease;word-break:break-word}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border-bottom-right-radius:4px}
+.msg.ai{align-self:flex-start;background:#fff;border:1px solid #e8eaf6;box-shadow:var(--sh);border-bottom-left-radius:4px}
+.msg.ai b{color:var(--pri)}
+.msg.ai .tag{display:inline-block;background:#e3f2fd;color:var(--pri);padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600;margin:2px 4px 2px 0}
+.msg .disclaimer{display:block;margin-top:10px;font-size:12px;color:#999;border-top:1px dashed #e0e0e0;padding-top:8px}
+.msg.loading{align-self:flex-start;background:#fff;border:1px solid #e8eaf6;box-shadow:var(--sh);padding:16px 20px}
+.spinner{width:28px;height:28px;border:3px solid #e0e0e0;border-top-color:var(--pri);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* Input bar */
+.input-bar{display:flex;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #e0e0e0}
+.input-bar input{flex:1;border:2px solid #e0e0e0;border-radius:24px;padding:10px 18px;font-size:15px;outline:none;transition:.2s}
+.input-bar input:focus{border-color:var(--pri-l)}
+.input-bar button{background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border:none;border-radius:24px;padding:10px 20px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
+.input-bar button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(21,101,192,.3)}
+.input-bar button:active{transform:translateY(0)}
+/* Model bar */
+.model-bar{display:flex;gap:6px;padding:8px 16px;background:#fff;overflow-x:auto;border-bottom:1px solid #f0f0f0}
+.model-bar button{padding:5px 12px;border-radius:20px;border:1px solid #e0e0e0;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap;transition:.2s}
+.model-bar button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+.model-bar button:hover{border-color:var(--pri-l)}
+/* Quiz */
+.quiz-wrap{max-width:500px;margin:0 auto;width:100%}
+.quiz-card{background:#fff;border-radius:var(--r);padding:24px;box-shadow:var(--sh);margin-bottom:16px}
+.quiz-card h3{font-size:17px;margin-bottom:16px;color:var(--pri-d)}
+.quiz-card .opts{display:flex;flex-direction:column;gap:10px}
+.quiz-card .opt{padding:12px 16px;border:2px solid #e0e0e0;border-radius:12px;cursor:pointer;transition:.2s;font-size:15px}
+.quiz-card .opt:hover{border-color:var(--pri-l);background:#f0f4ff}
+.quiz-card .opt.sel{border-color:var(--pri);background:#e3f2fd;font-weight:600}
+.prog-bar{height:6px;background:#e0e0e0;border-radius:3px;margin-bottom:16px;overflow:hidden}
+.prog-bar .fill{height:100%;background:linear-gradient(90deg,var(--pri),var(--pri-l));border-radius:3px;transition:width .4s ease}
+.result-card{background:linear-gradient(135deg,#e3f2fd,#f3e5f5);border-radius:var(--r);padding:24px;box-shadow:var(--sh)}
+.result-card h2{color:var(--pri-d);margin-bottom:12px}
+.result-card .rsec{margin-bottom:12px}
+.result-card .rsec h4{color:var(--pri);margin-bottom:4px}
+/* Settings */
+.settings-wrap{max-width:500px;margin:0 auto;width:100%}
+.s-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:12px}
+.s-card h3{font-size:15px;color:var(--pri-d);margin-bottom:12px}
+.s-card label{display:block;font-size:13px;color:var(--txt2);margin-bottom:4px}
+.s-card input{width:100%;border:2px solid #e0e0e0;border-radius:10px;padding:8px 12px;font-size:14px;outline:none;margin-bottom:12px;transition:.2s}
+.s-card input:focus{border-color:var(--pri-l)}
+.s-card .hint{font-size:12px;color:#999;margin-top:-8px;margin-bottom:12px}
+.s-card button{background:var(--pri);color:#fff;border:none;border-radius:10px;padding:8px 20px;font-size:14px;cursor:pointer;transition:.2s}
+.s-card button:hover{background:var(--pri-d)}
+/* Welcome */
+.welcome{text-align:center;padding:40px 20px}
+.welcome h2{color:var(--pri-d);font-size:22px;margin-bottom:8px}
+.welcome p{color:var(--txt2);font-size:14px;line-height:1.8}
+.welcome .feats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+.welcome .feat{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:var(--sh);font-size:14px;text-align:center;min-width:120px}
+.welcome .feat .icon{font-size:28px;margin-bottom:6px}
 </style>
 </head>
 <body>
-<div class="container">
-<div class="header"><h1>岐黄智医</h1><p class="subtitle">AI 中西医结合健康助手</p></div>
+<div class="hd">
+  <div class="logo">🏥 岐黄智医<span>AI中西医结合健康助手</span></div>
+  <div class="spacer"></div>
+  <button class="gear" onclick="showPanel('settings')">⚙️</button>
+</div>
+<div class="tabs">
+  <button id="t-chat" class="active" onclick="showPanel('chat')">💬 智能问诊</button>
+  <button id="t-quiz" onclick="showPanel('quiz')">🔄 体质辨识</button>
+  <button id="t-settings" onclick="showPanel('settings')">⚙️ 设置</button>
+</div>
+<div class="model-bar" id="modelBar"></div>
 
-<div class="nav">
-<button id="btn-chat" class="active" onclick="showTab('chat')">🏠 主页</button>
-<button id="btn-quiz" onclick="showTab('quiz')">🔄 体质测试</button>
-<button id="btn-settings" onclick="showTab('settings')">⚙️ 设置</button>
-</div>
-
-<!-- 智能问诊区 -->
-<div id="chat-panel" class="chat-area active">
-<div class="chat-area" id="chat"></div>
-<div class="input-row"><input type="text" id="inp" placeholder="输入症状或健康问题，如：感冒、胃痛、失眠..." autofocus><button class="send" onclick="send()">发送</button></div>
-</div>
-
-<!-- 体质辨识问卷 -->
-<div id="quiz-panel" class="chat-area">
-<div class="quiz-area" id="quiz-area">
-<div class="quiz-progress"><div class="quiz-progress-bar" id="progress" style="width:0%"></div></div>
-<div class="quiz-question" id="question"></div>
-<div class="quiz-options" id="options"></div>
-</div>
-<div class="quiz-result" id="result">
-<div class="result-type" id="result-type"></div>
-<div class="result-section"><h3>典型症状</h3><div id="result-symptoms"></div></div>
-<div class="result-section"><h3>中医解读</h3><div id="result-tcm"></div></div>
-<div class="result-section"><h3>生活建议</h3><div id="result-life"></div></div>
-<div class="result-section"><h3>饮食调养</h3><div id="result-diet"></div></div>
-<button class="send" style="margin-top:16px;width:100%" onclick="resetQuiz()">重新测试</button>
-</div>
+<!-- Chat Panel -->
+<div class="panel active" id="p-chat">
+  <div class="chat-area" id="chatArea"></div>
+  <div class="input-bar">
+    <input id="inp" placeholder="描述您的症状或健康问题…" onkeypress="if(event.key==='Enter')send()">
+    <button onclick="send()">发送</button>
+  </div>
 </div>
 
-<!-- 设置面板 -->
-<div id="settings-panel" class="settings-panel">
-<h2 style="margin-bottom:16px;color:#0f3d2e">⚙️ API 设置</h2>
-<div class="setting-row"><label>Groq API Key（免费）</label><input id="api-key" placeholder="gsk_..."></div>
-<div class="setting-row"><label>或 DeepSeek API Key（便宜）</label><input id="deepseek-key" placeholder="sk-..."></div>
-<button class="save" onclick="saveKeys()" style="margin-top:12px;padding:12px 24px;background:#0f3d2e;color:#fff;border:none;border-radius:8px;cursor:pointer;width:100%">保存 Key</button>
-<div class="setting-note">
-<b>如何获取免费 API Key？</b><br>
-1. 访问 <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a><br>
-2. 用邮箱注册（无需绑卡）<br>
-3. 点击 "Create API Key"<br>
-4. 复制 Key 填入上方框内<br>
-<br>
-<b>为什么需要 API Key？</b><br>
-本地知识库只有 18 种疾病。配置 API Key 后，AI 可以回答任何健康问题！
+<!-- Quiz Panel -->
+<div class="panel" id="p-quiz">
+  <div class="quiz-wrap" id="quizWrap"></div>
 </div>
-</div>
-</div>
+
+<!-- Settings Panel -->
+<div class="panel" id="p-settings">
+  <div class="settings-wrap">
+    <div class="s-card">
+      <h3>🔑 API Key 配置</h3>
+      <label>Groq API Key（免费）</label>
+      <input id="groqKey" type="password" placeholder="gsk_…">
+      <div class="hint">申请：<a href="https://console.groq.com/keys" target="_blank">console.groq.com</a></div>
+      <label>DeepSeek API Key</label>
+      <input id="dsKey" type="password" placeholder="sk-…">
+      <div class="hint">申请：<a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a></div>
+      <button onclick="saveKeys()">💾 保存</button>
+    </div>
+    <div class="s-card">
+      <h3>ℹ️ 使用说明</h3>
+      <p style="font-size:14px;line-height:1.8;color:#5f6368">
+        <b>无需配置即可使用：</b>本机运行 OpenClaw 时自动连接本地AI。<br>
+        <b>配置 API Key：</b>可在不同设备使用 Groq/DeepSeek AI。<br>
+        <b>本地知识库：</b>覆盖18种常见病症，无需联网。<br>
+        <b>体质辨识：</b>18道题测出您的中医体质类型。
+      </p>
+    </div>
+  </div>
 </div>
 
 <script>
-// ========== 知识库 ==========
-var KB={
-"感冒":{t:"普通感冒 / 上呼吸道感染",c:"由病毒引起的上呼吸道感染。常见症状：鼻塞、流涕、咽痛、咳嗽、低热（<38℃）、全身乏力。多数情况下可自愈，病程约5-7天。",d:"【宜】多喝温水（每日2000ml+）、清淡饮食、新鲜蔬果、热粥、鸡汤。<br>【忌】辛辣油腻、生冷食物、烟酒、过度劳累。",m:"感冒灵颗粒、板蓝根颗粒、对乙酰氨基酚（退烧>38.5℃时服用）。注意休息，多饮水。"},
-"发烧":{t:"发热",c:"体温超过37.3℃即为发热。低热（37.3-38℃）可物理降温；中高热（>38.5℃）需用退烧药。持续发热超过3天或伴严重症状需立即就医。",d:"【宜】大量补水、流质/半流质饮食、电解质水、清淡易消化。<br>【忌】油腻辛辣、高蛋白难消化食物。",m:"布洛芬（间隔≥6h）、对乙酰氨���酚��间隔≥4h）。儿童勿用阿司匹林。"},
-"头痛":{t:"头痛",c:"原因多样：紧张性头痛（最常见，与压力/姿势有关）、偏头痛（搏动性痛+恶心畏光）、感冒相关头痛、高血压头痛等。长期反复发作需就医检查。",d:"【宜】规律作息、充足睡眠、适量运动、少看屏幕。<br>【忌】过量咖啡因、熬夜、长时间固定姿势。",m:"轻度：休息+按摩太阳穴；中度：布洛芬/对乙酰氨基酚；偏头痛特异性药需医生处方。"},
-"失眠":{t:"失眠 / 睡眠障碍",c:"表现为入睡困难（>30min）、早醒、睡眠浅、总睡眠<6h。常见原因：焦虑/压力、作息不规律、睡前使用电子设备、咖啡因摄入过晚。",d:"【宜】睡前1h远离手机/电脑、固定就寝时间、睡前温牛奶/核桃、卧室保持黑暗安静（18-22℃）。<br>【忌】下午4点后咖啡/浓茶、睡前剧烈运动、床上玩手机。",m:"短期：褪黑素（保健品）；长期/严重：需就医，可能涉及CBT-I认知行为治疗或药物干预。"},
-"胃痛":{t:"胃痛 / 胃部不适",c:"可能病因：急性/慢性胃炎、胃溃疡、功能性消化不良、胃食管反流。典型症状：上腹隐痛或灼烧感、胀气、反酸、恶心。与饮食不规律、刺激性食物密切相关。",d:"【宜】少食多餐（每日5-6次）、温热软食、小米粥、山药、南瓜。<br>【忌】生冷冰饮、辛辣刺激、酒精、浓茶咖啡、空腹服止痛药（伤胃黏膜）。",m:"抑酸：奥美拉唑（饭前30min）；护胃：铝碳酸镁；促动力：多潘立酮。持续>2周需胃镜检查。"},
-"腹泻":{t:"腹泻 / 拉肚子",c:"排便次数增多（>3次/日）且粪便稀薄/水样。常见原因：急性胃肠炎（诺如病毒/细菌感染）、食物不耐受/过敏、腹部受凉。重点预防脱水！",d:"【宜】口服补液盐（ORS）、白米粥加少许盐、烤面包片、香蕉、苹果泥。<br>【忌】乳制品（乳糖不耐受加重腹泻）、高纤维蔬菜、油腻辛辣、冷饮。",m:"止泻：蒙脱石散（空腹服）；补液：口服补液盐III；益生菌：双歧杆菌三联活菌。便血/高热>39℃需急诊。"},
-"咳嗽":{t:"咳嗽",c:"呼吸道常见症状。干咳（无痰）：早期感冒、过敏、气道刺激。湿咳（有痰）：支气管炎、肺炎、鼻后滴漏。持续>2周需就医排除其他疾病。",d:"【宜】蜂蜜温水（研究证实有效）、蒸汽吸入、多喝温水、梨汤。<br>【忌】甜食生痰、冷空气直接刺激、吸烟环境。",m:"干咳：右美沙芬；有痰：氨溴索/乙酰半胱氨酸化痰。抗生素仅细菌感染时有效。"},
-"便秘":{t:"便秘",c:"排便频率减少（<3次/周）、粪便干硬、排便困难。常见原因：膳食纤维不足、饮水少、缺乏运动、久坐、忽视便意。",d:"【宜】大量饮水（每日2L+）、高纤维食物（燕麦、红薯、芹菜、火龙果）、规律如厕习惯（晨起后）。<br>【忌】久坐不动、过度依赖泻药、精细加工食品。",m:"轻度：乳果糖/聚乙二醇（安全可长期用）；临时：开塞露。顽固性便秘需结肠镜检查。"},
-"脚疼":{t:"足部疼痛",c:"可能原因：（1）足底筋膜炎—晨起第一步刺痛；（2）跟腱炎—跟腱处疼痛肿胀；（3）痛风—大脚趾红肿剧痛（多夜间发作）；（4）鞋子不合脚。",d:"【宜】休息+冰敷（急性期）、换穿舒适鞋、足底筋膜拉伸、控制体重。<br>【忌】长时间站立/行走、穿高跟鞋/硬底鞋、强行运动忍痛。",m:"止痛：布洛芬/外用扶他林；足底筋膜炎：足弓支撑垫+拉伸；痛风：秋水仙碱（需确诊后用药）。"},
-"腰痛":{t:"腰部疼痛",c:"常见原因：腰肌劳损（久坐/姿势不良）、��椎��盘突出（坐骨神经痛放射至腿）、腰扭伤、肾结石（绞痛+血尿）。持续>2周需影像学检查。",d:"【宜】卧床休息（硬板床）、温和拉伸、核心肌群锻炼、避免弯腰搬重物。<br>【忌】久坐不动、床垫过软、突然扭转腰部、负重弯腰。",m:"肌肉劳损：热敷+布洛芬+理疗；椎间盘突出：需骨科评估，严重者手术。"},
-"过敏":{t:"过敏性反应",c:"免疫系统对无害物质（过敏原）的过度反应。常见类型：过敏性鼻炎（打喷嚏+流涕+鼻痒）、皮肤过敏（荨麻疹/湿疹）、食物过敏、哮喘。",d:"【宜】记录过敏日记找出诱因、保持室内清洁除螨、戴口罩防花粉/粉尘。<br>【忌】已知过敏原接触。",m:"抗组胺药：氯雷他定/西替利嗪；鼻炎：鼻喷激素（糠酸莫米松）；严重过敏：立即注射肾上腺素+急诊。"},
-"痛经":{t:"痛经 / 月经不适",c:"原发性痛经：子宫前列腺素分泌过多导致子宫收缩，下腹坠痛+腰酸，常在月经第1-2天最重。继发性痛经：子宫内膜异位症，需妇科检查。",d:"【宜】热敷下腹部、姜茶/红糖水、温和瑜伽、规律作息。<br>【忌】生冷寒凉食物、剧烈运动、压力过大。",m:"NSAIDs：布洛芬/萘普生（月经开始前1-2天提前服用效果最佳）；严重者：短效避孕药（需医嘱）。"},
-"高血压":{t:"高血压",c:"血压持续≥140/90mmHg。多数无症状（\"沉默杀手\"），长期不控可致心梗、脑卒中、肾衰竭。生活方式干预是基础。",d:"【宜】DASH饮食（低钠高钾）、每日<5g盐、有氧运动150min/周、限酒、减重。<br>【忌】高盐腌制食品、肥胖、吸烟、精神高度紧张、擅自停药。",m:"一线药：氨氯地平/硝苯地平（CCB）、厄贝沙坦/缬沙坦（ARB）、氢氯噻嗪（利尿剂）。需终身服药！"},
-"糖尿病":{t:"糖尿病",c:"血糖代谢紊乱。典型\"三多一少\"：多饮、多食、多尿、体重下降。2型占90%+，与遗传+生活方式相关。并发症累及眼/肾/神经/心血管。",d:"【宜】定时定量进餐、低GI主食（糙米/燕麦代替精米面）、高纤维蔬菜、血糖监测。<br>【忌】含糖饮料/甜点、暴饮暴食、完全不吃主食（酮症风险）。",m:"二甲双胍（一线首选）；胰岛素（1型必须/2型后期）；GLP-1受体激动剂。定期查糖化血红蛋白。"},
-"焦虑":{t:"焦虑 / 焦虑症",c:"过度担忧、紧张不安、心悸出汗、失眠、注意力难以集中。生理性焦虑（正常反应）vs 病理性焦虑（持续>6月、影响生活）。",d:"【宜】规律运动、正念冥想、深呼吸练习、保证睡眠、限制咖啡因。<br>【忌】酒精自我 medicate、回避引起焦虑的场景、信息过载刷手机。",m:"轻度：CBT认知行为治疗（首选）；中度以上：SSRIs（舍曲林/氟西汀），起效需2-4周。"},
-"牙痛":{t:"牙痛",c:"常见原因：龋齿（蛀牙深入牙髓→剧痛）、牙周炎（牙龈出血+松动）、智齿冠周炎、牙本质敏感。",d:"【宜】温水漱口、盐水漱口（杀菌）、避免患侧咀嚼、冷敷面部。<br>【忌】甜食/过冷过热食物、用患牙咬硬物、自行服抗生素替代看牙。",m:"临时止痛：布洛芬+甲硝唑；根本解决：看牙医补牙/根管/拔智齿。牙痛不会自愈！"},
-"中暑":{t:"中暑 / 热射病",c:"高温环境下体温调节失衡。先兆：头晕、口渴、多汗、乏力。重症（热射病）：体温>40℃、无汗、意识模糊——危及生命！",d:"【宜】立即移至阴凉通风处、解开衣扣、补充淡盐水、冷敷颈部腋下。<br>【忌】继续暴露在高温环境、大量饮用纯水（水中毒）、酒精饮料。",m:"轻症：休息+补液即可。重症：立即拨打急救+物理降温，死亡率极高！"}
+// ========== Knowledge Base ==========
+var KB=[
+{kw:["感冒","风寒","风热","流鼻涕","打喷嚏","鼻塞","伤风"],t:"感冒",c:"<span class='tag'>西医</span>上呼吸道病毒感染，分普通感冒和流感。<br><span class='tag'>中医</span>外感六淫，分风寒（恶寒重、发热轻、无汗）和风热（发热重、恶寒轻、有汗）。",d:"风寒：生姜红糖水、葱白粥<br>风热：银翘片、菊花茶、薄荷水",m:"风寒：感冒清热颗粒、正柴胡饮<br>风热：银翘解毒片、板蓝根"},
+{kw:["发烧","发热","体温高","高烧","低烧"],t:"发烧",c:"<span class='tag'>西医</span>体温调节中枢异常，常见于感染、炎症。<br><span class='tag'>中医</span>正邪交争的表现，分外感发热和内伤发热。",d:"多饮温水、稀粥、绿豆汤<br>忌辛辣油腻",m:"布洛芬（>38.5℃）、对乙酰氨基酚<br>中医：小柴胡汤、白虎汤"},
+{kw:["头痛","头疼","偏头痛","头胀","头晕"],t:"头痛",c:"<span class='tag'>西医</span>紧张性头痛最常见，其次偏头痛、丛集性头痛。<br><span class='tag'>中医</span>分外感头痛（风寒/风热/风湿）和内伤头痛（肝阳/血虚/瘀血）。",d:"天麻炖鸡、菊花茶<br>避免巧克力、红酒、奶酪",m:"布洛芬、对乙酰氨基酚<br>中医：川芎茶调散、天麻钩藤饮"},
+{kw:["失眠","睡不着","入睡困难","多梦","早醒"],t:"失眠",c:"<span class='tag'>西医</span>入睡困难、睡眠质量差，与压力、焦虑、生活习惯有关。<br><span class='tag'>中医</span>心神失养或邪扰心神，常见心脾两虚、肝火扰心、心肾不交。",d:"酸枣仁粥、百合莲子汤、温牛奶<br>睡前忌咖啡茶酒",m:"褪黑素（短期）、艾司唑仑（处方）<br>中医：酸枣仁汤、天王补心丹、归脾丸"},
+{kw:["胃痛","胃疼","胃胀","反酸","烧心","胃炎"],t:"胃痛",c:"<span class='tag'>西医</span>急慢性胃炎、胃溃疡、功能性消化不良。<br><span class='tag'>中医</span>胃气郁滞或胃络瘀阻，分寒凝、食积、肝气犯胃、脾胃虚寒。",d:"小米粥、山药粥、少量多餐<br>忌生冷辛辣烟酒浓茶",m:"奥美拉唑、铝碳酸镁<br>中医：香砂六君子汤、黄芪建中汤"},
+{kw:["腹泻","拉肚子","拉稀","大便稀","水样便","急性胃肠炎"],t:"腹泻",c:"<span class='tag'>西医</span>急性多由感染（病毒/细菌）引起，慢性需排查肠易激、炎症性肠病。<br><span class='tag'>中医</span>分寒湿、湿热、食积、脾虚、肾阳虚。",d:"米粥、面汤、苹果煮水<br>忌油腻生冷乳制品<br>注意补水补盐",m:"蒙脱石散、口服补液盐<br>中医：藿香正气水（寒湿）、葛根芩连汤（湿热）"},
+{kw:["便秘","大便干","排便困难","几天没拉"],t:"便秘",c:"<span class='tag'>西医</span>排便频率减少（<3次/周）或排便困难，分功能性和器质性。<br><span class='tag'>中医</span>分热秘、气秘、虚秘、冷秘。",d:"多食膳食纤维（燕麦、红薯、绿叶菜）<br>晨起空腹温开水<br>蜂蜜水、火龙果",m:"乳果糖、聚乙二醇<br>中医：麻子仁丸（热秘）、黄芪汤（气虚）"},
+{kw:["咳嗽","咳","干咳","痰多","久咳"],t:"咳嗽",c:"<span class='tag'>西医</span>呼吸道防御反射，分急性（<3周）、亚急性、慢性（>8周）。<br><span class='tag'>中医</span>分外感（风寒/风热/燥咳）和内伤（痰湿/肝火/阴虚）。",d:"风寒：生姜红糖水<br>风热：梨汁、枇杷<br>燥咳：蜂蜜梨水、银耳汤",m:"右美沙芬（干咳）、氨溴索（化痰）<br>中医：止嗽散、二陈汤"},
+{kw:["过敏","荨麻疹","皮疹","瘙痒","过敏体质"],t:"过敏",c:"<span class='tag'>西医</span>免疫系统过度反应，常见过敏性鼻炎、荨麻疹、湿疹。<br><span class='tag'>中医</span>禀赋不耐，风邪客于肌表，或血虚生风。",d:"避免过敏原<br>清淡饮食，忌海鲜发物<br>薏米赤小豆汤",m:"氯雷他定、西替利嗪<br>中医：消风散、防风通圣丸"},
+{kw:["颈椎","脖子痛","颈肩","落枕","颈痛"],t:"颈椎不适",c:"<span class='tag'>西医</span>颈型颈椎病最常见，长期低头、姿势不良所致。<br><span class='tag'>中医</span>经络不通、气血瘀滞，属痹证范畴。",d:"补充钙质和维生素D<br>适度颈部运动",m:"布洛芬外用、贴膏<br>中医：桂枝加葛根汤、针灸推拿"},
+{kw:["腰痛","腰酸","腰椎","肾虚","腰肌劳损"],t:"腰痛",c:"<span class='tag'>西医</span>腰肌劳损、腰椎间盘突出最常见。<br><span class='tag'>中医</span>腰为肾之府，分肾虚、瘀血、寒湿、湿热腰痛。",d:"黑豆核桃粥、杜仲炖猪腰<br>注意腰部保暖",m:"布洛芬、外用贴膏<br>中医：独活寄生汤、右归丸"},
+{kw:["月经","痛经","经痛","姨妈痛","经期"],t:"痛经",c:"<span class='tag'>西医</span>原发性（无器质性病变）和继发性（子宫内膜异位等）。<br><span class='tag'>中医</span>不通则痛，分寒凝血瘀、气滞血瘀、气血两虚。",d:"红糖姜茶、桂圆红枣汤<br>经期忌冷饮寒凉",m:"布洛芬、萘普生<br>中医：少腹逐瘀汤、益母草膏"},
+{kw:["失眠多梦","心悸","心慌","焦虑","紧张","烦躁"],t:"心悸焦虑",c:"<span class='tag'>西医</span>心律失常、焦虑障碍、自主神经功能紊乱。<br><span class='tag'>中医</span>心神不宁，分心虚胆怯、心血不足、阴虚火旺。",d:"莲子百合粥、玫瑰花茶<br>规律作息，适度运动",m:"中医：甘麦大枣汤、安神定志丸<br>西医：必要时β受体阻滞剂"},
+{kw:["高血压","血压高","头晕目眩"],t:"高血压",c:"<span class='tag'>西医</span>血压持续≥140/90mmHg，需长期管理。<br><span class='tag'>中医</span>属眩晕、头痛范畴，分肝阳上亢、痰湿内阻、阴虚阳亢。",d:"低盐低脂饮食<br>芹菜汁、山楂茶<br>控制体重",m:"遵医嘱用降压药<br>中医：天麻钩藤饮、半夏白术天麻汤"},
+{kw:["糖尿病","血糖高","多饮多尿","消渴"],t:"糖尿病",c:"<span class='tag'>西医</span>胰岛素分泌或作用缺陷，分1型和2型。<br><span class='tag'>中医</span>消渴症，分上消（肺热）、中消（胃热）、下消（肾虚）。",d:"控制总热量<br>苦瓜、山药、燕麦<br>少食多餐",m:"遵医嘱用降糖药/胰岛素<br>中医：消渴方、六味地黄丸"},
+{kw:["痛风","尿酸高","关节痛","红肿热痛"],t:"痛风",c:"<span class='tag'>西医</span>尿酸结晶沉积关节，急性发作红肿热痛。<br><span class='tag'>中医</span>湿热痹证，痰瘀互结。",d:"低嘌呤饮食<br>忌海鲜啤酒内脏<br>多饮水（>2L/天）",m:"秋水仙碱（急性）、非布司他<br>中医：四妙丸、当归拈痛汤"},
+{kw:["湿疹","皮肤痒","皮炎","渗出"],t:"湿疹",c:"<span class='tag'>西医</span>皮肤炎症反应，分急性亚急性慢性。<br><span class='tag'>中医</span>风湿热邪浸淫肌肤，或血虚风燥。",d:"清淡饮食，忌辛辣发物<br>薏米绿豆汤",m:"外用糖皮质激素、保湿<br>中医：龙胆泻肝汤（湿热）、当归饮子（血虚）"},
+{kw:["痤疮","青春痘","长痘","粉刺","暗疮"],t:"痤疮",c:"<span class='tag'>西医</span>毛囊皮脂腺慢性炎症，与雄激素、皮脂、痤疮丙酸杆菌相关。<br><span class='tag'>中医</span>肺胃蕴热或湿热蕴结。",d:"清淡饮食，忌甜食奶制品<br>多食蔬果<br>规律作息",m:"外用阿达帕林、过氧苯甲酰<br>中医：枇杷清肺饮、黄连解毒汤"}
+];
+
+// ========== Models ==========
+var MODELS={
+groq_llama:{name:'LLaMA 3.1',icon:'🦙',base:'https://api.groq.com/openai/v1/chat/completions',keyField:'groqKey',model:'llama-3.1-8b-instant',think:false},
+groq_mixtral:{name:'Mixtral',icon:'🔮',base:'https://api.groq.com/openai/v1/chat/completions',keyField:'groqKey',model:'mixtral-8x7b-32768',think:false},
+ds_r1:{name:'DeepSeek-R1',icon:'🧠',base:'https://api.deepseek.com/chat/completions',keyField:'dsKey',model:'deepseek-reasoner',think:true},
+ds_v3:{name:'DeepSeek-V3',icon:'⚡',base:'https://api.deepseek.com/chat/completions',keyField:'dsKey',model:'deepseek-chat',think:false},
+local:{name:'本地AI',icon:'🏠',base:'http://127.0.0.1:28789/v1/chat/completions',keyField:null,model:'gpt-3.5-turbo',think:false}
 };
+var curModel=localStorage.getItem('curModel')||'local';
 
-// ========== 搜索函数 ==========
-function search(q){
-q=q.toLowerCase().replace(/[^\u4e00-\u9fa5a-z0-9]/g,'');
-if(q.length<2)return null;
-var best=null,bestScore=0;
-for(var k in KB){
-var item=KB[k],s=0;
-var keys=(k+' '+item.t+' '+item.c).toLowerCase();
-if(keys.indexOf(q)>=0)s+=10;
-for(var i=0;i<=Math.min(q.length-2,3);i++){
-var sub=q.substring(i,i+2);
-if(keys.indexOf(sub)>=0)s+=3;}
-if(s>bestScore){bestScore=s;best=item;}
+function renderModelBar(){
+  var bar=document.getElementById('modelBar');
+  bar.innerHTML='';
+  for(var k in MODELS){
+    var m=MODELS[k];
+    var b=document.createElement('button');
+    b.textContent=m.icon+' '+m.name;
+    b.className=k===curModel?'active':'';
+    b.onclick=(function(kk){return function(){curModel=kk;localStorage.setItem('curModel',kk);renderModelBar();}})(k);
+    bar.appendChild(b);
+  }
 }
-return bestScore>=3?best:null;
+renderModelBar();
+
+// ========== KB Search ==========
+function searchKB(q){
+  q=q.toLowerCase();
+  var best=null,bestScore=0;
+  for(var i=0;i<KB.length;i++){
+    var score=0;
+    for(var j=0;j<KB[i].kw.length;j++){
+      if(q.includes(KB[i].kw[j].toLowerCase()))score++;
+    }
+    if(score>bestScore){bestScore=score;best=KB[i];}
+  }
+  return bestScore>0?best:null;
 }
 
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function addMsg(cls,html){var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;document.getElementById('chat').appendChild(d);document.getElementById('chat').scrollTop=99999;}
+// ========== Chat ==========
+var chatArea=document.getElementById('chatArea');
+
+function addMsg(cls,html){
+  var d=document.createElement('div');
+  d.className='msg '+cls;
+  d.innerHTML=html;
+  chatArea.appendChild(d);
+  chatArea.scrollTop=99999;
+  return d;
+}
+
+function showWelcome(){
+  chatArea.innerHTML='';
+  addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">🏥</div><h2 style="color:#0d47a1;margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:#5f6368;line-height:1.8">AI中西医结合健康助手<br>输入症状即可获得中西医建议</p><div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center"><span class="tag">💬 智能问诊</span><span class="tag">📚 18种病症知识库</span><span class="tag">🔄 体质辨识</span><span class="tag">🤖 多模型AI</span></div></div>');
+}
+showWelcome();
 
 async function send(){
-var inp=document.getElementById('inp'),q=inp.value.trim();
-if(!q)return;
-addMsg('user-msg',esc(q));
-inp.value='';
-var ld=document.createElement('div');ld.className='msg ai-msg loading';ld.textContent='正在查询...';document.getElementById('chat').appendChild(ld);
-document.getElementById('chat').scrollTop=99999;
-var r=search(q);
-if(r){
-document.getElementById('chat').removeChild(ld);
-addMsg('ai-msg','<div class="title">'+r.t+'</div><div class="section">'+r.c+'</div><div class="section"><strong>饮食建议：</strong>'+r.d+'</div><div class="section"><strong>常用药物：</strong>'+r.m+'</div><span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>');
-return;
-}
-// 本地KB无匹配，移除loading，尝试AI
-document.getElementById('chat').removeChild(ld);
-try{
-await callOpenClawAPI(q);
-}catch(e1){
-var groqKey=localStorage.getItem('groq_api_key');
-if(groqKey){
-try{
-await callGroqAPI(q,groqKey);
-}catch(e2){
-addMsg('ai-msg','AI 调用失败：'+e2.message+'<br><br>请检查 API Key 或稍后重试。');
-}
-}else{
-addMsg('ai-msg','抱歉，知识库暂未收录此问题。<br><br><b>想要 AI 智能回答？</b><br>1. <b>同设备</b>（推荐）：确保 OpenClaw 正在运行<br>2. <b>不同设备</b>：在设置中配置 <a href="https://console.groq.com/keys" target="_blank">免费 Groq API Key</a>');
-}
-}
+  var inp=document.getElementById('inp'),q=inp.value.trim();
+  if(!q)return;
+  addMsg('user',esc(q));
+  inp.value='';
+
+  // 1. Try local KB
+  var kb=searchKB(q);
+  if(kb){
+    addMsg('ai','<b>📋 '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br><b>🍎 饮食建议：</b><br>'+kb.d+'<br><br><b>💊 常用药物：</b><br>'+kb.m+'<span class="disclaimer">⚠️ 仅供参考，如有不适请及时就医</span>');
+    return;
+  }
+
+  // 2. Try AI
+  var ld=document.createElement('div');
+  ld.className='msg loading';
+  ld.innerHTML='<div class="spinner"></div>';
+  chatArea.appendChild(ld);
+  chatArea.scrollTop=99999;
+
+  try{
+    await callAI(q);
+    chatArea.removeChild(ld);
+  }catch(e){
+    chatArea.removeChild(ld);
+    addMsg('ai','❌ AI请求失败：'+esc(e.message)+'<br><br>💡 建议：<br>1. 本机运行 OpenClaw 可免费使用本地AI<br>2. 在⚙️设置中配置免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a>');
+  }
 }
 
-async function callOpenClawAPI(q){
-var OPENCLAW_URL='http://127.0.0.1:28789/v1/chat/completions';
-var systemPrompt='你是岐黄智医，一个AI中西医结合健康助手。回答要：1)简洁易懂 2)结合中西医视角 3)给出饮食和生活建议 4)提醒严重情况需就医。';
-var body=JSON.stringify({model:'gpt-3.5-turbo',messages:[{role:'system',content:systemPrompt},{role:'user',content:q}],stream:true});
-var resp=await fetch(OPENCLAW_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:body});
-if(!resp.ok)throw new Error('OpenClaw API error: '+resp.status);
-var msgDiv=document.createElement('div');msgDiv.className='msg ai-msg';document.getElementById('chat').appendChild(msgDiv);
-var reader=resp.body.getReader();
-var decoder=new TextDecoder();
-var fullText='';
-while(true){
-var result=await reader.read();
-if(result.done){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
-var chunk=decoder.decode(result.value,{stream:true});
-var lines=chunk.split('\n');
-for(var i=0;i<lines.length;i++){
-var line=lines[i];
-if(line.startsWith('data: ')){
-var data=line.slice(6);
-if(data==='[DONE]'){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
-try{
-var json=JSON.parse(data);
-if(json.choices&&json.choices[0].delta&&json.choices[0].delta.content){
-fullText+=json.choices[0].delta.content;
-msgDiv.innerHTML=fullText;document.getElementById('chat').scrollTop=99999;
-}
-}catch(e){}
-}
-}
-}
-}async function callGroqAPI(q,key){
-var GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
-var systemPrompt='你是岐黄智医，一个AI中西医结合健康助手。回答要：1)简洁易懂 2)结合中西医视角 3)给出饮食和生活建议 4)提醒严重情况需就医。';
-var body=JSON.stringify({model:'llama-3.1-8b-instant',messages:[{role:'system',content:systemPrompt},{role:'user',content:q}],stream:true});
-var resp=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:body});
-if(!resp.ok){
-if(resp.status===401)throw new Error('Groq Key无效，请检查设置中的API Key');
-if(resp.status===429)throw new Error('Groq 请求过于频繁，请稍后再试');
-throw new Error('Groq API错误: '+resp.status);
-}
-var msgDiv=document.createElement('div');msgDiv.className='msg ai-msg';document.getElementById('chat').appendChild(msgDiv);
-var reader=resp.body.getReader();
-var decoder=new TextDecoder();
-var fullText='';
-while(true){
-var result=await reader.read();
-if(result.done){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
-var chunk=decoder.decode(result.value,{stream:true});
-var lines=chunk.split('\n');
-for(var i=0;i<lines.length;i++){
-var line=lines[i];
-if(line.startsWith('data: ')){
-var data=line.slice(6);
-if(data==='[DONE]'){msgDiv.innerHTML=fullText+'<span class="disclaimer">⚠️ 仅供参考，如有不适请就医</span>';return;}
-try{
-var json=JSON.parse(data);
-if(json.choices&&json.choices[0].delta&&json.choices[0].delta.content){
-fullText+=json.choices[0].delta.content;
-msgDiv.innerHTML=fullText;document.getElementById('chat').scrollTop=99999;
-}
-}catch(e){}
-}
-}
-}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+async function callAI(q){
+  var cfg=MODELS[curModel];
+  var key=cfg.keyField?document.getElementById(cfg.keyField).value||localStorage.getItem(cfg.keyField):null;
+  var sys='你是岐黄智医，一个专业的AI中西医结合健康助手。回答要求：1)简洁易懂 2)结合中西医双重视角 3)给出饮食和生活建议 4)提醒严重情况需就医 5)不要过度诊断';
+
+  var headers={'Content-Type':'application/json'};
+  if(key)headers['Authorization']='Bearer '+key;
+
+  var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sys},{role:'user',content:q}],stream:true});
+
+  var resp=await fetch(cfg.base,{method:'POST',headers:headers,body:body});
+  if(!resp.ok){
+    var errTxt='';
+    try{errTxt=await resp.text();}catch(e){}
+    if(resp.status===401)throw new Error('API Key无效，请检查设置');
+    if(resp.status===402)throw new Error('API余额不足，请充值或更换Key');
+    if(resp.status===429)throw new Error('请求过于频繁，请稍后重试');
+    throw new Error('HTTP '+resp.status+' '+(errTxt||''));
+  }
+
+  var msgDiv=addMsg('ai','');
+  var reader=resp.body.getReader();
+  var decoder=new TextDecoder();
+  var full='';
+  var thinking='';
+
+  while(true){
+    var result=await reader.read();
+    if(result.done)break;
+    var chunk=decoder.decode(result.value,{stream:true});
+    var lines=chunk.split('\n');
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i];
+      if(!line.startsWith('data: '))continue;
+      var data=line.slice(6).trim();
+      if(data==='[DONE]')continue;
+      try{
+        var json=JSON.parse(data);
+        var delta=json.choices&&json.choices[0]&&json.choices[0].delta;
+        if(!delta)continue;
+        // DeepSeek-R1 thinking
+        if(cfg.think&&delta.reasoning_content){
+          thinking+=delta.reasoning_content;
+        }
+        if(delta.content){
+          full+=delta.content;
+          var display='';
+          if(thinking)display='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">🧠 思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(thinking)+'</div></details>';
+          display+=full;
+          msgDiv.innerHTML=display;
+          chatArea.scrollTop=99999;
+        }
+      }catch(e){}
+    }
+  }
+  if(!full&&thinking){
+    msgDiv.innerHTML='<details><summary style="cursor:pointer;color:#999;font-size:13px">🧠 思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666">'+esc(thinking)+'</div></details><br>模型完成了思考但未输出结论，请再次提问。';
+  }
+  msgDiv.innerHTML+='<span class="disclaimer">⚠️ AI生成内容仅供参考，如有不适请及时就医</span>';
 }
 
-document.getElementById('inp').onkeypress=function(e){if(e.key==='Enter')send();};
-
-addMsg('ai-msg','您好！我是<strong>岐黄智医</strong>。<br><br>我可以帮您：<br>🏥 <b>查询健康问题</b>——输入症状获取中西医建议<br>🔄 <b>体质辨识</b>——18道题测体质<br>🤖 <b>AI 问诊</b>——配置 API Key 后开启<br><br>请选择上方功能 👆');
-
-function showTab(tab){
-document.getElementById('btn-chat').className=tab==='chat'?'active':'';
-document.getElementById('btn-quiz').className=tab==='quiz'?'active':'';
-document.getElementById('btn-settings').className=tab==='settings'?'active':'';
-document.getElementById('chat-panel').className=tab==='chat'?'chat-area active':'chat-area';
-document.getElementById('quiz-panel').className=tab==='quiz'?'chat-area active':'chat-area';
-document.getElementById('settings-panel').className=tab==='settings'?'settings-panel active':'settings-panel';
-if(tab==='quiz'&&!quizStarted)startQuiz();
-if(tab==='settings')loadKeys();
+// ========== Panel Switch ==========
+function showPanel(p){
+  ['chat','quiz','settings'].forEach(function(x){
+    document.getElementById('p-'+x).className='panel'+(x===p?' active':'');
+    document.getElementById('t-'+x).className=x===p?'active':'';
+  });
+  if(p==='quiz'&&!quizStarted)startQuiz();
+  if(p==='settings')loadKeys();
 }
 
-// ========== 体质辨识问卷 ==========
-var quizStarted=false;
-var quizAnswers=[];
-var constitutions=["气虚","阳虚","阴虚","痰湿","湿热","血瘀","气郁","特禀","平和"];
-var quizData=[
-{q:"你容易疲乏、气短吗？",y:["是","有时"],n:["否"]},
-{q:"你手脚冰凉、怕冷吗？",y:["是","有时"],n:["否"]},
-{q:"你口干咽燥、手心热吗？",y:["是","有时"],n:["否"]},
-{q:"你体型肥胖、痰多吗？",y:["是","有时"],n:["否"]},
-{q:"你容易长痘、口苦吗？",y:["是","有时"],n:["否"]},
-{q:"你面色晦暗、容易瘀青吗？",y:["是","有时"],n:["否"]},
-{q:"你情绪低落、胁胀吗？",y:["是","有时"],n:["否"]},
-{q:"你容易过敏、皮疹吗？",y:["是","有时"],n:["否"]},
-{q:"你体力充沛、精力旺吗？",y:["是"],n:["否","有时"]},
-{q:"你容易感冒吗？",y:["是","有时"],n:["否"]},
-{q:"你夜间盗汗吗？",y:["是","有时"],n:["否"]},
-{q:"你大便黏滞、口黏腻吗？",y:["是","有时"],n:["否"]},
-{q:"你小便短赤、口渴喜冷饮吗？",y:["是","有时"],n:["否"]},
-{q:"你月经有血块、痛经吗？",y:["是","有时"],n:["否"]},
-{q:"你多疑善虑、抑郁吗？",y:["是","有时"],n:["否"]},
-{q:"你喷嚏、流涕、鼻痒吗？",y:["是","有时"],n:["否"]},
-{q:"你睡眠安稳、饮食规律吗？",y:["是"],n:["否","有时"]},
-{q:"你舌淡红苔薄白吗？",y:["是"],n:["否","不知道"]}
+// ========== Quiz ==========
+var quizStarted=false,quizAns=[];
+var CST=["气虚","阳虚","阴虚","痰湿","湿热","血瘀","气郁","特禀","平和"];
+var QS=[
+"你容易疲乏、气短吗？",
+"你手脚冰凉、怕冷吗？",
+"你口干咽燥、手心热吗？",
+"你体型偏胖、痰多吗？",
+"你容易长痘、口苦吗？",
+"你面色晦暗、容易瘀青吗？",
+"你情绪低落、胁肋胀满吗？",
+"你容易过敏、起皮疹吗？",
+"你体力充沛、精力旺盛吗？",
+"你容易感冒吗？",
+"你夜间盗汗吗？",
+"你大便黏滞、口黏腻吗？",
+"你小便短赤、口渴喜冷饮吗？",
+"你月经有血块、痛经吗？",
+"你多疑善虑、抑郁吗？",
+"你喷嚏、流涕、鼻痒吗？",
+"你睡眠安稳、饮食规律吗？",
+"你舌淡红苔薄白吗？"
 ];
-var constitutionInfo={
-"气虚":{s:"疲乏无力、气短懒言、易出汗、感冒",t:"元气不足，脏腑功能减退",l:"适度运动（太极拳/散步），保证睡眠，避免劳累",d:"黄芪粥、山药、红枣、鸡肉"},
-"阳虚":{s:"畏寒肢冷、面色苍白、小便清长",t:"阳气不足，温煦功能减退",l:"保暖避寒，适度晒太阳（上午9点），坚持快走",d:"羊肉、核桃、生姜、���桂"},
-"阴虚":{s:"口干咽燥、手足心热、盗汗",t:"阴液不足，虚热内生",l:"避免熬夜（23点前睡），放松心情，静心养身",d:"银耳、百合、梨、蜂蜜"},
-"痰湿":{s:"体型肥胖、痰多、口黏腻",t:"痰湿内蕴，代谢障碍",l:"增加运动（每周150min），控制体重，规律作息",d:"薏米、赤小豆、冬瓜、白萝卜"},
-"湿热":{s:"容易长痘、口苦、小便黄",t:"湿热内蕴，火热偏盛",l:"清淡饮食，避免辛辣，保持清洁干燥",d:"绿豆、薏仁、苦瓜、莲子"},
-"血瘀":{s:"面色晦暗、容易瘀青、刺痛",t:"血行不畅，瘀血内阻",l:"适度运动促进循环，保持情绪稳定，避免久坐",d:"黑木耳、山楂、桃仁、玫瑰花"},
-"气郁":{s:"情绪低落、胁胀、多疑",t:"气机郁滞，情绪失调",l:"户外活动（爬山/散步），社交倾诉，培养爱好",d:"玫瑰花茶、橙子、柚子、山楂"},
-"特禀":{s:"过敏体质、皮疹、喷嚏",t:"先天或后天免疫异常",l:"避免过敏原，清洁环境，适度锻炼",d:"根据个人体质调整，避免发物"},
-"平和":{s:"精力充沛、睡眠安稳、饮食规律",t:"阴阳平衡，气血调和",l:"保持现状，规律生活，适量运动",d:"均衡饮食，荤素搭配，新鲜蔬果"}
+var CI={
+"气虚":{s:"疲乏无力、气短懒言、易出汗",t:"元气不足，脏腑功能减退",l:"适度运动（太极拳/散步），保证睡眠",d:"黄芪粥、山药、红枣、鸡肉"},
+"阳虚":{s:"畏寒肢冷、面色苍白、小便清长",t:"阳气不足，温煦功能减退",l:"保暖避寒，适度晒太阳",d:"羊肉、核桃、生姜、肉桂"},
+"阴虚":{s:"口干咽燥、手足心热、盗汗",t:"阴液不足，虚热内生",l:"避免熬夜，放松心情",d:"银耳、百合、梨、蜂蜜"},
+"痰湿":{s:"体型肥胖、痰多、口黏腻",t:"痰湿内蕴，代谢障碍",l:"增加运动，控制体重",d:"薏米、赤小豆、冬瓜、白萝卜"},
+"湿热":{s:"容易长痘、口苦、小便黄",t:"湿热内蕴，火热偏盛",l:"清淡饮食，避免辛辣",d:"绿豆、薏仁、苦瓜、莲子"},
+"血瘀":{s:"面色晦暗、容易瘀青、刺痛",t:"血行不畅，瘀血内阻",l:"适度运动促进循环",d:"黑木耳、山楂、桃仁、玫瑰花"},
+"气郁":{s:"情绪低落、胁胀、多疑",t:"气机郁滞，情绪失调",l:"户外活动，社交倾诉",d:"玫瑰花茶、橙子、柚子、山楂"},
+"特禀":{s:"过敏体质、皮疹、喷嚏",t:"先天或后天免疫异常",l:"避免过敏原，适度锻炼",d:"根据体质调整，避免发物"},
+"平和":{s:"精力充沛、睡眠安稳",t:"阴阳平衡，气血调和",l:"保持现状，规律生活",d:"均衡饮食，荤素搭配"}
 };
 
 function startQuiz(){
-if(quizStarted)return;
-quizStarted=true;quizAnswers=[];
-showQuestion();
+  quizStarted=true;quizAns=[];
+  renderQ();
 }
 
-function showQuestion(){
-var i=quizAnswers.length;
-if(i>=quizData.length){
-showResult();return;
-}
-var q=quizData[i];
-document.getElementById('progress').style.width=((i/quizData.length)*100)+'%';
-document.getElementById('question').textContent=(i+1)+'. '+q.q;
-var opts=document.getElementById('options');opts.innerHTML='';
-var allOpts=[];
-if(q.y)allOpts=q.y;
-if(q.n)allOpts=allOpts.concat(q.n);
-allOpts.forEach(function(opt){
-var btn=document.createElement('div');
-btn.className='quiz-option';
-btn.textContent=opt;
-btn.onclick=function(){selectOption(opt);};
-opts.appendChild(btn);
-});
+function renderQ(){
+  var wrap=document.getElementById('quizWrap');
+  var qi=quizAns.length;
+  if(qi>=QS.length){showResult();return;}
+  var pct=Math.round(qi/QS.length*100);
+  wrap.innerHTML='<div class="prog-bar"><div class="fill" style="width:'+pct+'%"></div></div><div class="quiz-card"><h3>第 '+(qi+1)+' / '+QS.length+' 题</h3><p style="font-size:16px;margin-bottom:16px">'+QS[qi]+'</p><div class="opts"><div class="opt" onclick="ans(1)">是</div><div class="opt" onclick="ans(0.5)">有时</div><div class="opt" onclick="ans(0)">否</div></div></div>';
 }
 
-function selectOption(opt){
-quizAnswers.push(opt);
-showQuestion();
+function ans(v){
+  quizAns.push(v);
+  renderQ();
 }
 
 function showResult(){
-document.getElementById('quiz-area').style.display='none';
-document.getElementById('result').className='quiz-result active';
-var scores={};
-constitutions.forEach(function(c){scores[c]=0;});
-// 简化计分
-quizAnswers.forEach(function(a,i){
-if(quizData[i].y&&quizData[i].y.indexOf(a)>=0){
-constitutions.forEach(function(c){scores[c]++;});
-}else if(quizData[i].n&&quizData[i].n.indexOf(a)>=0){
-constitutions.forEach(function(c){scores[c]+=0.5;});
-}
-});
-// 平和优先
-if(quizAnswers.filter(function(a){return a==="是";}).length<=3&&
-   quizAnswers.filter(function(a){return a==="否";}).length>=10){
-scores["平和"]+=10;
-}
-// 找最高分
-var maxScore=0,result="平和";
-for(var c in scores){
-if(scores[c]>maxScore){maxScore=scores[c];result=c;}
-}
-var info=constitutionInfo[result];
-document.getElementById('result-type').textContent=result+"质";
-document.getElementById('result-symptoms').textContent=info.s;
-document.getElementById('result-tcm').textContent=info.t;
-document.getElementById('result-life').textContent=info.l;
-document.getElementById('result-diet').textContent=info.d;
+  var scores=CST.map(function(){return 0;});
+  // Map answers to constitution scores (simplified)
+  var map=[[0],[1],[2],[3],[4],[5],[6],[7],[8,0],[0],[2],[3],[4],[5],[6],[7],[8],[8]];
+  for(var i=0;i<quizAns.length;i++){
+    var idx=map[i];
+    for(var j=0;j<idx.length;j++){
+      if(idx[j]<9)scores[idx[j]]+=quizAns[i];
+    }
+  }
+  var maxI=0;for(var i=1;i<9;i++){if(scores[i]>scores[maxI])maxI=i;}
+  var c=CST[maxI],info=CI[c];
+  document.getElementById('quizWrap').innerHTML='<div class="result-card"><h2>🎯 您的体质：'+c+'质</h2><div class="rsec"><h4>常见表现</h4><p>'+info.s+'</p></div><div class="rsec"><h4>体质特征</h4><p>'+info.t+'</p></div><div class="rsec"><h4>调理建议</h4><p>'+info.l+'</p></div><div class="rsec"><h4>推荐饮食</h4><p>'+info.d+'</p></div><button onclick="quizStarted=false;quizAns=[];startQuiz()" style="margin-top:16px;background:var(--pri);color:#fff;border:none;border-radius:12px;padding:10px 24px;font-size:14px;cursor:pointer">🔄 重新测试</button></div>';
 }
 
-function resetQuiz(){
-quizStarted=false;quizAnswers=[];
-document.getElementById('quiz-area').style.display='block';
-document.getElementById('result').className='quiz-result';
-showQuestion();
-}
-
-// ========== 设置面板 ==========
+// ========== Settings ==========
 function loadKeys(){
-document.getElementById('api-key').value=localStorage.getItem('groq_api_key')||'';
-document.getElementById('deepseek-key').value=localStorage.getItem('deepseek_api_key')||'';
+  var gk=localStorage.getItem('groqKey')||'';
+  var dk=localStorage.getItem('dsKey')||'';
+  document.getElementById('groqKey').value=gk;
+  document.getElementById('dsKey').value=dk;
 }
-
 function saveKeys(){
-var k1=document.getElementById('api-key').value.trim();
-var k2=document.getElementById('deepseek-key').value.trim();
-if(k1)localStorage.setItem('groq_api_key',k1);
-if(k2)localStorage.setItem('deepseek_api_key',k2);
-alert('已保存！配置 API Key 后，AI 可以回答任何健康问题。');
+  localStorage.setItem('groqKey',document.getElementById('groqKey').value);
+  localStorage.setItem('dsKey',document.getElementById('dsKey').value);
+  addMsg('ai','✅ 设置已保存');
+  showPanel('chat');
 }
 </script>
 </body>
