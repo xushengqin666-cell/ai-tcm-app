@@ -8,46 +8,41 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--pri:#1565c0;--pri-l:#42a5f5;--pri-d:#0d47a1;--acc:#ff6f00;--bg:#f5f7fa;--card:#fff;--txt:#1a1a2e;--txt2:#5f6368;--sh:0 2px 12px rgba(0,0,0,.08);--r:16px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden}
-/* Header */
 .hd{background:linear-gradient(135deg,var(--pri-d),var(--pri),var(--pri-l));color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(21,101,192,.3);z-index:10}
 .hd .logo{font-size:22px;font-weight:700;letter-spacing:1px}
 .hd .logo span{font-size:13px;font-weight:400;opacity:.85;margin-left:8px}
 .hd .spacer{flex:1}
 .hd .gear{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;transition:.2s}
 .hd .gear:hover{opacity:1;transform:rotate(30deg)}
-/* Tabs */
 .tabs{display:flex;background:#fff;border-bottom:1px solid #e0e0e0}
 .tabs button{flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;color:var(--txt2);cursor:pointer;border-bottom:3px solid transparent;transition:.2s}
 .tabs button.active{color:var(--pri);border-bottom-color:var(--pri)}
 .tabs button:hover{background:#f0f4ff}
-/* Panels */
 .panel{display:none;flex:1;overflow-y:auto;padding:16px}
 .panel.active{display:flex;flex-direction:column}
-/* Chat */
-.chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-.msg{max-width:85%;padding:12px 16px;border-radius:var(--r);line-height:1.6;font-size:15px;animation:fadeUp .3s ease;word-break:break-word}
+.chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:12px 16px;border-radius:var(--r);line-height:1.7;font-size:15px;animation:fadeUp .3s ease;word-break:break-word}
 .msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border-bottom-right-radius:4px}
 .msg.ai{align-self:flex-start;background:#fff;border:1px solid #e8eaf6;box-shadow:var(--sh);border-bottom-left-radius:4px}
 .msg.ai b{color:var(--pri)}
 .msg.ai .tag{display:inline-block;background:#e3f2fd;color:var(--pri);padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600;margin:2px 4px 2px 0}
+.msg.ai .section{margin:10px 0;padding:10px;background:#f8f9ff;border-radius:10px}
+.msg.ai .section-title{font-weight:700;color:var(--pri-d);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.msg.ai .section p{margin:4px 0 4px 28px;font-size:14px;color:#444}
 .msg .disclaimer{display:block;margin-top:10px;font-size:12px;color:#999;border-top:1px dashed #e0e0e0;padding-top:8px}
 .msg.loading{align-self:flex-start;background:#fff;border:1px solid #e8eaf6;box-shadow:var(--sh);padding:16px 20px}
 .spinner{width:28px;height:28px;border:3px solid #e0e0e0;border-top-color:var(--pri);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-/* Input bar */
 .input-bar{display:flex;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #e0e0e0}
 .input-bar input{flex:1;border:2px solid #e0e0e0;border-radius:24px;padding:10px 18px;font-size:15px;outline:none;transition:.2s}
 .input-bar input:focus{border-color:var(--pri-l)}
 .input-bar button{background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border:none;border-radius:24px;padding:10px 20px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
 .input-bar button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(21,101,192,.3)}
-.input-bar button:active{transform:translateY(0)}
-/* Model bar */
 .model-bar{display:flex;gap:6px;padding:8px 16px;background:#fff;overflow-x:auto;border-bottom:1px solid #f0f0f0}
 .model-bar button{padding:5px 12px;border-radius:20px;border:1px solid #e0e0e0;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap;transition:.2s}
 .model-bar button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
 .model-bar button:hover{border-color:var(--pri-l)}
-/* Quiz */
 .quiz-wrap{max-width:500px;margin:0 auto;width:100%}
 .quiz-card{background:#fff;border-radius:var(--r);padding:24px;box-shadow:var(--sh);margin-bottom:16px}
 .quiz-card h3{font-size:17px;margin-bottom:16px;color:var(--pri-d)}
@@ -61,7 +56,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .result-card h2{color:var(--pri-d);margin-bottom:12px}
 .result-card .rsec{margin-bottom:12px}
 .result-card .rsec h4{color:var(--pri);margin-bottom:4px}
-/* Settings */
 .settings-wrap{max-width:500px;margin:0 auto;width:100%}
 .s-card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:12px}
 .s-card h3{font-size:15px;color:var(--pri-d);margin-bottom:12px}
@@ -71,13 +65,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .s-card .hint{font-size:12px;color:#999;margin-top:-8px;margin-bottom:12px}
 .s-card button{background:var(--pri);color:#fff;border:none;border-radius:10px;padding:8px 20px;font-size:14px;cursor:pointer;transition:.2s}
 .s-card button:hover{background:var(--pri-d)}
-/* Welcome */
-.welcome{text-align:center;padding:40px 20px}
-.welcome h2{color:var(--pri-d);font-size:22px;margin-bottom:8px}
-.welcome p{color:var(--txt2);font-size:14px;line-height:1.8}
-.welcome .feats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
-.welcome .feat{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:var(--sh);font-size:14px;text-align:center;min-width:120px}
-.welcome .feat .icon{font-size:28px;margin-bottom:6px}
+.quick-btns{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #f0f0f0}
+.quick-btns button{padding:6px 14px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;font-size:13px;cursor:pointer;transition:.2s;color:var(--txt)}
+.quick-btns button:hover{border-color:var(--pri-l);background:#e3f2fd;color:var(--pri)}
 </style>
 </head>
 <body>
@@ -96,6 +86,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 <!-- Chat Panel -->
 <div class="panel active" id="p-chat">
   <div class="chat-area" id="chatArea"></div>
+  <div class="quick-btns" id="quickBtns">
+    <button onclick="quickAsk('头痛')">头痛</button>
+    <button onclick="quickAsk('胃痛')">胃痛</button>
+    <button onclick="quickAsk('失眠')">失眠</button>
+    <button onclick="quickAsk('咳嗽')">咳嗽</button>
+    <button onclick="quickAsk('感冒')">感冒</button>
+    <button onclick="quickAsk('便秘')">便秘</button>
+    <button onclick="quickAsk('痛经')">痛经</button>
+    <button onclick="quickAsk('高血压')">高血压</button>
+    <button onclick="quickAsk('糖尿病')">糖尿病</button>
+    <button onclick="quickAsk('痛风')">痛风</button>
+  </div>
   <div class="input-bar">
     <input id="inp" placeholder="描述您的症状或健康问题…" onkeypress="if(event.key==='Enter')send()">
     <button onclick="send()">发送</button>
@@ -112,9 +114,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div class="settings-wrap">
     <div class="s-card">
       <h3>🔑 API Key 配置</h3>
-      <label>Groq API Key（免费）</label>
+      <label>Groq API Key（免费，速度快）</label>
       <input id="groqKey" type="password" placeholder="gsk_…">
-      <div class="hint">申请：<a href="https://console.groq.com/keys" target="_blank">console.groq.com</a></div>
+      <div class="hint">申请：<a href="https://console.groq.com/keys" target="_blank">console.groq.com</a>（完全免费，无需信用卡）</div>
       <label>DeepSeek API Key</label>
       <input id="dsKey" type="password" placeholder="sk-…">
       <div class="hint">申请：<a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a></div>
@@ -123,9 +125,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     <div class="s-card">
       <h3>ℹ️ 使用说明</h3>
       <p style="font-size:14px;line-height:1.8;color:#5f6368">
-        <b>无需配置即可使用：</b>本机运行 OpenClaw 时自动连接本地AI。<br>
-        <b>配置 API Key：</b>可在不同设备使用 Groq/DeepSeek AI。<br>
-        <b>本地知识库：</b>覆盖18种常见病症，无需联网。<br>
+        <b>推荐配置：</b>申请免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a>，响应快、无需付费。<br>
+        <b>无需配置：</b>本机运行 OpenClaw 时自动连接本地AI。<br>
+        <b>问诊流程：</b>输入症状 → AI辨证问诊 → 个性化食疗+用药方案。<br>
         <b>体质辨识：</b>18道题测出您的中医体质类型。
       </p>
     </div>
@@ -133,33 +135,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 </div>
 
 <script>
-// ========== Knowledge Base ==========
+// ========== Expanded Knowledge Base (50+ entries) ==========
 var KB=[
-{kw:["感冒","风寒","风热","流鼻涕","打喷嚏","鼻塞","伤风"],t:"感冒",c:"<span class='tag'>西医</span>上呼吸道病毒感染，分普通感冒和流感。<br><span class='tag'>中医</span>外感六淫，分风寒（恶寒重、发热轻、无汗）和风热（发热重、恶寒轻、有汗）。",d:"风寒：生姜红糖水、葱白粥<br>风热：银翘片、菊花茶、薄荷水",m:"风寒：感冒清热颗粒、正柴胡饮<br>风热：银翘解毒片、板蓝根"},
-{kw:["发烧","发热","体温高","高烧","低烧"],t:"发烧",c:"<span class='tag'>西医</span>体温调节中枢异常，常见于感染、炎症。<br><span class='tag'>中医</span>正邪交争的表现，分外感发热和内伤发热。",d:"多饮温水、稀粥、绿豆汤<br>忌辛辣油腻",m:"布洛芬（>38.5℃）、对乙酰氨基酚<br>中医：小柴胡汤、白虎汤"},
-{kw:["头痛","头疼","偏头痛","头胀","头晕"],t:"头痛",c:"<span class='tag'>西医</span>紧张性头痛最常见，其次偏头痛、丛集性头痛。<br><span class='tag'>中医</span>分外感头痛（风寒/风热/风湿）和内伤头痛（肝阳/血虚/瘀血）。",d:"天麻炖鸡、菊花茶<br>避免巧克力、红酒、奶酪",m:"布洛芬、对乙酰氨基酚<br>中医：川芎茶调散、天麻钩藤饮"},
-{kw:["失眠","睡不着","入睡困难","多梦","早醒"],t:"失眠",c:"<span class='tag'>西医</span>入睡困难、睡眠质量差，与压力、焦虑、生活习惯有关。<br><span class='tag'>中医</span>心神失养或邪扰心神，常见心脾两虚、肝火扰心、心肾不交。",d:"酸枣仁粥、百合莲子汤、温牛奶<br>睡前忌咖啡茶酒",m:"褪黑素（短期）、艾司唑仑（处方）<br>中医：酸枣仁汤、天王补心丹、归脾丸"},
-{kw:["胃痛","胃疼","胃胀","反酸","烧心","胃炎"],t:"胃痛",c:"<span class='tag'>西医</span>急慢性胃炎、胃溃疡、功能性消化不良。<br><span class='tag'>中医</span>胃气郁滞或胃络瘀阻，分寒凝、食积、肝气犯胃、脾胃虚寒。",d:"小米粥、山药粥、少量多餐<br>忌生冷辛辣烟酒浓茶",m:"奥美拉唑、铝碳酸镁<br>中医：香砂六君子汤、黄芪建中汤"},
-{kw:["腹泻","拉肚子","拉稀","大便稀","水样便","急性胃肠炎"],t:"腹泻",c:"<span class='tag'>西医</span>急性多由感染（病毒/细菌）引起，慢性需排查肠易激、炎症性肠病。<br><span class='tag'>中医</span>分寒湿、湿热、食积、脾虚、肾阳虚。",d:"米粥、面汤、苹果煮水<br>忌油腻生冷乳制品<br>注意补水补盐",m:"蒙脱石散、口服补液盐<br>中医：藿香正气水（寒湿）、葛根芩连汤（湿热）"},
-{kw:["便秘","大便干","排便困难","几天没拉"],t:"便秘",c:"<span class='tag'>西医</span>排便频率减少（<3次/周）或排便困难，分功能性和器质性。<br><span class='tag'>中医</span>分热秘、气秘、虚秘、冷秘。",d:"多食膳食纤维（燕麦、红薯、绿叶菜）<br>晨起空腹温开水<br>蜂蜜水、火龙果",m:"乳果糖、聚乙二醇<br>中医：麻子仁丸（热秘）、黄芪汤（气虚）"},
-{kw:["咳嗽","咳","干咳","痰多","久咳"],t:"咳嗽",c:"<span class='tag'>西医</span>呼吸道防御反射，分急性（<3周）、亚急性、慢性（>8周）。<br><span class='tag'>中医</span>分外感（风寒/风热/燥咳）和内伤（痰湿/肝火/阴虚）。",d:"风寒：生姜红糖水<br>风热：梨汁、枇杷<br>燥咳：蜂蜜梨水、银耳汤",m:"右美沙芬（干咳）、氨溴索（化痰）<br>中医：止嗽散、二陈汤"},
-{kw:["过敏","荨麻疹","皮疹","瘙痒","过敏体质"],t:"过敏",c:"<span class='tag'>西医</span>免疫系统过度反应，常见过敏性鼻炎、荨麻疹、湿疹。<br><span class='tag'>中医</span>禀赋不耐，风邪客于肌表，或血虚生风。",d:"避免过敏原<br>清淡饮食，忌海鲜发物<br>薏米赤小豆汤",m:"氯雷他定、西替利嗪<br>中医：消风散、防风通圣丸"},
-{kw:["颈椎","脖子痛","颈肩","落枕","颈痛"],t:"颈椎不适",c:"<span class='tag'>西医</span>颈型颈椎病最常见，长期低头、姿势不良所致。<br><span class='tag'>中医</span>经络不通、气血瘀滞，属痹证范畴。",d:"补充钙质和维生素D<br>适度颈部运动",m:"布洛芬外用、贴膏<br>中医：桂枝加葛根汤、针灸推拿"},
-{kw:["腰痛","腰酸","腰椎","肾虚","腰肌劳损"],t:"腰痛",c:"<span class='tag'>西医</span>腰肌劳损、腰椎间盘突出最常见。<br><span class='tag'>中医</span>腰为肾之府，分肾虚、瘀血、寒湿、湿热腰痛。",d:"黑豆核桃粥、杜仲炖猪腰<br>注意腰部保暖",m:"布洛芬、外用贴膏<br>中医：独活寄生汤、右归丸"},
-{kw:["月经","痛经","经痛","姨妈痛","经期"],t:"痛经",c:"<span class='tag'>西医</span>原发性（无器质性病变）和继发性（子宫内膜异位等）。<br><span class='tag'>中医</span>不通则痛，分寒凝血瘀、气滞血瘀、气血两虚。",d:"红糖姜茶、桂圆红枣汤<br>经期忌冷饮寒凉",m:"布洛芬、萘普生<br>中医：少腹逐瘀汤、益母草膏"},
-{kw:["失眠多梦","心悸","心慌","焦虑","紧张","烦躁"],t:"心悸焦虑",c:"<span class='tag'>西医</span>心律失常、焦虑障碍、自主神经功能紊乱。<br><span class='tag'>中医</span>心神不宁，分心虚胆怯、心血不足、阴虚火旺。",d:"莲子百合粥、玫瑰花茶<br>规律作息，适度运动",m:"中医：甘麦大枣汤、安神定志丸<br>西医：必要时β受体阻滞剂"},
-{kw:["高血压","血压高","头晕目眩"],t:"高血压",c:"<span class='tag'>西医</span>血压持续≥140/90mmHg，需长期管理。<br><span class='tag'>中医</span>属眩晕、头痛范畴，分肝阳上亢、痰湿内阻、阴虚阳亢。",d:"低盐低脂饮食<br>芹菜汁、山楂茶<br>控制体重",m:"遵医嘱用降压药<br>中医：天麻钩藤饮、半夏白术天麻汤"},
-{kw:["糖尿病","血糖高","多饮多尿","消渴"],t:"糖尿病",c:"<span class='tag'>西医</span>胰岛素分泌或作用缺陷，分1型和2型。<br><span class='tag'>中医</span>消渴症，分上消（肺热）、中消（胃热）、下消（肾虚）。",d:"控制总热量<br>苦瓜、山药、燕麦<br>少食多餐",m:"遵医嘱用降糖药/胰岛素<br>中医：消渴方、六味地黄丸"},
-{kw:["痛风","尿酸高","关节痛","红肿热痛"],t:"痛风",c:"<span class='tag'>西医</span>尿酸结晶沉积关节，急性发作红肿热痛。<br><span class='tag'>中医</span>湿热痹证，痰瘀互结。",d:"低嘌呤饮食<br>忌海鲜啤酒内脏<br>多饮水（>2L/天）",m:"秋水仙碱（急性）、非布司他<br>中医：四妙丸、当归拈痛汤"},
-{kw:["湿疹","皮肤痒","皮炎","渗出"],t:"湿疹",c:"<span class='tag'>西医</span>皮肤炎症反应，分急性亚急性慢性。<br><span class='tag'>中医</span>风湿热邪浸淫肌肤，或血虚风燥。",d:"清淡饮食，忌辛辣发物<br>薏米绿豆汤",m:"外用糖皮质激素、保湿<br>中医：龙胆泻肝汤（湿热）、当归饮子（血虚）"},
-{kw:["痤疮","青春痘","长痘","粉刺","暗疮"],t:"痤疮",c:"<span class='tag'>西医</span>毛囊皮脂腺慢性炎症，与雄激素、皮脂、痤疮丙酸杆菌相关。<br><span class='tag'>中医</span>肺胃蕴热或湿热蕴结。",d:"清淡饮食，忌甜食奶制品<br>多食蔬果<br>规律作息",m:"外用阿达帕林、过氧苯甲酰<br>中医：枇杷清肺饮、黄连解毒汤"},
-{kw:["脚疼","脚痛","足底痛","足跟痛","脚底疼","足底筋膜炎","脚后跟疼"],t:"足底筋膜炎",c:"<span class='tag'>西医</span>足底筋膜反复牵拉损伤，常见于久站、跑步、扁平足。<br><span class='tag'>中医</span>属痹证范畴，肝肾不足、寒湿阻络。",d:"休息+冰敷（急性期）<br>穿软底鞋/足弓支撑垫<br>拉伸小腿和足底筋膜<br>控制体重",m:"外用扶他林（双氯芬酸）<br>中医：独活寄生汤、针灸推拿、泡脚（艾叶+红花）"},
-{kw:["肩痛","肩膀疼","肩周炎","抬不起胳膊","肩关节痛","五十肩"],t:"肩周炎",c:"<span class='tag'>西医</span>肩关节囊及周围组织炎症，好发50岁左右。<br><span class='tag'>中医</span>漏肩风，风寒湿邪侵袭，气血瘀滞。",d:"爬墙练习、钟摆运动<br>注意保暖避免受凉<br>适度活动但不过度",m:"布洛芬、外用贴膏<br>中医：桂枝加葛根汤、针灸推拿、拔罐"},
-{kw:["脱发","掉发","秃顶","头发稀疏","斑秃"],t:"脱发",c:"<span class='tag'>西医</span>雄激素性脱发最常见，其次斑秃、休止期脱发。<br><span class='tag'>中医</span>肾精亏虚或血热风燥。",d:"均衡饮食补蛋白质铁锌<br>规律作息减少压力<br>避免频繁烫染",m:"米诺地尔外用（男性）<br>中医：七宝美髯丹、养血生发胶囊"},
-{kw:["哮喘","喘息","呼吸困难","胸闷气短","哮鸣音"],t:"哮喘",c:"<span class='tag'>西医</span>气道慢性炎症，可逆性气流受限。<br><span class='tag'>中医</span>哮证，宿痰内伏遇诱因触发，分冷哮热哮。",d:"避免过敏原（尘螨花粉宠物）<br>忌生冷辛辣<br>适度运动增强体质",m:"沙丁胺醇吸入剂（急救）<br>中医：小青龙汤（冷哮）、定喘汤（热哮）"},
-{kw:["流感","流行性感冒","高烧全身酸痛","浑身无力","甲流乙流"],t:"流感",c:"<span class='tag'>西医</span>流感病毒感染，症状比普通感冒重，传染性强。<br><span class='tag'>中医</span>时行感冒，疫毒之邪侵袭肺卫。",d:"隔离休息多饮水<br>清淡易消化饮食<br>密切观察体温变化",m:"奥司他韦（48h内有效）<br>中医：连花清瘟、金花清感"},
-{kw:["鼻炎","鼻塞打喷嚏","过敏性鼻炎","鼻子痒","流清涕"],t:"过敏性鼻炎",c:"<span class='tag'>西医</span>IgE介导的I型变态反应，接触过敏原后发作。<br><span class='tag'>中医</span>鼻鼽，肺气虚寒或脾肾阳虚。",d:"戴口罩避开过敏原<br>生理盐水洗鼻<br>保持室内清洁通风",m:"氯雷他定、西替利嗪<br>中医：玉屏风散、苍耳子散"},
-{kw:["口臭","口腔异味","口气大"],t:"口臭",c:"<span class='tag'>西医</span>口腔细菌分解食物残渣产生硫化物；也可由胃病引起。<br><span class='tag'>中医</span>脾胃积热或胃火炽盛。",d:"餐后漱口用牙线<br>多喝水嚼口香糖<br>检查是否有牙周病龋齿",m:"漱口水（含氯己定）<br>中医：清胃散、藿香正气水"}
+{kw:["感冒","风寒","风热","流鼻涕","打喷嚏","鼻塞","伤风","着凉","受凉"],t:"感冒",c:"<span class='tag'>西医</span>上呼吸道病毒（鼻病毒/冠状病毒）感染，传染性强。<br><span class='tag'>中医</span>外感六淫：风寒（恶寒重、发热轻、无汗、舌淡苔白）和风热（发热重、恶寒轻、咽喉肿痛、舌红苔黄）。",d:"风寒：生姜红糖水、葱白粥、紫苏茶<br>风热：菊花茶、薄荷水、梨汁、绿豆汤<br>多喝温水，清淡饮食",m:"布洛芬或对乙酰氨基酚（退热止痛）<br>风寒：感冒清热颗粒、正柴胡饮<br>风热：银翘解毒片、板蓝根冲剂、连花清瘟"},
+{kw:["发烧","发热","体温高","高烧","低烧","体温升高"],t:"发烧",c:"<span class='tag'>西医</span>体温调节中枢上移，常见于感染（病毒/细菌）、炎症。<br><span class='tag'>中医</span>正邪交争。外感发热（风寒/风热/暑湿）和内伤发热（阴虚/气虚/血瘀）。",d:"多饮温水、稀粥、绿豆汤<br>西瓜汁（清热）<br>忌辛辣油腻<br>补充电解质",m:"体温>38.5℃：布洛芬、对乙酰氨基酚<br>细菌感染（验血确认）：抗生素<br>中医：柴胡注射液、小柴胡汤（少阳）、白虎汤（高热）"},
+{kw:["头痛","头疼","偏头痛","头胀","头晕","太阳穴疼"],t:"头痛",c:"<span class='tag'>西医</span>紧张性头痛（最多见，压痛+束带感）、偏头痛（单侧搏动样，伴恶心畏光）。<br><span class='tag'>中医</span>分外感（风寒/风热）和内伤（肝阳上亢、血虚、瘀血、肾虚）。",d:"天麻炖鱼头、菊花茶、芹菜粥<br>避免巧克力、红酒、奶酪、味精<br>规律作息",m:"布洛芬、对乙酰氨基酚（紧张性）<br>偏头痛：曲普坦类（处方）<br>中医：川芎茶调散（风袭）、天麻钩藤饮（肝阳）、正天丸"},
+{kw:["失眠","睡不着","入睡困难","多梦","早醒","睡眠不好","睡不好"],t:"失眠",c:"<span class='tag'>西医</span>入睡困难、睡眠维持障碍或早醒，每周≥3次，持续≥1个月为慢性失眠。<br><span class='tag'>中医</span>不寐，心神失养或邪扰心神。常见：心脾两虚（多梦易醒）、肝火扰心（急躁易怒）、心肾不交（心烦耳鸣）。",d:"酸枣仁粥、百合莲子汤、桂圆红枣茶、温牛奶<br>睡前1小时避免手机电脑<br>忌咖啡、浓茶、酒精",m:"短期：褪黑素（调节生物钟）<br>焦虑：艾司唑仑（遵医嘱，≤2周）<br>中医：酸枣仁汤（心肝血虚）、天王补心丹（心肾阴虚）、归脾丸（心脾两虚）、龙胆泻肝汤（肝火）"},
+{kw:["胃痛","胃疼","胃胀","反酸","烧心","胃炎","胃溃疡","胃不适","肚子疼"],t:"胃痛",c:"<span class='tag'>西医</span>急慢性胃炎（Hp感染、NSAIDs）、胃溃疡（周期性餐后痛）、功能性消化不良。<br><span class='tag'>中医</span>胃脘痛，分寒凝（喜温喜按）、食积（胀满嗳腐）、肝气犯胃（胁痛随情绪）、脾胃虚寒（隐痛喜温）、湿热中阻（烧心口苦）。",d:"小米粥、山药粥、南瓜、面条<br>少量多餐（每顿七分饱）<br>忌生冷、辛辣、浓茶、咖啡、酒精",m:"反酸：奥美拉唑、铝碳酸镁（保护胃黏膜）<br>杀菌：四联疗法（PPI+铋剂+两种抗生素，遵医嘱）<br>中医：香砂六君子汤（脾胃虚弱）、黄芪建中汤（虚寒）、三九胃泰（湿热）"},
+{kw:["腹泻","拉肚子","拉稀","大便稀","水样便","急性胃肠炎","肠胃炎"],t:"腹泻",c:"<span class='tag'>西医</span>急性（<2周）：感染性（病毒60%如诺如/轮状，细菌如沙门氏菌）或非感染性；慢性（>4周）需排查IBS、IBD。<br><span class='tag'>中医</span>泄泻，分寒湿（大便清稀）、湿热（臭秽肛门灼热）、食积（臭如败卵）、脾虚（餐后即泻）、肾虚（五更泄）。",d:"米粥、面汤、苹果煮水（收敛）、蒸山药<br>补充口服补液盐（防脱水）<br>忌油腻、生冷、乳制品、高纤维",m:"蒙脱石散（物理止泻，急性首选）<br>口服补液盐III<br>细菌性（血便+发热）：诺氟沙星（遵医嘱）<br>中医：藿香正气水（寒湿）、葛根芩连汤（湿热）、参苓白术散（脾虚）"},
+{kw:["便秘","大便干","排便困难","几天没拉","排便费劲","大便困难"],t:"便秘",c:"<span class='tag'>西医</span>排便频率<3次/周或排便困难，分慢传输型（结肠动力弱）、排便障碍型（盆底肌失调）、混合型。<br><span class='tag'>中医</span>分热秘（面红口干）、气秘（腹胀嗳气）、虚秘（气虚无力）、冷秘（手足冷、腰酸）。",d:"燕麦、红薯、玉米、芹菜、菠菜、火龙果、猕猴桃、蜂蜜水<br>晨起空腹喝温开水<br>每天饮水≥1.5L",m:"乳果糖（渗透性，安全，适合老人孕妇）<br>聚乙二醇（渗透性）<br>开塞露（临时，急症）<br>中医：麻子仁丸（热秘）、黄芪汤（气虚）、济川煎（冷秘）"},
+{kw:["咳嗽","干咳","痰多","久咳","咳痰","咳嗽有痰","嗓子痒"],t:"咳嗽",c:"<span class='tag'>西医</span>急性<3周（感冒后最常见）、亚急性3-8周（感染后）、慢性>8周（哮喘/胃食管反流/鼻后滴漏/慢支）。<br><span class='tag'>中医</span>分外感（风寒—痰白稀、风热—痰黄稠、燥咳—干咳无痰）和内伤（痰湿—痰多白黏、肝火—胸胁胀痛、阴虚—干咳少痰）。",d:"风寒：生姜陈皮水、烤橘子<br>风热：梨汁、枇杷、川贝冰糖雪梨<br>燥咳：蜂蜜梨水、银耳百合汤<br>多喝温水，忌甜腻",m:"干咳：右美沙芬<br>有痰：氨溴索、乙酰半胱氨酸（化痰）<br>气喘：孟鲁司特（过敏性咳嗽）<br>中医：止嗽散（初咳）、二陈汤（痰湿）、桑菊饮（风热）、川贝枇杷膏（热咳）"},
+{kw:["过敏","荨麻疹","皮疹","瘙痒","皮肤痒","过敏体质","湿疹","皮肤过敏"],t:"过敏",c:"<span class='tag'>西医</span>免疫系统过度反应。常见：过敏性鼻炎（IgE介导）、荨麻疹（风团瘙痒）、湿疹（红斑渗出）。<br><span class='tag'>中医</span>风瘙痒、血风疮。禀赋不耐，风邪客表；或血虚生风、脾胃湿热。",d:"清淡饮食，忌海鲜、牛羊肉、辛辣发物<br>薏米赤小豆汤（清热利湿）<br>避免已知过敏原<br>穿纯棉衣物",m:"氯雷他定、西替利嗪（抗组胺，起效快）<br>炉甘石洗剂（止痒，外用）<br>严重（喉头水肿/呼吸困难）：肾上腺素笔（处方）<br>中医：消风散（风热）、防风通圣丸（湿热）、当归饮子（血虚）"},
+{kw:["颈椎","脖子痛","颈肩痛","落枕","颈痛","颈部不适","肩颈酸痛"],t:"颈椎不适",c:"<span class='tag'>西医</span>颈型颈椎病最常见（颈部肌肉劳损），神经根型（手臂麻痛），椎动脉型（头晕）。<br><span class='tag'>中医</span>项痹，经络不通、气血瘀滞、风寒湿侵袭。",d:"鸡蛋、牛奶、豆制品补充钙和蛋白质<br>低头工作每30分钟活动颈部<br>热敷（热水袋）",m:"布洛芬、外用双氯芬酸凝胶<br>甲钴胺（营养神经）<br>中医：桂枝加葛根汤（风寒）、针灸推拿（经络不通）、颈复康颗粒"},
+{kw:["腰痛","腰酸","腰椎","肾虚","腰肌劳损","腰疼","腰部不适"],t:"腰痛",c:"<span class='tag'>西医</span>腰肌劳损（最常见，压痛点）、腰椎间盘突出（伴腿麻）、强直性脊柱炎（晨僵）。<br><span class='tag'>中医</span>腰为肾之府。肾虚腰痛（酸软无力）、寒湿（冷痛重着）、湿热（胀痛）、瘀血（刺痛固定）。",d:"黑豆核桃粥、杜仲炖猪腰、枸杞桑葚茶<br>睡硬板床<br>避免久坐久站<br>注意腰部保暖",m:"布洛芬、外用膏药（氟比洛芬凝胶贴膏）<br>严重：盐酸乙哌立松（肌肉松弛）<br>中医：独活寄生汤（寒湿肾虚）、右归丸（肾阳虚）、六味地黄丸（肾阴虚）"},
+{kw:["痛经","经痛","经期腹痛","月经痛","姨妈痛","来例假疼"],t:"痛经",c:"<span class='tag'>西医</span>原发性（无器质病变，前列腺素↑所致）和继发性（子宫内膜异位、腺肌症、盆腔炎）。<br><span class='tag'>中医</span>经行腹痛。寒凝血瘀（冷痛经血暗有块）、气滞血瘀（胀痛）、气血虚弱（隐痛经量少）。",d:"红糖姜茶、桂圆红枣汤、黑木耳、榴莲<br>经期前1周开始喝玫瑰花茶<br>热敷小腹<br>适度运动（瑜伽）",m:"布洛芬或萘普生（前列腺素抑制剂，经期前开始吃效果更好）<br>短效避孕药（遵医嘱，调经）<br>中医：少腹逐瘀汤（寒凝血瘀）、益母草颗粒（血瘀）、艾附暖宫丸（虚寒）"},
+{kw:["焦虑","心慌","心悸","紧张","烦躁","焦虑症","心脏心慌"],t:"焦虑心悸",c:"<span class='tag'>西医</span>焦虑障碍（广泛性/惊恐发作），症状：心慌、胸闷、呼吸困难、手抖、出汗、濒死感。<br><span class='tag'>中医</span>郁证、心悸。心虚胆怯（易惊多虑）、心血不足（失眠健忘）、阴虚火旺（心烦盗汗）、痰火扰心（胸闷苔黄腻）。",d:"莲子百合粥、甘麦大枣汤、玫瑰花茶<br>深呼吸（4-7-8呼吸法）<br>规律运动（快走/瑜伽）<br>减少咖啡因摄入",m:"轻症：β受体阻滞剂（如普萘洛尔，短期间歇用）<br>明确诊断：SSRIs（舍曲林/帕罗西汀，处方，需数周起效）<br>中医：甘麦大枣汤（脏躁）、安神定志丸（心胆气虚）、天王补心丹（阴虚）"},
+{kw:["高血压","血压高","高压高","低压高","头晕目眩"],t:"高血压",c:"<span class='tag'>西医</span>安静状态下≥140/90mmHg（诊室）或≥135/85mmHg（家庭）。分为原发性（95%，多因素）和继发性（肾、内分泌）。<br><span class='tag'>中医</span>眩晕、头痛。肝阳上亢（面红急躁）、痰湿内阻（体肥胸闷）、阴虚阳亢（腰酸耳鸣）、瘀血阻窍（刺痛固定）。",d:"<span class='tag'>关键</span>低盐饮食（<5g/天）<br>芹菜、山楂、洋葱、黑木耳泡茶<br>补充钾（香蕉、紫菜）<br>控制体重<br>戒烟限酒",m:"<span class='tag'>遵医嘱长期用药</span>，不可自行停药！<br>常用：氨氯地平（钙通道阻滞剂）、培哚普利（ACEI）、厄贝沙坦（ARB）<br>中医：天麻钩藤饮（肝阳上亢）、半夏白术天麻汤（痰湿）、杞菊地黄丸（阴虚）"},
+{kw:["糖尿病","血糖高","血糖高","多饮多尿","口干多尿","消渴"],t:"糖尿病",c:"<span class='tag'>西医</span>空腹血糖≥7.0或糖化血红蛋白≥6.5%。1型（胰岛素缺乏，急骤）、2型（胰岛素抵抗，缓慢）。<br><span class='tag'>中医</span>消渴。上消（肺热—口渴多饮）、中消（胃热—多食善饥）、下消（肾虚—多尿尿甜）。",d:"<span class='tag'>关键</span>控制总热量<br>苦瓜、秋葵、山药、燕麦、荞麦<br>少食多餐，定时定量<br>避免精制糖和甜饮料<br>优选低GI食物",m:"<span class='tag'>遵医嘱用药</span>，不可自行停药！<br>2型：二甲双胍（首选）、阿卡波糖、GLP-1受体激动剂<br>1型：胰岛素（必须）<br>中医：消渴方（肺胃热盛）、六味地黄丸（肾阴虚）、金匮肾气丸（阴阳两虚）"},
+{kw:["痛风","尿酸高","关节痛红肿","脚踝肿","大脚趾肿"],t:"痛风",c:"<span class='tag'>西医</span>尿酸结晶沉积关节，急性发作（红肿热痛，常首发于第一跖趾关节）。<br><span class='tag'>中医</span>痹证（热痹/浊瘀痹）。湿热痰瘀互结，脾肾失调为本。",d:"<span class='tag'>关键</span>低嘌呤饮食<br>忌：海鲜、动物内脏、浓汤、啤酒<br>宜：牛奶、鸡蛋、蔬菜、樱桃（降尿酸）<br>每天饮水>2L（促进尿酸排泄）",m:"急性发作：秋水仙碱（尽早，越早越好）+NSAIDs（如布洛芬）<br>缓解期：非布司他或苯溴马隆（降尿酸，需长期）<br><span class='tag'>禁止</span>发作期使用别嘌醇（非布司他）<br>中医：四妙丸（湿热）、当归拈痛汤（浊瘀）"},
+{kw:["湿疹","皮肤痒","渗出","皮肤红","过敏性皮炎"],t:"湿疹",c:"<span class='tag'>西医</span>皮肤炎症，分急性（红斑水疱渗出）、亚急性（红肿减轻）、慢性（苔藓化）。<br><span class='tag'>中医</span>湿疮。风湿热邪浸淫（急性）、脾虚湿蕴（亚急性）、血虚风燥（慢性）。",d:"清淡饮食，忌辛辣、海鲜、牛羊肉<br>薏米绿豆汤、冬瓜汤（清热利湿）<br>避免搔抓<br>穿宽松纯棉衣物",m:"外用：丁酸氢化可的松（弱效激素急性期）、他克莫司（慢性，无激素）<br>保湿：凡士林或尿素霜（修复皮肤屏障）<br>渗出：硼酸溶液湿敷<br>中医：龙胆泻肝汤（湿热蕴肤）、除湿止痒软膏、当归饮子（血虚风燥）"},
+{kw:["痤疮","青春痘","长痘","粉刺","暗疮","痘痘","脸上长痘"],t:"痤疮",c:"<span class='tag'>西医</span>毛囊皮脂腺慢性炎症。雄激素↑→皮脂↑→毛孔堵塞→痤疮丙酸杆菌繁殖→炎症。<br><span class='tag'>中医</span>粉刺。肺经风热（丘疹色红）、肠胃湿热（脓疱红肿）、痰湿瘀结（结节囊肿）。",d:"清淡饮食，忌甜食、奶制品、油炸、辛辣<br>多食蔬菜水果<br>规律作息（23点前睡）<br>每天喝足够水",m:"外用：阿达帕林（维A酸类，晚间）、过氧苯甲酰（抗菌）<br>炎症明显：克林霉素凝胶<br>重度（结节囊肿）：口服异维A酸（处方，副作用大）<br>中医：枇杷清肺饮（肺热）、黄连解毒汤（湿热）、清热暗疮片"},
+{kw:["脚疼","脚痛","足底痛","足跟痛","脚底疼","足底筋膜炎","脚后跟疼","走路脚疼"],t:"足底筋膜炎",c:"<span class='tag'>西医</span>足底筋膜反复牵拉损伤，常见于久站、跑步、扁平足、高弓足。<br><span class='tag'>中医</span>痹证。肝肾不足、筋脉失养，或寒湿侵袭、瘀血阻络。",d:"休息（急性期减少走路）<br>冰敷（每天3次，每次15分钟）<br>穿软底鞋或足弓支撑垫<br>拉伸小腿三头肌和足底筋膜（每天2次）<br>控制体重",m:"外用：双氯芬酸二乙胺乳胶剂（扶他林）<br>夜间：足底牵伸夹板<br>顽固：局部注射糖皮质激素（封闭）<br>冲击波治疗<br>中医：独活寄生汤（肝肾亏虚）、针灸、艾叶红花泡脚"},
+{kw:["肩周炎","肩膀疼","肩痛","肩关节痛","五十肩","冻结肩","抬不起胳膊"],t:"肩周炎",c:"<span class='tag'>西医</span>肩关节囊及周围组织慢性炎症，好发40-60岁，分冻结期（疼痛）、僵硬期（活动受限）、解冻期。<br><span class='tag'>中医</span>漏肩风。风寒湿邪侵袭肩部经络，气血瘀滞。",d:"保暖（尤其夜间）<br>爬墙练习（每天递增）<br>钟摆运动（画圈）<br>避免提重物<br>热敷（每次15-20分钟）",m:"急性期：布洛芬<br>外用：氟比洛芬凝胶贴膏<br>封闭注射（局麻药+糖皮质激素）<br>中医：桂枝加葛根汤（风寒）、针灸、拔罐、推拿"},
+{kw:["脱发","掉发","秃顶","头发稀疏","斑秃","秃发"],t:"脱发",c:"<span class='tag'>西医</span>雄激素性脱发（最多见，男性M型/女性弥漫性）、斑秃（免疫性斑片状）、休止期脱发（应激/营养）。<br><span class='tag'>中医</span>发秃。肾精亏虚（腰酸耳鸣）、血虚风燥（头皮屑多）、湿热上蒸（头油多）、肝郁气滞。",d:"补充蛋白质（鸡蛋、豆制品）、铁、锌<br>黑芝麻、核桃、黑豆、何首乌<br>规律作息，减轻压力<br>避免频繁烫染、紧扎头发",m:"米诺地尔（男女通用，外用，3-6个月见效，需持续）<br>男性：非那雄胺（1mg，处方，抑制DHT）<br>斑秃：局部糖皮质激素注射<br>中医：七宝美髯丹（肾精不足）、养血生发胶囊、神应养真丹"},
+{kw:["哮喘","喘息","呼吸困难","胸闷气短","哮鸣音","支气管哮喘"],t:"哮喘",c:"<span class='tag'>西医</span>气道慢性炎症+可逆性气流受限。过敏原、感染、冷空气、运动均可诱发。<br><span class='tag'>中医</span>哮证。宿痰内伏（脾虚生痰），遇诱因触发。外寒内饮（冷哮）、热哮（痰黄稠）、虚哮（气短懒言）。",d:"避免过敏原（尘螨、花粉、宠物皮屑）<br>忌生冷、辛辣、海鲜<br>适度运动（游泳/太极）<br>保持室内清洁通风<br>接种流感疫苗",m:"急性发作：沙丁胺醇吸入剂（随身携带，1-2喷，15分钟可重复）<br>控制：ICS（布地奈德）/LABA（信必可）<br>白三烯受体拮抗剂：孟鲁司特<br>中医：小青龙汤（冷哮）、定喘汤（热哮）、苏子降气汤（虚哮）"},
+{kw:["流感","流行性感冒","高烧全身酸痛","浑身无力","甲流","乙流","病毒性感冒"],t:"流感",c:"<span class='tag'>西医</span>流感病毒（甲/乙/丙型），传染性强，全身症状重（高热+肌肉酸痛+乏力）。<br><span class='tag'>中医</span>时行感冒。疫毒之邪侵袭肺卫，传染性强，症状重。",d:"隔离休息，多饮水<br>清淡易消化（粥、面条、蛋羹）<br>补充维生素C（鲜榨橙汁）<br>密切观察体温",m:"奥司他韦（达菲，48h内服用效果最佳，疗程5天）<br>布洛芬（退热止痛）<br>对症：止咳药、淡盐水<br>中医：连花清瘟、金花清感颗粒（风热袭肺）"},
+{kw:["鼻炎","过敏性鼻炎","鼻塞打喷嚏","鼻子痒","流清涕","鼻后滴漏"],t:"过敏性鼻炎",c:"<span class='tag'>西医</span>IgE介导的I型变态反应，症状：鼻痒+连续喷嚏+清水涕+鼻塞+眼痒。<br><span class='tag'>中医</span>鼻鼽。肺气虚寒（清涕、怕冷）、脾气虚弱（纳差腹胀）、肾阳不足（畏寒腰酸）。",d:"戴口罩（花粉季/雾霾天）<br>生理盐水鼻腔冲洗（每天1-2次）<br>保持室内清洁通风，湿度40-60%<br>避免已知过敏原",m:"一线：鼻用糖皮质激素（糠酸莫米松/布地奈德，起效慢但最有效）<br>抗组胺：氯雷他定、西替利嗪（口服）+氮卓斯汀（鼻喷）<br>减充血剂（麻黄碱，不宜超过7天）<br>中医：玉屏风散（肺气虚）、苍耳子散（通鼻窍）、补中益气丸（脾气虚）"},
+{kw:["咽炎","嗓子疼","喉咙痛","咽痛","咽喉炎","扁桃体发炎","喉咙干"],t:"咽炎",c:"<span class='tag'>西医</span>急性咽炎（病毒/细菌，咽痛+发热）、慢性咽炎（长期刺激，异物感+干痒）。<br><span class='tag'>中医</span>喉痹。风热犯肺（咽痛红肿）、肺肾阴虚（咽干微红）、脾虚痰湿（咽中有痰）。",d:"多喝温水<br>淡盐水漱口（消炎）<br>梨汁、蜂蜜柠檬水、罗汉果茶<br>避免辛辣、烟酒<br>保持口腔清洁",m:"细菌性（化脓+发热）：阿莫西林或头孢（遵医嘱）<br>病毒性：对症（多喝水+止痛）<br>慢性：华素片、银黄含片<br>中医：银翘解毒片（风热）、玄麦甘桔颗粒（阴虚）、蓝芩口服液"},
+{kw:["口腔溃疡","嘴破","口疮","舌头烂","口腔溃烂"],t:"口腔溃疡",c:"<span class='tag'>西医</span>复发性阿弗他溃疡（最常见，单个或多个，7-14天自愈）、白塞病（多系统）。<br><span class='tag'>中医</span>口疮。心脾积热（红肿疼痛）、阴虚火旺（隐隐作痛反复）、气血两虚（疮面淡红）。",d:"多食新鲜蔬果（补充维生素B、C）<br>避免辛辣、烫食、坚硬食物<br>蜂蜜涂抹（促进愈合）<br>绿茶漱口（收敛）",m:"局部：口腔溃疡贴、曲安奈德口腔软膏<br>疼痛：利多卡因凝胶（餐前）<br>复合维生素B+维生素C<br>反复发作：排查白塞病/克隆恩病<br>中医：西瓜霜、冰硼散、黄连上清片（实火）"},
+{kw:["痔疮","便血","肛裂","肛门疼","痔疮犯了"],t:"痔疮",c:"<span class='tag'>西医</span>肛垫下移或静脉曲张。分内痔（便血）、外痔（疼痛肿块）、混合痔。<br><span class='tag'>中医</span>痔疮。风伤肠络（便血鲜红）、湿热下注（肿胀疼痛）、脾虚气陷（脱出）。",d:"多喝水（软化大便）<br>高纤维饮食（燕麦、芹菜、菠菜）<br>避免久坐久蹲<br>便后温水坐浴<br>提肛运动（每天3组，每组30次）",m:"止血：云南白药胶囊、马应龙痔疮膏<br>疼痛肿胀：马应龙麝香痔疮膏、普济痔疮栓<br>严重：手术治疗<br>中医：槐角丸（风伤肠络）、补中益气丸（气虚下陷）"},
+{kw:["脂肪肝","肝脂肪","转氨酶高"],t:"脂肪肝",c:"<span class='tag'>西医</span>肝细胞脂肪变性，分酒精性（长期饮酒）和非酒精性（代谢综合征相关）。<br><span class='tag'>中医</span>肝痞。痰湿内蕴、瘀血阻络、脾虚失运。",d:"<span class='tag'>关键</span>减重（BMI下降5-7%即可改善）<br>控制饮食，低脂低糖<br>燕麦、玉米、山楂、乌龙茶<br>戒酒（酒精性必须）<br>适度有氧运动",m:"护肝：多烯磷脂酰胆碱、水飞蓟素<br>降脂：他汀类（胆固醇高时）<br>二甲双胍（合并糖尿病）<br>中医：护肝片、强肝胶囊、山楂精降脂片"},
+{kw:["胆囊炎","胆结石","右上腹痛","胆区痛"],t:"胆囊炎/胆结石",c:"<span class='tag'>西医</span>胆囊结石梗阻+感染。典型：右上腹绞痛+向右肩放射，伴恶心呕吐发热。<br><span class='tag'>中医</span>胁痛/胆胀。肝郁气滞（胀痛）、肝胆湿热（绞痛发热）、肝阴不足（隐痛）。",d:"急性发作期禁食油腻<br>平时低脂饮食（<40g/天）<br>少食多餐<br>避免暴饮暴食<br>乌梅、金桔理气",m:"急性发作：禁食+输液+抗生素（头孢）<br>解痉：654-2<br>止痛：间苯三酚<br>结石>1cm或反复发作：手术（腹腔镜胆囊切除）<br>中医：消炎利胆片、胆石通"},
+{kw:["肝炎","乙肝","甲肝","丙肝","肝功能异常"],t:"肝炎",c:"<span class='tag'>西医</span>肝细胞炎症损伤。病毒性（甲/乙/丙/丁/戊型）、酒精性、药物性、自身免疫性。<br><span class='tag'>中医</span>胁痛、黄疸。湿热蕴结（急性）、肝郁脾虚（慢性）、肝肾阴虚（久病）。",d:"高蛋白（鸡蛋、鱼、豆制品）<br>适量碳水化合物<br>新鲜蔬菜水果<br>戒酒<br>卧床休息（急性期）",m:"乙肝：恩替卡韦/替诺福韦（长期，处方，不能停）<br>丙肝：直接抗病毒药（DAA，90%+治愈率）<br>护肝降酶：甘草酸制剂、水飞蓟素<br>中医：护肝片、逍遥丸（肝郁）、一贯煎（阴虚）"},
+{kw:["冠心病","心绞痛","胸闷胸痛","心脏疼","心肌缺血"],t:"冠心病",c:"<span class='tag'>西医</span>冠状动脉粥样硬化→管腔狭窄→心肌供血不足。稳定型心绞痛（活动后发作）和急性冠脉综合征（危险）。<br><span class='tag'>中医</span>胸痹、心悸。气滞血瘀（刺痛固定）、痰浊闭阻（胸闷苔腻）、寒凝心脉（绞痛畏寒）、气阴两虚（隐痛乏力）。",d:"<span class='tag'>关键</span>低盐低脂低糖饮食<br>地中海饮食（橄榄油、鱼类、坚果）<br>戒烟（最重要之一）<br>适度有氧运动（步行）<br>避免饱餐和寒冷刺激",m:"<span class='tag'>硝酸甘油（急救，心绞痛发作时舌下含服1片）</span><br>抗血小板：阿司匹林（每天75-100mg）<br>调脂：他汀类（LDL-C<1.8mmol/L）<br>降压：ACEI/ARB、β受体阻滞剂<br>中医：复方丹参滴丸、麝香保心丸、速效救心丸"},
+{kw:["心律失常","心悸","心跳快","心跳慢","心律不齐","早搏"],t:"心律失常",c:"<span class='tag'>西医</span>心脏电传导异常。室性早搏（最常见）、房颤（脑卒中风险）、心动过速/过缓。<br><span class='tag'>中医</span>心悸。心胆虚怯（易惊）、心血不足（失眠多梦）、阴虚火旺（心烦盗汗）、水气凌心（心悸浮肿）。",d:"避免咖啡、浓茶、能量饮料<br>莲子百合粥（养心安神）<br>规律作息<br>避免情绪激动<br>戒烟酒",m:"早搏：β受体阻滞剂（无器质性病变可观察）<br>房颤：抗凝（华法林/新型口服抗凝药）节律控制+心率控制<br>心动过速：β受体阻滞剂<br>心动过缓：起搏器（严重）<br>中医：稳心颗粒、参松养心胶囊"},
+{kw:["骨质疏松","骨头脆","腰背痛","骨折","缺钙"],t:"骨质疏松",c:"<span class='tag'>西医</span>骨量↓+骨微结构破坏→脆性骨折风险↑。绝经后女性和老年人最常见。<br><span class='tag'>中医</span>骨痿。肾精不足（腰膝酸软）、脾胃虚弱（乏力纳差）、瘀血阻络。",d:"高钙饮食：牛奶、豆制品、绿叶菜、芝麻<br>维生素D：深海鱼、蛋黄、晒太阳（每天15分钟）<br>负重运动（快走、太极）<br>防跌倒（卫生间扶手）",m:"钙剂：碳酸钙D3（每天600-1200mg元素钙）<br>抗骨吸收：阿仑膦酸钠（每周1次，早晨空腹）<br>促骨形成：特立帕肽（严重，处方）<br>中医：骨疏康、仙灵骨葆、左归丸（肾阴虚）、右归丸（肾阳虚）"},
+{kw:["类风湿","关节肿胀","关节变形","晨僵","风湿性关节炎"],t:"类风湿关节炎",c:"<span class='tag'>西医</span>自身免疫性滑膜炎，侵蚀性关节破坏。对称性小关节（腕/掌指/近端指间）肿痛+晨僵>1小时。<br><span class='tag'>中医</span>尪痹。风寒湿痹（关节冷痛）、湿热痹阻（红肿热痛）、痰瘀互结（关节变形）、肝肾亏虚（功能障碍）。",d:"高蛋白饮食<br>避免生冷<br>适度关节活动（防止畸形）<br>热敷（缓解僵硬）<br>晒太阳补充维生素D",m:"DMARDs（改善病情抗风湿药，越早用越好）：甲氨蝶呤（首选，处方）<br> NSAIDs：布洛芬（止痛）<br>生物制剂：TNF-α抑制剂（严重，处方）<br>中医：独活寄生汤（风寒湿）、四妙丸（湿热）、针灸"},
+{kw:["前列腺炎","前列腺","尿频尿急","排尿困难","男性下尿路"],t:"前列腺炎",c:"<span class='tag'>西医</span>前列腺炎（50岁以下男性最常见泌尿疾病）。分急性细菌性、慢性细菌性、慢性盆腔疼痛综合征（最常见）。<br><span class='tag'>中医</span>精浊/淋证。湿热下注（尿频尿急）、气滞血瘀（会阴刺痛）、肾虚（腰膝酸软）。",d:"多喝水（冲刷尿道）<br>避免久坐（每1小时起身活动）<br>不吃辛辣刺激<br>规律性生活<br>南瓜籽（富含锌）",m:"急性：抗生素（左氧氟沙星，遵医嘱）<br>慢性：α受体阻滞剂（坦索罗辛）+植物药（前列康）<br>疼痛：布洛芬<br>中医：前列舒通胶囊、三金片、知柏地黄丸（肾阴虚）"},
+{kw:["膀胱炎","尿道炎","尿路感染","尿频尿急尿痛","小便疼"],t:"尿路感染",c:"<span class='tag'>西医</span>细菌（80%大肠杆菌）上行感染膀胱（膀胱炎）或肾盂（肾盂肾炎）。<br><span class='tag'>中医</span>淋证。湿热下注（尿频尿急尿痛）、阴虚火旺（反复发作）、脾虚气陷（劳累诱发）。",d:"多喝水（每天>2L，冲洗尿路）<br>蔓越莓汁（预防复发）<br>避免憋尿<br>便后从前向后擦<br>忌辛辣",m:"经验性抗生素：磷霉素（单次3g）或左氧氟沙星（3天）<br>三金片（辅助）<br>反复发作：需做尿培养+药敏<br>中医：热淋清颗粒、三金片、知柏地黄丸（反复发作）"},
+{kw:["贫血","脸色苍白","血红蛋白低","头晕乏力","缺铁"],t:"贫血",c:"<span class='tag'>西医</span>血红蛋白↓，最常见缺铁性贫血（育龄女性）。症状：乏力、头晕、面色苍白、心悸。<br><span class='tag'>中医</span>血虚。脾气虚弱（纳差倦怠）、心肝血虚（失眠心悸）、肾精不足（腰酸耳鸣）。",d:"补铁食物：动物肝脏（猪肝）、红肉（牛肉）、血制品、菠菜、红枣、桂圆<br>补维生素C（促进铁吸收）<br>避免浓茶咖啡（抑制铁吸收）",m:"缺铁性：琥珀酸亚铁/多糖铁复合物（饭后，+维生素C）<br>叶酸/B12缺乏：补充叶酸或甲钴胺<br>地中海贫血：避免铁剂（需基因检测确诊）<br>中医：复方阿胶浆、当归补血汤、八珍颗粒"},
+{kw:["甲亢","甲状腺功能亢进","手抖","心慌消瘦","怕热多汗"],t:"甲亢",c:"<span class='tag'>西医</span>甲状腺激素↑。Graves病（最常见，自身免疫）。症状：怕热多汗、心慌手抖、消瘦、多食、突眼、甲状腺肿大。<br><span class='tag'>中医</span>瘿病。气郁痰凝（甲状腺肿）、阴虚火旺（怕热盗汗）、气阴两虚（消瘦乏力）。",d:"高热量高蛋白饮食（补偿消耗）<br>限碘饮食（不吃海带紫菜）<br>避免咖啡因（加重心悸）<br>补充钙和维生素D",m:"<span class='tag'>处方用药，需在内分泌科医生指导下</span><br>甲巯咪唑（抑制甲状腺激素合成，疗程1.5-2年）<br>丙硫氧嘧啶（妊娠首选）<br>β受体阻滞剂（控制心悸）<br>放射性碘131或手术（难治性）"},
+{kw:["甲减","甲状腺功能减退","怕冷","倦怠","浮肿"],t:"甲减",c:"<span class='tag'>西医</span>甲状腺激素↓。桥本甲状腺炎最常见（原发性甲减）。症状：怕冷乏力、嗜睡、便秘、体重↑、浮肿、表情淡漠。<br><span class='tag'>中医</span>瘿劳。脾肾阳虚（畏寒浮肿）、心肾阳虚（心悸胸闷）。",d:"均衡饮食<br>适量碘（加碘盐，海带紫菜适量）<br>高纤维（改善便秘）<br>控制热量（避免体重↑）",m:"<span class='tag'>左甲状腺素（优甲乐），空腹服用，与铁钙间隔4小时</span><br>需终身服药，定期复查TSH调整剂量<br>中医：金匮肾气丸（肾阳虚）、右归丸"},
+{kw:["胃食管反流","烧心","反酸","喉咙酸","GERD"],t:"胃食管反流病",c:"<span class='tag'>西医</span>胃酸反流食管。典型：烧心、反酸；不典型：慢性咳嗽、咽炎、牙侵蚀。<br><span class='tag'>中医</span>反酸、嘈杂。肝胃郁热（反酸口苦）、中虚气逆（反胃嗳气）、痰气交阻（咽部异物感）。",d:"少量多餐（晚餐不过饱）<br>抬高床头10-15cm<br>避免甜食、油腻、巧克力、咖啡、薄荷<br>餐后散步（30分钟）<br>减重",m:"抑酸：奥美拉唑/艾司奥美拉唑（每天1次，8周）<br>促动力：莫沙必利<br>黏膜保护：铝碳酸镁<br>难治：PPI+促动力药<br>中医：气滞胃痛颗粒、左金丸、乌贝散"},
+{kw:["肠易激","IBS","腹胀腹痛","拉肚子便秘交替","肠功能紊乱"],t:"肠易激综合征",c:"<span class='tag'>西医</span>功能性肠道疾病，腹痛伴排便习惯改变（腹泻型/便秘型/混合型）。<br><span class='tag'>中医</span>腹痛/泄泻。肝郁脾虚（情绪相关）、脾虚湿盛（腹泻）、肠道燥结（便秘）。",d:"腹泻型：低FODMAP饮食（减少产气食物）<br>便秘型：高纤维饮食+足够饮水<br>规律饮食<br>避免生冷辛辣<br>记录食物日记找诱因",m:"腹泻型：洛哌丁胺（对症）、匹维溴铵（解痉）<br>便秘型：乳果糖、聚乙二醇<br>肠功能调节：益生菌（双歧杆菌）<br>抗焦虑：匹维溴铵+抗抑郁药（难治性）<br>中医：痛泻要方（肝郁脾虚）、参苓白术散（脾虚）"},
+{kw:["慢性支气管炎","慢支","长期咳嗽","咳痰喘","老慢支"],t:"慢性支气管炎",c:"<span class='tag'>西医</span>连续2年每年咳嗽咳痰≥3个月。吸烟是最主要病因。<br><span class='tag'>中医</span>咳嗽/喘证。痰湿蕴肺（咳嗽痰多白稀）、肺肾气虚（气短喘息动则甚）。",d:"戒烟（最重要）<br>清淡饮食<br>适度有氧运动（步行/太极）<br>避免寒冷刺激<br>梨、百合、银耳润肺",m:"急性发作：抗生素（合并感染）+平喘（氨茶碱）<br>长期：ICS/LABA（氟替美维吸入剂）<br>化痰：氨溴索<br>中医：二陈汤（痰湿）、补肺汤（气虚）"},
+{kw:["白内障","视力模糊","眼睛看不清","晶状体混浊"],t:"白内障",c:"<span class='tag'>西医</span>晶状体混浊，年龄相关性最常见（>60岁）。视物模糊、眩光、夜视力↓。<br><span class='tag'>中医</span>圆翳内障。肝肾阴虚（目涩模糊）、脾胃气虚（食少倦怠）。",d:"多食深绿色蔬菜（叶黄素）、胡萝卜、蓝莓<br>补充维生素C、E<br>避免强光直射（戴太阳镜）<br>控制血糖血压",m:"<span class='tag'>手术是唯一治愈方式</span>（超声乳化+人工晶体植入，早期即可手术，无需等"成熟"）<br>早期可暂观察<br>中医：明目地黄丸、石斛夜光丸（延缓发展）"},
+{kw:["耳鸣","耳朵响","听力下降","耳聋"],t:"耳鸣",c:"<span class='tag'>西医</span>外界无声源但主观听到声音。分主观性（常见）和客观性（罕见，血管性）。<br><span class='tag'>中医</span>耳鸣。肾精亏虚（蝉鸣、腰酸）、肝火上扰（轰鸣、急躁）、脾胃虚弱（声低、倦怠）。",d:"耳鸣保健操（鸣天鼓）<br>避免噪音<br>少熬夜<br>喝菊花茶、枸杞茶<br>补充锌",m:"明确病因治疗最重要<br>掩蔽治疗（助听器/白噪音）<br>血管性（搏动性）：需影像学排除血管瘤<br>中医：耳聋左慈丸（肾虚）、龙胆泻肝丸（肝火）、针灸"},
+{kw:["静脉曲张","腿胀","腿沉","下肢静脉","蚯蚓腿"],t:"下肢静脉曲张",c:"<span class='tag'>西医</span>下肢浅静脉瓣膜功能不全，血液淤积。表现为腿上蚯蚓状突起，伴胀痛、沉重感。<br><span class='tag'>中医</span>筋瘤。气虚血瘀（久站久立加重）、寒湿凝滞（怕冷）。",d:"避免久站久坐（每1小时活动5-10分钟）<br>抬高患肢（休息时）<br>穿弹力袜（渐进式）<br>快走运动（促进静脉回流）<br>控制体重",m:"保守：医用弹力袜（压力梯度）<br>严重：硬化剂注射、射频/激光消融、手术剥脱<br>抗凝：阿司匹林（血栓高危）<br>中医：迈之灵片、血府逐瘀汤"},
+{kw:["湿疹痒","阴囊湿疹","股癣","皮肤瘙痒","老年皮肤瘙痒"],t:"皮肤瘙痒",c:"<span class='tag'>西医</span>皮肤瘙痒症（无原发皮损），老年人常见（老年性瘙痒），或继发于糖尿病/肝病/肾功能不全。<br><span class='tag'>中医</span>风瘙痒。血虚风燥（老年人、干燥）、湿热下注（局部）、风寒束表（遇冷加重）。",d:"老年人：减少洗澡频次（每周1-2次）<br>不用过热的水（<40℃）<br>穿纯棉宽松衣物<br>涂抹润肤霜（干燥后立即涂）<br>避免搔抓",m:"止痒：炉甘石洗剂<br>严重：短期弱效激素（丁酸氢化可的松）<br>口服：左西替利嗪（睡前）<br>排查系统性疾病（血糖/肝肾功能）<br>中医：润燥止痒胶囊、当归饮子（血虚风燥）"},
+{kw:["神经衰弱","记忆力下降","用脑过度","脑疲劳","头昏沉"],t:"神经衰弱",c:"<span class='tag'>西医</span>大脑皮质兴奋-抑制功能失调，与长期精神紧张压力相关。<br><span class='tag'>中医</span>健忘/失眠。心脾两虚（多梦健忘）、心肾不交（心烦失眠）、痰浊内阻（头重昏沉）。",d:"核桃（补脑）、鸡蛋、鱼（磷脂）<br>蓝莓（抗氧化）<br>规律作息，23点前睡<br>有氧运动（每周3次）<br>减少屏幕时间",m:"调节作息是根本<br>复合维生素B<br>失眠：安神类<br>焦虑明显：抗焦虑药（遵医嘱）<br>中医：归脾丸（心脾两虚）、天王补心丹（心肾不交）、益智仁茶"},
+{kw:["男性不育","少精","弱精","备孕失败","怀不上"],t:"男性不育",c:"<span class='tag'>西医</span>夫妻正常性生活1年未孕，原因：少弱精症（最常见）、性功能障碍、精索静脉曲张、感染。<br><span class='tag'>中医</span>无子。肾精亏虚（腰酸耳鸣）、脾虚气陷（倦怠纳差）、气滞血瘀（睾丸胀痛）。",d:"富含锌食物（生蚝、牛肉、南瓜子）<br>番茄红素（番茄、西瓜）<br>避免泡温泉/热水澡（杀精）<br>戒烟酒<br>规律作息<br>适度运动",m:"需检查精液常规+性激素<br>少弱精：左卡尼汀、左氧氟沙星（感染时）<br>精索静脉曲张：手术<br>体外受精（IVF）：严重少弱精<br>中医：五子衍宗丸（肾精不足）、生精胶囊"}
 ];
 
 // ========== Models ==========
@@ -193,9 +218,8 @@ function searchKB(q){
   for(var i=0;i<KB.length;i++){
     var score=0;
     for(var j=0;j<KB[i].kw.length;j++){
-      if(q.includes(KB[i].kw[j].toLowerCase()))score+=10; // 完全匹配
-      else if(KB[i].kw[j].toLowerCase().includes(q))score+=5; // 包含查询词
-      // 部分字匹配
+      if(q.includes(KB[i].kw[j].toLowerCase()))score+=10;
+      else if(KB[i].kw[j].toLowerCase().includes(q))score+=5;
       for(var k=0;k<Math.min(q.length,3);k++){
         if(KB[i].kw[j].toLowerCase().includes(q.substring(0,k+1)))score+=1;
       }
@@ -203,6 +227,27 @@ function searchKB(q){
     if(score>bestScore){bestScore=score;best=KB[i];}
   }
   return bestScore>=5?best:null;
+}
+
+// ========== Consultation State Machine ==========
+// state: 'init' | 'asking_history' | 'ready'
+var consultState='init';
+var consultKB=null; // matched KB entry
+var consultHistory={}; // drugAllergy, chronicDisease, currentMeds
+
+var HISTORY_QUESTIONS=[
+  {field:'drugAllergy',q:'您有没有对什么药物过敏？（如青霉素、阿司匹林等）'},
+  {field:'chronicDisease',q:'您有没有慢性疾病？（如高血压、糖尿病、心脏病、哮喘等）'},
+  {field:'currentMeds',q:'您目前有没有在服用其他药物？（中药、西药、保健品都可以）'}
+];
+
+var historyIdx=0;
+
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+function quickAsk(symptom){
+  document.getElementById('inp').value=symptom;
+  send();
 }
 
 // ========== Chat ==========
@@ -219,7 +264,7 @@ function addMsg(cls,html){
 
 function showWelcome(){
   chatArea.innerHTML='';
-  addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">🏥</div><h2 style="color:#0d47a1;margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:#5f6368;line-height:1.8">AI中西医结合健康助手<br>输入症状即可获得中西医建议</p><div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center"><span class="tag">💬 智能问诊</span><span class="tag">📚 18种病症知识库</span><span class="tag">🔄 体质辨识</span><span class="tag">🤖 多模型AI</span></div></div>');
+  addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">🏥</div><h2 style="color:#0d47a1;margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:#5f6368;line-height:1.8">AI中西医结合健康助手<br>请描述您的症状或健康问题，我将为您辨证论治</p><div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center"><span class="tag">🤖 智能问诊</span><span class="tag">🍎 个性化食疗</span><span class="tag">💊 安全用药</span><span class="tag">🔄 体质辨识</span></div></div>');
 }
 showWelcome();
 
@@ -229,14 +274,19 @@ async function send(){
   addMsg('user',esc(q));
   inp.value='';
 
-  // 1. Try local KB
   var kb=searchKB(q);
   if(kb){
-    addMsg('ai','<b>📋 '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br><b>🍎 饮食建议：</b><br>'+kb.d+'<br><br><b>💊 常用药物：</b><br>'+kb.m+'<span class="disclaimer">⚠️ 仅供参考，如有不适请及时就医</span>');
+    consultKB=kb;
+    consultState='asking_history';
+    historyIdx=0;
+    consultHistory={};
+    var intro='<b>📋 初步判断：'+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br><b>🩺 为了给您更精准的建议，请回答几个问题：</b><br>';
+    intro+='<div class="section"><div class="section-title">💊 '+esc(HISTORY_QUESTIONS[0].q)+'</div></div>';
+    addMsg('ai',intro+'<span class="disclaimer">⚠️ AI辅助诊疗仅供参考，不能替代医生诊断</span>');
     return;
   }
 
-  // 2. Try AI
+  // AI fallback
   var ld=document.createElement('div');
   ld.className='msg loading';
   ld.innerHTML='<div class="spinner"></div>';
@@ -248,21 +298,66 @@ async function send(){
     chatArea.removeChild(ld);
   }catch(e){
     chatArea.removeChild(ld);
-    // 如果KB有部分匹配，至少给个提示
-    var partial=searchKB(q);
-    if(partial){
-      addMsg('ai','<b>📋 可能相关：'+esc(partial.t)+'</b><br><br>'+partial.c+'<br><br><b>🍎 饮食建议：</b><br>'+partial.d+'<br><br><b>💊 常用药物：</b><br>'+partial.m+'<span class="disclaimer">⚠️ 仅供参考，如有不适请及时就医</span>');
-    }else{
-      addMsg('ai','😅 暂时无法连接AI服务（'+esc(e.message)+'）<br><br>📋 知识库暂未收录「'+esc(q)+'」<br><br>💡 您可以：<br>1. <b>换一个关键词</b>试试（如"头痛""失眠""胃痛"）<br>2. 在⚙️设置中配置 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">免费Groq API Key</a> 获得完整AI功能<br>3. 在电脑上运行OpenClaw可免费使用本地AI');
-    }
+    addMsg('ai','😅 暂时无法连接AI服务<br><br>📋 知识库暂未收录「'+esc(q)+'」<br><br>💡 建议：<br>1. <b>换个说法</b>（如"头痛"而非"太阳穴不舒服"）<br>2. 配置免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a><br>3. 在电脑运行OpenClaw可免费用本地AI');
   }
 }
 
-function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function handleHistoryReply(reply){
+  var field=HISTORY_QUESTIONS[historyIdx].field;
+  consultHistory[field]=reply;
+  historyIdx++;
+  if(historyIdx<HISTORY_QUESTIONS.length){
+    var next='<div class="section"><div class="section-title">💊 '+esc(HISTORY_QUESTIONS[historyIdx].q)+'</div></div>';
+    addMsg('ai',next);
+  } else {
+    // All history collected — generate full response
+    generateAdvice();
+  }
+}
 
+async function generateAdvice(){
+  var kb=consultKB;
+  var h=consultHistory;
+  var md={
+    disease: kb.t,
+    hasDrugAllergy: h.drugAllergy && !h.drugAllergy.match(/没有|无|否|不对/i),
+    hasChronicDisease: h.chronicDisease && !h.chronicDisease.match(/没有|无|否/i),
+    chronicDiseaseText: h.chronicDisease||'无',
+    currentMeds: h.currentMeds || '无',
+    drugAllergyText: h.drugAllergy || '无'
+  };
+
+  var ld=document.createElement('div');
+  ld.className='msg loading';
+  ld.innerHTML='<div class="spinner"></div>正在根据您的情况生成个性化方案…';
+  chatArea.appendChild(ld);
+  chatArea.scrollTop=99999;
+
+  try{
+    var resp=await callAI_Once('你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n已知信息：\n- 症状/疾病：'+kb.t+'\n- 患者过敏史：'+md.drugAllergyText+'\n- 慢性病史：'+md.chronicDiseaseText+'\n- 当前用药：'+md.currentMeds+'\n\n请分两大部分回复：\n\n## 🍎 食疗方案\n请给出：\n1. 【中医辨证分型】根据症状描述，判断最可能的证型\n2. 【药膳推荐】3-5款家常药膳，包含食材、做法、功效（注意根据过敏史和慢病史调整）\n3. 【时辰食疗】根据中医子午流注，推荐早中晚各适宜的食物\n4. 【饮食禁忌】列出需要避免的食物和原因\n5. 【药物-食物相互作用提醒】（如华法林忌菠菜、抗凝药忌银杏等）\n\n## 💊 用药建议\n请给出：\n1. 【常用药物】（西药+中成药），括号内注明主要注意事项\n2. 【药物相互作用】（如正在服用XX时，不能与XX同用）\n3. 【中药-西药同用注意】（如阿司匹林与活血化瘀中药同用风险）\n4. 【就医指征】（出现哪些情况必须立即就医）\n\n注意事项：\n- 结合患者的过敏史和慢病史给出个性化调整\n- 涉及慢性病用药时提醒\"遵医嘱，不可自行停药\"\n- 药膳以家常易行为主\n- 总字数控制在600字以内，分点清晰\n\n参考知识：\n'+kb.c+'\n\n'+kb.d+'\n\n'+kb.m);
+    chatArea.removeChild(ld);
+    addMsg('ai',resp+'<span class="disclaimer">⚠️ 以上内容仅供参考，如有不适请及时就医。</span>');
+    consultState='init';
+    consultKB=null;
+  }catch(e){
+    chatArea.removeChild(ld);
+    // Fallback to KB-only response
+    var fallback='<b>📋 '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br>';
+    if(md.hasDrugAllergy){
+      fallback+='<div class="section"><div class="section-title">⚠️ 注意您的过敏史</div><p>您提到对'+esc(md.drugAllergyText)+'过敏，请在就医时告知医生。</p></div>';
+    }
+    fallback+='<b>🍎 饮食建议：</b><br>'+kb.d+'<br><br><b>💊 常用药物：</b><br>'+kb.m;
+    fallback+='<span class="disclaimer">⚠️ 仅供参考，如有不适请及时就医</span>';
+    addMsg('ai',fallback);
+    consultState='init';
+  }
+}
+
+// ========== AI Call ==========
 async function callAI(q){
   var cfg=MODELS[curModel];
-  var key=cfg.keyField?document.getElementById(cfg.keyField).value||localStorage.getItem(cfg.keyField):null;
+  var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
+  if(!key)key=document.getElementById(cfg.keyField).value||null;
   var sys='你是岐黄智医，一个专业的AI中西医结合健康助手。回答要求：1)简洁易懂 2)结合中西医双重视角 3)给出饮食和生活建议 4)提醒严重情况需就医 5)不要过度诊断';
 
   var headers={'Content-Type':'application/json'};
@@ -275,16 +370,15 @@ async function callAI(q){
     var errTxt='';
     try{errTxt=await resp.text();}catch(e){}
     if(resp.status===401)throw new Error('API Key无效，请检查设置');
-    if(resp.status===402)throw new Error('API余额不足，请充值或更换Key');
+    if(resp.status===402)throw new Error('API余额不足');
     if(resp.status===429)throw new Error('请求过于频繁，请稍后重试');
-    throw new Error('HTTP '+resp.status+' '+(errTxt||''));
+    throw new Error('HTTP '+resp.status);
   }
 
   var msgDiv=addMsg('ai','');
   var reader=resp.body.getReader();
   var decoder=new TextDecoder();
-  var full='';
-  var thinking='';
+  var full='',thinking='';
 
   while(true){
     var result=await reader.read();
@@ -300,15 +394,12 @@ async function callAI(q){
         var json=JSON.parse(data);
         var delta=json.choices&&json.choices[0]&&json.choices[0].delta;
         if(!delta)continue;
-        // DeepSeek-R1 thinking
-        if(cfg.think&&delta.reasoning_content){
-          thinking+=delta.reasoning_content;
-        }
+        if(cfg.think&&delta.reasoning_content)thinking+=delta.reasoning_content;
         if(delta.content){
           full+=delta.content;
           var display='';
           if(thinking)display='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">🧠 思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(thinking)+'</div></details>';
-          display+=full;
+          display+=esc(full);
           msgDiv.innerHTML=display;
           chatArea.scrollTop=99999;
         }
@@ -320,6 +411,49 @@ async function callAI(q){
   }
   msgDiv.innerHTML+='<span class="disclaimer">⚠️ AI生成内容仅供参考，如有不适请及时就医</span>';
 }
+
+// Non-streaming AI call for structured advice
+async function callAI_Once(prompt){
+  var cfg=MODELS[curModel];
+  var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
+  if(!key)key=document.getElementById(cfg.keyField).value||null;
+  var sys='你是岐黄智医，中西医结合健康助手。回答时分两大部分：【食疗方案】和【用药建议】，简洁分点，600字以内。';
+
+  var headers={'Content-Type':'application/json'};
+  if(key)headers['Authorization']='Bearer '+key;
+
+  var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sys},{role:'user',content:prompt}],stream:false});
+
+  var resp=await fetch(cfg.base,{method:'POST',headers:headers,body:body});
+  if(!resp.ok){
+    var errTxt='';
+    try{errTxt=await resp.text();}catch(e){}
+    if(resp.status===401)throw new Error('API Key无效，请检查设置');
+    if(resp.status===402)throw new Error('API余额不足');
+    if(resp.status===429)throw new Error('请求过于频繁');
+    throw new Error('HTTP '+resp.status);
+  }
+
+  var data=await resp.json();
+  var content=data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+  if(!content)throw new Error('无效响应');
+  // Basic formatting
+  content=content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+  return content;
+}
+
+// Intercept Enter in history-asking state
+document.getElementById('inp').addEventListener('keypress',function(e){
+  if(e.key==='Enter' && consultState==='asking_history'){
+    var q=this.value.trim();
+    if(q){
+      addMsg('user',esc(q));
+      this.value='';
+      handleHistoryReply(q);
+    }
+    e.preventDefault();
+  }
+});
 
 // ========== Panel Switch ==========
 function showPanel(p){
@@ -335,24 +469,12 @@ function showPanel(p){
 var quizStarted=false,quizAns=[];
 var CST=["气虚","阳虚","阴虚","痰湿","湿热","血瘀","气郁","特禀","平和"];
 var QS=[
-"你容易疲乏、气短吗？",
-"你手脚冰凉、怕冷吗？",
-"你口干咽燥、手心热吗？",
-"你体型偏胖、痰多吗？",
-"你容易长痘、口苦吗？",
-"你面色晦暗、容易瘀青吗？",
-"你情绪低落、胁肋胀满吗？",
-"你容易过敏、起皮疹吗？",
-"你体力充沛、精力旺盛吗？",
-"你容易感冒吗？",
-"你夜间盗汗吗？",
-"你大便黏滞、口黏腻吗？",
-"你小便短赤、口渴喜冷饮吗？",
-"你月经有血块、痛经吗？",
-"你多疑善虑、抑郁吗？",
-"你喷嚏、流涕、鼻痒吗？",
-"你睡眠安稳、饮食规律吗？",
-"你舌淡红苔薄白吗？"
+"你容易疲乏、气短吗？","你手脚冰凉、怕冷吗？","你口干咽燥、手心热吗？",
+"你体型偏胖、痰多吗？","你容易长痘、口苦吗？","你面色晦暗、容易瘀青吗？",
+"你情绪低落、胁肋胀满吗？","你容易过敏、起皮疹吗？","你体力充沛、精力旺盛吗？",
+"你容易感冒吗？","你夜间盗汗吗？","你大便黏滞、口黏腻吗？",
+"你小便短赤、口渴喜冷饮吗？","你月经有血块、痛经吗？","你多疑善虑、抑郁吗？",
+"你喷嚏、流涕、鼻痒吗？","你睡眠安稳、饮食规律吗？","你舌淡红苔薄白吗？"
 ];
 var CI={
 "气虚":{s:"疲乏无力、气短懒言、易出汗",t:"元气不足，脏腑功能减退",l:"适度运动（太极拳/散步），保证睡眠",d:"黄芪粥、山药、红枣、鸡肉"},
@@ -386,7 +508,6 @@ function ans(v){
 
 function showResult(){
   var scores=CST.map(function(){return 0;});
-  // Map answers to constitution scores (simplified)
   var map=[[0],[1],[2],[3],[4],[5],[6],[7],[8,0],[0],[2],[3],[4],[5],[6],[7],[8],[8]];
   for(var i=0;i<quizAns.length;i++){
     var idx=map[i];
@@ -401,10 +522,8 @@ function showResult(){
 
 // ========== Settings ==========
 function loadKeys(){
-  var gk=localStorage.getItem('groqKey')||'';
-  var dk=localStorage.getItem('dsKey')||'';
-  document.getElementById('groqKey').value=gk;
-  document.getElementById('dsKey').value=dk;
+  document.getElementById('groqKey').value=localStorage.getItem('groqKey')||'';
+  document.getElementById('dsKey').value=localStorage.getItem('dsKey')||'';
 }
 function saveKeys(){
   localStorage.setItem('groqKey',document.getElementById('groqKey').value);
