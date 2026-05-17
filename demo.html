@@ -68,6 +68,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .quick-btns{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #f0f0f0}
 .quick-btns button{padding:6px 14px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;font-size:13px;cursor:pointer;transition:.2s;color:var(--txt)}
 .quick-btns button:hover{border-color:var(--pri-l);background:#e3f2fd;color:var(--pri)}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.tw-cursor{display:inline-block;width:2px;height:1em;background:#2e7d6b;margin-left:2px;animation:blink 1s infinite;vertical-align:text-bottom}
 </style>
 <script>window.addEventListener('error',function(e){var c=document.getElementById('chatArea');if(c)c.innerHTML+='<div class="msg ai" style="background:#fff3f3"><b>! </b>'+e.message+'</div>';});window.addEventListener('unhandledrejection',function(e){var c=document.getElementById('chatArea');if(c)c.innerHTML+='<div class="msg ai" style="background:#fff3f3"><b>! async:</b>'+e.reason+'</div>';});</script></head>
 <body>
@@ -410,6 +413,37 @@ async function generateAdvice(){
   }
 }
 
+
+// ========== Typewriter Effect ==========
+function typewriter(msgDiv, fullText, prefixHTML){
+  return new Promise(function(resolve){
+    msgDiv.innerHTML = prefixHTML + '<span id="tw-cursor" class="tw-cursor"></span>';
+    var i = 0;
+    var speed = 35;
+    function tick(){
+      if(i < fullText.length){
+        // Insert character before the cursor
+        var cursor = document.getElementById('tw-cursor');
+        if(cursor){
+          cursor.insertAdjacentText('beforebegin', fullText[i]);
+          i++;
+          chatArea.scrollTop = 99999;
+          setTimeout(tick, speed);
+        } else {
+          // Cursor gone (shouldn't happen), just set directly
+          msgDiv.innerHTML = prefixHTML + '<span>' + esc(fullText) + '</span>';
+          resolve();
+        }
+      } else {
+        // Done - remove cursor, set final HTML with proper escaping
+        msgDiv.innerHTML = prefixHTML + '<span>' + esc(fullText) + '</span>';
+        resolve();
+      }
+    }
+    tick();
+  });
+}
+
 // ========== AI Call ==========
 async function callAI(q){
   var cfg=MODELS[curModel];
@@ -436,6 +470,19 @@ async function callAI(q){
   var reader=resp.body.getReader();
   var decoder=new TextDecoder();
   var full='',thinking='';
+  var dotInterval=null;
+
+  // Show "thinking" indicator for DeepSeek-R1
+  if(cfg.think){
+    msgDiv.innerHTML='<div id="ti" style="color:#999;font-size:13px;padding:8px">🧠 思考中</div>';
+    var dc=0;
+    dotInterval=setInterval(function(){
+      dc=(dc+1)%4;
+      var d='';for(var i=0;i<dc;i++)d+='.';
+      var t=document.getElementById('ti');
+      if(t)t.textContent='🧠 思考中'+d;
+    },500);
+  }
 
   while(true){
     var result=await reader.read();
@@ -451,23 +498,33 @@ async function callAI(q){
         var json=JSON.parse(data);
         var delta=json.choices&&json.choices[0]&&json.choices[0].delta;
         if(!delta)continue;
-        if(cfg.think&&delta.reasoning_content)thinking+=delta.reasoning_content;
-        if(delta.content){
-          full+=delta.content;
-          var display='';
-          if(thinking)display='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">🧠 思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(thinking)+'</div></details>';
-          display+=esc(full);
-          msgDiv.innerHTML=display;
-          chatArea.scrollTop=99999;
+        if(cfg.think&&delta.reasoning_content){
+          thinking+=delta.reasoning_content;
+          continue;
         }
+        if(delta.content)full+=delta.content;
       }catch(e){}
     }
   }
-  if(!full&&thinking){
-    msgDiv.innerHTML='<details><summary style="cursor:pointer;color:#999;font-size:13px">🧠 思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666">'+esc(thinking)+'</div></details><br>模型完成了思考但未输出结论，请再次提问。';
+
+  // Clear thinking indicator
+  if(dotInterval)clearInterval(dotInterval);
+  var ti=document.getElementById('ti');
+  if(ti)ti.remove();
+
+  // Build display HTML (thinking process)
+  var html='';
+  if(thinking){
+    html='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">🧠 思考过程</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(thinking)+'</div></details>';
   }
+
+  // Typewriter effect - display characters one by one
+  await typewriter(msgDiv, full, html);
+  
   msgDiv.innerHTML+='<span class="disclaimer">⚠️ AI生成内容仅供参考，如有不适请及时就医</span>';
 }
+
+
 
 // Non-streaming AI call for structured advice
 async function callAI_Once(prompt){
