@@ -305,6 +305,12 @@ async function send(){
   addMsg('user',esc(q));
   inp.value='';
 
+  // If in consultation flow, route to history handler
+  if(consultState==='asking_history'){
+    handleHistoryReply(q);
+    return;
+  }
+
   var kb=searchKB(q);
   if(kb){
     consultKB=kb;
