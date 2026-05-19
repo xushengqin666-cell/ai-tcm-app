@@ -134,6 +134,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
         <b>体质辨识：</b>18道题测出您的中医体质类型。
       </p>
     </div>
+
+    <div class="s-card">
+      <h3>🗄️ 知识库管理</h3>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:10px">
+        当前状态: <span id="kbStatus" style="font-weight:600">加载中...</span><br>
+        上次更新: <span id="kbUpdateTime">--</span>
+      </div>
+      <button onclick="forceUpdateKB()" style="background:var(--pri);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">🔄 强制更新知识库</button>
+      <div class="hint" style="margin-top:8px">知识库自动从远程加载并缓存到本地，每30分钟检查更新。<br>首次加载可能需要几秒钟。</div>
+    </div>
   </div>
 </div>
 
