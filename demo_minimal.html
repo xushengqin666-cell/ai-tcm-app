@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>岐黄智医 - 测试版</title>
+<style>
+body{font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f0f0f0}
+h1{color:#0f3d2e;text-align:center}
+#chat{min-height:300px;background:#fff;padding:15px;border-radius:10px;margin-bottom:15px}
+.msg{padding:10px;margin:8px 0;border-radius:8px;max-width:85%}
+.user{background:#d4edda;margin-left:15%;text-align:right}
+.ai{background:#e8f4f8;margin-right:15%}
+.input-row{display:flex;gap:10px}
+input{flex:1;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button{padding:12px 24px;background:#0f3d2e;color:#fff;border:none;border-radius:8px;cursor:pointer}
+button:hover{background:#1a5c3a}
+.loading{color:#888;font-style:italic}
+</style>
+</head>
+<body>
+<h1>岐黄智医</h1>
+<div id="chat">
+<div class="msg ai">您好！请输入症状或健康问题。</div>
+</div>
+<div class="input-row">
+<input type="text" id="msgInput" placeholder="输入问题..." autofocus>
+<button onclick="sendMsg()">发送</button>
+</div>
+
+<script>
+// 知识库
+var KB = {
+  "感冒": {"t":"普通感冒","c":"病毒引起的上呼吸道感染。症状：流鼻涕、咳嗽、喉咙痛。治疗：多喝水、休息。","d":"宜喝温水、果汁；忌辛辣。"},
+  "发烧": {"t":"发热","c":"体温>37.3°C。多喝水，38.5°C以上用退烧药。","d":"宜流质饮食；忌油腻。"},
+  "头痛": {"t":"头痛","c":"原因多样，休息可缓解。必要时服止痛药。","d":"宜清淡饮食；忌咖啡因过量。"},
+  "失眠": {"t":"失眠","c":"难以入睡或睡眠浅。建议：规律作息，睡前不看手机。","d":"宜热牛奶、核桃；忌咖啡、浓茶。"},
+  "胃痛": {"t":"胃痛","c":"胃部不适，可能是胃炎或消化不良。避免刺激性食物。","d":"宜粥、面条；忌生冷、辛辣。"},
+  "腹泻": {"t":"腹泻","c":"大便稀薄、次数增多。注意补充水分，口服补液盐。","d":"宜米粥、面包；忌乳制品、油腻。"}
+};
+
+// 简单的关键词搜索
+function search(query) {
+  query = query.toLowerCase();
+  for (var key in KB) {
+    if (key.indexOf(query) >= 0 || query.indexOf(key) >= 0) {
+      return KB[key];
+    }
+  }
+  // 部分匹配
+  var q = query.replace(/[^\u4e00-\u9fa5a-z0-9]/g,'');
+  if (q.length < 2) return null;
+  for (var key in KB) {
+    if (key.indexOf(q) >= 0 || KB[key].t.indexOf(q) >= 0) return KB[key];
+  }
+  return null;
+}
+
+function sendMsg() {
+  var inp = document.getElementById('msgInput');
+  var q = inp.value.trim();
+  if (!q) return;
+  
+  var chat = document.getElementById('chat');
+  
+  // 用户消息
+  chat.innerHTML += '<div class="msg user">' + escHtml(q) + '</div>';
+  inp.value = '';
+  
+  // 显示加载中
+  var loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.textContent = '搜索中...';
+  chat.appendChild(loadingEl);
+  chat.scrollTop = chat.scrollHeight;
+  
+  // 搜索知识库（延迟500ms模拟处理）
+  setTimeout(function() {
+    chat.removeChild(loadingEl);
+    
+    var result = search(q);
+    if (result) {
+      var html = '<div class="msg ai"><strong>' + result.t + '</strong><br>' + result.c;
+      if (result.d) html += '<br><br><em>饮食建议：</em>' + result.d;
+      html += '<br><br><small style="color:#888">⚠️ 仅供参考，如有不适请就医</small></div>';
+      chat.innerHTML += html;
+    } else {
+      chat.innerHTML += '<div class="msg ai">抱歉，未找到相关信息。建议咨询医生。</div>';
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }, 500);
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// 回车发送
+document.getElementById('msgInput').onkeypress = function(e) {
+  if (e.key === 'Enter') sendMsg();
+};
+</script>
+</body>
+</html>

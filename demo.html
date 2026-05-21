@@ -310,6 +310,14 @@ async function send(){
   addMsg('user',esc(q));
   inp.value='';
 
+  // Route based on consultation state
+  if(consultState==='asking_history'){
+    // User is answering history questions
+    handleHistoryReply(q);
+    return;
+  }
+
+  // Normal flow: search KB first
   var kb=searchKB(q);
   if(kb){
     consultKB=kb;
@@ -320,38 +328,9 @@ async function send(){
     intro+='<div class="section"><div class="section-title">💊 '+esc(HISTORY_QUESTIONS[0].q)+'</div></div>';
     addMsg('ai',intro+'<span class="disclaimer">⚠️ AI辅助诊疗仅供参考，不能替代医生诊断</span>');
     return;
-  
-// Handle history question answers (multi-turn consultation per flowchart)
-function handleHistoryAnswer(answer){
-  consultHistory[HISTORY_QUESTIONS[historyIdx].field] = answer;
-  historyIdx++;
-  if(historyIdx < HISTORY_QUESTIONS.length){
-    var q = HISTORY_QUESTIONS[historyIdx].q;
-    addMsg('ai','<div class="section"><div class="section-title">💊 '+esc(q)+'</div></div>');
-  } else {
-    // All 3 questions answered -> call AI for personalized diet + medication advice
-    var profile = '【患者信息】\n- 过敏史：'+consultHistory.drugAllergy+'\n- 慢病史：'+consultHistory.chronicDisease+'\n- 当前用药：'+consultHistory.currentMeds;
-    var prompt = '你是一位资深中西医结合医生。患者症状：'+consultKB.t+'。'+profile+'\n\n请按以下格式给出针对性建议（简洁专业，结合患者过敏史和慢病史调整用药建议）：\n\n🥗 食疗方案\n- 辨证类型：（根据症状判断证型）\n- 推荐食物：（具体食物，考虑慢病禁忌）\n- 时辰药膳：（早/中/晚推荐）\n- 饮食禁忌：（结合慢病史，如糖尿病忌高糖、高血压忌高盐）\n\n💊 用药建议\n- 能否与当前用药同用：（分析药物相互作用）\n- 推荐非处方药：（针对症状的OTC，注意过敏史）\n- 注意事项：（结合患者所有病史的综合提醒）\n\n如无特殊病史，给出通用建议即可。';
-    
-    addMsg('ai','<span class="disclaimer">📝 已收集您的信息，正在生成个性化建议...</span>');
-    
-    // Call AI (non-streaming for structured output)
-    (async function(){
-      try {
-        await callAI(prompt);
-      } catch(e) {
-        // Fallback to KB content
-        addMsg('ai','<div class="section"><div class="section-title">🥗 食疗方案（知识库内容）</div><p>'+consultKB.d+'</p></div><div class="section"><div class="section-title">💊 用药建议（知识库内容）</div><p>'+consultKB.m+'</p></div><span class="disclaimer">⚠️ AI服务不可用，显示知识库内容，仅供参考</span>');
-      }
-    })();
-    consultState = 'init';
-    consultKB = null;
   }
-}
 
-}
-
-  // AI fallback
+  // No KB match - try AI directly
   var ld=document.createElement('div');
   ld.className='msg loading';
   ld.innerHTML='<div class="spinner"></div>';
@@ -366,6 +345,7 @@ function handleHistoryAnswer(answer){
     addMsg('ai','😅 暂时无法连接AI服务<br><br>📋 知识库暂未收录「'+esc(q)+'」<br><br>💡 建议：<br>1. <b>换个说法</b>（如"头痛"而非"太阳穴不舒服"）<br>2. 配置免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a><br>3. 在电脑运行OpenClaw可免费用本地AI');
   }
 }
+
 
 function handleHistoryReply(reply){
   var field=HISTORY_QUESTIONS[historyIdx].field;
