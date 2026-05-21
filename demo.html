@@ -2,12 +2,17 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#2e7d6b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+
 <title>岐黄智医 — AI中西医结合健康助手</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--pri:#2e7d6b;--pri-l:#4db8a4;--pri-d:#1b5e50;--acc:#ff8f00;--bg:#f0f7f4;--card:#fff;--txt:#2c3e3a;--txt2:#6b7c78;--sh:0 2px 12px rgba(46,125,107,.1);--r:16px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .hd{background:linear-gradient(135deg,var(--pri-d),var(--pri));color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(21,101,192,.3);z-index:10}
 .hd .logo{font-size:22px;font-weight:700;letter-spacing:1px}
 .hd .logo span{font-size:13px;font-weight:400;opacity:.85;margin-left:8px}
@@ -185,7 +190,7 @@ function fetchRemoteKB(){
           localStorage.setItem(KB_VERSION_KEY,newV);
           localStorage.setItem(KB_TIME_KEY,new Date().toISOString());
         }catch(e){/* localStorage full */}
-        showKBStatus('已更新 ('+KB.length+'条)',true);
+        showKBStatus('已更新 ('+KB.length+'条)',true);_searchIdx=null;
       }else{
         showKBStatus('最新 ('+KB.length+'条)',true);
       }
@@ -194,7 +199,7 @@ function fetchRemoteKB(){
       if(KB.length===0){
         showKBStatus('离线模式 (无数据)',false);
       }else{
-        showKBStatus('离线缓存 ('+KB.length+'条)',true);
+        showKBStatus('离线缓存 ('+KB.length+'条)',true);_searchIdx=null;
       }
     });
 }
@@ -237,28 +242,43 @@ function renderModelBar(){
 renderModelBar();
 
 // ========== KB Search ==========
+var _searchIdx=null; // inverted index for fast lookup
+function buildSearchIdx(){
+  _searchIdx={};
+  for(var i=0;i<KB.length;i++){
+    var e=KB[i];if(!e||!e.kw)continue;
+    var terms=[e.t.toLowerCase()].concat(e.kw.map(function(k){return k.toLowerCase();}));
+    for(var j=0;j<terms.length;j++){
+      var t=terms[j];
+      if(!_searchIdx[t])_searchIdx[t]=[];
+      if(_searchIdx[t].indexOf(i)<0)_searchIdx[t].push(i);
+    }
+  }
+}
 function searchKB(q){
   q=q.toLowerCase().trim();
+  if(!_searchIdx)buildSearchIdx();
+  var scores={};
+  // Index lookup for exact/partial matches
+  var keys=Object.keys(_searchIdx);
+  for(var k=0;k<keys.length;k++){
+    var term=keys[k];
+    var w=0;
+    if(term===q)w=50;
+    else if(term.includes(q))w=10;
+    else if(q.includes(term))w=15;
+    else{for(var p=1;p<=Math.min(q.length,3);p++){if(term.includes(q.substring(0,p))){w=Math.max(w,1);break;}}}
+    if(w>0){
+      var idxs=_searchIdx[term];
+      for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;
+    }
+  }
+  // Content match (only for top candidates to save time)
   var best=null,bestScore=0;
-  for(var i=0;i<KB.length;i++){
-    var e=KB[i],score=0;
-    // Title match (highest weight)
-    var tl=e.t.toLowerCase();
-    if(tl===q)score+=50;
-    else if(tl.includes(q))score+=20;
-    else if(q.includes(tl))score+=15;
-    // Content match
-    var cl=e.c.toLowerCase();
-    if(cl.includes(q))score+=3;
-    // Keyword match
-    if(e.kw){for(var j=0;j<e.kw.length;j++){
-      var kw=e.kw[j].toLowerCase();
-      if(kw===q)score+=30;
-      else if(q.includes(kw))score+=10;
-      else if(kw.includes(q))score+=5;
-      else{for(var k=0;k<Math.min(q.length,3);k++){if(kw.includes(q.substring(0,k+1)))score+=1;}}
-    }}
-    if(score>bestScore){bestScore=score;best=e;}
+  for(var idx in scores){
+    var s=scores[idx];
+    if(KB[idx].c&&KB[idx].c.toLowerCase().includes(q))s+=3;
+    if(s>bestScore){bestScore=s;best=KB[idx];}
   }
   return bestScore>=5?best:null;
 }
