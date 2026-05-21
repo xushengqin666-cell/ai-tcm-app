@@ -257,6 +257,23 @@ function searchKB(q){
   return bestScore>=5?best:null;
 }
 
+
+function findSimilar(q){
+  q=q.toLowerCase().trim();
+  var results=[];
+  for(var i=0;i<KB.length;i++){
+    var e=KB[i],score=0,tl=e.t.toLowerCase();
+    // Fuzzy title match
+    if(tl.includes(q)||q.includes(tl))score+=10;
+    // Shared characters
+    for(var j=0;j<q.length;j++){if(tl.includes(q[j]))score+=1;}
+    // Keyword partial match
+    if(e.kw){for(var k=0;k<e.kw.length;k++){var kw=e.kw[k].toLowerCase();if(kw.includes(q)||q.includes(kw))score+=5;}}
+    if(score>=3)results.push({t:e.t,s:score});
+  }
+  results.sort(function(a,b){return b.s-a.s;});
+  return results.slice(0,5).map(function(r){return r.t;});
+}
 // ========== Consultation State Machine ==========
 // state: 'init' | 'asking_history' | 'ready'
 var consultState='init';
@@ -318,11 +335,12 @@ async function send(){
     consultHistory={};
     var intro='<b>📋 初步判断：'+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br><b>🩺 为了给您更精准的建议，请回答几个问题：</b><br>';
     intro+='<div class="section"><div class="section-title">💊 '+esc(HISTORY_QUESTIONS[0].q)+'</div></div>';
-    addMsg('ai',intro+'<span class="disclaimer">⚠️ AI辅助诊疗仅供参考，不能替代医生诊断</span>');
+    addMsg('ai',intro+'<div style="margin-top:8px"><button onclick="skipHistory()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">⏩ 跳过，直接给建议</button></div><span class="disclaimer">⚠️ AI辅助诊疗仅供参考，不能替代医生诊断</span>');
     return;
   }
 
-  // No KB match - try AI directly
+  // No KB match - find similar entries
+  var suggestions=findSimilar(q);
   var ld=document.createElement('div');
   ld.className='msg loading';
   ld.innerHTML='<div class="spinner"></div>';
@@ -334,7 +352,13 @@ async function send(){
     chatArea.removeChild(ld);
   }catch(e){
     chatArea.removeChild(ld);
-    addMsg('ai','😅 暂时无法连接AI服务<br><br>📋 知识库暂未收录「'+esc(q)+'」<br><br>💡 建议：<br>1. <b>换个说法</b>（如"头痛"而非"太阳穴不舒服"）<br>2. 配置免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a><br>3. 在电脑运行OpenClaw可免费用本地AI');
+    var errMsg='😅 暂时无法连接AI服务<br><br>📋 知识库暂未收录「'+esc(q)+'」';
+    if(suggestions.length>0){
+      errMsg+='<br><br>🤔 您是不是想问：<br>';
+      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\''+esc(s)+'\')">'+esc(s)+'</span>';});
+    }
+    errMsg+='<br><br>💡 建议：<br>1. <b>换个说法</b>（如"头痛"而非"太阳穴不舒服"）<br>2. 配置免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a><br>3. 在电脑运行OpenClaw可免费用本地AI';
+    addMsg('ai',errMsg);
   }
 }
 
@@ -352,6 +376,12 @@ function handleHistoryReply(reply){
   }
 }
 
+
+function skipHistory(){
+  consultHistory={drugAllergy:'未提供',chronicDisease:'未提供',currentMeds:'未提供'};
+  historyIdx=HISTORY_QUESTIONS.length;
+  generateAdvice();
+}
 async function generateAdvice(){
   var kb=consultKB;
   var h=consultHistory;
@@ -388,7 +418,8 @@ async function generateAdvice(){
     if(md.hasDrugAllergy){
       fallback+='<div class="section"><div class="section-title">⚠️ 注意您的过敏史</div><p>您提到对'+esc(md.drugAllergyText)+'过敏，请在就医时告知医生。</p></div>';
     }
-    fallback+='<b>🍎 饮食建议：</b><br>'+kb.d+'<br><br><b>💊 常用药物：</b><br>'+kb.m;
+    if(kb.d)fallback+='<b>🍎 饮食建议：</b><br>'+kb.d+'<br><br>';
+    if(kb.m)fallback+='<b>💊 常用药物：</b><br>'+kb.m+'<br><br>';
     fallback+='<span class="disclaimer">⚠️ 仅供参考，如有不适请及时就医</span>';
     addMsg('ai',fallback);
     consultState='init';
