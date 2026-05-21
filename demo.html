@@ -344,7 +344,7 @@ async function send(){
   var inp=document.getElementById('inp'),q=inp.value.trim();
   if(!q)return;
   addMsg('user',esc(q));
-  inp.value='';
+  inp.value='';_sending=false;_sending=false;
 
   // Route based on consultation state
   if(consultState==='asking_history'){
@@ -590,62 +590,96 @@ function showPanel(p){
     document.getElementById('t-'+x).className=x===p?'active':'';
   });
   if(p==='quiz'&&!quizStarted)startQuiz();
-  if(p==='settings')loadKeys();
+  if(p==='settings')loadKeys();if(p==='quiz')initQuiz();
 }
 
 // ========== Quiz ==========
-var quizStarted=false,quizAns=[];
-var CST=["气虚","阳虚","阴虚","痰湿","湿热","血瘀","气郁","特禀","平和"];
 var QS=[
-"你容易疲乏、气短吗？","你手脚冰凉、怕冷吗？","你口干咽燥、手心热吗？",
-"你体型偏胖、痰多吗？","你容易长痘、口苦吗？","你面色晦暗、容易瘀青吗？",
-"你情绪低落、胁肋胀满吗？","你容易过敏、起皮疹吗？","你体力充沛、精力旺盛吗？",
-"你容易感冒吗？","你夜间盗汗吗？","你大便黏滞、口黏腻吗？",
-"你小便短赤、口渴喜冷饮吗？","你月经有血块、痛经吗？","你多疑善虑、抑郁吗？",
-"你喷嚏、流涕、鼻痒吗？","你睡眠安稳、饮食规律吗？","你舌淡红苔薄白吗？"
+"你容易疲乏无力吗？","你容易气短懒言吗？","你容易手脚发凉吗？",
+"你容易口干咽燥吗？","你体型偏胖腹部肥满吗？","你面部油光易生痤疮吗？",
+"你面色晦暗易有瘀斑吗？","你容易忧郁多虑吗？","你容易过敏打喷嚏吗？",
+"你容易怕冷吗？","你容易出汗吗？","你睡眠质量如何？",
+"你容易烦躁不安吗？","你胃口如何？","你大便情况如何？",
+"你小便颜色如何？","你容易感冒吗？","你四肢感觉如何？"
 ];
-var CI={
-"气虚":{s:"疲乏无力、气短懒言、易出汗",t:"元气不足，脏腑功能减退",l:"适度运动（太极拳/散步），保证睡眠",d:"黄芪粥、山药、红枣、鸡肉"},
-"阳虚":{s:"畏寒肢冷、面色苍白、小便清长",t:"阳气不足，温煦功能减退",l:"保暖避寒，适度晒太阳",d:"羊肉、核桃、生姜、肉桂"},
-"阴虚":{s:"口干咽燥、手足心热、盗汗",t:"阴液不足，虚热内生",l:"避免熬夜，放松心情",d:"银耳、百合、梨、蜂蜜"},
-"痰湿":{s:"体型肥胖、痰多、口黏腻",t:"痰湿内蕴，代谢障碍",l:"增加运动，控制体重",d:"薏米、赤小豆、冬瓜、白萝卜"},
-"湿热":{s:"容易长痘、口苦、小便黄",t:"湿热内蕴，火热偏盛",l:"清淡饮食，避免辛辣",d:"绿豆、薏仁、苦瓜、莲子"},
-"血瘀":{s:"面色晦暗、容易瘀青、刺痛",t:"血行不畅，瘀血内阻",l:"适度运动促进循环",d:"黑木耳、山楂、桃仁、玫瑰花"},
-"气郁":{s:"情绪低落、胁胀、多疑",t:"气机郁滞，情绪失调",l:"户外活动，社交倾诉",d:"玫瑰花茶、橙子、柚子、山楂"},
-"特禀":{s:"过敏体质、皮疹、喷嚏",t:"先天或后天免疫异常",l:"避免过敏原，适度锻炼",d:"根据体质调整，避免发物"},
-"平和":{s:"精力充沛、睡眠安稳",t:"阴阳平衡，气血调和",l:"保持现状，规律生活",d:"均衡饮食，荤素搭配"}
-};
+var QZ_TYPES=['平和质','气虚质','阳虚质','阴虚质','痰湿质','湿热质','血瘀质','气郁质','特禀质'];
+var quizIdx=0,quizAns=[];
 
-function startQuiz(){
-  quizStarted=true;quizAns=[];
-  renderQ();
+function initQuiz(){
+  quizIdx=0;quizAns=[];
+  renderQuizQ();
 }
 
-function renderQ(){
-  var wrap=document.getElementById('quizWrap');
-  var qi=quizAns.length;
-  if(qi>=QS.length){showResult();return;}
-  var pct=Math.round(qi/QS.length*100);
-  wrap.innerHTML='<div class="prog-bar"><div class="fill" style="width:'+pct+'%"></div></div><div class="quiz-card"><h3>第 '+(qi+1)+' / '+QS.length+' 题</h3><p style="font-size:16px;margin-bottom:16px">'+QS[qi]+'</p><div class="opts"><div class="opt" onclick="ans(1)">是</div><div class="opt" onclick="ans(0.5)">有时</div><div class="opt" onclick="ans(0)">否</div></div></div>';
-}
-
-function ans(v){
-  quizAns.push(v);
-  renderQ();
-}
-
-function showResult(){
-  var scores=CST.map(function(){return 0;});
-  var map=[[0],[1],[2],[3],[4],[5],[6],[7],[8,0],[0],[2],[3],[4],[5],[6],[7],[8],[8]];
-  for(var i=0;i<quizAns.length;i++){
-    var idx=map[i];
-    for(var j=0;j<idx.length;j++){
-      if(idx[j]<9)scores[idx[j]]+=quizAns[i];
-    }
+function renderQuizQ(){
+  var w=document.getElementById('quizWrap');if(!w)return;
+  if(quizIdx>=QS.length){renderQuizResult();return;}
+  var q=QS[quizIdx];
+  var h='<div class="quiz-card"><div class="prog-bar"><div class="fill" style="width:'+Math.round(quizIdx/QS.length*100)+'%"></div></div>';
+  h+='<h3>第'+(quizIdx+1)+'题 / '+QS.length+'</h3>';
+  h+='<p style="margin-bottom:16px;font-size:16px;line-height:1.6">'+q+'</p>';
+  h+='<div class="opts">';
+  var opts=['没有','很少','有时','经常','总是'];
+  for(var i=0;i<opts.length;i++){
+    h+='<div class="opt" onclick="answerQuiz('+i+')">'+opts[i]+'</div>';
   }
-  var maxI=0;for(var i=1;i<9;i++){if(scores[i]>scores[maxI])maxI=i;}
-  var c=CST[maxI],info=CI[c];
-  document.getElementById('quizWrap').innerHTML='<div class="result-card"><h2>🎯 您的体质：'+c+'质</h2><div class="rsec"><h4>常见表现</h4><p>'+info.s+'</p></div><div class="rsec"><h4>体质特征</h4><p>'+info.t+'</p></div><div class="rsec"><h4>调理建议</h4><p>'+info.l+'</p></div><div class="rsec"><h4>推荐饮食</h4><p>'+info.d+'</p></div><button onclick="quizStarted=false;quizAns=[];startQuiz()" style="margin-top:16px;background:var(--pri);color:#fff;border:none;border-radius:12px;padding:10px 24px;font-size:14px;cursor:pointer">🔄 重新测试</button></div>';
+  h+='</div></div>';
+  w.innerHTML=h;
+}
+
+function answerQuiz(v){
+  quizAns.push(v);quizIdx++;renderQuizQ();
+}
+
+function renderQuizResult(){
+  var w=document.getElementById('quizWrap');if(!w)return;
+  // Score: each Q maps to a primary constitution type
+  // QS[0-1]=气虚, [2]=阳虚, [3]=阴虚, [4]=痰湿, [5]=湿热,
+  // [6]=血瘀, [7]=气郁, [8]=特禀, [9]=阳虚, [10]=气虚,
+  // [11]=阴虚, [12]=湿热, [13]=痰湿, [14]=脾胃, [15]=湿热,
+  // [16]=气虚, [17]=阳虚
+  var typeMap=[1,1,2,3,4,5,6,7,8,2,1,3,5,4,4,5,1,2];
+  var scores=[0,0,0,0,0,0,0,0,0]; // index 0=平和 never scores
+  for(var i=0;i<quizAns.length;i++){
+    var tm=typeMap[i]||0;
+    scores[tm]+=(quizAns[i]+1); // 1-5 scale
+  }
+  // If all low scores → 平和质
+  var maxS=0,maxI=0,totalS=0;
+  for(var i=1;i<9;i++){
+    totalS+=scores[i];
+    if(scores[i]>maxS){maxS=scores[i];maxI=i;}
+  }
+  var type=totalS<20?QZ_TYPES[0]:QZ_TYPES[maxI];
+  var descs={
+    '平和质':'阴阳气血调和，体形匀称，面色润泽，精力充沛，性格随和。',
+    '气虚质':'元气不足，疲乏气短，易感冒，说话低弱，性格内向。',
+    '阳虚质':'阳气不足，手足不温，畏寒怕冷，喜热饮食，性格沉静。',
+    '阴虚质':'阴液亏少，口燥咽干，手足心热，性情急躁好动。',
+    '痰湿质':'痰湿凝聚，体形肥胖腹满，口黏苔腻，性格温和稳重。',
+    '湿热质':'湿热内蕴，面垢油光，口苦苔黄，性格急躁易怒。',
+    '血瘀质':'血行不畅，肤色晦暗，易有瘀斑，性情忧郁烦闷。',
+    '气郁质':'气机郁滞，神情抑郁，忧虑脆弱，敏感多疑。',
+    '特禀质':'先天禀赋异常，过敏体质，易患哮喘、荨麻疹等。'
+  };
+  var diets={
+    '平和质':'饮食有节，五谷杂粮、蔬菜水果均衡摄入。','气虚质':'多食山药、黄芪、大枣、小米、鸡肉。少食萝卜、空心菜。',
+    '阳虚质':'多食羊肉、生姜、韭菜、核桃、桂圆。忌寒凉生冷。','阴虚质':'多食银耳、百合、枸杞、鸭肉。少食辛辣燥热。',
+    '痰湿质':'少食肥甘厚腻，多食薏米、冬瓜、荷叶、陈皮。','湿热质':'少食辛辣油腻，多食绿豆、薏米、苦瓜、黄瓜。',
+    '血瘀质':'多食山楂、黑豆、醋、玫瑰花茶。少食油腻。','气郁质':'多食佛手、橙子、荞麦、萝卜。多户外活动。',
+    '特禀质':'饮食清淡，避免已知过敏原，多食黄芪、大枣、山药。'
+  };
+  var h='<div class="quiz-card"><h3>🎯 您的体质类型</h3>';
+  h+='<div style="text-align:center;margin:20px 0">';
+  h+='<div style="font-size:36px;font-weight:700;color:var(--pri)">'+type+'</div>';
+  h+='<p style="margin-top:12px;font-size:15px;line-height:1.8;color:#555">'+descs[type]+'</p></div>';
+  h+='<div class="section"><div class="section-title">🍵 食疗建议</div><p>'+diets[type]+'</p></div>';
+  h+='<div class="section"><div class="section-title">📊 各项得分</div>';
+  for(var i=0;i<9;i++)h+='<p>'+QZ_TYPES[i]+'：'+scores[i]+'</p>';
+  h+='</div>';
+  h+='<button onclick="initQuiz()" style="width:100%;padding:12px;background:var(--pri);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px">🔄 重新测试</button>';
+  h+='<button onclick="showPanel(\'chat\')" style="width:100%;padding:12px;background:#fff;color:var(--pri);border:2px solid var(--pri);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px">💬 去问诊</button>';
+  h+='</div>';
+  w.innerHTML=h;
 }
 
 // ========== Settings ==========
