@@ -33,8 +33,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .msg.ai .tag{display:inline-block;background:rgba(21,101,192,.08);color:var(--pri);padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600;margin:2px 4px 2px 0}
 .msg.ai .section{margin:10px 0;padding:10px;background:rgba(21,101,192,.04);border-radius:10px;border:1px solid rgba(21,101,192,.06)}
 .msg.ai .section-title{font-weight:700;color:var(--pri-d);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.msg.ai .section p{margin:4px 0 4px 28px;font-size:14px;color:#555}
-.msg .disclaimer{display:block;margin-top:10px;font-size:12px;color:#aaa;border-top:1px dashed var(--border);padding-top:8px}
+.msg.ai .section p{margin:4px 0 4px 28px;font-size:14px;color:var(--txt2)}
+.msg .disclaimer{display:block;margin-top:10px;font-size:12px;color:var(--txt2);border-top:1px dashed var(--border);padding-top:8px}
 .msg.loading{align-self:flex-start;background:var(--card);border:1px solid var(--border);box-shadow:var(--sh);padding:16px 20px}
 .spinner{width:32px;height:32px;border:3px solid #e0e4ff;border-top-color:var(--pri);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -68,7 +68,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .s-card label{display:block;font-size:13px;color:var(--txt2);margin-bottom:4px}
 .s-card input{width:100%;border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-size:14px;outline:none;margin-bottom:12px;transition:.2s}
 .s-card input:focus{border-color:var(--pri-l)}
-.s-card .hint{font-size:12px;color:#999;margin-top:-8px;margin-bottom:12px}
+.s-card .hint{font-size:12px;color:var(--txt2);margin-top:-8px;margin-bottom:12px}
 .s-card button{background:var(--pri);color:#fff;border:none;border-radius:10px;padding:8px 20px;font-size:14px;cursor:pointer;transition:.2s}
 .s-card button:hover{background:var(--pri-d)}
 .quick-btns{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;background:var(--card);border-top:1px solid var(--border)}
@@ -163,7 +163,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     </div>
     <div class="s-card">
       <h3>ℹ️ 使用说明</h3>
-      <p style="font-size:14px;line-height:1.8;color:#5f6368">
+      <p style="font-size:14px;line-height:1.8;color:var(--txt2)">
         <b>推荐配置：</b>申请免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a>，响应快、无需付费。<br>
         <b>无需配置：</b>本机运行 OpenClaw 时自动连接本地AI。<br>
         <b>问诊流程：</b>输入症状 → AI辨证问诊 → 个性化食疗+用药方案。<br>
@@ -714,7 +714,7 @@ function renderQuizResult(){
   var h='<div class="quiz-card"><h3>🎯 您的体质类型</h3>';
   h+='<div style="text-align:center;margin:20px 0">';
   h+='<div style="font-size:36px;font-weight:700;color:var(--pri)">'+type+'</div>';
-  h+='<p style="margin-top:12px;font-size:15px;line-height:1.8;color:#555">'+descs[type]+'</p></div>';
+  h+='<p style="margin-top:12px;font-size:15px;line-height:1.8;color:var(--txt2)">'+descs[type]+'</p></div>';
   h+='<div class="section"><div class="section-title">🍵 食疗建议</div><p>'+diets[type]+'</p></div>';
   h+='<div class="section"><div class="section-title">📊 各项得分</div>';
   for(var i=0;i<9;i++)h+='<p>'+QZ_TYPES[i]+'：'+scores[i]+'</p>';
