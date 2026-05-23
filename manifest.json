@@ -4,8 +4,8 @@
   "description": "AI中西医结合健康助手，智能问诊+体质辨识",
   "start_url": "./demo.html",
   "display": "standalone",
-  "background_color": "#f0f7f4",
-  "theme_color": "#2e7d6b",
+  "background_color": "#f5f0ff",
+  "theme_color": "#1565c0",
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>",
