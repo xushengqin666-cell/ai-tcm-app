@@ -184,7 +184,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
 <script>
 // ========== Knowledge Base ==========
-var KB=[{t:"加载中",c:"正在加载知识库...",kw:["加载"]}];
+var KB=[{t:"知识库加载中",c:"正在从远程加载知识库，请稍候...",kw:["加载"]}];
 
 // ===== Remote KB Loading System =====
 var KB_VERSION_KEY='qhy_kb_version';
@@ -240,6 +240,7 @@ ds_v3:{name:'DeepSeek-V3',icon:'⚡',base:'https://api.deepseek.com/chat/complet
 local:{name:'本地AI',icon:'🏠',base:'http://127.0.0.1:28789/v1/chat/completions',keyField:null,model:'gpt-3.5-turbo',think:false}
 };
 var curModel=localStorage.getItem('curModel')||'local';
+var _sending=false;
 
 function renderModelBar(){
   var bar=document.getElementById('modelBar');bar.innerHTML='';
@@ -277,8 +278,20 @@ function searchKB(q){
 }
 function findSimilar(q){
   q=q.toLowerCase().trim();if(!_searchIdx)buildSearchIdx();
+  var qTokens=q.split(/[\s,，、]+/).filter(function(t){return t.length>0;});
   var scores={};var keys=Object.keys(_searchIdx);
-  for(var k=0;k<keys.length;k++){var term=keys[k],w=0;if(term.includes(q)||q.includes(term))w+=10;else{for(var p=0;p<q.length;p++){if(term.includes(q[p]))w+=1;}}if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}}
+  for(var k=0;k<keys.length;k++){
+    var term=keys[k],w=0;
+    if(term===q)w=100;
+    else if(term.includes(q)||q.includes(term))w=20;
+    else{
+      for(var ti=0;ti<qTokens.length;ti++){
+        var qt=qTokens[ti];
+        if(qt.length>=2&&(term.includes(qt)||qt.includes(term)))w+=8;
+      }
+    }
+    if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
+  }
   var results=[];for(var idx in scores)results.push({t:KB[idx].t,s:scores[idx]});
   results.sort(function(a,b){return b.s-a.s;});
   return results.slice(0,5).map(function(r){return r.t;});
@@ -319,11 +332,34 @@ function esc(s){var d=document.createElement('div');d.textContent=s;return d.inn
 // ========== Chat UI ==========
 var chatArea=document.getElementById('chatArea');
 
+var _chatHistory=null;
 function addMsg(cls,html){
   var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;
   chatArea.appendChild(d);chatArea.scrollTop=99999;
   while(chatArea.children.length>100)chatArea.removeChild(chatArea.firstChild);
+  _chatHistory=null;
   return d;
+}
+function saveChatHistory(){
+  try{
+    var msgs=[];for(var i=0;i<chatArea.children.length;i++){
+      var c=chatArea.children[i];msgs.push({cls:c.className,html:c.innerHTML});
+    }
+    sessionStorage.setItem('qhy_chat',JSON.stringify(msgs));
+  }catch(e){}
+}
+function restoreChatHistory(){
+  try{
+    var s=sessionStorage.getItem('qhy_chat');
+    if(!s)return false;
+    var msgs=JSON.parse(s);if(msgs.length===0)return false;
+    for(var i=0;i<msgs.length;i++){
+      var d=document.createElement('div');d.className=msgs[i].cls;d.innerHTML=msgs[i].html;
+      chatArea.appendChild(d);
+    }
+    chatArea.scrollTop=99999;
+    return true;
+  }catch(e){return false;}
 }
 
 function skipToConsult(){
@@ -427,8 +463,10 @@ function quickAsk(symptom){
 }
 
 async function send(){
+  if(_sending)return;
   var inp=document.getElementById('inp'),q=inp.value.trim();
   if(!q)return;
+  _sending=true;
 
   // If not in consult phase, ignore or redirect
   if(phase==='profile'||phase==='quiz'){
@@ -445,6 +483,7 @@ async function send(){
     handleAllergyReply(q);return;
   }
 
+  _sending=false;
   // Search KB
   var kb=searchKB(q);
   if(kb){
@@ -464,6 +503,7 @@ async function send(){
   try{
     await callAIWithProfile(q);
     chatArea.removeChild(ld);
+    _sending=false;
   }catch(e){
     chatArea.removeChild(ld);
     var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
@@ -500,7 +540,7 @@ async function generateAdvice(){
     if(adviceDiv&&!adviceDiv.innerHTML.includes('disclaimer')){
       adviceDiv.innerHTML+='<span class="disclaimer">\u26a0\ufe0f 以上内容仅供参考，如有不适请及时就医。</span>';
     }
-    consultState='init';consultKB=null;
+    consultState='init';consultKB=null;saveChatHistory();
   }catch(e){
     chatArea.removeChild(ld);
     var fallback='<b>\ud83d\udccb '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br>';
@@ -601,6 +641,7 @@ async function callAIWithProfile(q){
   }
   await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');
   var disc=document.createElement('span');disc.className='disclaimer';disc.textContent='⚠️ AI生成内容仅供参考，如有不适请及时就医';msgDiv.appendChild(disc);
+  _sending=false;saveChatHistory();
 }
 
 async function callAI_Once(prompt, msgDiv){
@@ -758,8 +799,12 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('inp').placeholder='请先完成信息收集...';
   inp.addEventListener('keydown',function(e){if(e.key==='Escape')showPanel('chat');});
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
-  // Start the flow!
-  showPhaseWelcome();
+  // Restore chat history or start fresh
+  if(!restoreChatHistory()){showPhaseWelcome();}
+  else{
+    document.getElementById('quickBtns').style.display='flex';
+    document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
+  }
 });
 
 // Enter key handler
