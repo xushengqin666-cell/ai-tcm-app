@@ -376,8 +376,8 @@ function showPhaseWelcome(){
     setTimeout(function(){askProfileQuestion(0);},600);
   }else if(phase==='quiz'){
     addMsg('ai','<div class="section"><div class="section-title">\ud83c\udfe7 基本信息已记录</div><p>性别：'+esc(profile.gender)+' | 年龄：'+esc(profile.age)+'<br>慢性病：'+esc(profile.chronicDisease)+' | 用药：'+esc(profile.currentMeds)+'</p></div>');
-    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">接下来进行<b>中医体质辨识</b>，共18道题</p><button onclick="skipToConsult()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ed 跳过体质测试</button></div>');
-    setTimeout(function(){renderQuizQ();},500);
+    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">正在跳转到<b>体质辨识</b>面板...</p><button onclick="skipToConsult()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ed 跳过体质测试</button></div>');
+    setTimeout(function(){showPanel('quiz');},500);
   }else if(phase==='consult'){
     var qzInfo=quizResult?'您的体质：<b>'+esc(quizResult.type)+'</b>':'（未测体质，可稍后补测）';
     var reQuizBtn=(!quizResult)?'<button onclick="quizResult=null;phase=\'quiz\';showPhaseWelcome()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\ud83e\ude7a 补测体质</button>':'';
@@ -678,7 +678,7 @@ function renderQuizPanel(){
   var qw=document.getElementById('quizWrap');
   if(!qw)return;
   if(quizResult){
-    qw.innerHTML=`<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">&#x2705;</div><h3 style="margin-bottom:8px">&#x4F53;&#x8D28;&#x8FA8;&#x5224;&#x5DF2;&#x5B8C;&#x6210;</h3><p style="color:var(--txt2);margin-bottom:20px">&#x60A8;&#x7684;&#x4F53;&#x8D28;&#x7C7B;&#x578B;&#xFF1A;<b style="color:var(--pri)">${quizResult.type}</b></p><p style="color:var(--txt2);font-size:14px">${quizResult.desc}</p><button onclick="quizResult=null;phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">&#x91CD;&#x65B0;&#x6D4B;&#x8BD5;</button></div>`;
+    qw.innerHTML=`<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">&#x2705;</div><h3 style="margin-bottom:8px">&#x4F53;&#x8D28;&#x8FA8;&#x5224;&#x5DF2;&#x5B8C;&#x6210;</h3><p style="color:var(--txt2);margin-bottom:20px">&#x60A8;&#x7684;&#x4F53;&#x8D28;&#x7C7B;&#x578B;&#xFF1A;<b style="color:var(--pri)">${quizResult.type}</b></p><p style="color:var(--txt2);font-size:14px">${quizResult.desc}</p><button onclick="quizResult=null;quizIdx=0;quizAns=[];phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">&#x91CD;&#x65B0;&#x6D4B;&#x8BD5;</button></div>`;
     return;
   }
   var qs=[
@@ -755,6 +755,8 @@ function renderQuizPanel(){
     };
     desc=descs[type]||'';
     quizResult={type:type,desc:desc,scores:scores};
+    phase='consult';document.getElementById('quickBtns').style.display='flex';document.getElementById('inp').placeholder='\u63cf\u8ff0\u60a8\u7684\u75c7\u72b6...';
+    setTimeout(function(){showPanel('chat');addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">体质辨识完成！</h3><p style="color:var(--txt2)">您的体质：<b>'+type+'</b><br>现在可以告诉我您哪里不舒服了</p></div>');},300);
     renderQuizPanel();
   }
   renderQ();
