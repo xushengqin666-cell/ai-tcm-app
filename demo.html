@@ -619,14 +619,108 @@ async function callAI_Once(prompt, msgDiv){
 }
 
 // ========== Panel Switch ==========
+
+function renderQuizPanel(){
+  var qw=document.getElementById('quizWrap');
+  if(!qw)return;
+  if(quizResult){
+    qw.innerHTML='<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">✅</div><h3 style="margin-bottom:8px">体质辨识已完成</h3><p style="color:var(--txt2);margin-bottom:20px">您的体质类型：<b style="color:var(--pri)">'+quizResult.type+'</b></p><p style="color:var(--txt2);font-size:14px">'+quizResult.desc+'</p><button onclick="quizResult=null;phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">重新测试</button></div>';
+    return;
+  }
+  var qs=[
+    {q:'您平时的体力如何？',a:['精力充沛，不太容易疲劳','容易疲劳，但休息后可恢复','经常疲劳，休息后不易恢复','非常容易疲劳，稍动即累']},
+    {q:'您是否容易出汗？',a:['正常出汗，运动后明显','稍微活动就出汗','不活动也自汗','夜间盗汗或手足心热汗']},
+    {q:'您的手脚温度如何？',a:['温暖正常','手脚偏凉，冬天明显','手脚冰凉，常年如此','手脚心发热']},
+    {q:'您的食欲和消化如何？',a:['食欲好，消化正常','食欲一般，偶有腹胀','食欲差，容易腹胀腹泻','容易饥饿，吃得多但仍瘦']},
+    {q:'您的大便情况？',a:['成形规律，每天1-2次','偏干或偏稀但不规律','经常溏稀或黏腻不爽','经常干燥便秘']},
+    {q:'您的睡眠质量？',a:['睡眠好，精力充沛','入睡慢或多梦','易醒或早醒，睡眠浅','失眠严重，难以入睡']},
+    {q:'您是否容易情绪低落或焦虑？',a:['情绪稳定，心态平和','偶尔情绪波动','经常郁闷或焦虑','易怒或情绪不稳定']},
+    {q:'您的面色如何？',a:['红润有光泽','偏白或偏黄','晦暗无光泽','潮红或两颧发红']},
+    {q:'您是否容易感冒或过敏？',a:['很少感冒，抵抗力好','换季时偶尔感冒','经常感冒或鼻塞','容易过敏（花粉/食物/药物）']},
+    {q:'您的体型特点？',a:['匀称标准','偏瘦或肌肉少','偏胖或虚胖','肥胖或腹部肥满']},
+    {q:'您是否有口干口苦？',a:['没有，口腔湿润','晨起略干','经常口干','口苦口臭明显']},
+    {q:'您的舌象？（如不清楚选最接近的）',a:['淡红苔薄白','淡白胖嫩有齿痕','红少苔或剥落','暗紫或有瘀点']},
+    {q:'您是否容易心慌胸闷？',a:['没有，心脏正常','偶尔活动后心慌','经常心悸或胸闷','有明显心脏不适']},
+    {q:'您的皮肤状况？',a:['正常光滑','干燥或脱屑','容易出油或长痘','容易出现紫斑或瘀血']},
+    {q:'您对寒冷的耐受？',a:['正常耐寒','怕冷，穿衣比别人多','非常怕冷，夏天也要保暖','不怕冷反怕热']},
+    {q:'您对炎热/潮湿天气的反应？',a:['正常适应','觉得闷热不适','非常难受，头重身困','喜欢凉爽潮湿环境']},
+    {q:'您是否容易头晕眼花？',a:['很少，只在过度劳累时','偶尔蹲起时头晕','经常头晕或眼花','经常眩晕伴恶心']},
+    {q:'您的腰膝感觉？',a:['正常，无不适','偶尔酸软','经常腰膝酸软无力','腰痛明显或膝关节痛']},
+    {q:'您是否容易忘事或注意力不集中？',a:['记忆力良好','偶尔健忘','经常忘事，注意力难集中','记忆力明显下降']}
+  ];
+  var cur=0,scores={};
+  function renderQ(){
+    if(cur>=qs.length){showQuizResult();return;}
+    var qi=qs[cur];
+    var html='<div style="padding:20px 16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:var(--pri);color:#fff;border-radius:12px;padding:4px 12px;font-size:13px">第 '+(cur+1)+'/'+qs.length+' 题</span><div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:'+Math.round((cur/qs.length)*100)+'%;height:100%;background:var(--pri);transition:width .3s"></div></div></div><h3 style="margin:12px 0 16px;font-size:16px;line-height:1.5">'+qi.q+'</h3>';
+    qi.a.forEach(function(ai,i){
+      html+='<button onclick="selectA('+i+')" style="width:100%;text-align:left;padding:14px 16px;margin-bottom:8px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--pri)'" onmouseout="this.style.borderColor='var(--border)'">'+String.fromCharCode(65+i)+'. '+ai+'</button>';
+    });
+    html+='</div>';
+    qw.innerHTML=html;
+  }
+  window.selectA=function(i){
+    scores[cur]=i;
+    cur++;
+    renderQ();
+  };
+  function showQuizResult(){
+    var types=['平和质','气虚质','阳虚质','阴虚质','痰湿质','湿热质','血瘀质','气郁质','特禀质'];
+    var ts=[0,0,0,0,0,0,0,0,0];
+    // Map each question answer to body constitution tendency
+    // Q0-energy: A=平和 B=气虚 C=气虚 D=气虚
+    // Q1-sweat: A=平和 B=阴虚 C=阳虚 D=阴虚
+    // etc - simplified scoring
+    for(var q=0;q<qs.length;q++){
+      var a=scores[q]||0;
+      if(q===0){if(a>0)ts[1]+=a;} // energy -> qi deficiency
+      else if(q===1){if(a>=2)ts[3]+=a;if(a===1)ts[2]+=1;} // sweat
+      else if(q===2){if(a>=2)ts[2]+=a;} // hands temp -> yang def
+      else if(q===3){if(a===2)ts[1]+=1;if(a===3)ts[4]+=1;} // appetite
+      else if(q===4){if(a>=2)ts[1]+=a;} // stool -> spleen
+      else if(q===5){if(a>=2){ts[3]+=a;ts[1]+=1;}} // sleep
+      else if(q===6){if(a>=2)ts[7]+=a;} // emotion -> qi stagnation
+      else if(q===7){if(a>=2)ts[1]+=a;if(a===3)ts[3]+=1;} // complexion
+      else if(q===8){if(a>=2)ts[8]+=a;} // allergy -> special
+      else if(q===9){if(a===2)ts[1]+=1;if(a>=3)ts[4]+=1;} // body type
+      else if(q===10){if(a>=2)ts[3]+=a;if(a>=3)ts[5]+=1;} // dry mouth
+      else if(q===11){if(a>=2)ts[6]+=a;} // tongue purple
+      else if(q===12){if(a>=2){ts[1]+=a;ts[3]+=1;}} // heart palpitation
+      else if(q===13){if(a>=2)ts[6]+=1;if(a===3)ts[5]+=1;} // skin
+      else if(q===14){if(a>=2)ts[2]+=a;} // cold tolerance
+      else if(q===15){if(a>=2)ts[5]+=a;} // heat/humidity
+      else if(q===16){if(a>=2){ts[1]+=a;ts[3]+=1;}} // dizziness
+      else if(q===17){if(a>=2)ts[1]+=a;if(a>=3)ts[2]+=1;} // waist/knee
+      else if(q===18){if(a>=2)ts[1]+=a;} // memory
+    }
+    var maxIdx=0,maxVal=0;
+    for(var i=0;i<ts.length;i++){if(ts[i]>maxVal){maxVal=ts[i];maxIdx=i;}}
+    var type=types[maxIdx],desc='';
+    var descs={
+      '平和质':'阴阳气血调和，体质最佳。保持规律作息、均衡饮食即可。',
+      '气虚质':'元气不足，容易疲乏。建议多吃益气食物（山药、黄芪、红枣），避免过度劳累。',
+      '阳虚质':'阳气不足，畏寒肢冷。建议温补饮食（羊肉、生姜、桂圆），注意保暖，避免生冷。',
+      '阴虚质':'阴液亏虚，手足心热。建议滋阴润燥（银耳、百合、梨），少吃辛辣燥热之物。',
+      '痰湿质':'体内痰湿积聚，形体偏胖。建议健脾化痰（薏米、冬瓜、赤小豆），加强运动。',
+      '湿热质':'湿热内蕴，面油痤疮。建议清热利湿（绿豆、苦瓜、芹菜），忌辛辣油腻。',
+      '血瘀质':'血行不畅，肤色暗沉。建议活血化瘀（山楂、玫瑰花、黑木耳），保持心情舒畅。',
+      '气郁质':'气机郁滞，情绪敏感。建议疏肝理气（陈皮、佛手、茉莉花茶），多户外活动。',
+      '特禀质':'先天禀赋不足，易过敏。建议避免过敏原，增强免疫力（灵芝、黄芪），清淡饮食。'
+    };
+    desc=descs[type]||'';
+    quizResult={type:type,desc desc:scores:scores};
+    renderQuizPanel();
+  }
+  renderQ();
+}
+
 function showPanel(p){
   ['chat','quiz','settings'].forEach(function(x){
     document.getElementById('p-'+x).className='panel'+(x===p?' active':'');
     document.getElementById('t-'+x).className=x===p?'active':'';
   });
   if(p==='settings')loadKeys();
-  // Quiz tab now redirects to chat since quiz is integrated into flow
-  if(p==='quiz'){showPanel('chat');return;}
+  if(p==='quiz')renderQuizPanel();
 }
 
 function clearChat(){
