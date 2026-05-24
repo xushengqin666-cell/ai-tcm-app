@@ -624,96 +624,87 @@ function renderQuizPanel(){
   var qw=document.getElementById('quizWrap');
   if(!qw)return;
   if(quizResult){
-    qw.innerHTML='<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">✅</div><h3 style="margin-bottom:8px">体质辨识已完成</h3><p style="color:var(--txt2);margin-bottom:20px">您的体质类型：<b style="color:var(--pri)">'+quizResult.type+'</b></p><p style="color:var(--txt2);font-size:14px">'+quizResult.desc+'</p><button onclick="quizResult=null;phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">重新测试</button></div>';
+    qw.innerHTML=`<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">&#x2705;</div><h3 style="margin-bottom:8px">&#x4F53;&#x8D28;&#x8FA8;&#x5224;&#x5DF2;&#x5B8C;&#x6210;</h3><p style="color:var(--txt2);margin-bottom:20px">&#x60A8;&#x7684;&#x4F53;&#x8D28;&#x7C7B;&#x578B;&#xFF1A;<b style="color:var(--pri)">${quizResult.type}</b></p><p style="color:var(--txt2);font-size:14px">${quizResult.desc}</p><button onclick="quizResult=null;phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">&#x91CD;&#x65B0;&#x6D4B;&#x8BD5;</button></div>`;
     return;
   }
   var qs=[
-    {q:'您平时的体力如何？',a:['精力充沛，不太容易疲劳','容易疲劳，但休息后可恢复','经常疲劳，休息后不易恢复','非常容易疲劳，稍动即累']},
-    {q:'您是否容易出汗？',a:['正常出汗，运动后明显','稍微活动就出汗','不活动也自汗','夜间盗汗或手足心热汗']},
-    {q:'您的手脚温度如何？',a:['温暖正常','手脚偏凉，冬天明显','手脚冰凉，常年如此','手脚心发热']},
-    {q:'您的食欲和消化如何？',a:['食欲好，消化正常','食欲一般，偶有腹胀','食欲差，容易腹胀腹泻','容易饥饿，吃得多但仍瘦']},
-    {q:'您的大便情况？',a:['成形规律，每天1-2次','偏干或偏稀但不规律','经常溏稀或黏腻不爽','经常干燥便秘']},
-    {q:'您的睡眠质量？',a:['睡眠好，精力充沛','入睡慢或多梦','易醒或早醒，睡眠浅','失眠严重，难以入睡']},
-    {q:'您是否容易情绪低落或焦虑？',a:['情绪稳定，心态平和','偶尔情绪波动','经常郁闷或焦虑','易怒或情绪不稳定']},
-    {q:'您的面色如何？',a:['红润有光泽','偏白或偏黄','晦暗无光泽','潮红或两颧发红']},
-    {q:'您是否容易感冒或过敏？',a:['很少感冒，抵抗力好','换季时偶尔感冒','经常感冒或鼻塞','容易过敏（花粉/食物/药物）']},
-    {q:'您的体型特点？',a:['匀称标准','偏瘦或肌肉少','偏胖或虚胖','肥胖或腹部肥满']},
-    {q:'您是否有口干口苦？',a:['没有，口腔湿润','晨起略干','经常口干','口苦口臭明显']},
-    {q:'您的舌象？（如不清楚选最接近的）',a:['淡红苔薄白','淡白胖嫩有齿痕','红少苔或剥落','暗紫或有瘀点']},
-    {q:'您是否容易心慌胸闷？',a:['没有，心脏正常','偶尔活动后心慌','经常心悸或胸闷','有明显心脏不适']},
-    {q:'您的皮肤状况？',a:['正常光滑','干燥或脱屑','容易出油或长痘','容易出现紫斑或瘀血']},
-    {q:'您对寒冷的耐受？',a:['正常耐寒','怕冷，穿衣比别人多','非常怕冷，夏天也要保暖','不怕冷反怕热']},
-    {q:'您对炎热/潮湿天气的反应？',a:['正常适应','觉得闷热不适','非常难受，头重身困','喜欢凉爽潮湿环境']},
-    {q:'您是否容易头晕眼花？',a:['很少，只在过度劳累时','偶尔蹲起时头晕','经常头晕或眼花','经常眩晕伴恶心']},
-    {q:'您的腰膝感觉？',a:['正常，无不适','偶尔酸软','经常腰膝酸软无力','腰痛明显或膝关节痛']},
-    {q:'您是否容易忘事或注意力不集中？',a:['记忆力良好','偶尔健忘','经常忘事，注意力难集中','记忆力明显下降']}
+    {q:'&#x60A8;&#x5E73;&#x65F6;&#x7684;&#x4F53;&#x529B;&#x5982;&#x4F55;&#xFF1F;',a:['&#x7CBE;&#x529B;&#x5111;&#x98C4;&#xFF0C;&#x4E0D;&#x592A;&#x5BB9;&#x6613;&#x75C5;&#x52B3;','&#x5BB9;&#x6613;&#x75C5;&#x52B3;&#xFF0C;&#x4F46;&#x4F11;&#x606F;&#x540E;&#x53EF;&#x6062;&#x590D;','&#x7ECF;&#x5E38;&#x75C5;&#x52B3;&#xFF0C;&#x4F11;&#x606F;&#x540E;&#x4E0D;&#x6613;&#x6062;&#x590D;','&#x975E;&#x5E38;&#x5BB9;&#x6613;&#x75C5;&#x52B3;&#xFF0C;&#x7A0D;&#x52A8;&#x5373;&#x7B49;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x51FA;&#x6C57;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x51FA;&#x6C57;&#xFF0C;&#x8FD0;&#x52A8;&#x540E;&#x660E;&#x663E;','&#x7A0D;&#x7A0D;&#x6D3B;&#x52A8;&#x5C31;&#x51FA;&#x6C57;','&#x4E0D;&#x6D3B;&#x52A8;&#x4E5F;&#x81EA;&#x6C57;','&#x591C;&#x95F4;&#x76D0;&#x6C57;&#x6216;&#x624B;&#x8111;&#x5FC3;&#x70ED;&#x6C57;']},
+    {q:'&#x60A8;&#x7684;&#x624B;&#x811A;&#x6E29;&#x5EA6;&#x5982;&#x4F55;&#xFF1F;',a:['&#x6E29;&#x6696;&#x6B63;&#x5E38;','&#x624B;&#x811A;&#x504F;&#x51C9;&#xFF0C;&#x51B0;&#x5929;&#x660E;&#x663E;','&#x624B;&#x811A;&#x51B0;&#x51C9;&#xFF0C;&#x5E38;&#x5E74;&#x5982;&#x6B64;','&#x624B;&#x811A;&#x5FC3;&#x53D1;&#x70ED;']},
+    {q:'&#x60A8;&#x7684;&#x9913;&#x6B32;&#x548C;&#x6D88;&#x5316;&#x5982;&#x4F55;&#xFF1F;',a:['&#x9913;&#x6B32;&#x597D;&#xFF0C;&#x6D88;&#x5316;&#x6B63;&#x5E38;','&#x9913;&#x6B32;&#x4E00;&#x822C;&#xFF0C;&#x5076;&#x6709;&#x8907;&#x80C0;','&#x9913;&#x6B32;&#x5DEE;&#xFF0C;&#x5BB9;&#x6613;&#x8907;&#x80C0;&#x6CF0;&#x6C57;','&#x5BB9;&#x6613;&#x9965;&#x9A5C;&#xFF0C;&#x5403;&#x5F97;&#x591A;&#x4F46;&#x4ECD;&#x7626;']},
+    {q:'&#x60A8;&#x7684;&#x5927;&#x4FBF;&#x60C5;&#x51B5;&#xFF1F;',a:['&#x6210;&#x5F62;&#x89C4;&#x5F8B;&#xFF0C;&#x6BCF;&#x5929;1-2&#x6B21;','&#x504F;&#x5E72;&#x6216;&#x504F;&#x7A62;&#x4F46;&#x4E0D;&#x89C4;&#x5F8B;','&#x7ECF;&#x5E38;&#x6C83;&#x7A62;&#x6216;&#x9ECF;&#x80A0;&#x723D;&#x5F7B;','&#x7ECF;&#x5E38;&#x5E72;&#x71E5;&#x4FBF;&#x79FB;']},
+    {q:'&#x60A8;&#x7684;&#x7761;&#x7720;&#x8D28;&#x91CF;&#xFF1F;',a:['&#x7761;&#x7720;&#x597D;&#xFF0C;&#x7CBE;&#x529B;&#x5111;&#x98C4;','&#x5165;&#x7761;&#x6162;&#x6216;&#x591A;&#x68A6;','&#x6613;&#x9192;&#x6216;&#x65E9;&#x9192;&#xFF0C;&#x7761;&#x7720;&#x6D45;','&#x5931;&#x7720;&#x4E25;&#x91CD;&#xFF0C;&#x96BE;&#x4EE5;&#x5165;&#x7761;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x60C5;&#x7EEA;&#x4F4E;&#x843D;&#x6216;&#x7126;&#x8651;&#xFF1F;',a:['&#x60C5;&#x7EEA;&#x7A33;&#x5B9A;&#xFF0C;&#x5FC3;&#x6001;&#x5E73;&#x548C;','&#x5076;&#x5C7E;&#x60C5;&#x7EEA;&#x6CE2;&#x52A8;','&#x7ECF;&#x5E38;&#x90C1;&#x95F7;&#x6216;&#x7126;&#x8651;','&#x6613;&#x6012;&#x6216;&#x60C5;&#x7EEA;&#x4E0D;&#x7A33;&#x5B9A;']},
+    {q:'&#x60A8;&#x7684;&#x9762;&#x8272;&#x5982;&#x4F55;&#xFF1F;',a:['&#x7EA2;&#x6DA6;&#x6709;&#x5149;&#x6CFD;','&#x504F;&#x767D;&#x6216;&#x504F;&#x9EC4;','&#x6653;&#x6697;&#x65E0;&#x5149;&#x6CFD;','&#x6F6E;&#x7EA2;&#x6216;&#x4E24;&#x9836;&#x53D1;&#x7EA2;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x611F;&#x5192;&#x6216;&#x8FC7;&#x654F;&#xFF1F;',a:['&#x5F88;&#x5C11;&#x611F;&#x5192;&#xFF0C;&#x629抗力好','&#x6362;&#x5B63;&#x65F6;&#x5076;&#x5C7E;&#x611F;&#x5192;','&#x7ECF;&#x5E38;&#x611F;&#x5192;&#x6216;&#x9F3B;&#x5835;','&#x5BB9;&#x6613;&#x8FC7;&#x654F;&#xFF08;&#x82B1;&#x7C89;/&#x98DF;&#x7269;/&#x836F;&#x7269;&#xFF09;']},
+    {q:'&#x60A8;&#x7684;&#x4F53;&#x578B;&#x7279;&#x70B9;&#xFF1F;',a:['&#x5300;&#x79F0;&#x6807;&#x51C6;','&#x504F;&#x7626;&#x6216;&#x808C;&#x8089;&#x5C11;','&#x504F;&#x80D6;&#x6216;&#x865A;&#x80D6;','&#x80D6;&#x80DC;&#x6216;&#x8179;&#x90E8;&#x80A5;&#x6EE1;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x6709;&#x53E3;&#x5E72;&#x53E3;&#x82E6;&#xFF1F;',a:['&#x6CA1;&#x6709;&#xFF0C;&#x53E3;&#x8154;&#x6E7F;&#x6DA6;','&#x6668;&#x8D77;&#x7566;&#x5E72;','&#x7ECF;&#x5E38;&#x53E3;&#x5E72;','&#x53E3;&#x82E6;&#x54B8;&#x81EA;&#x660E;&#x663E;']},
+    {q:'&#x60A8;&#x7684;&#x820C;&#x8C61;&#xFF1F;&#xFF08;&#x5982;&#x4E0D;&#x6E05;&#x695A;&#x9009;&#x6700;&#x63A5;&#x8FD1;&#x7684&#xFF09;',a:['&#x6DE1;&#x7EA2;&#x82CD;&#x8584;&#x767D;','&#x6DE1;&#x767D;&#x80D6;&#x5AE9;&#x6709;&#x9F7F;&#x75D5;','&#x7EA2;&#x5C11;&#x82CD;&#x6216;&#x5250;&#x843D;','&#x6697;&#x7D2B;&#x6216;&#x6709;&#x65E0;&#x70B9;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x5FC3;&#x614C;&#x80F8;&#x95F4;&#xFF1F;',a:['&#x6CA1;&#x6709;&#xFF0C;&#x5FC3;&#x810F;&#x6B63;&#x5E38;','&#x5076;&#x5C7E;&#x6D3B;&#x52A8;&#x540E;&#x5FC3;&#x614C;','&#x7ECF;&#x5E38;&#x5FC3;&#x6014;&#x6216;&#x80F8;&#x95F4;','&#x6709;&#x660E;&#x663E;&#x5FC3;&#x810F;&#x4E0D;&#x9002;']},
+    {q:'&#x60A8;&#x7684;&#x76AE;&#x80A4;&#x72B6;&#x51B5;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x5149;&#x6ED1;','&#x5E72;&#x71E5;&#x6216;&#x8131;&#x5C42;','&#x5BB9;&#x6613;&#x51FA;&#x6CB9;&#x6216;&#x957F;&#x818A;','&#x5BB9;&#x6613;&#x51FA;&#x73B0;&#x7D2B;&#x6591;&#x6216;&#x65E5;&#x8840;']},
+    {q:'&#x60A8;&#x5BF9;&#x5BD2;&#x51B7;&#x7684;&#x8010;&#x53D7;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x8010;&#x5BD2;','&#x6015;&#x51B7;&#xFF0C;&#x7A7F;&#x8863;&#x6BD4;&#x522B;&#x4EBA;&#x591A;','&#x975E;&#x5E38;&#x6015;&#x51B7;&#xFF0C;&#x590F;&#x5929;&#x4E5F;&#x8981;&#x4FDD;&#x6696;','&#x4E0D;&#x6015;&#x51B7;&#x53CD;&#x6015;&#x70ED;']},
+    {q:'&#x60A8;&#x5BF9;&#x7080;&#x70ED;/&#x6E7F;&#x6E7F;&#x5929;&#x6C14;&#x7684;&#x53CD;&#x5E94;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x9002;&#x5E94;','&#x89C9;&#x5F97;&#x95F7;&#x70ED;&#x4E0D;&#x9002;','&#x975E;&#x5E38;&#x96BE;&#x53D7;&#xFF0C;&#x5934;&#x91CD;&#x8EAB;&#x56F0;','&#x559C;&#x6B22;&#x2620;&#x84D3;&#x5E72;&#x6E7F;&#x73AF;&#x5883;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x5934;&#x6655;&#x828;&#x82B1;&#x773C;&#xFF1F;',a:['&#x5F88;&#x5C11;&#xFF0C;&#x53EA;&#x5728;&#x8FC7;&#x5EA6;&#x52B3;&#x7D9F;&#x65F6;','&#x5076;&#x5C7E;&#x8E72;&#x8D77;&#x65F6;&#x5934;&#x6655;','&#x7ECF;&#x5E38;&#x5934;&#x6655;&#x6216;&#x82B1;&#x773C;','&#x7ECF;&#x5E38;&#x65D7;&#x6655;&#x4F34;&#x6076;&#x5FC3;']},
+    {q:'&#x60A8;&#x7684;&#x8170;&#x8198;&#x611F;&#x89C9;&#xFF1F;',a:['&#x6B63;&#x5E38;&#xFF0C;&#x65E0;&#x4E0D;&#x9002;','&#x5076;&#x5C7E;&#x9178;&#x8F6F;','&#x7ECF;&#x5E38;&#x8170;&#x8198;&#x9178;&#x8F6F;&#x65E0;&#x529B;','&#x80A0;&#x75DB;&#x660E;&#x663E;&#x6216;&#x8198;&#x5173;&#x8282;&#x75DB;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x5FD8;&#x4E8B;&#x6216;&#x6CE8;&#x610F;&#x529B;&#x4E0D;&#x96C6;&#x4E2D;&#xFF1F;',a:['&#x8BB0;&#x5FC6;&#x529B;&#x826F;&#x597D;','&#x5076;&#x5C7E;&#x5065;&#x5FD8;','&#x7ECF;&#x5E38;&#x5FD8;&#x4E8B;&#xFF0C;&#x6CE8;&#x610F;&#x529B;&#x96BE;&#x96C6;&#x4E2D;','&#x8BB0;&#x5FC6;&#x529B;&#x660E;&#x663E;&#x4E0B;&#x964D;']}
   ];
   var cur=0,scores={};
   function renderQ(){
     if(cur>=qs.length){showQuizResult();return;}
     var qi=qs[cur];
-    var html='<div style="padding:20px 16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:var(--pri);color:#fff;border-radius:12px;padding:4px 12px;font-size:13px">第 '+(cur+1)+'/'+qs.length+' 题</span><div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:'+Math.round((cur/qs.length)*100)+'%;height:100%;background:var(--pri);transition:width .3s"></div></div></div><h3 style="margin:12px 0 16px;font-size:16px;line-height:1.5">'+qi.q+'</h3>';
+    var prog=`<div style="padding:20px 16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:var(--pri);color:#fff;border-radius:12px;padding:4px 12px;font-size:13px">&#x7B2C; ${cur+1}/${qs.length} &#x9898;</span><div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.round((cur/qs.length)*100)}%;height:100%;background:var(--pri);transition:width .3s"></div></div></div><h3 style="margin:12px 0 16px;font-size:16px;line-height:1.5">${qi.q}</h3>`;
     qi.a.forEach(function(ai,i){
-      html+='<button onclick="selectA('+i+')" style="width:100%;text-align:left;padding:14px 16px;margin-bottom:8px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--pri)'" onmouseout="this.style.borderColor='var(--border)'">'+String.fromCharCode(65+i)+'. '+ai+'</button>';
+      prog+=`<button onclick="selectA(${i})" style="width:100%;text-align:left;padding:14px 16px;margin-bottom:8px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--pri)'" onmouseout="this.style.borderColor='var(--border)'">${String.fromCharCode(65+i)}. ${ai}</button>`;
     });
-    html+='</div>';
-    qw.innerHTML=html;
+    prog+='</div>';
+    qw.innerHTML=prog;
   }
-  window.selectA=function(i){
-    scores[cur]=i;
-    cur++;
-    renderQ();
-  };
+  window.selectA=function(i){scores[cur]=i;cur++;renderQ();};
   function showQuizResult(){
-    var types=['平和质','气虚质','阳虚质','阴虚质','痰湿质','湿热质','血瘀质','气郁质','特禀质'];
+    var types=['&#x5E73;&#x548C;&#x8D28;','&#x6C14;&#x865A;&#x8D28;','&#x9633;&#x865A;&#x8D28;','&#x9634;&#x865A;&#x8D28;','&#x6EB6;&#x6E7F;&#x8D28;','&#x6E7F;&#x70ED;&#x8D28;','&#x8840;&#x65E7;&#x8D28;','&#x6C14;&#x90C1;&#x8D28;','&#x7279;&#x7965;&#x8D28;'];
     var ts=[0,0,0,0,0,0,0,0,0];
-    // Map each question answer to body constitution tendency
-    // Q0-energy: A=平和 B=气虚 C=气虚 D=气虚
-    // Q1-sweat: A=平和 B=阴虚 C=阳虚 D=阴虚
-    // etc - simplified scoring
     for(var q=0;q<qs.length;q++){
       var a=scores[q]||0;
-      if(q===0){if(a>0)ts[1]+=a;} // energy -> qi deficiency
-      else if(q===1){if(a>=2)ts[3]+=a;if(a===1)ts[2]+=1;} // sweat
-      else if(q===2){if(a>=2)ts[2]+=a;} // hands temp -> yang def
-      else if(q===3){if(a===2)ts[1]+=1;if(a===3)ts[4]+=1;} // appetite
-      else if(q===4){if(a>=2)ts[1]+=a;} // stool -> spleen
-      else if(q===5){if(a>=2){ts[3]+=a;ts[1]+=1;}} // sleep
-      else if(q===6){if(a>=2)ts[7]+=a;} // emotion -> qi stagnation
-      else if(q===7){if(a>=2)ts[1]+=a;if(a===3)ts[3]+=1;} // complexion
-      else if(q===8){if(a>=2)ts[8]+=a;} // allergy -> special
-      else if(q===9){if(a===2)ts[1]+=1;if(a>=3)ts[4]+=1;} // body type
-      else if(q===10){if(a>=2)ts[3]+=a;if(a>=3)ts[5]+=1;} // dry mouth
-      else if(q===11){if(a>=2)ts[6]+=a;} // tongue purple
-      else if(q===12){if(a>=2){ts[1]+=a;ts[3]+=1;}} // heart palpitation
-      else if(q===13){if(a>=2)ts[6]+=1;if(a===3)ts[5]+=1;} // skin
-      else if(q===14){if(a>=2)ts[2]+=a;} // cold tolerance
-      else if(q===15){if(a>=2)ts[5]+=a;} // heat/humidity
-      else if(q===16){if(a>=2){ts[1]+=a;ts[3]+=1;}} // dizziness
-      else if(q===17){if(a>=2)ts[1]+=a;if(a>=3)ts[2]+=1;} // waist/knee
-      else if(q===18){if(a>=2)ts[1]+=a;} // memory
+      if(q===0&&a>0)ts[1]+=a;
+      else if(q===1){if(a>=2)ts[3]+=a;if(a===1)ts[2]+=1;}
+      else if(q===2&&a>=2)ts[2]+=a;
+      else if(q===3){if(a===2)ts[1]+=1;if(a===3)ts[4]+=1;}
+      else if(q===4&&a>=2)ts[1]+=a;
+      else if(q===5&&a>=2){ts[3]+=a;ts[1]+=1;}
+      else if(q===6&&a>=2)ts[7]+=a;
+      else if(q===7){if(a>=2)ts[1]+=a;if(a===3)ts[3]+=1;}
+      else if(q===8&&a>=2)ts[8]+=a;
+      else if(q===9){if(a===2)ts[1]+=1;if(a>=3)ts[4]+=1;}
+      else if(q===10){if(a>=2)ts[3]+=a;if(a>=3)ts[5]+=1;}
+      else if(q===11&&a>=2)ts[6]+=a;
+      else if(q===12&&a>=2){ts[1]+=a;ts[3]+=1;}
+      else if(q===13){if(a>=2)ts[6]+=1;if(a===3)ts[5]+=1;}
+      else if(q===14&&a>=2)ts[2]+=a;
+      else if(q===15&&a>=2)ts[5]+=a;
+      else if(q===16&&a>=2){ts[1]+=a;ts[3]+=1;}
+      else if(q===17){if(a>=2)ts[1]+=a;if(a>=3)ts[2]+=1;}
+      else if(q===18&&a>=2)ts[1]+=a;
     }
     var maxIdx=0,maxVal=0;
     for(var i=0;i<ts.length;i++){if(ts[i]>maxVal){maxVal=ts[i];maxIdx=i;}}
     var type=types[maxIdx],desc='';
     var descs={
-      '平和质':'阴阳气血调和，体质最佳。保持规律作息、均衡饮食即可。',
-      '气虚质':'元气不足，容易疲乏。建议多吃益气食物（山药、黄芪、红枣），避免过度劳累。',
-      '阳虚质':'阳气不足，畏寒肢冷。建议温补饮食（羊肉、生姜、桂圆），注意保暖，避免生冷。',
-      '阴虚质':'阴液亏虚，手足心热。建议滋阴润燥（银耳、百合、梨），少吃辛辣燥热之物。',
-      '痰湿质':'体内痰湿积聚，形体偏胖。建议健脾化痰（薏米、冬瓜、赤小豆），加强运动。',
-      '湿热质':'湿热内蕴，面油痤疮。建议清热利湿（绿豆、苦瓜、芹菜），忌辛辣油腻。',
-      '血瘀质':'血行不畅，肤色暗沉。建议活血化瘀（山楂、玫瑰花、黑木耳），保持心情舒畅。',
-      '气郁质':'气机郁滞，情绪敏感。建议疏肝理气（陈皮、佛手、茉莉花茶），多户外活动。',
-      '特禀质':'先天禀赋不足，易过敏。建议避免过敏原，增强免疫力（灵芝、黄芪），清淡饮食。'
+      '&#x5E73;&#x548C;&#x8D28;':'&#x9634;&#x9633;&#x6C14;&#x8840;&#x8C03;&#x548C;&#xFF0C;&#x4F53;&#x8D28;&#x6700;&#x4F73;&#x3002;&#x4FDD;&#x6301;&#x89C4;&#x5F8B;&#x4F5C;&#x606F;&#x3001;&#x5747;&#x8861;&#x9913;&#x98DF;&#x5373;&#x53EF;&#x3002;',
+      '&#x6C14;&#x865A;&#x8D28;':'&#x5143;&#x6C14;&#x4E0D;&#x8DB3;&#xFF0C;&#x5BB9;&#x6613;&#x75C5;&#x52B3;&#x3002;&#x5EFA;&#x8BAE;&#x591A;&#x5403;&#x76CA;&#x6C14;&#x98DF;&#x7269;&#xFF08;&#x5C71;&#x836F;&#x3001;&#x9EC4;&#x8282;&#x3001;&#x7EA2;&#x67A3;&#xFF09;&#xFF0C;&#x907F;&#x514D;&#x8FC7;&#x5EA6;&#x52B3;&#x7D9F;&#x3002;',
+      '&#x9633;&#x865A;&#x8D28;':'&#x9633;&#x6C14;&#x4E0D;&#x8DB3;&#xFF0C;&#x754F;&#x5BD2;&#x8179;&#x51B7;&#x3002;&#x5EFA;&#x8BAE;&#x6E29;&#x8865;&#x9913;&#x98DF;&#xFF08;&#x7F8A;&#x8089;&#x3001;&#x751F;&#x59DC;&#x3001;&#x6843;&#x5706;&#xFF09;&#xFF0C;&#x6CE8;&#x610F;&#x4FDD;&#x6696;&#xFF0C;&#x907F;&#x514D;&#x751F;&#x51B7;&#x3002;',
+      '&#x9634;&#x865A;&#x8D28;':'&#x9634;&#x6DB2;&#x4EAF;&#x865A;&#xFF0C;&#x624B;&#x8111;&#x5FC3;&#x70ED;&#x3002;&#x5EFA;&#x8BAE;&#x6ECB;&#x9634;&#x6E7F;&#x71E5;&#xFF08;&#x94F6;&#x8033;&#x3001;&#x767E;&#x5408;&#x3001;&#x68A8;&#xFF09;&#xFF0C;&#x5C11;&#x5403;&#x8FA3;&#x6912;&#x70E7;&#x70ED;&#x4E4B;&#x7269;&#x3002;',
+      '&#x6EB6;&#x6E7F;&#x8D28;':'&#x4F53;&#x5185;&#x6EB6;&#x6E7F;&#x79EF;&#x805A;&#xFF0C;&#x5F62;&#x4F53;&#x504F;&#x80D6;&#x3002;&#x5EFA;&#x8BAE;&#x5065;&#x816E;&#x5316;&#x6EB6;&#xFF08;&#x853A;&#x7C73;&#x3001;&#x51B0;&#x74DC;&#x3001;&#x8D64;&#x5C0F;&#x8C46;&#xFF09;&#xFF0C;&#x52A0;&#x5F3A;&#x8FD0;&#x52A8;&#x3002;',
+      '&#x6E7F;&#x70ED;&#x8D28;':'&#x6E7F;&#x70ED;&#x5185;&#x857E;&#xFF0C;&#x9762;&#x6CB9;&#x75DE;&#x7626;&#x3002;&#x5EFA;&#x8BAE;&#x6E05;&#x70ED;&#x5229;&#x6E7F;&#xFF08;&#x7EFF;&#x8C46;&#x3001;&#x82E6;&#x74DC;&#x3001;&#x82CF;&#x83C7;&#xFF09;&#xFF0C;&#x5FCC;&#x8FA3;&#x8FA3;&#x6CB9;&#x3002;',
+      '&#x8840;&#x65E7;&#x8D28;':'&#x8840;&#x884C;&#x4E0D;&#x7545;&#xFF0C;&#x80A4;&#x8272;&#x6697;&#x6C89;&#x3002;&#x5EFA;&#x8BAE;&#x6D3B;&#x8840;&#x5316;&#x65E7;&#xFF08;&#x5C71;&#x6817;&#x3001;&#x7396;&#x7396;&#x82B1;&#x3001;&#x9ED1;&#x6728;&#x8033;&#xFF09;&#xFF0C;&#x4FDD;&#x6301;&#x5FC3;&#x60C5;&#x8212;&#x7545;&#x3002;',
+      '&#x6C14;&#x90C1;&#x8D28;':'&#x6C14;&#x673A;&#x90C1;&#x6E05;&#xFF0C;&#x60C5;&#x7EEA;&#x654F;&#x611F;&#x3002;&#x5EFA;&#x8BAE;&#x758F;&#x8096;&#x7406;&#x6C14;&#xFF08;&#x9648;&#x76AE;&#x3001;&#x4F5B;&#x624B;&#x3001;&#x83AB;&#x8389;&#x82B1;&#x8336;&#xFF09;&#xFF0C;&#x591A;&#x6237;&#x5916;&#x6D3B;&#x52A8;&#x3002;',
+      '&#x7279;&#x7965;&#x8D28;':'&#x5148;&#x5929;&#x5951;&#x8D46;&#x4E0D;&#x8DB3;&#xFF0C;&#x6613;&#x8FC7;&#x654F;&#x3002;&#x5EFA;&#x8BAE;&#x907F;&#x514D;&#x8FC7;&#x654F;&#x539F;&#xFF0C;&#x589E;&#x5F3A;&#x514D;&#x75AB;&#x529B;&#xFF08;&#x7075;&#x829D;&#x3001;&#x9EC4;&#x8282;&#xFF09;&#xFF0C;&#x6E05;&#x6DE1;&#x9913;&#x98DF;&#x3002;'
     };
     desc=descs[type]||'';
-    quizResult={type:type,desc desc:scores:scores};
+    quizResult={type:type,desc:desc,scores:scores};
     renderQuizPanel();
   }
   renderQ();
 }
-
 function showPanel(p){
   ['chat','quiz','settings'].forEach(function(x){
     document.getElementById('p-'+x).className='panel'+(x===p?' active':'');
