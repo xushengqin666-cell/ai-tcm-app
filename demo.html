@@ -618,19 +618,6 @@ async function callAI_Once(prompt, msgDiv){
   return r.full.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
 }
 
-  var dotInterval=null,cfg=MODELS[curModel];
-  if(msgDiv){
-    if(cfg.think){msgDiv.innerHTML='<div id="ti2" style="color:#999;font-size:13px;padding:8px">\ud83e\udde0 \u6b63\u5728\u8fa8\u8bc1\u5206\u6790\u4e2d</div>';
-      dotInterval=setInterval(function(){var dc=(Date.now()/500)%4|0;var t=document.getElementById('ti2');if(t)t.textContent='\ud83e\udde0 \u6b63\u5728\u8fa8\u8bc1\u5206\u6790\u4e2d'+'.'.repeat(dc);},500);}
-    else{msgDiv.innerHTML='<div style="color:#999;font-size:13px;padding:8px">\u23f3 \u6b63\u5728\u751f\u6210\u4e2a\u6027\u5316\u65b9\u6848...</div>';}
-  }
-  var r=await _fetchAI('你是岐黄智医，中西医结合健康助手。回答时分两大部分：【食疗方案】和【用药建议】，简洁分点，600字以内。',prompt);
-  if(dotInterval)clearInterval(dotInterval);var ti2=document.getElementById('ti2');if(ti2)ti2.remove();
-  var html='';if(r.thinking)html='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">\ud83e\udde0 \u8fa8\u8bc1\u601d\u8003\u8fc7\u7a0b</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(r.thinking)+'</div></details>';
-  if(msgDiv){await typewriter(msgDiv, r.full, html);return null;}
-  return html+r.full.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
-}
-
 // ========== Panel Switch ==========
 function showPanel(p){
   ['chat','quiz','settings'].forEach(function(x){
