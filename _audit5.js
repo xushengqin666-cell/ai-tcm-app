@@ -1,0 +1,574 @@
+
+// ========== Knowledge Base ==========
+var KB=[{t:"加载中",c:"正在加载知识库...",kw:["加载"]}];
+
+// ===== Remote KB Loading System =====
+var KB_VERSION_KEY='qhy_kb_version';
+var KB_DATA_KEY='qhy_kb_data';
+var KB_TIME_KEY='qhy_kb_time';
+var KB_URL='https://xushengqin666-cell.github.io/ai-tcm-app/kb.json';
+var KB_CHECK_INTERVAL=30*60*1000;
+
+function loadKB(){
+  var cached=localStorage.getItem(KB_DATA_KEY);
+  if(cached){
+    try{KB=JSON.parse(cached);showKBStatus('本地缓存 ('+KB.length+'条)',true);}
+    catch(e){localStorage.removeItem(KB_DATA_KEY);}
+  }
+  fetchRemoteKB();
+  setInterval(fetchRemoteKB,KB_CHECK_INTERVAL);
+}
+
+function fetchRemoteKB(){
+  var v=localStorage.getItem(KB_VERSION_KEY)||'0';
+  fetch(KB_URL+'?v='+Date.now(),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){
+      if(!Array.isArray(data)||data.length===0)return;
+      var newV=String(data.length)+'_'+data.slice(0,3).map(function(e){return e.t}).join('');
+      if(newV!==v||!localStorage.getItem(KB_DATA_KEY)){
+        KB=data;
+        try{localStorage.setItem(KB_DATA_KEY,JSON.stringify(data));localStorage.setItem(KB_VERSION_KEY,newV);localStorage.setItem(KB_TIME_KEY,new Date().toISOString());}
+        catch(e){}
+        showKBStatus('已更新 ('+KB.length+'条)',true);_searchIdx=null;
+      }else{showKBStatus('最新 ('+KB.length+'条)',true);}
+    })
+    .catch(function(e){
+      if(KB.length===0)showKBStatus('离线模式 (无数据)',false);
+      else{showKBStatus('离线缓存 ('+KB.length+'条)',true);_searchIdx=null;}
+    });
+}
+
+function showKBStatus(text,ok){
+  var tEl=document.getElementById('kbUpdateTime');
+  if(tEl){var lt=localStorage.getItem(KB_TIME_KEY);tEl.textContent=lt?new Date(lt).toLocaleString():'--';}
+  var el=document.getElementById('kbStatus');
+  if(el){el.textContent=text;el.style.color=ok?'#4db8a4':'#ff8f00';}
+}
+function forceUpdateKB(){localStorage.removeItem(KB_VERSION_KEY);showKBStatus('更新中...',false);fetchRemoteKB();}
+
+// ========== Models ==========
+var MODELS={
+groq_llama:{name:'LLaMA 3.1',icon:'🦙',base:'https://api.groq.com/openai/v1/chat/completions',keyField:'groqKey',model:'llama-3.1-8b-instant',think:false},
+groq_mixtral:{name:'Mixtral',icon:'🔮',base:'https://api.groq.com/openai/v1/chat/completions',keyField:'groqKey',model:'mixtral-8x7b-32768',think:false},
+ds_r1:{name:'DeepSeek-R1',icon:'🧠',base:'https://api.deepseek.com/chat/completions',keyField:'dsKey',model:'deepseek-reasoner',think:true},
+ds_v3:{name:'DeepSeek-V3',icon:'⚡',base:'https://api.deepseek.com/chat/completions',keyField:'dsKey',model:'deepseek-chat',think:false},
+local:{name:'本地AI',icon:'🏠',base:'http://127.0.0.1:28789/v1/chat/completions',keyField:null,model:'gpt-3.5-turbo',think:false}
+};
+var curModel=localStorage.getItem('curModel')||'local';
+
+function renderModelBar(){
+  var bar=document.getElementById('modelBar');bar.innerHTML='';
+  for(var k in MODELS){
+    var m=MODELS[k],b=document.createElement('button');
+    b.textContent=m.icon+' '+m.name;b.className=k===curModel?'active':'';
+    b.onclick=(function(kk){return function(){curModel=kk;localStorage.setItem('curModel',kk);renderModelBar();}})(k);
+    bar.appendChild(b);
+  }
+}
+renderModelBar();
+
+// ========== KB Search ==========
+var _searchIdx=null;
+function buildSearchIdx(){
+  _searchIdx={};
+  for(var i=0;i<KB.length;i++){
+    var e=KB[i];if(!e||!e.kw)continue;
+    var terms=[e.t.toLowerCase()].concat(e.kw.map(function(k){return k.toLowerCase();}));
+    for(var j=0;j<terms.length;j++){var t=terms[j];if(!_searchIdx[t])_searchIdx[t]=[];if(_searchIdx[t].indexOf(i)<0)_searchIdx[t].push(i);}
+  }
+}
+function searchKB(q){
+  q=q.toLowerCase().trim();if(!_searchIdx)buildSearchIdx();
+  var scores={};var keys=Object.keys(_searchIdx);
+  for(var k=0;k<keys.length;k++){
+    var term=keys[k],w=0;
+    if(term===q)w=50;else if(term.includes(q))w=10;else if(q.includes(term))w=15;
+    else{for(var p=1;p<=Math.min(q.length,3);p++){if(term.includes(q.substring(0,p))){w=Math.max(w,1);break;}}}
+    if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
+  }
+  var best=null,bestScore=0;
+  for(var idx in scores){var s=scores[idx];if(KB[idx].c&&KB[idx].c.toLowerCase().includes(q))s+=3;if(s>bestScore){bestScore=s;best=KB[idx];}}
+  return bestScore>=5?best:null;
+}
+function findSimilar(q){
+  q=q.toLowerCase().trim();if(!_searchIdx)buildSearchIdx();
+  var scores={};var keys=Object.keys(_searchIdx);
+  for(var k=0;k<keys.length;k++){var term=keys[k],w=0;if(term.includes(q)||q.includes(term))w+=10;else{for(var p=0;p<q.length;p++){if(term.includes(q[p]))w+=1;}}if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}}
+  var results=[];for(var idx in scores)results.push({t:KB[idx].t,s:scores[idx]});
+  results.sort(function(a,b){return b.s-a.s;});
+  return results.slice(0,5).map(function(r){return r.t;});
+}
+
+// ========== Patient Profile & State Machine ==========
+// Phase: 'profile' -> 'quiz' -> 'consult'
+var phase='profile'; // current phase
+var profile={gender:'',age:'',chronicDisease:'',currentMeds:''};
+var quizResult=null; // constitution type after quiz
+var consultState='init'; // 'init' | 'asking_allergy' | 'ready'
+var consultKB=null;
+var consultAllergy='';
+var historyIdx=0;
+
+var PROFILE_QUESTIONS=[
+  {field:'gender',q:'请问您的性别是？',opts:['男','女','其他']},
+  {field:'age',q:'请问您的年龄？',opts:['18岁以下','18-30岁','31-45岁','46-60岁','60岁以上']},
+  {field:'chronicDisease',q:'您有没有慢性疾病？（如高血压、糖尿病、心脏病等，没有请选"无"）',opts:['无','高血压','糖尿病','心脏病','肝病','肾病','哮喘','其他']},
+  {field:'currentMeds',q:'您目前有在服用什么药物或保健品吗？（没有请选"无"）',opts:['无','降压药','降糖药','心脏药','中药/中成药','保健品','其他']}
+];
+
+var ALLERGY_QUESTION={field:'allergy',q:'请问您有没有药物过敏史？对哪些药物过敏？（没有请说"无"）'};
+
+var QS=[
+"你容易疲乏无力吗？","你容易气短懒言吗？","你容易手脚发凉吗？",
+"你容易口干咽燥吗？","你体型偏胖腹部肥满吗？","你面部油光易生痤疮吗？",
+"你面色晦暗易有瘀斑吗？","你容易忧郁多虑吗？","你容易过敏打喷嚏吗？",
+"你容易怕冷吗？","你容易出汗吗？","你睡眠质量如何？",
+"你容易烦躁不安吗？","你胃口如何？","你大便情况如何？",
+"你小便颜色如何？","你容易感冒吗？","你四肢感觉如何？"
+];
+var QZ_TYPES=['平和质','气虚质','阳虚质','阴虚质','痰湿质','湿热质','血瘀质','气郁质','特禀质'];
+var quizIdx=0,quizAns=[];
+
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// ========== Chat UI ==========
+var chatArea=document.getElementById('chatArea');
+
+function addMsg(cls,html){
+  var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;
+  chatArea.appendChild(d);chatArea.scrollTop=99999;
+  while(chatArea.children.length>100)chatArea.removeChild(chatArea.firstChild);
+  return d;
+}
+
+function showPhaseWelcome(){
+  chatArea.innerHTML='';
+  if(phase==='profile'){
+    addMsg('ai','<div style="text-align:center"><div style="font-size:42px;margin-bottom:10px;animation:float 3s ease-in-out infinite">\ud83c\udfe7</div><h2 style="color:var(--pri-d);margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:var(--txt2);line-height:1.8">AI中西医结合健康助手<br>为了给您提供精准的个性化建议<br>请先告诉我一些基本信息</p></div>');
+    setTimeout(function(){askProfileQuestion(0);},600);
+  }else if(phase==='quiz'){
+    addMsg('ai','<div class="section"><div class="section-title">\ud83c\udfe7 基本信息已记录</div><p>性别：'+esc(profile.gender)+' | 年龄：'+esc(profile.age)+'<br>慢性病：'+esc(profile.chronicDisease)+' | 用药：'+esc(profile.currentMeds)+'</p></div>');
+    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">接下来进行<b>中医体质辨识</b>，共18道题</p></div>');
+    setTimeout(function(){renderQuizQ();},500);
+  }else if(phase==='consult'){
+    var qzInfo=quizResult?'您的体质：<b>'+esc(quizResult.type)+'</b>':'';
+    addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">信息收集完成！</h3><p style="color:var(--txt2);line-height:1.8">'+qzInfo+'<br>现在请告诉我您今天哪里不舒服？</p><div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center"></div></div>');
+    document.getElementById('quickBtns').style.display='flex';
+    document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
+  }
+}
+
+// ========== Phase 1: Profile Collection ==========
+function askProfileQuestion(idx){
+  if(idx>=PROFILE_QUESTIONS.length){
+    // Profile complete, move to quiz phase
+    phase='quiz';
+    showPhaseWelcome();
+    return;
+  }
+  var pq=PROFILE_QUESTIONS[idx];
+  var h='<div class="section"><div class="section-title">\ud83d\udc64 第'+(idx+1)+'步 / 共'+PROFILE_QUESTIONS.length+'步 — '+esc(pq.q)+'</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
+  for(var i=0;i<pq.opts.length;i++){
+    h+='<button onclick="answerProfile('+idx+',\''+esc(pq.opts[i])+'\')" style="background:var(--pri);color:#fff;border:none;border-radius:20px;padding:8px 20px;font-size:14px;cursor:pointer;font-weight:500;transition:.2s">'+esc(pq.opts[i])+'</button>';
+  }
+  h+='</div></div>';
+  addMsg('ai',h);
+}
+
+function answerProfile(idx,val){
+  var field=PROFILE_QUESTIONS[idx].field;
+  profile[field]=val;
+  // Show user's choice as user message
+  addMsg('user',val);
+  askProfileQuestion(idx+1);
+}
+
+// ========== Phase 2: Constitution Quiz ==========
+function renderQuizQ(){
+  var w=document.getElementById('chatArea'); // render in chat area now
+  if(quizIdx>=QS.length){renderQuizResult();return;}
+  var q=QS[quizIdx];
+  var h='<div class="section"><div class="section-title">\ud83e\ude7a 体质辨识 第'+(quizIdx+1)+'题 / '+QS.length+'</div><p style="font-size:15px;line-height:1.6;margin-top:8px">'+esc(q)+'</p>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">';
+  var opts=['没有','很少','有时','经常','总是'];
+  for(var i=0;i<opts.length;i++){
+    h+='<button onclick="answerQuiz('+i+')" style="border:2px solid var(--border);border-radius:12px;background:var(--card);padding:8px 24px;font-size:14px;cursor:pointer;color:var(--txt2);transition:.2s">'+esc(opts[i])+'</button>';
+  }
+  h+='</div></div>';
+  addMsg('ai',h);
+}
+
+function answerQuiz(v){
+  quizAns.push(v);addMsg('user',['没有','很少','有时','经常','总是'][v]);
+  quizIdx++;renderQuizQ();
+}
+
+function renderQuizResult(){
+  var typeMap=[1,1,2,3,4,5,6,7,8,2,1,3,5,4,4,5,1,2];
+  var scores=[0,0,0,0,0,0,0,0,0];
+  for(var i=0;i<quizAns.length;i++){var tm=typeMap[i]||0;scores[tm]+=(quizAns[i]+1);}
+  var maxS=0,maxI=0,totalS=0;
+  for(var i=1;i<9;i++){totalS+=scores[i];if(scores[i]>maxS){maxS=scores[i];maxI=i;}}
+  var type=totalS<20?QZ_TYPES[0]:QZ_TYPES[maxI];
+  quizResult={type:type,scores:scores};
+
+  var descs={'平和质':'阴阳气血调和，体形匀称，面色润泽。','气虚质':'元气不足，疲乏气短，易感冒。','阳虚质':'阳气不足，手足不温，畏寒怕冷。','阴虚质':'阴液亏少，口燥咽干，手足心热。','痰湿质':'痰湿凝聚，体形肥胖腹满。','湿热质':'湿热内蕴，面垢油光，口苦苔黄。','血瘀质':'血行不畅，肤色晦暗易瘀斑。','气郁质':'气机郁滞，神情抑郁多虑。','特禀质':'先天禀赋异常，过敏体质。'};
+
+  var h='<div class="section"><div class="section-title">\ud83c\udfaf 您的中医体质：'+esc(type)+'</div>';
+  h+='<p style="margin-top:8px;color:var(--txt2)">'+descs[type]+'</p>';
+  h+='<p style="margin-top:6px;font-size:13px;color:var(--txt2)">该体质将在后续问诊中作为辨证参考。</p></div>';
+  addMsg('ai',h);
+
+  // Move to consultation phase
+  phase='consult';
+  setTimeout(function(){showPhaseWelcome();},800);
+}
+
+// ========== Phase 3: Consultation ==========
+function quickAsk(symptom){
+  if(phase!=='consult'){return;}
+  inp.focus();chatArea.scrollTop=0;
+  document.getElementById('inp').value=symptom;
+  send();
+}
+
+async function send(){
+  var inp=document.getElementById('inp'),q=inp.value.trim();
+  if(!q)return;
+
+  // If not in consult phase, ignore or redirect
+  if(phase==='profile'||phase==='quiz'){
+    addMsg('user',esc(q));
+    addMsg('ai','<span style="color:var(--txt2)">请先完成信息收集和体质辨识 \u21aa</span>');
+    return;
+  }
+
+  addMsg('user',esc(q));inp.value='';
+
+  // Route by state
+  if(consultState==='asking_allergy'){
+    handleAllergyReply(q);return;
+  }
+
+  // Search KB
+  var kb=searchKB(q);
+  if(kb){
+    consultKB=kb;consultState='asking_allergy';consultAllergy='';
+    var intro='<b>\ud83d\udccb 初步判断：'+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br><b>\ud83d\udcea 为了给您更精准的建议：</b><br>';
+    intro+='<div class="section"><div class="section-title">\ud83d\udc8a '+esc(ALLERGY_QUESTION.q)+'</div></div>';
+    addMsg('ai',intro+'<div style="margin-top:8px"><button onclick="skipAllergy()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ef 跳过</button></div><span class="disclaimer">\u26a0\ufe0f AI辅助诊疗仅供参考，不能替代医生诊断</span>');
+    return;
+  }
+
+  // No match
+  var suggestions=findSimilar(q);
+  var ld=document.createElement('div');ld.className='msg loading';ld.innerHTML='<div class="spinner"></div>';
+  chatArea.appendChild(ld);chatArea.scrollTop=99999;
+  while(chatArea.children.length>100)chatArea.removeChild(chatArea.firstChild);
+
+  try{
+    await callAIWithProfile(q);
+    chatArea.removeChild(ld);
+  }catch(e){
+    chatArea.removeChild(ld);
+    var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
+    if(suggestions.length>0){
+      errMsg+='<br><br>\ud83e\dd14 您是不是想问：<br>';
+      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\''+esc(s)+'\')">'+esc(s)+'</span>';});
+    }
+    addMsg('ai',errMsg);
+  }
+}
+
+function handleAllergyReply(reply){
+  consultAllergy=reply;
+  generateAdvice();
+}
+
+function skipAllergy(){
+  consultAllergy='未提供';
+  generateAdvice();
+}
+
+async function generateAdvice(){
+  var kb=consultKB;
+  var ld=document.createElement('div');ld.className='msg loading';
+  ld.innerHTML='<div class="spinner"></div>\u6b63\u5728\u6839\u636e\u60a8\u7684\u60c5\u51b5\u751f\u6210\u4e2a\u6027\u5316\u65b9\u6848\u2026';
+  chatArea.appendChild(ld);chatArea.scrollTop=99999;
+  while(chatArea.children.length>100)chatArea.removeChild(chatArea.firstChild);
+
+  try{
+    var adviceDiv=addMsg('ai','');
+    var prompt='你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病史：'+profile.chronicDisease+'\n- 当前用药：'+profile.currentMeds+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分两大部分回复：\n\n## \ud83c\udf4f 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## \ud83d\udc8a 用药建议\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★★★ 必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：饭后服用是为了减少胃刺激；睡前服用因夜间血小板聚集性高）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血象/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n注意事项：结合患者体质和病史给出个性化调整；涉及慢性病用药时提醒遵医嘱；总字数控制在600字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');
+    await callAI_Once(prompt, adviceDiv);
+    chatArea.removeChild(ld);
+    if(adviceDiv&&!adviceDiv.innerHTML.includes('disclaimer')){
+      adviceDiv.innerHTML+='<span class="disclaimer">\u26a0\ufe0f 以上内容仅供参考，如有不适请及时就医。</span>';
+    }
+    consultState='init';consultKB=null;
+  }catch(e){
+    chatArea.removeChild(ld);
+    var fallback='<b>\ud83d\udccb '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br>';
+    if(consultAllergy&&consultAllergy!=='未提供'){
+      fallback+='<div class="section"><div class="section-title">\u26a0\ufe0f 注意您的过敏史</div><p>您提到对'+esc(consultAllergy)+'过敏，请在就医时告知医生。</p></div>';
+    }
+    if(kb.d)fallback+='<b>\ud83c\udf4f 饮食建议：</b><br>'+kb.d+'<br><br>';
+    if(kb.m)fallback+='<b>\ud83d\udc8a 常用药物：</b><br>'+kb.m+'<br><br>';
+    fallback+='<span class="disclaimer">\u26a0\ufe0f 仅供参考，如有不适请及时就医</span>';
+    addMsg('ai',fallback);
+    consultState='init';consultKB=null;
+  }
+}
+
+// ========== Typewriter Effect ==========
+function formatMD(text){
+  var codeBlocks=[];
+  text=text.replace(/```([\s\S]*?)```/g,function(m,c){codeBlocks.push('<pre style="background:#f5f5f5;padding:8px;border-radius:8px;font-size:13px;overflow-x:auto">'+esc(c.trim())+'</pre>');return '\x00CB'+(codeBlocks.length-1)+'\x00';});
+  text=text.replace(/`([^`]+)`/g,'<code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>');
+  text.replace(/^### (.+)$/gm,'<h4 style="margin:8px 0 4px;color:var(--pri)">$1</h4>');
+  text=text.replace(/^## (.+)$/gm,'<h3 style="margin:10px 0 4px;color:var(--pri-d)">$1</h3>');
+  text=text.replace(/^# (.+)$/gm,'<h2 style="margin:10px 0 4px;color:var(--pri-d)">$2</h2>');
+  text=text.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+  text=text.replace(/^[-*] /gm,'\u2022 ');
+  text=text.replace(/^(\d+)\. /gm,'$1. ');
+  for(var i=0;i<codeBlocks.length;i++)text=text.replace('\x00CB'+i+'\x00',codeBlocks[i]);
+  text=text.replace(/\n/g,'<br>');
+  return text;
+}
+
+function typewriter(msgDiv, fullText, prefixHTML){
+  return new Promise(function(resolve){
+    msgDiv.innerHTML = prefixHTML + '<span id="tw-text"></span><span id="tw-cursor" class="tw-cursor"></span>';
+    var i = 0,speed = 22,textEl = document.getElementById('tw-text');
+    function tick(){
+      if(i < fullText.length){
+        if(textEl){textEl.textContent = fullText.substring(0, i+1);i++;chatArea.scrollTop = 99999;setTimeout(tick, speed);}
+        else {msgDiv.innerHTML = prefixHTML + '<span>' + formatMD(fullText) + '</span>';resolve();}
+      } else {
+        var cursor = document.getElementById('tw-cursor');if(cursor) cursor.remove();
+        var te = document.getElementById('tw-text');if(te) te.innerHTML = formatMD(fullText);
+        resolve();
+      }
+    }
+    tick();
+  });
+}
+
+// ========== AI Call ==========
+async function _fetchAI(sysPrompt, userMsg, opts){
+  opts=opts||{};var onThinking=opts.onThinking||null;
+  var cfg=MODELS[curModel];
+  var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
+  if(!key)key=document.getElementById(cfg.keyField).value||null;
+  var headers={'Content-Type':'application/json'};
+  if(key)headers['Authorization']='Bearer '+key;
+  var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sysPrompt},{role:'user',content:userMsg}],stream:true});
+  var resp=await Promise.race([fetch(cfg.base,{method:'POST',headers:headers,body:body}),new Promise(function(_,rej){setTimeout(function(){rej(new Error('\u8bf7\u6c42\u8d85\u65f6(15s)'));},15000);})]);
+  if(!resp.ok){try{await resp.text();}catch(e){}
+    if(resp.status===401)throw new Error('API Key\u65e0\u6548\uff0c\u8bf7\u68c0\u67e5\u8bbe\u7f6e');
+    if(resp.status===402)throw new Error('API\u4f59\u989d\u4e0d\u8db3');
+    if(resp.status===429)throw new Error('\u8bf7\u6c42\u8fc7\u4e8e\u9891\u7e41\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5');
+    throw new Error('HTTP '+resp.status);
+  }
+  var reader=resp.body.getReader(),decoder=new TextDecoder(),full='',thinking='';
+  while(true){
+    var result=await reader.read();if(result.done)break;
+    var chunk=decoder.decode(result.value,{stream:true});var lines=chunk.split('\n');
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i];if(!line.startsWith('data: '))continue;
+      var data=line.slice(6).trim();if(data==='[DONE]')continue;
+      try{var json=JSON.parse(data);var delta=json.choices&&json.choices[0]&&json.choices[0].delta;if(!delta)continue;if(cfg.think&&delta.reasoning_content){thinking+=delta.reasoning_content;if(onThinking)onThinking(thinking);continue;}if(delta.content)full+=delta.content;}catch(e){}
+    }
+  }
+  return {full:full,thinking:thinking,cfg:cfg};
+}
+
+async function callAIWithProfile(q){
+  var msgDiv=addMsg('ai',''),cfg=MODELS[curModel];
+  var profileInfo='\n【患者档案】性别:'+profile.gender+' 年龄:'+profile.age+' 慢性病:'+profile.chronicDisease+' 用药:'+profile.currentMeds+' 体质:'+(quizResult?quizResult.type:'未知');
+  var thinkDiv=null;
+  if(cfg.think){
+    thinkDiv=document.createElement('div');
+    thinkDiv.style.cssText='background:var(--chat-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.6;max-height:300px;overflow-y:auto;display:none';
+    msgDiv.appendChild(thinkDiv);
+  }
+  var onThink=function(txt){
+    if(!thinkDiv)return;
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<div style="font-weight:600;color:var(--pri);margin-bottom:6px">🧠 思考中... <span style="font-size:11px;color:var(--txt2)">('+Math.round(txt.length/2)+'字)</span></div>'+esc(txt).replace(/\n/g,'<br>');
+    chatArea.scrollTop=99999;
+  };
+  var r=await _fetchAI('你是岐黄智医，一个专业的AI中西医结合健康助手。回答要求：1)简洁易懂 2)结合中西医双重视角 3)给出饮食和生活建议 4)提醒严重情况需就医 5)不要过度诊断'+profileInfo,q,{onThinking:onThink});
+  if(thinkDiv&&r.thinking){
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<details open><summary style="cursor:pointer;font-weight:600;color:var(--pri);margin-bottom:6px">🧠 思考过程 ('+Math.round(r.thinking.length/2)+'字)</summary><div style="margin-top:6px">'+esc(r.thinking).replace(/\n/g,'<br>')+'</div></details>';
+  }
+  await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');
+  var disc=document.createElement('span');disc.className='disclaimer';disc.textContent='⚠️ AI生成内容仅供参考，如有不适请及时就医';msgDiv.appendChild(disc);
+}
+
+async function callAI_Once(prompt, msgDiv){
+  var cfg=MODELS[curModel];
+  var thinkDiv=null;
+  if(msgDiv&&cfg.think){
+    thinkDiv=document.createElement('div');
+    thinkDiv.style.cssText='background:var(--chat-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.6;max-height:300px;overflow-y:auto;display:none';
+    msgDiv.appendChild(thinkDiv);
+  }else if(msgDiv){
+    msgDiv.innerHTML='<div style="color:var(--txt2);font-size:13px;padding:8px">⏳ 正在生成个性化方案...</div>';
+  }
+  var onThink=function(txt){
+    if(!thinkDiv)return;
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<div style="font-weight:600;color:var(--pri);margin-bottom:6px">🧠 辨证分析中... <span style="font-size:11px;color:var(--txt2)">('+Math.round(txt.length/2)+'字)</span></div>'+esc(txt).replace(/\n/g,'<br>');
+    chatArea.scrollTop=99999;
+  };
+  var r=await _fetchAI('你是岐黄智医，中西医结合健康助手。回答时分两大部分：【食疗方案】和【用药建议】，简洁分点，600字以内。',prompt,{onThinking:onThink});
+  if(thinkDiv&&r.thinking){
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<details open><summary style="cursor:pointer;font-weight:600;color:var(--pri);margin-bottom:6px">🧠 辨证思考过程 ('+Math.round(r.thinking.length/2)+'字)</summary><div style="margin-top:6px">'+esc(r.thinking).replace(/\n/g,'<br>')+'</div></details>';
+  }
+  if(msgDiv){await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');return null;}
+  return r.full.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+}
+
+// ========== Panel Switch ==========
+
+function renderQuizPanel(){
+  var qw=document.getElementById('quizWrap');
+  if(!qw)return;
+  if(quizResult){
+    qw.innerHTML=`<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">&#x2705;</div><h3 style="margin-bottom:8px">&#x4F53;&#x8D28;&#x8FA8;&#x5224;&#x5DF2;&#x5B8C;&#x6210;</h3><p style="color:var(--txt2);margin-bottom:20px">&#x60A8;&#x7684;&#x4F53;&#x8D28;&#x7C7B;&#x578B;&#xFF1A;<b style="color:var(--pri)">${quizResult.type}</b></p><p style="color:var(--txt2);font-size:14px">${quizResult.desc}</p><button onclick="quizResult=null;phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">&#x91CD;&#x65B0;&#x6D4B;&#x8BD5;</button></div>`;
+    return;
+  }
+  var qs=[
+    {q:'&#x60A8;&#x5E73;&#x65F6;&#x7684;&#x4F53;&#x529B;&#x5982;&#x4F55;&#xFF1F;',a:['&#x7CBE;&#x529B;&#x5111;&#x98C4;&#xFF0C;&#x4E0D;&#x592A;&#x5BB9;&#x6613;&#x75C5;&#x52B3;','&#x5BB9;&#x6613;&#x75C5;&#x52B3;&#xFF0C;&#x4F46;&#x4F11;&#x606F;&#x540E;&#x53EF;&#x6062;&#x590D;','&#x7ECF;&#x5E38;&#x75C5;&#x52B3;&#xFF0C;&#x4F11;&#x606F;&#x540E;&#x4E0D;&#x6613;&#x6062;&#x590D;','&#x975E;&#x5E38;&#x5BB9;&#x6613;&#x75C5;&#x52B3;&#xFF0C;&#x7A0D;&#x52A8;&#x5373;&#x7B49;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x51FA;&#x6C57;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x51FA;&#x6C57;&#xFF0C;&#x8FD0;&#x52A8;&#x540E;&#x660E;&#x663E;','&#x7A0D;&#x7A0D;&#x6D3B;&#x52A8;&#x5C31;&#x51FA;&#x6C57;','&#x4E0D;&#x6D3B;&#x52A8;&#x4E5F;&#x81EA;&#x6C57;','&#x591C;&#x95F4;&#x76D0;&#x6C57;&#x6216;&#x624B;&#x8111;&#x5FC3;&#x70ED;&#x6C57;']},
+    {q:'&#x60A8;&#x7684;&#x624B;&#x811A;&#x6E29;&#x5EA6;&#x5982;&#x4F55;&#xFF1F;',a:['&#x6E29;&#x6696;&#x6B63;&#x5E38;','&#x624B;&#x811A;&#x504F;&#x51C9;&#xFF0C;&#x51B0;&#x5929;&#x660E;&#x663E;','&#x624B;&#x811A;&#x51B0;&#x51C9;&#xFF0C;&#x5E38;&#x5E74;&#x5982;&#x6B64;','&#x624B;&#x811A;&#x5FC3;&#x53D1;&#x70ED;']},
+    {q:'&#x60A8;&#x7684;&#x9913;&#x6B32;&#x548C;&#x6D88;&#x5316;&#x5982;&#x4F55;&#xFF1F;',a:['&#x9913;&#x6B32;&#x597D;&#xFF0C;&#x6D88;&#x5316;&#x6B63;&#x5E38;','&#x9913;&#x6B32;&#x4E00;&#x822C;&#xFF0C;&#x5076;&#x6709;&#x8907;&#x80C0;','&#x9913;&#x6B32;&#x5DEE;&#xFF0C;&#x5BB9;&#x6613;&#x8907;&#x80C0;&#x6CF0;&#x6C57;','&#x5BB9;&#x6613;&#x9965;&#x9A5C;&#xFF0C;&#x5403;&#x5F97;&#x591A;&#x4F46;&#x4ECD;&#x7626;']},
+    {q:'&#x60A8;&#x7684;&#x5927;&#x4FBF;&#x60C5;&#x51B5;&#xFF1F;',a:['&#x6210;&#x5F62;&#x89C4;&#x5F8B;&#xFF0C;&#x6BCF;&#x5929;1-2&#x6B21;','&#x504F;&#x5E72;&#x6216;&#x504F;&#x7A62;&#x4F46;&#x4E0D;&#x89C4;&#x5F8B;','&#x7ECF;&#x5E38;&#x6C83;&#x7A62;&#x6216;&#x9ECF;&#x80A0;&#x723D;&#x5F7B;','&#x7ECF;&#x5E38;&#x5E72;&#x71E5;&#x4FBF;&#x79FB;']},
+    {q:'&#x60A8;&#x7684;&#x7761;&#x7720;&#x8D28;&#x91CF;&#xFF1F;',a:['&#x7761;&#x7720;&#x597D;&#xFF0C;&#x7CBE;&#x529B;&#x5111;&#x98C4;','&#x5165;&#x7761;&#x6162;&#x6216;&#x591A;&#x68A6;','&#x6613;&#x9192;&#x6216;&#x65E9;&#x9192;&#xFF0C;&#x7761;&#x7720;&#x6D45;','&#x5931;&#x7720;&#x4E25;&#x91CD;&#xFF0C;&#x96BE;&#x4EE5;&#x5165;&#x7761;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x60C5;&#x7EEA;&#x4F4E;&#x843D;&#x6216;&#x7126;&#x8651;&#xFF1F;',a:['&#x60C5;&#x7EEA;&#x7A33;&#x5B9A;&#xFF0C;&#x5FC3;&#x6001;&#x5E73;&#x548C;','&#x5076;&#x5C7E;&#x60C5;&#x7EEA;&#x6CE2;&#x52A8;','&#x7ECF;&#x5E38;&#x90C1;&#x95F7;&#x6216;&#x7126;&#x8651;','&#x6613;&#x6012;&#x6216;&#x60C5;&#x7EEA;&#x4E0D;&#x7A33;&#x5B9A;']},
+    {q:'&#x60A8;&#x7684;&#x9762;&#x8272;&#x5982;&#x4F55;&#xFF1F;',a:['&#x7EA2;&#x6DA6;&#x6709;&#x5149;&#x6CFD;','&#x504F;&#x767D;&#x6216;&#x504F;&#x9EC4;','&#x6653;&#x6697;&#x65E0;&#x5149;&#x6CFD;','&#x6F6E;&#x7EA2;&#x6216;&#x4E24;&#x9836;&#x53D1;&#x7EA2;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x611F;&#x5192;&#x6216;&#x8FC7;&#x654F;&#xFF1F;',a:['&#x5F88;&#x5C11;&#x611F;&#x5192;&#xFF0C;&#x629抗力好','&#x6362;&#x5B63;&#x65F6;&#x5076;&#x5C7E;&#x611F;&#x5192;','&#x7ECF;&#x5E38;&#x611F;&#x5192;&#x6216;&#x9F3B;&#x5835;','&#x5BB9;&#x6613;&#x8FC7;&#x654F;&#xFF08;&#x82B1;&#x7C89;/&#x98DF;&#x7269;/&#x836F;&#x7269;&#xFF09;']},
+    {q:'&#x60A8;&#x7684;&#x4F53;&#x578B;&#x7279;&#x70B9;&#xFF1F;',a:['&#x5300;&#x79F0;&#x6807;&#x51C6;','&#x504F;&#x7626;&#x6216;&#x808C;&#x8089;&#x5C11;','&#x504F;&#x80D6;&#x6216;&#x865A;&#x80D6;','&#x80D6;&#x80DC;&#x6216;&#x8179;&#x90E8;&#x80A5;&#x6EE1;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x6709;&#x53E3;&#x5E72;&#x53E3;&#x82E6;&#xFF1F;',a:['&#x6CA1;&#x6709;&#xFF0C;&#x53E3;&#x8154;&#x6E7F;&#x6DA6;','&#x6668;&#x8D77;&#x7566;&#x5E72;','&#x7ECF;&#x5E38;&#x53E3;&#x5E72;','&#x53E3;&#x82E6;&#x54B8;&#x81EA;&#x660E;&#x663E;']},
+    {q:'&#x60A8;&#x7684;&#x820C;&#x8C61;&#xFF1F;&#xFF08;&#x5982;&#x4E0D;&#x6E05;&#x695A;&#x9009;&#x6700;&#x63A5;&#x8FD1;&#x7684&#xFF09;',a:['&#x6DE1;&#x7EA2;&#x82CD;&#x8584;&#x767D;','&#x6DE1;&#x767D;&#x80D6;&#x5AE9;&#x6709;&#x9F7F;&#x75D5;','&#x7EA2;&#x5C11;&#x82CD;&#x6216;&#x5250;&#x843D;','&#x6697;&#x7D2B;&#x6216;&#x6709;&#x65E0;&#x70B9;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x5FC3;&#x614C;&#x80F8;&#x95F4;&#xFF1F;',a:['&#x6CA1;&#x6709;&#xFF0C;&#x5FC3;&#x810F;&#x6B63;&#x5E38;','&#x5076;&#x5C7E;&#x6D3B;&#x52A8;&#x540E;&#x5FC3;&#x614C;','&#x7ECF;&#x5E38;&#x5FC3;&#x6014;&#x6216;&#x80F8;&#x95F4;','&#x6709;&#x660E;&#x663E;&#x5FC3;&#x810F;&#x4E0D;&#x9002;']},
+    {q:'&#x60A8;&#x7684;&#x76AE;&#x80A4;&#x72B6;&#x51B5;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x5149;&#x6ED1;','&#x5E72;&#x71E5;&#x6216;&#x8131;&#x5C42;','&#x5BB9;&#x6613;&#x51FA;&#x6CB9;&#x6216;&#x957F;&#x818A;','&#x5BB9;&#x6613;&#x51FA;&#x73B0;&#x7D2B;&#x6591;&#x6216;&#x65E5;&#x8840;']},
+    {q:'&#x60A8;&#x5BF9;&#x5BD2;&#x51B7;&#x7684;&#x8010;&#x53D7;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x8010;&#x5BD2;','&#x6015;&#x51B7;&#xFF0C;&#x7A7F;&#x8863;&#x6BD4;&#x522B;&#x4EBA;&#x591A;','&#x975E;&#x5E38;&#x6015;&#x51B7;&#xFF0C;&#x590F;&#x5929;&#x4E5F;&#x8981;&#x4FDD;&#x6696;','&#x4E0D;&#x6015;&#x51B7;&#x53CD;&#x6015;&#x70ED;']},
+    {q:'&#x60A8;&#x5BF9;&#x7080;&#x70ED;/&#x6E7F;&#x6E7F;&#x5929;&#x6C14;&#x7684;&#x53CD;&#x5E94;&#xFF1F;',a:['&#x6B63;&#x5E38;&#x9002;&#x5E94;','&#x89C9;&#x5F97;&#x95F7;&#x70ED;&#x4E0D;&#x9002;','&#x975E;&#x5E38;&#x96BE;&#x53D7;&#xFF0C;&#x5934;&#x91CD;&#x8EAB;&#x56F0;','&#x559C;&#x6B22;&#x2620;&#x84D3;&#x5E72;&#x6E7F;&#x73AF;&#x5883;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x5934;&#x6655;&#x828;&#x82B1;&#x773C;&#xFF1F;',a:['&#x5F88;&#x5C11;&#xFF0C;&#x53EA;&#x5728;&#x8FC7;&#x5EA6;&#x52B3;&#x7D9F;&#x65F6;','&#x5076;&#x5C7E;&#x8E72;&#x8D77;&#x65F6;&#x5934;&#x6655;','&#x7ECF;&#x5E38;&#x5934;&#x6655;&#x6216;&#x82B1;&#x773C;','&#x7ECF;&#x5E38;&#x65D7;&#x6655;&#x4F34;&#x6076;&#x5FC3;']},
+    {q:'&#x60A8;&#x7684;&#x8170;&#x8198;&#x611F;&#x89C9;&#xFF1F;',a:['&#x6B63;&#x5E38;&#xFF0C;&#x65E0;&#x4E0D;&#x9002;','&#x5076;&#x5C7E;&#x9178;&#x8F6F;','&#x7ECF;&#x5E38;&#x8170;&#x8198;&#x9178;&#x8F6F;&#x65E0;&#x529B;','&#x80A0;&#x75DB;&#x660E;&#x663E;&#x6216;&#x8198;&#x5173;&#x8282;&#x75DB;']},
+    {q:'&#x60A8;&#x662F;&#x5426;&#x5BB9;&#x6613;&#x5FD8;&#x4E8B;&#x6216;&#x6CE8;&#x610F;&#x529B;&#x4E0D;&#x96C6;&#x4E2D;&#xFF1F;',a:['&#x8BB0;&#x5FC6;&#x529B;&#x826F;&#x597D;','&#x5076;&#x5C7E;&#x5065;&#x5FD8;','&#x7ECF;&#x5E38;&#x5FD8;&#x4E8B;&#xFF0C;&#x6CE8;&#x610F;&#x529B;&#x96BE;&#x96C6;&#x4E2D;','&#x8BB0;&#x5FC6;&#x529B;&#x660E;&#x663E;&#x4E0B;&#x964D;']}
+  ];
+  var cur=0,scores={};
+  function renderQ(){
+    if(cur>=qs.length){showQuizResult();return;}
+    var qi=qs[cur];
+    var prog=`<div style="padding:20px 16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="background:var(--pri);color:#fff;border-radius:12px;padding:4px 12px;font-size:13px">&#x7B2C; ${cur+1}/${qs.length} &#x9898;</span><div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.round((cur/qs.length)*100)}%;height:100%;background:var(--pri);transition:width .3s"></div></div></div><h3 style="margin:12px 0 16px;font-size:16px;line-height:1.5">${qi.q}</h3>`;
+    qi.a.forEach(function(ai,i){
+      prog+=`<button onclick="selectA(${i})" style="width:100%;text-align:left;padding:14px 16px;margin-bottom:8px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--pri)'" onmouseout="this.style.borderColor='var(--border)'">${String.fromCharCode(65+i)}. ${ai}</button>`;
+    });
+    prog+='</div>';
+    qw.innerHTML=prog;
+  }
+  window.selectA=function(i){scores[cur]=i;cur++;renderQ();};
+  function showQuizResult(){
+    var types=['&#x5E73;&#x548C;&#x8D28;','&#x6C14;&#x865A;&#x8D28;','&#x9633;&#x865A;&#x8D28;','&#x9634;&#x865A;&#x8D28;','&#x6EB6;&#x6E7F;&#x8D28;','&#x6E7F;&#x70ED;&#x8D28;','&#x8840;&#x65E7;&#x8D28;','&#x6C14;&#x90C1;&#x8D28;','&#x7279;&#x7965;&#x8D28;'];
+    var ts=[0,0,0,0,0,0,0,0,0];
+    for(var q=0;q<qs.length;q++){
+      var a=scores[q]||0;
+      if(q===0&&a>0)ts[1]+=a;
+      else if(q===1){if(a>=2)ts[3]+=a;if(a===1)ts[2]+=1;}
+      else if(q===2&&a>=2)ts[2]+=a;
+      else if(q===3){if(a===2)ts[1]+=1;if(a===3)ts[4]+=1;}
+      else if(q===4&&a>=2)ts[1]+=a;
+      else if(q===5&&a>=2){ts[3]+=a;ts[1]+=1;}
+      else if(q===6&&a>=2)ts[7]+=a;
+      else if(q===7){if(a>=2)ts[1]+=a;if(a===3)ts[3]+=1;}
+      else if(q===8&&a>=2)ts[8]+=a;
+      else if(q===9){if(a===2)ts[1]+=1;if(a>=3)ts[4]+=1;}
+      else if(q===10){if(a>=2)ts[3]+=a;if(a>=3)ts[5]+=1;}
+      else if(q===11&&a>=2)ts[6]+=a;
+      else if(q===12&&a>=2){ts[1]+=a;ts[3]+=1;}
+      else if(q===13){if(a>=2)ts[6]+=1;if(a===3)ts[5]+=1;}
+      else if(q===14&&a>=2)ts[2]+=a;
+      else if(q===15&&a>=2)ts[5]+=a;
+      else if(q===16&&a>=2){ts[1]+=a;ts[3]+=1;}
+      else if(q===17){if(a>=2)ts[1]+=a;if(a>=3)ts[2]+=1;}
+      else if(q===18&&a>=2)ts[1]+=a;
+    }
+    var maxIdx=0,maxVal=0;
+    for(var i=0;i<ts.length;i++){if(ts[i]>maxVal){maxVal=ts[i];maxIdx=i;}}
+    var type=types[maxIdx],desc='';
+    var descs={
+      '&#x5E73;&#x548C;&#x8D28;':'&#x9634;&#x9633;&#x6C14;&#x8840;&#x8C03;&#x548C;&#xFF0C;&#x4F53;&#x8D28;&#x6700;&#x4F73;&#x3002;&#x4FDD;&#x6301;&#x89C4;&#x5F8B;&#x4F5C;&#x606F;&#x3001;&#x5747;&#x8861;&#x9913;&#x98DF;&#x5373;&#x53EF;&#x3002;',
+      '&#x6C14;&#x865A;&#x8D28;':'&#x5143;&#x6C14;&#x4E0D;&#x8DB3;&#xFF0C;&#x5BB9;&#x6613;&#x75C5;&#x52B3;&#x3002;&#x5EFA;&#x8BAE;&#x591A;&#x5403;&#x76CA;&#x6C14;&#x98DF;&#x7269;&#xFF08;&#x5C71;&#x836F;&#x3001;&#x9EC4;&#x8282;&#x3001;&#x7EA2;&#x67A3;&#xFF09;&#xFF0C;&#x907F;&#x514D;&#x8FC7;&#x5EA6;&#x52B3;&#x7D9F;&#x3002;',
+      '&#x9633;&#x865A;&#x8D28;':'&#x9633;&#x6C14;&#x4E0D;&#x8DB3;&#xFF0C;&#x754F;&#x5BD2;&#x8179;&#x51B7;&#x3002;&#x5EFA;&#x8BAE;&#x6E29;&#x8865;&#x9913;&#x98DF;&#xFF08;&#x7F8A;&#x8089;&#x3001;&#x751F;&#x59DC;&#x3001;&#x6843;&#x5706;&#xFF09;&#xFF0C;&#x6CE8;&#x610F;&#x4FDD;&#x6696;&#xFF0C;&#x907F;&#x514D;&#x751F;&#x51B7;&#x3002;',
+      '&#x9634;&#x865A;&#x8D28;':'&#x9634;&#x6DB2;&#x4EAF;&#x865A;&#xFF0C;&#x624B;&#x8111;&#x5FC3;&#x70ED;&#x3002;&#x5EFA;&#x8BAE;&#x6ECB;&#x9634;&#x6E7F;&#x71E5;&#xFF08;&#x94F6;&#x8033;&#x3001;&#x767E;&#x5408;&#x3001;&#x68A8;&#xFF09;&#xFF0C;&#x5C11;&#x5403;&#x8FA3;&#x6912;&#x70E7;&#x70ED;&#x4E4B;&#x7269;&#x3002;',
+      '&#x6EB6;&#x6E7F;&#x8D28;':'&#x4F53;&#x5185;&#x6EB6;&#x6E7F;&#x79EF;&#x805A;&#xFF0C;&#x5F62;&#x4F53;&#x504F;&#x80D6;&#x3002;&#x5EFA;&#x8BAE;&#x5065;&#x816E;&#x5316;&#x6EB6;&#xFF08;&#x853A;&#x7C73;&#x3001;&#x51B0;&#x74DC;&#x3001;&#x8D64;&#x5C0F;&#x8C46;&#xFF09;&#xFF0C;&#x52A0;&#x5F3A;&#x8FD0;&#x52A8;&#x3002;',
+      '&#x6E7F;&#x70ED;&#x8D28;':'&#x6E7F;&#x70ED;&#x5185;&#x857E;&#xFF0C;&#x9762;&#x6CB9;&#x75DE;&#x7626;&#x3002;&#x5EFA;&#x8BAE;&#x6E05;&#x70ED;&#x5229;&#x6E7F;&#xFF08;&#x7EFF;&#x8C46;&#x3001;&#x82E6;&#x74DC;&#x3001;&#x82CF;&#x83C7;&#xFF09;&#xFF0C;&#x5FCC;&#x8FA3;&#x8FA3;&#x6CB9;&#x3002;',
+      '&#x8840;&#x65E7;&#x8D28;':'&#x8840;&#x884C;&#x4E0D;&#x7545;&#xFF0C;&#x80A4;&#x8272;&#x6697;&#x6C89;&#x3002;&#x5EFA;&#x8BAE;&#x6D3B;&#x8840;&#x5316;&#x65E7;&#xFF08;&#x5C71;&#x6817;&#x3001;&#x7396;&#x7396;&#x82B1;&#x3001;&#x9ED1;&#x6728;&#x8033;&#xFF09;&#xFF0C;&#x4FDD;&#x6301;&#x5FC3;&#x60C5;&#x8212;&#x7545;&#x3002;',
+      '&#x6C14;&#x90C1;&#x8D28;':'&#x6C14;&#x673A;&#x90C1;&#x6E05;&#xFF0C;&#x60C5;&#x7EEA;&#x654F;&#x611F;&#x3002;&#x5EFA;&#x8BAE;&#x758F;&#x8096;&#x7406;&#x6C14;&#xFF08;&#x9648;&#x76AE;&#x3001;&#x4F5B;&#x624B;&#x3001;&#x83AB;&#x8389;&#x82B1;&#x8336;&#xFF09;&#xFF0C;&#x591A;&#x6237;&#x5916;&#x6D3B;&#x52A8;&#x3002;',
+      '&#x7279;&#x7965;&#x8D28;':'&#x5148;&#x5929;&#x5951;&#x8D46;&#x4E0D;&#x8DB3;&#xFF0C;&#x6613;&#x8FC7;&#x654F;&#x3002;&#x5EFA;&#x8BAE;&#x907F;&#x514D;&#x8FC7;&#x654F;&#x539F;&#xFF0C;&#x589E;&#x5F3A;&#x514D;&#x75AB;&#x529B;&#xFF08;&#x7075;&#x829D;&#x3001;&#x9EC4;&#x8282;&#xFF09;&#xFF0C;&#x6E05;&#x6DE1;&#x9913;&#x98DF;&#x3002;'
+    };
+    desc=descs[type]||'';
+    quizResult={type:type,desc:desc,scores:scores};
+    renderQuizPanel();
+  }
+  renderQ();
+}
+function showPanel(p){
+  ['chat','quiz','settings'].forEach(function(x){
+    document.getElementById('p-'+x).className='panel'+(x===p?' active':'');
+    document.getElementById('t-'+x).className=x===p?'active':'';
+  });
+  if(p==='settings')loadKeys();
+  if(p==='quiz')renderQuizPanel();
+}
+
+function clearChat(){
+  chatArea.innerHTML='';
+  phase='profile';
+  profile={gender:'',age:'',chronicDisease:'',currentMeds:''};
+  quizResult=null;consultState='init';consultKB=null;consultAllergy='';historyIdx=0;
+  quizIdx=0;quizAns=[];
+  document.getElementById('quickBtns').style.display='none';
+  showPhaseWelcome();
+}
+
+// ========== Settings ==========
+function loadKeys(){
+  document.getElementById('groqKey').value=localStorage.getItem('groqKey')||'';
+  document.getElementById('dsKey').value=localStorage.getItem('dsKey')||'';
+}
+function saveKeys(){
+  localStorage.setItem('groqKey',document.getElementById('groqKey').value);
+  localStorage.setItem('dsKey',document.getElementById('dsKey').value);
+  addMsg('ai','\u2705 设置已保存');
+  showPanel('chat');
+}
+
+// ===== Init =====
+document.addEventListener('DOMContentLoaded', function(){
+  loadKB();
+  var lt=localStorage.getItem('qhy_kb_time');
+  var tEl=document.getElementById('kbUpdateTime');
+  if(tEl&&lt) tEl.textContent=new Date(lt).toLocaleString();
+  // Hide quick buttons initially (shown only in consult phase)
+  document.getElementById('quickBtns').style.display='none';
+  // Disable input during profile/quiz phases - actually let it work but route properly
+  document.getElementById('inp').placeholder='请先完成信息收集...';
+  inp.addEventListener('keydown',function(e){if(e.key==='Escape')showPanel('chat');});
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+  // Start the flow!
+  showPhaseWelcome();
+});
+
+// Enter key handler
+document.getElementById('inp').addEventListener('keypress',function(e){
+  if(e.key==='Enter'){e.preventDefault();send();}
+});
