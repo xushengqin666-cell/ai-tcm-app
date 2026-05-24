@@ -326,18 +326,26 @@ function addMsg(cls,html){
   return d;
 }
 
+function skipToConsult(){
+  phase='consult';profile={gender:'未提供',age:'未提供',chronicDisease:'未提供',currentMeds:'未提供'};
+  consultState='init';document.getElementById('quickBtns').style.display='flex';
+  document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
+  showPhaseWelcome();
+}
+
 function showPhaseWelcome(){
   chatArea.innerHTML='';
   if(phase==='profile'){
-    addMsg('ai','<div style="text-align:center"><div style="font-size:42px;margin-bottom:10px;animation:float 3s ease-in-out infinite">\ud83c\udfe7</div><h2 style="color:var(--pri-d);margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:var(--txt2);line-height:1.8">AI中西医结合健康助手<br>为了给您提供精准的个性化建议<br>请先告诉我一些基本信息</p></div>');
+    addMsg('ai','<div style="text-align:center"><div style="font-size:42px;margin-bottom:10px;animation:float 3s ease-in-out infinite">\ud83c\udfe7</div><h2 style="color:var(--pri-d);margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:var(--txt2);line-height:1.8">AI中西医结合健康助手<br>为了给您提供精准的个性化建议<br>请先告诉我一些基本信息</p><div style="margin-top:14px"><button onclick="skipToConsult()" style="background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:8px 20px;font-size:13px;cursor:pointer;font-weight:500">\u23ed 跳过，直接问诊</button></div></div>');
     setTimeout(function(){askProfileQuestion(0);},600);
   }else if(phase==='quiz'){
     addMsg('ai','<div class="section"><div class="section-title">\ud83c\udfe7 基本信息已记录</div><p>性别：'+esc(profile.gender)+' | 年龄：'+esc(profile.age)+'<br>慢性病：'+esc(profile.chronicDisease)+' | 用药：'+esc(profile.currentMeds)+'</p></div>');
-    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">接下来进行<b>中医体质辨识</b>，共18道题</p></div>');
+    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">接下来进行<b>中医体质辨识</b>，共18道题</p><button onclick="skipToConsult()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ed 跳过体质测试</button></div>');
     setTimeout(function(){renderQuizQ();},500);
   }else if(phase==='consult'){
-    var qzInfo=quizResult?'您的体质：<b>'+esc(quizResult.type)+'</b>':'';
-    addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">信息收集完成！</h3><p style="color:var(--txt2);line-height:1.8">'+qzInfo+'<br>现在请告诉我您今天哪里不舒服？</p><div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center"></div></div>');
+    var qzInfo=quizResult?'您的体质：<b>'+esc(quizResult.type)+'</b>':'（未测体质，可稍后补测）';
+    var reQuizBtn=(!quizResult)?'<button onclick="quizResult=null;phase=\'quiz\';showPhaseWelcome()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\ud83e\ude7a 补测体质</button>':'';
+    addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">信息收集完成！</h3><p style="color:var(--txt2);line-height:1.8">'+qzInfo+'<br>现在请告诉我您今天哪里不舒服？</p>'+reQuizBtn+'</div>');
     document.getElementById('quickBtns').style.display='flex';
     document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
   }
@@ -425,7 +433,8 @@ async function send(){
   // If not in consult phase, ignore or redirect
   if(phase==='profile'||phase==='quiz'){
     addMsg('user',esc(q));
-    addMsg('ai','<span style="color:var(--txt2)">请先完成信息收集和体质辨识 \u21aa</span>');
+    addMsg('ai','<span style="color:var(--txt2)">\u23ed 已为您跳转到问诊模式</span>');
+    skipToConsult();
     return;
   }
 
@@ -511,9 +520,9 @@ function formatMD(text){
   var codeBlocks=[];
   text=text.replace(/```([\s\S]*?)```/g,function(m,c){codeBlocks.push('<pre style="background:#f5f5f5;padding:8px;border-radius:8px;font-size:13px;overflow-x:auto">'+esc(c.trim())+'</pre>');return '\x00CB'+(codeBlocks.length-1)+'\x00';});
   text=text.replace(/`([^`]+)`/g,'<code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>');
-  text.replace(/^### (.+)$/gm,'<h4 style="margin:8px 0 4px;color:var(--pri)">$1</h4>');
+  text=text.replace(/^### (.+)$/gm,'<h4 style="margin:8px 0 4px;color:var(--pri)">$1</h4>');
   text=text.replace(/^## (.+)$/gm,'<h3 style="margin:10px 0 4px;color:var(--pri-d)">$1</h3>');
-  text=text.replace(/^# (.+)$/gm,'<h2 style="margin:10px 0 4px;color:var(--pri-d)">$2</h2>');
+  text=text.replace(/^# (.+)$/gm,'<h2 style="margin:10px 0 4px;color:var(--pri-d)">$1</h2>');
   text=text.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
   text=text.replace(/^[-*] /gm,'\u2022 ');
   text=text.replace(/^(\d+)\. /gm,'$1. ');
@@ -546,6 +555,7 @@ async function _fetchAI(sysPrompt, userMsg, opts){
   var cfg=MODELS[curModel];
   var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
   if(!key)key=document.getElementById(cfg.keyField).value||null;
+  if(cfg.keyField&&!key&&!cfg.base.includes('127.0.0.1')){throw new Error('\u8bf7\u5148\u5728\u8bbe\u7f6e\u4e2d\u914d\u7f6e'+MODELS[curModel].name+' API Key');}
   var headers={'Content-Type':'application/json'};
   if(key)headers['Authorization']='Bearer '+key;
   var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sysPrompt},{role:'user',content:userMsg}],stream:true});
