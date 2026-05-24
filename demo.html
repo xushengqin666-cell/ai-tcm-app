@@ -516,11 +516,13 @@ async function send(){
 }
 
 function handleAllergyReply(reply){
+  addMsg('user',esc(reply));
   consultAllergy=reply;
   generateAdvice();
 }
 
 function skipAllergy(){
+  addMsg('user','跳过');
   consultAllergy='未提供';
   generateAdvice();
 }
@@ -599,13 +601,14 @@ async function _fetchAI(sysPrompt, userMsg, opts){
   var headers={'Content-Type':'application/json'};
   if(key)headers['Authorization']='Bearer '+key;
   var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sysPrompt},{role:'user',content:userMsg}],stream:true});
-  var resp=await Promise.race([fetch(cfg.base,{method:'POST',headers:headers,body:body}),new Promise(function(_,rej){setTimeout(function(){rej(new Error('\u8bf7\u6c42\u8d85\u65f6(15s)'));},15000);})]);
+  var resp=await Promise.race([fetch(cfg.base,{method:'POST',headers:headers,body:body}),new Promise(function(_,rej){setTimeout(function(){rej(new Error('\u8bf7\u6c42\u8d85\u65f6(15s)'));},30000);})]);
   if(!resp.ok){try{await resp.text();}catch(e){}
     if(resp.status===401)throw new Error('API Key\u65e0\u6548\uff0c\u8bf7\u68c0\u67e5\u8bbe\u7f6e');
     if(resp.status===402)throw new Error('API\u4f59\u989d\u4e0d\u8db3');
     if(resp.status===429)throw new Error('\u8bf7\u6c42\u8fc7\u4e8e\u9891\u7e41\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5');
     throw new Error('HTTP '+resp.status);
   }
+  if(!resp.body||!resp.body.getReader){var text=await resp.text();try{var j=JSON.parse(text);return{full:j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'',thinking:'',cfg:cfg};}catch(e){throw new Error('\u60a8\u7684\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u6d41\u5f0f\u54cd\u5e94\uff0c\u8bf7\u4f7f\u7528Chrome/Safari\u6d4f\u89c8\u5668');}}
   var reader=resp.body.getReader(),decoder=new TextDecoder(),full='',thinking='';
   while(true){
     var result=await reader.read();if(result.done)break;
@@ -772,6 +775,7 @@ function clearChat(){
   quizResult=null;consultState='init';consultKB=null;consultAllergy='';historyIdx=0;
   quizIdx=0;quizAns=[];
   document.getElementById('quickBtns').style.display='none';
+  sessionStorage.removeItem('qhy_chat');
   showPhaseWelcome();
 }
 
@@ -799,6 +803,7 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('inp').placeholder='请先完成信息收集...';
   inp.addEventListener('keydown',function(e){if(e.key==='Escape')showPanel('chat');});
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+  window.addEventListener('beforeunload',function(){saveChatHistory();});
   // Restore chat history or start fresh
   if(!restoreChatHistory()){showPhaseWelcome();}
   else{
