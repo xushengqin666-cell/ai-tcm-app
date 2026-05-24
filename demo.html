@@ -541,7 +541,8 @@ function typewriter(msgDiv, fullText, prefixHTML){
 }
 
 // ========== AI Call ==========
-async function _fetchAI(sysPrompt, userMsg){
+async function _fetchAI(sysPrompt, userMsg, opts){
+  opts=opts||{};var onThinking=opts.onThinking||null;
   var cfg=MODELS[curModel];
   var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
   if(!key)key=document.getElementById(cfg.keyField).value||null;
@@ -550,9 +551,9 @@ async function _fetchAI(sysPrompt, userMsg){
   var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sysPrompt},{role:'user',content:userMsg}],stream:true});
   var resp=await Promise.race([fetch(cfg.base,{method:'POST',headers:headers,body:body}),new Promise(function(_,rej){setTimeout(function(){rej(new Error('\u8bf7\u6c42\u8d85\u65f6(15s)'));},15000);})]);
   if(!resp.ok){try{await resp.text();}catch(e){}
-    if(resp.status===401)throw new Error('API Key无效，请检查设置');
-    if(resp.status===402)throw new Error('API余额不足');
-    if(resp.status===429)throw new Error('请求过于频繁，请稍后重试');
+    if(resp.status===401)throw new Error('API Key\u65e0\u6548\uff0c\u8bf7\u68c0\u67e5\u8bbe\u7f6e');
+    if(resp.status===402)throw new Error('API\u4f59\u989d\u4e0d\u8db3');
+    if(resp.status===429)throw new Error('\u8bf7\u6c42\u8fc7\u4e8e\u9891\u7e41\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5');
     throw new Error('HTTP '+resp.status);
   }
   var reader=resp.body.getReader(),decoder=new TextDecoder(),full='',thinking='';
@@ -562,25 +563,61 @@ async function _fetchAI(sysPrompt, userMsg){
     for(var i=0;i<lines.length;i++){
       var line=lines[i];if(!line.startsWith('data: '))continue;
       var data=line.slice(6).trim();if(data==='[DONE]')continue;
-      try{var json=JSON.parse(data);var delta=json.choices&&json.choices[0]&&json.choices[0].delta;if(!delta)continue;if(cfg.think&&delta.reasoning_content){thinking+=delta.reasoning_content;continue;}if(delta.content)full+=delta.content;}catch(e){}
+      try{var json=JSON.parse(data);var delta=json.choices&&json.choices[0]&&json.choices[0].delta;if(!delta)continue;if(cfg.think&&delta.reasoning_content){thinking+=delta.reasoning_content;if(onThinking)onThinking(thinking);continue;}if(delta.content)full+=delta.content;}catch(e){}
     }
   }
   return {full:full,thinking:thinking,cfg:cfg};
 }
 
 async function callAIWithProfile(q){
-  var msgDiv=addMsg('ai',''),dotInterval=null,cfg=MODELS[curModel];
+  var msgDiv=addMsg('ai',''),cfg=MODELS[curModel];
   var profileInfo='\n【患者档案】性别:'+profile.gender+' 年龄:'+profile.age+' 慢性病:'+profile.chronicDisease+' 用药:'+profile.currentMeds+' 体质:'+(quizResult?quizResult.type:'未知');
-  if(cfg.think){msgDiv.innerHTML='<div id="ti" style="color:#999;font-size:13px;padding:8px">\ud83e\udde0 \u601d\u8003\u4e2d</div>';
-    dotInterval=setInterval(function(){var dc=(Date.now()/500)%4|0;var t=document.getElementById('ti');if(t)t.textContent='\ud83e\udde0 \u601d\u8003\u4e2d'+'.'.repeat(dc);},500);}
-  var r=await _fetchAI('你是岐黄智医，一个专业的AI中西医结合健康助手。回答要求：1)简洁易懂 2)结合中西医双重视角 3)给出饮食和生活建议 4)提醒严重情况需就医 5)不要过度诊断'+profileInfo,q);
-  if(dotInterval)clearInterval(dotInterval);var ti=document.getElementById('ti');if(ti)ti.remove();
-  var html='';if(r.thinking)html='<details style="margin-bottom:8px"><summary style="cursor:pointer;color:#999;font-size:13px">\ud83e\udde0 \u601d\u8003\u8fc7\u7a0b</summary><div style="padding:8px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#666;margin-top:4px">'+esc(r.thinking)+'</div></details>';
-  await typewriter(msgDiv, r.full, html);
-  var disc=document.createElement('span');disc.className='disclaimer';disc.textContent='\u26a0\ufe0f AI生成内容仅供参考，如有不适请及时就医';msgDiv.appendChild(disc);
+  var thinkDiv=null;
+  if(cfg.think){
+    thinkDiv=document.createElement('div');
+    thinkDiv.style.cssText='background:var(--chat-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.6;max-height:300px;overflow-y:auto;display:none';
+    msgDiv.appendChild(thinkDiv);
+  }
+  var onThink=function(txt){
+    if(!thinkDiv)return;
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<div style="font-weight:600;color:var(--pri);margin-bottom:6px">🧠 思考中... <span style="font-size:11px;color:var(--txt2)">('+Math.round(txt.length/2)+'字)</span></div>'+esc(txt).replace(/\n/g,'<br>');
+    chatArea.scrollTop=99999;
+  };
+  var r=await _fetchAI('你是岐黄智医，一个专业的AI中西医结合健康助手。回答要求：1)简洁易懂 2)结合中西医双重视角 3)给出饮食和生活建议 4)提醒严重情况需就医 5)不要过度诊断'+profileInfo,q,{onThinking:onThink});
+  if(thinkDiv&&r.thinking){
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<details open><summary style="cursor:pointer;font-weight:600;color:var(--pri);margin-bottom:6px">🧠 思考过程 ('+Math.round(r.thinking.length/2)+'字)</summary><div style="margin-top:6px">'+esc(r.thinking).replace(/\n/g,'<br>')+'</div></details>';
+  }
+  await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');
+  var disc=document.createElement('span');disc.className='disclaimer';disc.textContent='⚠️ AI生成内容仅供参考，如有不适请及时就医';msgDiv.appendChild(disc);
 }
 
 async function callAI_Once(prompt, msgDiv){
+  var cfg=MODELS[curModel];
+  var thinkDiv=null;
+  if(msgDiv&&cfg.think){
+    thinkDiv=document.createElement('div');
+    thinkDiv.style.cssText='background:var(--chat-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.6;max-height:300px;overflow-y:auto;display:none';
+    msgDiv.appendChild(thinkDiv);
+  }else if(msgDiv){
+    msgDiv.innerHTML='<div style="color:var(--txt2);font-size:13px;padding:8px">⏳ 正在生成个性化方案...</div>';
+  }
+  var onThink=function(txt){
+    if(!thinkDiv)return;
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<div style="font-weight:600;color:var(--pri);margin-bottom:6px">🧠 辨证分析中... <span style="font-size:11px;color:var(--txt2)">('+Math.round(txt.length/2)+'字)</span></div>'+esc(txt).replace(/\n/g,'<br>');
+    chatArea.scrollTop=99999;
+  };
+  var r=await _fetchAI('你是岐黄智医，中西医结合健康助手。回答时分两大部分：【食疗方案】和【用药建议】，简洁分点，600字以内。',prompt,{onThinking:onThink});
+  if(thinkDiv&&r.thinking){
+    thinkDiv.style.display='block';
+    thinkDiv.innerHTML='<details open><summary style="cursor:pointer;font-weight:600;color:var(--pri);margin-bottom:6px">🧠 辨证思考过程 ('+Math.round(r.thinking.length/2)+'字)</summary><div style="margin-top:6px">'+esc(r.thinking).replace(/\n/g,'<br>')+'</div></details>';
+  }
+  if(msgDiv){await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');return null;}
+  return r.full.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+}
+
   var dotInterval=null,cfg=MODELS[curModel];
   if(msgDiv){
     if(cfg.think){msgDiv.innerHTML='<div id="ti2" style="color:#999;font-size:13px;padding:8px">\ud83e\udde0 \u6b63\u5728\u8fa8\u8bc1\u5206\u6790\u4e2d</div>';
