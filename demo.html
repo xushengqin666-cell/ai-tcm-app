@@ -562,7 +562,9 @@ function skipHistoryQ(){
 function skipAllergy(){
   addMsg('user','跳过');
   consultAllergy='未提供';
-  generateAdvice();
+  consultState='asking_history';
+  consultHistoryIdx=0;
+  askNextHistoryQ();
 }
 
 async function generateAdvice(){
@@ -595,7 +597,13 @@ async function generateAdvice(){
   }
 }
 
-// ========== Typewriter Effect ==========
+function toggleDark(){
+    document.body.classList.toggle('dark');
+    var isDark=document.body.classList.contains('dark');
+    localStorage.setItem('qhy_dark',isDark?'1':'0');
+  }
+
+  // ========== Typewriter Effect ==========
 function formatMD(text){
   var codeBlocks=[];
   text=text.replace(/```([\s\S]*?)```/g,function(m,c){codeBlocks.push('<pre style="background:#f5f5f5;padding:8px;border-radius:8px;font-size:13px;overflow-x:auto">'+esc(c.trim())+'</pre>');return '\x00CB'+(codeBlocks.length-1)+'\x00';});
