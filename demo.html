@@ -465,10 +465,9 @@ function renderQuizResult(){
 
 // ========== Phase 3: Consultation ==========
 function quickAsk(symptom){
-  if(phase!=='consult'){return;}
-  inp.focus();chatArea.scrollTop=0;
   document.getElementById('inp').value=symptom;
-  send();
+  if(phase==='consult'){send();}
+  else{searchKB(symptom);showPanel('chat');}
 }
 
 async function send(){
