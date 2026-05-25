@@ -25125,5 +25125,25 @@
       "昏厥"
     ],
     "cat": "急诊科"
+  },
+  {
+    "t": "胃溃疡",
+    "c": "西医：gastric ulcer。NSAIDs/HP。阿司匹林禁。<br><span class=tag>中医</span>胃脘痛。肝气犯胃柴胡疏肝散；血瘀阻络失笑散；脾胃虚寒黄芪建中汤。",
+    "kw": [
+      "胃溃疡",
+      " gastric ulcer",
+      "胃溃疡"
+    ],
+    "cat": "消化科"
+  },
+  {
+    "t": "十二指肠溃疡",
+    "c": "西医：duodenal ulcer。空腹痛进食缓解。治疗PPI+HP根除。<br><span class=tag>中医</span>胃脘痛。肝气犯胃柴胡疏肝散；脾胃虚寒黄芪建中汤。",
+    "kw": [
+      "十二指肠溃疡",
+      " duodenal ulcer",
+      "球溃"
+    ],
+    "cat": "消化科"
   }
 ]
