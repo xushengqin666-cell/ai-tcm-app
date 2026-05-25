@@ -313,7 +313,7 @@ var profile={gender:'',age:'',chronicDisease:'',currentMeds:''};
 var quizResult=null; // constitution type after quiz
 var consultState='init'; // 'init' | 'asking_allergy' | 'ready'
 var consultKB=null;
-var consultAllergy='';
+var consultAllergy='';var consultChronic='';var consultCurrentMeds='';var consultHistoryIdx=0;
 var historyIdx=0;
 
 var PROFILE_QUESTIONS=[
@@ -490,6 +490,9 @@ async function send(){
   if(consultState==='asking_allergy'){
     handleAllergyReply(q);return;
   }
+  if(consultState==='asking_history'){
+    handleHistoryReply(q);return;
+  }
 
   _sending=false;
   // Search KB
@@ -526,7 +529,34 @@ async function send(){
 function handleAllergyReply(reply){
   addMsg('user',esc(reply));
   consultAllergy=reply;
-  generateAdvice();
+  consultState='asking_history';
+  consultHistoryIdx=0;
+  askNextHistoryQ();
+}
+
+function askNextHistoryQ(){
+  var qs=[{q:'您有慢性疾病史吗？（如高血压/糖尿病/心脏病等）',key:'chronicDisease'},
+          {q:'您目前在服用什么药物？',key:'currentMeds'}];
+  if(consultHistoryIdx>=qs.length){generateAdvice();return;}
+  var hq=qs[consultHistoryIdx];
+  addMsg('ai','<b>\ud83d\udcdc '+esc(hq.q)+'</b><div style="margin-top:8px"><button onclick="skipHistoryQ()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ef 跳过</button></div>');
+}
+
+function handleHistoryReply(reply){
+  var qs=[{key:'chronicDisease'},{key:'currentMeds'}];
+  addMsg('user',esc(reply));
+  if(consultHistoryIdx===0)consultChronic=reply;
+  else consultCurrentMeds=reply;
+  consultHistoryIdx++;
+  askNextHistoryQ();
+}
+
+function skipHistoryQ(){
+  addMsg('user','\u8df3\u8fc7');
+  if(consultHistoryIdx===0)consultChronic='\u672a\u63d0\u4f9b';
+  else consultCurrentMeds='\u672a\u63d0\u4f9b';
+  consultHistoryIdx++;
+  askNextHistoryQ();
 }
 
 function skipAllergy(){
@@ -544,7 +574,7 @@ async function generateAdvice(){
 
   try{
     var adviceDiv=addMsg('ai','');
-    var prompt='你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病史：'+profile.chronicDisease+'\n- 当前用药：'+profile.currentMeds+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分两大部分回复：\n\n## \ud83c\udf4f 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## \ud83d\udc8a 用药建议\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★★★ 必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：饭后服用是为了减少胃刺激；睡前服用因夜间血小板聚集性高）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血象/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n注意事项：结合患者体质和病史给出个性化调整；涉及慢性病用药时提醒遵医嘱；总字数控制在600字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');
+    var prompt='你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病史：'+(consultChronic||profile.chronicDisease)+'\n- 当前用药：'+(consultCurrentMeds||profile.currentMeds)+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分两大部分回复：\n\n## \ud83c\udf4f 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## \ud83d\udc8a 用药建议\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★★★ 必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：饭后服用是为了减少胃刺激；睡前服用因夜间血小板聚集性高）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血象/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n注意事项：结合患者体质和病史给出个性化调整；涉及慢性病用药时提醒遵医嘱；总字数控制在600字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');
     await callAI_Once(prompt, adviceDiv);
     chatArea.removeChild(ld);
     if(adviceDiv&&!adviceDiv.innerHTML.includes('disclaimer')){
@@ -632,7 +662,7 @@ async function _fetchAI(sysPrompt, userMsg, opts){
 
 async function callAIWithProfile(q){
   var msgDiv=addMsg('ai',''),cfg=MODELS[curModel];
-  var profileInfo='\n【患者档案】性别:'+profile.gender+' 年龄:'+profile.age+' 慢性病:'+profile.chronicDisease+' 用药:'+profile.currentMeds+' 体质:'+(quizResult?quizResult.type:'未知');
+  var profileInfo='\n【患者档案】性别:'+profile.gender+' 年龄:'+profile.age+' 慢性病:'+(consultChronic||profile.chronicDisease)+' 用药:'+(consultCurrentMeds||profile.currentMeds)+' 体质:'+(quizResult?quizResult.type:'未知');
   var thinkDiv=null;
   if(cfg.think){
     thinkDiv=document.createElement('div');
