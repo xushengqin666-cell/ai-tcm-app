@@ -114,6 +114,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   .quick-btns button{background:rgba(100,181,246,.06);border-color:var(--border);color:var(--txt2)}
   .quick-btns button:hover{background:rgba(100,181,246,.12);color:var(--pri-l);border-color:var(--pri-l)}
 }
+body.dark{--bg:#1a1a2e;--card:#16213e;--pri:#4cc9f0;--pri-d:#7ee8ff;--txt:#e0e0e0;--txt2:#a0a0a0;--border:#2a2a4a;--chat-bg:#16213e;--chat-ai:#1a1a2e;--chat-user:#0f3460;}
+
 </style>
 
 </head>
@@ -160,6 +162,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <input type="password" id="dsKey" placeholder="sk-..." autocomplete="off">
       <div class="hint">申请地址：<a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--pri)">https://platform.deepseek.com/api_keys</a></div>
       <button onclick="saveKeys()">💾 保存设置</button>
+    </div>
+    <div class="s-card">
+      <h3>🌙 外观</h3>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:14px;color:var(--txt2)">暗黑模式</span>
+        <button onclick="toggleDark()" style="padding:6px 16px;border-radius:12px;border:2px solid var(--pri);background:var(--card);color:var(--pri);cursor:pointer;font-size:13px;font-weight:600">⟳ 切换</button>
+      </div>
     </div>
     <div class="s-card">
       <h3>ℹ️ 使用说明</h3>
