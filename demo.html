@@ -456,9 +456,8 @@ function renderQuizResult(){
   var maxS=0,maxI=0,totalS=0;
   for(var i=1;i<9;i++){totalS+=scores[i];if(scores[i]>maxS){maxS=scores[i];maxI=i;}}
   var type=totalS<20?QZ_TYPES[0]:QZ_TYPES[maxI];
-  quizResult={type:type,scores:scores};
-
   var descs={'平和质':'阴阳气血调和，体形匀称，面色润泽。','气虚质':'元气不足，疲乏气短，易感冒。','阳虚质':'阳气不足，手足不温，畏寒怕冷。','阴虚质':'阴液亏少，口燥咽干，手足心热。','痰湿质':'痰湿凝聚，体形肥胖腹满。','湿热质':'湿热内蕴，面垢油光，口苦苔黄。','血瘀质':'血行不畅，肤色晦暗易瘀斑。','气郁质':'气机郁滞，神情抑郁多虑。','特禀质':'先天禀赋异常，过敏体质。'};
+  quizResult={type:type,desc:descs[type]||'',scores:scores};
 
   var h='<div class="section"><div class="section-title">\ud83c\udfaf 您的中医体质：'+esc(type)+'</div>';
   h+='<p style="margin-top:8px;color:var(--txt2)">'+descs[type]+'</p>';
@@ -520,10 +519,17 @@ async function send(){
 
   try{
     await callAIWithProfile(q);
-    chatArea.removeChild(ld);
-    _sending=false;
   }catch(e){
-    chatArea.removeChild(ld);
+    var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
+    if(suggestions.length>0){
+      errMsg+='<br><br>\ud83e\udd14 您是不是想问：<br>';
+      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\''+esc(s)+'\')">'+esc(s)+'</span>';});
+    }
+    addMsg('ai',errMsg);
+  }finally{
+    if(ld.parentNode)chatArea.removeChild(ld);
+    _sending=false;
+  }
     var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
     if(suggestions.length>0){
       errMsg+='<br><br>\ud83e\dd14 您是不是想问：<br>';
@@ -690,6 +696,7 @@ async function callAIWithProfile(q){
     thinkDiv.innerHTML='<div style="font-weight:600;color:var(--pri);margin-bottom:6px">🧠 思考中... <span style="font-size:11px;color:var(--txt2)">('+Math.round(txt.length/2)+'字)</span></div>'+esc(txt).replace(/\n/g,'<br>');
     chatArea.scrollTop=99999;
   };
+  try{
   var r=await _fetchAI('你是岐黄智医，一个专业的AI中西医结合健康助手。回答要求：1)简洁易懂 2)结合中西医双重视角 3)给出饮食和生活建议 4)提醒严重情况需就医 5)不要过度诊断'+profileInfo,q,{onThinking:onThink});
   if(thinkDiv&&r.thinking){
     thinkDiv.style.display='block';
@@ -697,6 +704,7 @@ async function callAIWithProfile(q){
   }
   await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');
   var disc=document.createElement('span');disc.className='disclaimer';disc.textContent='⚠️ AI生成内容仅供参考，如有不适请及时就医';msgDiv.appendChild(disc);
+  }catch(e){msgDiv.innerHTML='<span style="color:#e74c3c">⚠️ '+esc(e.message||'AI服务异常')+'</span>';}
   _sending=false;saveChatHistory();
 }
 
@@ -716,6 +724,7 @@ async function callAI_Once(prompt, msgDiv){
     thinkDiv.innerHTML='<div style="font-weight:600;color:var(--pri);margin-bottom:6px">🧠 辨证分析中... <span style="font-size:11px;color:var(--txt2)">('+Math.round(txt.length/2)+'字)</span></div>'+esc(txt).replace(/\n/g,'<br>');
     chatArea.scrollTop=99999;
   };
+  try{
   var r=await _fetchAI('你是岐黄智医，中西医结合健康助手。回答时分两大部分：【食疗方案】和【用药建议】，简洁分点，600字以内。',prompt,{onThinking:onThink});
   if(thinkDiv&&r.thinking){
     thinkDiv.style.display='block';
@@ -723,6 +732,7 @@ async function callAI_Once(prompt, msgDiv){
   }
   if(msgDiv){await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');return null;}
   return r.full.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+  }catch(e){if(msgDiv)msgDiv.innerHTML='<span style="color:#e74c3c">⚠️ '+esc(e.message||'AI服务异常')+'</span>';return null;}
 }
 
 // ========== Panel Switch ==========
