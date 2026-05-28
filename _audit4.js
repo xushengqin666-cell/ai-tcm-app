@@ -1,199 +1,6 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#1565c0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
 
-<title>岐黄智医 — AI中西医结合健康助手</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--pri:#1565c0;--pri-l:#42a5f5;--pri-d:#0d47a1;--acc:#ff6f00;--bg:#f8f6ff;--card:#fff;--txt:#1a1a2e;--txt2:#5c6bc0;--sh:0 2px 16px rgba(21,101,192,.12);--r:16px;--chat-bg:#f8f6ff;--input-bg:#fff;--border:#e0e4ff}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--txt);height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom)}
-.hd{background:linear-gradient(135deg,var(--pri-d),var(--pri));color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(13,73,161,.25);z-index:10}
-.hd .logo{font-size:22px;font-weight:700;letter-spacing:1px}
-.hd .logo span{font-size:13px;font-weight:400;opacity:.85;margin-left:8px}
-.hd .spacer{flex:1}
-.hd .gear{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;transition:.2s}
-.hd .gear:hover{opacity:1;transform:rotate(30deg)}
-.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border)}
-.tabs button{flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;color:var(--txt2);cursor:pointer;border-bottom:3px solid transparent;transition:.2s}
-.tabs button.active{color:var(--pri);border-bottom-color:var(--pri)}
-.tabs button:hover{background:rgba(21,101,192,.05)}
-.panel{display:none;flex:1;overflow-y:auto;padding:16px}
-.panel.active{display:flex;flex-direction:column}
-.chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--chat-bg)}
-.msg{max-width:85%;padding:12px 16px;border-radius:var(--r);line-height:1.7;font-size:15px;animation:fadeUp .3s ease;word-break:break-word}
-.msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border-bottom-right-radius:4px}
-.msg.ai{align-self:flex-start;background:var(--card);border:1px solid var(--border);box-shadow:var(--sh);border-bottom-left-radius:4px}
-.msg.ai b{color:var(--pri)}
-.msg.ai .tag{display:inline-block;background:rgba(21,101,192,.08);color:var(--pri);padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600;margin:2px 4px 2px 0}
-.msg.ai .section{margin:10px 0;padding:10px;background:rgba(21,101,192,.04);border-radius:10px;border:1px solid rgba(21,101,192,.06)}
-.msg.ai .section-title{font-weight:700;color:var(--pri-d);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.msg.ai .section p{margin:4px 0 4px 28px;font-size:14px;color:var(--txt2)}
-.msg .disclaimer{display:block;margin-top:10px;font-size:12px;color:var(--txt2);border-top:1px dashed var(--border);padding-top:8px}
-.msg.loading{align-self:flex-start;background:var(--card);border:1px solid var(--border);box-shadow:var(--sh);padding:16px 20px}
-.spinner{width:32px;height:32px;border:3px solid #e0e4ff;border-top-color:var(--pri);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.input-bar{display:flex;gap:8px;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:var(--input-bg);border-top:1px solid var(--border);position:sticky;bottom:0;z-index:5}
-.input-bar input{flex:1;border:2px solid var(--border);border-radius:24px;padding:11px 20px;font-size:15px;outline:none;transition:.25s;background:var(--chat-bg)}
-.input-bar input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(21,101,192,.12);background:#fff}
-.input-bar button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border:none;border-radius:24px;padding:11px 22px;font-size:15px;font-weight:600;cursor:pointer;transition:.25s;box-shadow:0 2px 8px rgba(21,101,192,.25)}
-.input-bar button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,101,192,.35)}
-.model-bar{display:flex;gap:6px;padding:8px 16px;background:var(--card);overflow-x:auto;border-bottom:1px solid var(--border)}
-.model-bar button{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);font-size:12px;cursor:pointer;white-space:nowrap;transition:.2s;color:var(--txt2)}
-.model-bar button.active{background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(21,101,192,.25)}
-.model-bar button:hover{border-color:var(--pri-l)}
-.quiz-wrap{max-width:500px;margin:0 auto;width:100%}
-.quiz-card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:var(--sh);margin-bottom:16px}
-.quiz-card h3{font-size:17px;margin-bottom:16px;color:var(--pri-d)}
-.quiz-card .opts{display:flex;flex-direction:column;gap:10px}
-.quiz-card .opt{padding:12px 16px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:.2s;font-size:15px}
-.quiz-card .opt:hover{border-color:var(--pri-l);background:rgba(21,101,192,.04)}
-.quiz-card .opt.sel{border-color:var(--pri);background:rgba(21,101,192,.08);font-weight:600}
-.prog-bar{height:6px;background:#e0e4ff;border-radius:3px;margin-bottom:16px;overflow:hidden}
-.prog-bar .fill{height:100%;background:linear-gradient(90deg,var(--pri),var(--pri-l));border-radius:3px;transition:width .4s ease}
-.result-card{background:linear-gradient(135deg,#e8eaf6,#f3e5f5);border-radius:var(--r);padding:24px;box-shadow:var(--sh)}
-.result-card h2{color:var(--pri-d);margin-bottom:12px}
-.result-card .rsec{margin-bottom:12px}
-.result-card .rsec h4{color:var(--pri);margin-bottom:4px}
-.settings-wrap{max-width:500px;margin:0 auto;width:100%}
-.s-card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:12px}
-.s-card h3{font-size:15px;color:var(--pri-d);margin-bottom:12px}
-.s-card label{display:block;font-size:13px;color:var(--txt2);margin-bottom:4px}
-.s-card input{width:100%;border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-size:14px;outline:none;margin-bottom:12px;transition:.2s}
-.s-card input:focus{border-color:var(--pri-l)}
-.s-card .hint{font-size:12px;color:var(--txt2);margin-top:-8px;margin-bottom:12px}
-.s-card button{background:var(--pri);color:#fff;border:none;border-radius:10px;padding:8px 20px;font-size:14px;cursor:pointer;transition:.2s}
-.s-card button:hover{background:var(--pri-d)}
-.quick-btns{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;background:var(--card);border-top:1px solid var(--border)}
-.quick-btns button{padding:7px 16px;border:1px solid var(--border);border-radius:20px;background:rgba(21,101,192,.04);font-size:13px;cursor:pointer;transition:.25s;color:var(--pri-d);font-weight:500}
-.quick-btns button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(21,101,192,.15);border-color:var(--pri);background:rgba(21,101,192,.08);color:var(--pri)}
-
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.tw-cursor{display:inline-block;width:2px;height:1em;background:var(--pri);margin-left:2px;animation:blink 1s infinite;vertical-align:text-bottom}
-
-/* ===== Dark Mode (single unified block) ===== */
-@media(prefers-color-scheme:dark){
-  :root{--pri:#64b5f6;--pri-l:#90caf9;--pri-d:#1565c0;--acc:#ffa726;--bg:#12121f;--card:#1c1c35;--txt:#e8eaff;--txt2:#8888aa;--sh:0 2px 16px rgba(0,0,0,.4);--chat-bg:#12121f;--input-bg:#1c1c35;--border:#2a2a48}
-  body{background:var(--bg);color:var(--txt)}
-  .hd{box-shadow:0 2px 12px rgba(0,0,0,.4)}
-  .tabs{background:var(--card);border-bottom-color:var(--border)}
-  .tabs button{color:var(--txt2)}
-  .tabs button:hover{background:rgba(255,255,255,.04)}
-  .tabs button.active{color:var(--pri)}
-  .chat-area{background:var(--chat-bg)}
-  .msg.ai{background:var(--card);border-color:var(--border);color:var(--txt)}
-  .msg.ai b{color:var(--pri-l)}
-  .msg.ai .tag{background:rgba(100,181,246,.12);color:var(--pri-l)}
-  .msg.ai .section{background:rgba(100,181,246,.06);border-color:rgba(100,181,246,.1)}
-  .msg.ai .section-title{color:var(--pri-l)}
-  .msg.ai .section p{color:#bbb}
-  .msg .disclaimer{color:#666;border-top-color:var(--border)}
-  .msg.loading{background:var(--card);border-color:var(--border)}
-  .spinner{border-color:var(--border);border-top-color:var(--pri-l)}
-  .input-bar{background:var(--input-bg);border-top-color:var(--border)}
-  .input-bar input{background:var(--bg);border-color:var(--border);color:var(--txt)}
-  .model-bar{background:var(--card);border-bottom-color:var(--border)}
-  .model-bar button{background:var(--card);border-color:var(--border);color:var(--txt2)}
-  .model-bar button.active{background:linear-gradient(135deg,var(--pri-d),var(--pri));color:#fff}
-  .quiz-card{background:var(--card);color:var(--txt)}
-  .quiz-card .opt{border-color:var(--border);color:var(--txt)}
-  .quiz-card .opt:hover{background:rgba(100,181,246,.08);border-color:var(--pri-l)}
-  .quiz-card .opt.sel{background:rgba(100,181,246,.12);border-color:var(--pri)}
-  .prog-bar{background:var(--border)}
-  .result-card{background:linear-gradient(135deg,#1a1a35,#251a35)}
-  .s-card{background:var(--card);color:var(--txt)}
-  .s-card input{background:var(--bg);border-color:var(--border);color:var(--txt)}
-  .quick-btns{background:var(--card);border-top-color:var(--border)}
-  .quick-btns button{background:rgba(100,181,246,.06);border-color:var(--border);color:var(--txt2)}
-  .quick-btns button:hover{background:rgba(100,181,246,.12);color:var(--pri-l);border-color:var(--pri-l)}
-}
-body.dark{--bg:#1a1a2e;--card:#16213e;--pri:#4cc9f0;--pri-d:#7ee8ff;--txt:#e0e0e0;--txt2:#a0a0a0;--border:#2a2a4a;--chat-bg:#16213e;--chat-ai:#1a1a2e;--chat-user:#0f3460;}
-
-</style>
-
-</head>
-<body>
-<div class="hd" role="banner">
-  <div class="logo">🏥 岐黄智医<span>AI中西医结合健康助手</span></div>
-  <div class="spacer"></div>
-  <button class="gear" onclick="clearChat()" title="清空对话" style="font-size:18px">🗑️</button>
-  <button class="gear" onclick="showPanel('settings')">⚙️</button>
-</div>
-<div class="tabs" role="tablist">
-  <button id="t-chat" class="active" role="tab" aria-selected="true" onclick="showPanel('chat')">💬 智能问诊</button>
-  <button id="t-quiz" role="tab" aria-selected="false" onclick="showPanel('quiz')">🔄 体质辨识</button>
-  <button id="t-settings" role="tab" aria-selected="false" onclick="showPanel('settings')">⚙️ 设置</button>
-</div>
-<div class="model-bar" id="modelBar"></div>
-
-<!-- Chat Panel -->
-<div class="panel active" id="p-chat">
-  <div class="chat-area" id="chatArea" role="log" aria-live="polite"></div>
-  <div class="quick-btns" id="quickBtns">
-    <button onclick="quickAsk('头痛')">头痛</button><button onclick="quickAsk('胃痛')">胃痛</button><button onclick="quickAsk('失眠')">失眠</button><button onclick="quickAsk('咳嗽')">咳嗽</button><button onclick="quickAsk('感冒')">感冒</button><button onclick="quickAsk('便秘')">便秘</button><button onclick="quickAsk('痛经')">痛经</button><button onclick="quickAsk('腹泻')">腹泻</button><button onclick="quickAsk('腰痛')">腰痛</button><button onclick="quickAsk('肩颈痛')">肩颈痛</button><button onclick="quickAsk('胸闷')">胸闷</button><button onclick="quickAsk('过敏')">过敏</button><button onclick="quickAsk('皮疹')">皮疹</button><button onclick="quickAsk('咽痛')">咽痛</button><button onclick="quickAsk('耳鸣')">耳鸣</button><button onclick="quickAsk('脱发')">脱发</button><button onclick="quickAsk('肥胖')">肥胖</button><button onclick="quickAsk('焦虑')">焦虑</button><button onclick="quickAsk('高血压')">高血压</button><button onclick="quickAsk('糖尿病')">糖尿病</button>
-  </div>
-  <div class="input-bar" role="form">
-    <input type="text" id="inp" placeholder="描述您的症状...（如：头痛、胃痛、失眠）">
-    <button onclick="send()">发送</button>
-  </div>
-</div>
-
-<!-- Quiz Panel -->
-<div class="panel" id="p-quiz">
-  <div class="quiz-wrap" id="quizWrap"></div>
-</div>
-
-<!-- Settings Panel -->
-<div class="panel" id="p-settings">
-  <div class="settings-wrap">
-    <div class="s-card">
-      <h3>🔑 API Key 配置</h3>
-      <label for="groqKey">Groq API Key（免费推荐）</label>
-      <input type="password" id="groqKey" placeholder="gsk_..." autocomplete="off">
-      <div class="hint">申请地址：<a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">https://console.groq.com/keys</a></div>
-      <label for="dsKey">DeepSeek API Key</label>
-      <input type="password" id="dsKey" placeholder="sk-..." autocomplete="off">
-      <div class="hint">申请地址：<a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--pri)">https://platform.deepseek.com/api_keys</a></div>
-      <button onclick="saveKeys()">💾 保存设置</button>
-    </div>
-    <div class="s-card">
-      <h3>🌙 外观</h3>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span style="font-size:14px;color:var(--txt2)">暗黑模式</span>
-        <button onclick="toggleDark()" style="padding:6px 16px;border-radius:12px;border:2px solid var(--pri);background:var(--card);color:var(--pri);cursor:pointer;font-size:13px;font-weight:600">⟳ 切换</button>
-      </div>
-    </div>
-    <div class="s-card">
-      <h3>ℹ️ 使用说明</h3>
-      <p style="font-size:14px;line-height:1.8;color:var(--txt2)">
-        <b>推荐配置：</b>申请免费 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pri)">Groq API Key</a>，响应快、无需付费。<br>
-        <b>无需配置：</b>本机运行 OpenClaw 时自动连接本地AI。<br>
-        <b>问诊流程：</b>输入症状 → AI辨证问诊 → 个性化食疗+用药方案。<br>
-        <b>体质辨识：</b>18道题测出您的中医体质类型。
-      </p>
-    </div>
-    <div class="s-card">
-      <h3>🗄️ 知识库管理</h3>
-      <div style="font-size:13px;color:var(--txt2);margin-bottom:10px">
-        当前状态: <span id="kbStatus" style="font-weight:600">加载中...</span><br>
-        上次更新: <span id="kbUpdateTime">--</span>
-      </div>
-      <button onclick="forceUpdateKB()" style="background:var(--pri);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">🔄 强制更新知识库</button>
-      <div class="hint" style="margin-top:8px">知识库自动从远程加载并缓存到本地，每30分钟检查更新。</div>
-    </div>
-  </div>
-</div>
-
-<script>
 // ========== Knowledge Base ==========
-var KB=[{t:"知识库加载中",c:"正在从远程加载知识库，请稍候...",kw:["加载"]}];
+var KB=[{t:"加载中",c:"正在加载知识库...",kw:["加载"]}];
 
 // ===== Remote KB Loading System =====
 var KB_VERSION_KEY='qhy_kb_version';
@@ -249,7 +56,6 @@ ds_v3:{name:'DeepSeek-V3',icon:'⚡',base:'https://api.deepseek.com/chat/complet
 local:{name:'本地AI',icon:'🏠',base:'http://127.0.0.1:28789/v1/chat/completions',keyField:null,model:'gpt-3.5-turbo',think:false}
 };
 var curModel=localStorage.getItem('curModel')||'local';
-var _sending=false;
 
 function renderModelBar(){
   var bar=document.getElementById('modelBar');bar.innerHTML='';
@@ -287,20 +93,8 @@ function searchKB(q){
 }
 function findSimilar(q){
   q=q.toLowerCase().trim();if(!_searchIdx)buildSearchIdx();
-  var qTokens=q.split(/[\s,，、]+/).filter(function(t){return t.length>0;});
   var scores={};var keys=Object.keys(_searchIdx);
-  for(var k=0;k<keys.length;k++){
-    var term=keys[k],w=0;
-    if(term===q)w=100;
-    else if(term.includes(q)||q.includes(term))w=20;
-    else{
-      for(var ti=0;ti<qTokens.length;ti++){
-        var qt=qTokens[ti];
-        if(qt.length>=2&&(term.includes(qt)||qt.includes(term)))w+=8;
-      }
-    }
-    if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
-  }
+  for(var k=0;k<keys.length;k++){var term=keys[k],w=0;if(term.includes(q)||q.includes(term))w+=10;else{for(var p=0;p<q.length;p++){if(term.includes(q[p]))w+=1;}}if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}}
   var results=[];for(var idx in scores)results.push({t:KB[idx].t,s:scores[idx]});
   results.sort(function(a,b){return b.s-a.s;});
   return results.slice(0,5).map(function(r){return r.t;});
@@ -313,7 +107,7 @@ var profile={gender:'',age:'',chronicDisease:'',currentMeds:''};
 var quizResult=null; // constitution type after quiz
 var consultState='init'; // 'init' | 'asking_allergy' | 'ready'
 var consultKB=null;
-var consultAllergy='';var consultChronic='';var consultCurrentMeds='';var consultHistoryIdx=0;
+var consultAllergy='';
 var historyIdx=0;
 
 var PROFILE_QUESTIONS=[
@@ -341,56 +135,25 @@ function esc(s){var d=document.createElement('div');d.textContent=s;return d.inn
 // ========== Chat UI ==========
 var chatArea=document.getElementById('chatArea');
 
-var _chatHistory=null;
 function addMsg(cls,html){
   var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;
   chatArea.appendChild(d);chatArea.scrollTop=99999;
   while(chatArea.children.length>100)chatArea.removeChild(chatArea.firstChild);
-  _chatHistory=null;
   return d;
-}
-function saveChatHistory(){
-  try{
-    var msgs=[];for(var i=0;i<chatArea.children.length;i++){
-      var c=chatArea.children[i];msgs.push({cls:c.className,html:c.innerHTML});
-    }
-    sessionStorage.setItem('qhy_chat',JSON.stringify(msgs));
-  }catch(e){}
-}
-function restoreChatHistory(){
-  try{
-    var s=sessionStorage.getItem('qhy_chat');
-    if(!s)return false;
-    var msgs=JSON.parse(s);if(msgs.length===0)return false;
-    for(var i=0;i<msgs.length;i++){
-      var d=document.createElement('div');d.className=msgs[i].cls;d.innerHTML=msgs[i].html;
-      chatArea.appendChild(d);
-    }
-    chatArea.scrollTop=99999;
-    return true;
-  }catch(e){return false;}
-}
-
-function skipToConsult(){
-  phase='consult';profile={gender:'未提供',age:'未提供',chronicDisease:'未提供',currentMeds:'未提供'};
-  consultState='init';document.getElementById('quickBtns').style.display='flex';
-  document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
-  showPhaseWelcome();
 }
 
 function showPhaseWelcome(){
   chatArea.innerHTML='';
   if(phase==='profile'){
-    addMsg('ai','<div style="text-align:center"><div style="font-size:42px;margin-bottom:10px;animation:float 3s ease-in-out infinite">\ud83c\udfe7</div><h2 style="color:var(--pri-d);margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:var(--txt2);line-height:1.8">AI中西医结合健康助手<br>为了给您提供精准的个性化建议<br>请先告诉我一些基本信息</p><div style="margin-top:14px"><button onclick="skipToConsult()" style="background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:8px 20px;font-size:13px;cursor:pointer;font-weight:500">\u23ed 跳过，直接问诊</button></div></div>');
+    addMsg('ai','<div style="text-align:center"><div style="font-size:42px;margin-bottom:10px;animation:float 3s ease-in-out infinite">\ud83c\udfe7</div><h2 style="color:var(--pri-d);margin-bottom:6px">欢迎使用岐黄智医</h2><p style="color:var(--txt2);line-height:1.8">AI中西医结合健康助手<br>为了给您提供精准的个性化建议<br>请先告诉我一些基本信息</p></div>');
     setTimeout(function(){askProfileQuestion(0);},600);
   }else if(phase==='quiz'){
     addMsg('ai','<div class="section"><div class="section-title">\ud83c\udfe7 基本信息已记录</div><p>性别：'+esc(profile.gender)+' | 年龄：'+esc(profile.age)+'<br>慢性病：'+esc(profile.chronicDisease)+' | 用药：'+esc(profile.currentMeds)+'</p></div>');
-    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">正在跳转到<b>体质辨识</b>面板...</p><button onclick="skipToConsult()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ed 跳过体质测试</button></div>');
-    setTimeout(function(){showPanel('quiz');},500);
+    addMsg('ai','<div style="text-align:center;margin-top:10px"><p style="color:var(--txt2)">接下来进行<b>中医体质辨识</b>，共18道题</p></div>');
+    setTimeout(function(){renderQuizQ();},500);
   }else if(phase==='consult'){
-    var qzInfo=quizResult?'您的体质：<b>'+esc(quizResult.type)+'</b>':'（未测体质，可稍后补测）';
-    var reQuizBtn=(!quizResult)?'<button onclick="quizResult=null;phase=\'quiz\';showPhaseWelcome()" style="margin-top:8px;background:none;border:2px solid var(--pri);color:var(--pri);border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer">\ud83e\ude7a 补测体质</button>':'';
-    addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">信息收集完成！</h3><p style="color:var(--txt2);line-height:1.8">'+qzInfo+'<br>现在请告诉我您今天哪里不舒服？</p>'+reQuizBtn+'</div>');
+    var qzInfo=quizResult?'您的体质：<b>'+esc(quizResult.type)+'</b>':'';
+    addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">信息收集完成！</h3><p style="color:var(--txt2);line-height:1.8">'+qzInfo+'<br>现在请告诉我您今天哪里不舒服？</p><div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center"></div></div>');
     document.getElementById('quickBtns').style.display='flex';
     document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
   }
@@ -465,22 +228,20 @@ function renderQuizResult(){
 
 // ========== Phase 3: Consultation ==========
 function quickAsk(symptom){
+  if(phase!=='consult'){return;}
+  inp.focus();chatArea.scrollTop=0;
   document.getElementById('inp').value=symptom;
-  if(phase==='consult'){send();}
-  else{searchKB(symptom);showPanel('chat');}
+  send();
 }
 
 async function send(){
-  if(_sending)return;
   var inp=document.getElementById('inp'),q=inp.value.trim();
   if(!q)return;
-  _sending=true;
 
   // If not in consult phase, ignore or redirect
   if(phase==='profile'||phase==='quiz'){
     addMsg('user',esc(q));
-    addMsg('ai','<span style="color:var(--txt2)">\u23ed 已为您跳转到问诊模式</span>');
-    skipToConsult();
+    addMsg('ai','<span style="color:var(--txt2)">请先完成信息收集和体质辨识 \u21aa</span>');
     return;
   }
 
@@ -490,11 +251,7 @@ async function send(){
   if(consultState==='asking_allergy'){
     handleAllergyReply(q);return;
   }
-  if(consultState==='asking_history'){
-    handleHistoryReply(q);return;
-  }
 
-  _sending=false;
   // Search KB
   var kb=searchKB(q);
   if(kb){
@@ -514,7 +271,6 @@ async function send(){
   try{
     await callAIWithProfile(q);
     chatArea.removeChild(ld);
-    _sending=false;
   }catch(e){
     chatArea.removeChild(ld);
     var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
@@ -527,44 +283,13 @@ async function send(){
 }
 
 function handleAllergyReply(reply){
-  addMsg('user',esc(reply));
   consultAllergy=reply;
-  consultState='asking_history';
-  consultHistoryIdx=0;
-  askNextHistoryQ();
-}
-
-function askNextHistoryQ(){
-  var qs=[{q:'您有慢性疾病史吗？（如高血压/糖尿病/心脏病等）',key:'chronicDisease'},
-          {q:'您目前在服用什么药物？',key:'currentMeds'}];
-  if(consultHistoryIdx>=qs.length){generateAdvice();return;}
-  var hq=qs[consultHistoryIdx];
-  addMsg('ai','<b>\ud83d\udcdc '+esc(hq.q)+'</b><div style="margin-top:8px"><button onclick="skipHistoryQ()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ef 跳过</button></div>');
-}
-
-function handleHistoryReply(reply){
-  var qs=[{key:'chronicDisease'},{key:'currentMeds'}];
-  addMsg('user',esc(reply));
-  if(consultHistoryIdx===0)consultChronic=reply;
-  else consultCurrentMeds=reply;
-  consultHistoryIdx++;
-  askNextHistoryQ();
-}
-
-function skipHistoryQ(){
-  addMsg('user','\u8df3\u8fc7');
-  if(consultHistoryIdx===0)consultChronic='\u672a\u63d0\u4f9b';
-  else consultCurrentMeds='\u672a\u63d0\u4f9b';
-  consultHistoryIdx++;
-  askNextHistoryQ();
+  generateAdvice();
 }
 
 function skipAllergy(){
-  addMsg('user','跳过');
   consultAllergy='未提供';
-  consultState='asking_history';
-  consultHistoryIdx=0;
-  askNextHistoryQ();
+  generateAdvice();
 }
 
 async function generateAdvice(){
@@ -576,105 +301,7 @@ async function generateAdvice(){
 
   try{
     var adviceDiv=addMsg('ai','');
-    var prompt='你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病史：'+(consultChronic||profile.chronicDisease)+'\n- 当前用药：'+(consultCurrentMeds||profile.currentMeds)+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分两大部分回复：\n\n## \ud83c\udf4f 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## \ud83d\udc8a 用药建议\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★★★ 必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：饭后服用是为了减少胃刺激；睡前服用因夜间血小板聚集性高）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血象/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n注意事项：结合患者体质和病史给出个性化调整；涉及慢性病用药时提醒遵医嘱；总字数控制在600字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');
-    await callAI_Once(prompt, adviceDiv);
-    chatArea.removeChild(ld);
-    if(adviceDiv&&!adviceDiv.innerHTML.includes('disclaimer')){
-      adviceDiv.innerHTML+='<span class="disclaimer">\u26a0\ufe0f 以上内容仅供参考，如有不适请及时就医。</span>';
-    }
-    consultState='init';consultKB=null;saveChatHistory();
-  }catch(e){
-    chatArea.removeChild(ld);
-    var fallback='<b>\ud83d\udccb '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br>';
-    if(consultAllergy&&consultAllergy!=='未提供'){
-      fallback+='<div class="section"><div class="section-title">\u26a0\ufe0f 注意您的过敏史</div><p>您提到对'+esc(consultAllergy)+'过敏，请在就医时告知医生。</p></div>';
-    }
-    if(kb.d)fallback+='<b>\ud83c\udf4f 饮食建议：</b><br>'+kb.d+'<br><br>';
-    if(kb.m)fallback+='<b>\ud83d\udc8a 常用药物：</b><br>'+kb.m+'<br><br>';
-    fallback+='<span class="disclaimer">\u26a0\ufe0f 仅供参考，如有不适请及时就医</span>';
-    addMsg('ai',fallback);
-    consultState='init';consultKB=null;
-  }
-}
-
-function toggleDark(){
-    document.body.classList.toggle('dark');
-    var isDark=document.body.classList.contains('dark');
-    localStorage.setItem('qhy_dark',isDark?'1':'0');
-  }
-
-  // ========== Typewriter Effect ==========
-function formatMD(text){
-  var codeBlocks=[];
-  text=text.replace(/```([\s\S]*?)```/g,function(m,c){codeBlocks.push('<pre style="background:#f5f5f5;padding:8px;border-radius:8px;font-size:13px;overflow-x:auto">'+esc(c.trim())+'</pre>');return '\x00CB'+(codeBlocks.length-1)+'\x00';});
-  text=text.replace(/`([^`]+)`/g,'<code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>');
-  text=text.replace(/^### (.+)$/gm,'<h4 style="margin:8px 0 4px;color:var(--pri)">$1</h4>');
-  text=text.replace(/^## (.+)$/gm,'<h3 style="margin:10px 0 4px;color:var(--pri-d)">$1</h3>');
-  text=text.replace(/^# (.+)$/gm,'<h2 style="margin:10px 0 4px;color:var(--pri-d)">$1</h2>');
-  text=text.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
-  text=text.replace(/^[-*] /gm,'\u2022 ');
-  text=text.replace(/^(\d+)\. /gm,'$1. ');
-  for(var i=0;i<codeBlocks.length;i++)text=text.replace('\x00CB'+i+'\x00',codeBlocks[i]);
-  text=text.replace(/\n/g,'<br>');
-  return text;
-}
-
-function typewriter(msgDiv, fullText, prefixHTML){
-  return new Promise(function(resolve){
-    msgDiv.innerHTML = prefixHTML + '<span id="tw-text"></span><span id="tw-cursor" class="tw-cursor"></span>';
-    var i = 0,speed = 22,textEl = document.getElementById('tw-text');
-    function tick(){
-      if(i < fullText.length){
-        if(textEl){textEl.textContent = fullText.substring(0, i+1);i++;chatArea.scrollTop = 99999;setTimeout(tick, speed);}
-        else {msgDiv.innerHTML = prefixHTML + '<span>' + formatMD(fullText) + '</span>';resolve();}
-      } else {
-        var cursor = document.getElementById('tw-cursor');if(cursor) cursor.remove();
-        var te = document.getElementById('tw-text');if(te) te.innerHTML = formatMD(fullText);
-        resolve();
-      }
-    }
-    tick();
-  });
-}
-
-// ========== AI Call ==========
-async function _fetchAI(sysPrompt, userMsg, opts){
-  opts=opts||{};var onThinking=opts.onThinking||null;
-  var cfg=MODELS[curModel];
-  var key=cfg.keyField?localStorage.getItem(cfg.keyField):null;
-  if(!key)key=document.getElementById(cfg.keyField).value||null;
-  if(cfg.keyField&&!key&&!cfg.base.includes('127.0.0.1')){throw new Error('\u8bf7\u5148\u5728\u8bbe\u7f6e\u4e2d\u914d\u7f6e'+MODELS[curModel].name+' API Key');}
-  var headers={'Content-Type':'application/json'};
-  if(key)headers['Authorization']='Bearer '+key;
-  var body=JSON.stringify({model:cfg.model,messages:[{role:'system',content:sysPrompt},{role:'user',content:userMsg}],stream:true});
-  var resp=await Promise.race([fetch(cfg.base,{method:'POST',headers:headers,body:body}),new Promise(function(_,rej){setTimeout(function(){rej(new Error('\u8bf7\u6c42\u8d85\u65f6(15s)'));},30000);})]);
-  if(!resp.ok){try{await resp.text();}catch(e){}
-    if(resp.status===401)throw new Error('API Key\u65e0\u6548\uff0c\u8bf7\u68c0\u67e5\u8bbe\u7f6e');
-    if(resp.status===402)throw new Error('API\u4f59\u989d\u4e0d\u8db3');
-    if(resp.status===429)throw new Error('\u8bf7\u6c42\u8fc7\u4e8e\u9891\u7e41\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5');
-    throw new Error('HTTP '+resp.status);
-  }
-  if(!resp.body||!resp.body.getReader){var text=await resp.text();try{var j=JSON.parse(text);return{full:j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'',thinking:'',cfg:cfg};}catch(e){throw new Error('\u60a8\u7684\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u6d41\u5f0f\u54cd\u5e94\uff0c\u8bf7\u4f7f\u7528Chrome/Safari\u6d4f\u89c8\u5668');}}
-  var reader=resp.body.getReader(),decoder=new TextDecoder(),full='',thinking='';
-  while(true){
-    var result=await reader.read();if(result.done)break;
-    var chunk=decoder.decode(result.value,{stream:true});var lines=chunk.split('\n');
-    for(var i=0;i<lines.length;i++){
-      var line=lines[i];if(!line.startsWith('data: '))continue;
-      var data=line.slice(6).trim();if(data==='[DONE]')continue;
-      try{var json=JSON.parse(data);var delta=json.choices&&json.choices[0]&&json.choices[0].delta;if(!delta)continue;if(cfg.think&&delta.reasoning_content){thinking+=delta.reasoning_content;if(onThinking)onThinking(thinking);continue;}if(delta.content)full+=delta.content;}catch(e){}
-    }
-  }
-  return {full:full,thinking:thinking,cfg:cfg};
-}
-
-async function callAIWithProfile(q){
-  var msgDiv=addMsg('ai',''),cfg=MODELS[curModel];
-  var profileInfo='\n【患者档案】性别:'+profile.gender+' 年龄:'+profile.age+' 慢性病:'+(consultChronic||profile.chronicDisease)+' 用药:'+(consultCurrentMeds||profile.currentMeds)+' 体质:'+(quizResult?quizResult.type:'未知');
-  var thinkDiv=null;
-  if(cfg.think){
-    thinkDiv=document.createElement('div');
-    thinkDiv.style.cssText='background:var(--chat-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.6;max-height:300px;overflow-y:auto;display:none';
+    var prompt='你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病史：'+profile.chronicDisease+'\n- 当前用药：'+profile.currentMeds+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分三大部分回复：\n\n## 🍲 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## 💊 用药建议（重点）\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：饭后服用是为了减少胃刺激；睡前服用因夜间血小板聚集性高）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血象/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n## ⚠️ 特别提醒\n结合患者体质和病史给出个性化调整；涉及慢性病用药时提醒遵医嘱；总字数控制在800字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.6;max-height:300px;overflow-y:auto;display:none';
     msgDiv.appendChild(thinkDiv);
   }
   var onThink=function(txt){
@@ -690,7 +317,6 @@ async function callAIWithProfile(q){
   }
   await typewriter(msgDiv, r.full, thinkDiv&&r.thinking?'':'');
   var disc=document.createElement('span');disc.className='disclaimer';disc.textContent='⚠️ AI生成内容仅供参考，如有不适请及时就医';msgDiv.appendChild(disc);
-  _sending=false;saveChatHistory();
 }
 
 async function callAI_Once(prompt, msgDiv){
@@ -724,7 +350,7 @@ function renderQuizPanel(){
   var qw=document.getElementById('quizWrap');
   if(!qw)return;
   if(quizResult){
-    qw.innerHTML=`<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">&#x2705;</div><h3 style="margin-bottom:8px">&#x4F53;&#x8D28;&#x8FA8;&#x5224;&#x5DF2;&#x5B8C;&#x6210;</h3><p style="color:var(--txt2);margin-bottom:20px">&#x60A8;&#x7684;&#x4F53;&#x8D28;&#x7C7B;&#x578B;&#xFF1A;<b style="color:var(--pri)">${quizResult.type}</b></p><p style="color:var(--txt2);font-size:14px">${quizResult.desc}</p><button onclick="quizResult=null;quizIdx=0;quizAns=[];phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">&#x91CD;&#x65B0;&#x6D4B;&#x8BD5;</button></div>`;
+    qw.innerHTML=`<div style="text-align:center;padding:40px 16px"><div style="font-size:48px;margin-bottom:16px">&#x2705;</div><h3 style="margin-bottom:8px">&#x4F53;&#x8D28;&#x8FA8;&#x5224;&#x5DF2;&#x5B8C;&#x6210;</h3><p style="color:var(--txt2);margin-bottom:20px">&#x60A8;&#x7684;&#x4F53;&#x8D28;&#x7C7B;&#x578B;&#xFF1A;<b style="color:var(--pri)">${quizResult.type}</b></p><p style="color:var(--txt2);font-size:14px">${quizResult.desc}</p><button onclick="quizResult=null;phase='quiz';renderQuizPanel();" style="margin-top:16px;padding:10px 24px;border:none;border-radius:12px;background:var(--pri);color:#fff;cursor:pointer;font-size:14px">&#x91CD;&#x65B0;&#x6D4B;&#x8BD5;</button></div>`;
     return;
   }
   var qs=[
@@ -801,8 +427,6 @@ function renderQuizPanel(){
     };
     desc=descs[type]||'';
     quizResult={type:type,desc:desc,scores:scores};
-    phase='consult';document.getElementById('quickBtns').style.display='flex';document.getElementById('inp').placeholder='\u63cf\u8ff0\u60a8\u7684\u75c7\u72b6...';
-    setTimeout(function(){showPanel('chat');addMsg('ai','<div style="text-align:center"><div style="font-size:36px;margin-bottom:8px">\u2728</div><h3 style="color:var(--pri-d)">体质辨识完成！</h3><p style="color:var(--txt2)">您的体质：<b>'+type+'</b><br>现在可以告诉我您哪里不舒服了</p></div>');},300);
     renderQuizPanel();
   }
   renderQ();
@@ -823,7 +447,6 @@ function clearChat(){
   quizResult=null;consultState='init';consultKB=null;consultAllergy='';historyIdx=0;
   quizIdx=0;quizAns=[];
   document.getElementById('quickBtns').style.display='none';
-  sessionStorage.removeItem('qhy_chat');
   showPhaseWelcome();
 }
 
@@ -851,19 +474,11 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('inp').placeholder='请先完成信息收集...';
   inp.addEventListener('keydown',function(e){if(e.key==='Escape')showPanel('chat');});
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
-  window.addEventListener('beforeunload',function(){saveChatHistory();});
-  // Restore chat history or start fresh
-  if(!restoreChatHistory()){showPhaseWelcome();}
-  else{
-    document.getElementById('quickBtns').style.display='flex';
-    document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
-  }
+  // Start the flow!
+  showPhaseWelcome();
 });
 
 // Enter key handler
 document.getElementById('inp').addEventListener('keypress',function(e){
   if(e.key==='Enter'){e.preventDefault();send();}
 });
-</script>
-</body>
-</html>
