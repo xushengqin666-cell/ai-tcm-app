@@ -117,7 +117,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 body.dark{--bg:#1a1a2e;--card:#16213e;--pri:#4cc9f0;--pri-d:#7ee8ff;--txt:#e0e0e0;--txt2:#a0a0a0;--border:#2a2a4a;--chat-bg:#16213e;--chat-ai:#1a1a2e;--chat-user:#0f3460;}
 
 </style>
-
+<script src="kb_data_new.js"></script>
 </head>
 <body>
 <div class="hd" role="banner">
@@ -203,6 +203,13 @@ var KB_URL='https://xushengqin666-cell.github.io/ai-tcm-app/kb.json';
 var KB_CHECK_INTERVAL=30*60*1000;
 
 function loadKB(){
+  // 优先使用内嵌的 KB_DATA（由 kb_data_new.js 提供）
+  if(window.KB_DATA && Array.isArray(window.KB_DATA.KB)){
+    KB=window.KB_DATA.KB;
+    showKBStatus('内置数据 ('+KB.length+'条)',true);
+    _searchIdx=null;
+    return;
+  }
   var cached=localStorage.getItem(KB_DATA_KEY);
   if(cached){
     try{KB=JSON.parse(cached);showKBStatus('本地缓存 ('+KB.length+'条)',true);}
