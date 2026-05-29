@@ -480,17 +480,14 @@ async function send(){
   if(_sending)return;
   var inp=document.getElementById('inp'),q=inp.value.trim();
   if(!q)return;
-  _sending=true;
+  addMsg('user',esc(q));inp.value='';
 
   // If not in consult phase, ignore or redirect
   if(phase==='profile'||phase==='quiz'){
-    addMsg('user',esc(q));
     addMsg('ai','<span style="color:var(--txt2)">\u23ed 已为您跳转到问诊模式</span>');
     skipToConsult();
     return;
   }
-
-  addMsg('user',esc(q));inp.value='';
 
   // Route by state
   if(consultState==='asking_allergy'){
@@ -500,7 +497,6 @@ async function send(){
     handleHistoryReply(q);return;
   }
 
-  _sending=false;
   // Search KB
   var kb=searchKB(q);
   if(kb){
@@ -511,7 +507,8 @@ async function send(){
     return;
   }
 
-  // No match
+  // No KB match — call AI
+  _sending=true;
   var suggestions=findSimilar(q);
   var ld=document.createElement('div');ld.className='msg loading';ld.innerHTML='<div class="spinner"></div>';
   chatArea.appendChild(ld);chatArea.scrollTop=99999;
@@ -523,19 +520,12 @@ async function send(){
     var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
     if(suggestions.length>0){
       errMsg+='<br><br>\ud83e\udd14 您是不是想问：<br>';
-      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\''+esc(s)+'\')">'+esc(s)+'</span>';});
+      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\'\'+esc(s)+'\'\')">'+esc(s)+'</span>';});
     }
     addMsg('ai',errMsg);
   }finally{
     if(ld.parentNode)chatArea.removeChild(ld);
     _sending=false;
-  }
-    var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
-    if(suggestions.length>0){
-      errMsg+='<br><br>\ud83e\dd14 您是不是想问：<br>';
-      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\''+esc(s)+'\')">'+esc(s)+'</span>';});
-    }
-    addMsg('ai',errMsg);
   }
 }
 
@@ -583,21 +573,19 @@ function skipAllergy(){
 async function generateAdvice(){
   var kb=consultKB;
   var ld=document.createElement('div');ld.className='msg loading';
-  ld.innerHTML='<div class="spinner"></div>\u6b63\u5728\u6839\u636e\u60a8\u7684\u60c5\u51b5\u751f\u6210\u4e2a\u6027\u5316\u65b9\u6848\u2026';
+  ld.innerHTML='<div class="spinner"></div>正在根据您的情况生成个性化方案...';
   chatArea.appendChild(ld);chatArea.scrollTop=99999;
   while(chatArea.children.length>100)chatArea.removeChild(chatArea.firstChild);
 
   try{
     var adviceDiv=addMsg('ai','');
-    var prompt='你扮演岐黄智医AI健康助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病史：'+(consultChronic||profile.chronicDisease)+'\n- 当前用药：'+(consultCurrentMeds||profile.currentMeds)+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分两大部分回复：\n\n## \ud83c\udf4f 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## \ud83d\udc8a 用药建议\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★★★ 必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：饭后服用是为了减少胃刺激；睡前服用因夜间血小板聚集性高）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血象/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n注意事项：结合患者体质和病史给出个性化调整；涉及慢性病用药时提醒遵医嘱；总字数控制在600字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');
+    var prompt='你是中医急诊AI助手。用户已自述症状并回答了以下问题，请生成完整的个性化健康方案。\n【患者档案】\n- 性别：'+profile.gender+'\n- 年龄：'+profile.age+'\n- 慢性病病史：'+(consultChronic||profile.chronicDisease)+'\n- 当前用药：'+(consultCurrentMeds||profile.currentMeds)+'\n- 中医体质：'+(quizResult?quizResult.type:'未知')+'\n- 症状/疾病：'+kb.t+'\n- 过敏史：'+consultAllergy+'\n\n请分两大部分回复：\n\n## \ud83c\udf4f 食疗方案\n1.【中医辨证分型】结合患者体质判断最可能的证型\n2.【药膳推荐】3-5款家常药膳（注意根据过敏史和慢病史调整）\n3.【饮食禁忌】需要避免的食物和原因\n4.【药物-食物相互作用提醒】\n\n## \ud83d\udc8a 用药建议\n1.【常用药物】（西药+中成药），括号内注明注意事项\n2.【服用时间】★★★★★ 必须详细说明：饭前/饭后/空腹/随餐/睡前，并解释原因（如：能量合剂可在饭后半小时服用，其他时间需遵医嘱）\n3.【用法用量】具体剂量、频次、疗程\n4.【漏服处理】忘记吃药怎么办\n5.【药物相互作用】与常用药物（阿司匹林/降压药/降糖药等）是否有冲突\n6.【监测指标】用药期间需要定期复查什么（肝功能/肾功能/血常规/电解质等）\n7.【就医指征】出现哪些情况必须立即就医\n\n注意事项：结合患者体质和病史给出个性化调整；涉及慢病用药时提醒遵医嘱；总字数控制在600字以内。\n\n参考知识：\n'+kb.c+(kb.d?'\n\n'+kb.d:'')+(kb.m?'\n\n'+kb.m:'');
     await callAI_Once(prompt, adviceDiv);
-    chatArea.removeChild(ld);
     if(adviceDiv&&!adviceDiv.innerHTML.includes('disclaimer')){
       adviceDiv.innerHTML+='<span class="disclaimer">\u26a0\ufe0f 以上内容仅供参考，如有不适请及时就医。</span>';
     }
-    consultState='init';consultKB=null;saveChatHistory();
+    saveChatHistory();
   }catch(e){
-    chatArea.removeChild(ld);
     var fallback='<b>\ud83d\udccb '+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br>';
     if(consultAllergy&&consultAllergy!=='未提供'){
       fallback+='<div class="section"><div class="section-title">\u26a0\ufe0f 注意您的过敏史</div><p>您提到对'+esc(consultAllergy)+'过敏，请在就医时告知医生。</p></div>';
@@ -606,6 +594,8 @@ async function generateAdvice(){
     if(kb.m)fallback+='<b>\ud83d\udc8a 常用药物：</b><br>'+kb.m+'<br><br>';
     fallback+='<span class="disclaimer">\u26a0\ufe0f 仅供参考，如有不适请及时就医</span>';
     addMsg('ai',fallback);
+  }finally{
+    if(ld.parentNode)chatArea.removeChild(ld);
     consultState='init';consultKB=null;
   }
 }
