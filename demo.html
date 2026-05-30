@@ -271,46 +271,93 @@ renderModelBar();
 
 // ========== KB Search ==========
 var _searchIdx=null;
+var _SYNONYMS={
+  '拉肚子':'腹泻','肚子疼':'腹痛','肚子痛':'腹痛','胃疼':'胃痛','胃痛':'胃炎 胃溃疡',
+  '头疼':'头痛','头痛':'偏头痛 紧张性头痛','血压高':'高血压','血糖高':'糖尿病',
+  '心脏不好':'冠心病','心率不齐':'心律失常','心律不齐':'心律失常',
+  '喘不上气':'呼吸困难 哮喘','气短':'呼吸困难','喘':'哮喘','咳嗽':'支气管炎 肺炎',
+  '失眠':'睡眠障碍','睡不着':'失眠','焦虑':'焦虑症','抑郁':'抑郁症',
+  '过敏':'过敏性鼻炎 过敏性皮肤病','起痘':'痤疮','长痘':'痤疮','痘痘':'痤疮',
+  '胖':'肥胖','减肥':'肥胖','瘦':'消瘦','贫血':'缺铁性贫血',
+  '结石':'肾结石 胆结石','腰疼':'腰痛 腰椎间盘突出','腰痛':'腰椎间盘突出 肾结石',
+  '颈椎':'颈椎病','肩膀疼':'肩周炎','膝盖疼':'膝关节炎 骨关节炎',
+  '月经不调':'月经失调','痛经':'月经失调','大姨妈':'月经失调',
+  '上火':'口腔溃疡 咽炎','嗓子疼':'咽炎 扁桃体炎','嗓子痛':'咽炎',
+  '便秘':'便秘','痔疮':'痔疮','脚气':'足癣','灰指甲':'甲癣',
+  '近视':'近视眼','老花':'老花眼','白内障':'白内障',
+  '耳鸣':'耳鸣','中耳炎':'中耳炎','鼻炎':'过敏性鼻炎 鼻炎',
+  '痛风':'痛风','尿酸高':'痛风','风湿':'类风湿关节炎',
+  '甲亢':'甲状腺功能亢进','甲减':'甲状腺功能减退',
+  '前列腺':'前列腺增生 前列腺炎','阳痿':'勃起功能障碍',
+  '更年期':'围绝经期综合征','湿疹':'湿疹','荨麻疹':'荨麻疹',
+  '水痘':'水痘','手足口':'手足口病','拉伤':'肌肉拉伤',
+  '发烧':'发热','感冒':'上呼吸道感染','咳嗽有痰':'支气管炎 肺炎'
+};
+function _expandSynonyms(q){
+  var q2=q.toLowerCase().trim();
+  var extra=_SYNONYMS[q2];
+  if(!extra)return q2;
+  return q2+' '+extra;
+}
+var _catMap=null;
+function _buildCatMap(){
+  _catMap={};
+  for(var i=0;i<KB.length;i++){
+    var e=KB[i];if(!e||!e.cat)continue;
+    var c=e.cat.toLowerCase();
+    if(!_catMap[c])_catMap[c]=[];
+    if(_catMap[c].indexOf(i)<0)_catMap[c].push(i);
+  }
+}
 function buildSearchIdx(){
-  _searchIdx={};
+  _searchIdx={};if(!_catMap)_buildCatMap();
   for(var i=0;i<KB.length;i++){
     var e=KB[i];if(!e||!e.kw)continue;
     var terms=[e.t.toLowerCase()].concat(e.kw.map(function(k){return k.toLowerCase();}));
+    if(e.cat)terms.push(e.cat.toLowerCase());
     for(var j=0;j<terms.length;j++){var t=terms[j];if(!_searchIdx[t])_searchIdx[t]=[];if(_searchIdx[t].indexOf(i)<0)_searchIdx[t].push(i);}
   }
 }
 function searchKB(q){
-  q=q.toLowerCase().trim();if(!_searchIdx)buildSearchIdx();
+  var raw=q.toLowerCase().trim();
+  var expanded=_expandSynonyms(raw);
+  if(!_searchIdx)buildSearchIdx();
+  var tokens=expanded.split(/[\s]+/).filter(function(t){return t.length>0;});
   var scores={};var keys=Object.keys(_searchIdx);
   for(var k=0;k<keys.length;k++){
     var term=keys[k],w=0;
-    if(term===q)w=50;else if(term.includes(q))w=10;else if(q.includes(term))w=15;
-    else{for(var p=1;p<=Math.min(q.length,3);p++){if(term.includes(q.substring(0,p))){w=Math.max(w,1);break;}}}
+    for(var ti=0;ti<tokens.length;ti++){
+      var qt=tokens[ti];
+      if(term===qt)w+=50;
+      else if(term.includes(qt)&&qt.length>=2)w+=12;
+      else if(qt.includes(term)&&term.length>=2)w+=8;
+      else if(qt.length>=2){for(var p=2;p<=Math.min(qt.length,4);p++){if(term.includes(qt.substring(0,p))){w+=1;break;}}}
+    }
     if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
   }
   var best=null,bestScore=0;
-  for(var idx in scores){var s=scores[idx];if(KB[idx].c&&KB[idx].c.toLowerCase().includes(q))s+=3;if(s>bestScore){bestScore=s;best=KB[idx];}}
-  return bestScore>=5?best:null;
+  for(var idx in scores){var s=scores[idx];if(KB[idx].c&&KB[idx].c.toLowerCase().includes(raw))s+=5;var tLow=KB[idx].t.toLowerCase();if(tLow===raw)s+=30;else if(tLow.includes(raw))s+=15;if(s>bestScore){bestScore=s;best=KB[idx];}}
+  return bestScore>=3?best:null;
 }
 function findSimilar(q){
-  q=q.toLowerCase().trim();if(!_searchIdx)buildSearchIdx();
-  var qTokens=q.split(/[\s,，、]+/).filter(function(t){return t.length>0;});
+  var raw=q.toLowerCase().trim();
+  var expanded=_expandSynonyms(raw);
+  if(!_searchIdx)buildSearchIdx();
+  var qTokens=expanded.split(/[\s]+/).filter(function(t){return t.length>0;});
   var scores={};var keys=Object.keys(_searchIdx);
   for(var k=0;k<keys.length;k++){
     var term=keys[k],w=0;
-    if(term===q)w=100;
-    else if(term.includes(q)||q.includes(term))w=20;
-    else{
-      for(var ti=0;ti<qTokens.length;ti++){
-        var qt=qTokens[ti];
-        if(qt.length>=2&&(term.includes(qt)||qt.includes(term)))w+=8;
-      }
+    for(var ti=0;ti<qTokens.length;ti++){
+      var qt=qTokens[ti];
+      if(term===qt)w+=100;
+      else if(term.includes(qt)&&qt.length>=2)w+=15;
+      else if(qt.includes(term)&&term.length>=2)w+=10;
     }
     if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
   }
   var results=[];for(var idx in scores)results.push({t:KB[idx].t,s:scores[idx]});
   results.sort(function(a,b){return b.s-a.s;});
-  return results.slice(0,5).map(function(r){return r.t;});
+  return results.slice(0,6).map(function(r){return r.t;});
 }
 
 // ========== Patient Profile & State Machine ==========
