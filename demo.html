@@ -548,7 +548,7 @@ async function send(){
   var kb=searchKB(q);
   if(kb){
     consultKB=kb;consultState='asking_allergy';consultAllergy='';
-    var intro='<b>\ud83d\udccb 初步判断：'+esc(kb.t)+'</b><br><br>'+kb.c+'<br><br><b>\ud83d\udcea 为了给您更精准的建议：</b><br>';
+    var catBadge=kb.cat?'<span style="display:inline-block;background:var(--pri);color:#fff;border-radius:10px;padding:2px 10px;font-size:12px;margin-left:8px">'+esc(kb.cat)+'</span>':'';var intro='<b>\ud83d\udccb 初步判断：'+esc(kb.t)+catBadge+'</b><br><br>'+kb.c+'<br><br><b>\ud83d\udcea 为了给您更精准的建议：</b><br>';
     intro+='<div class="section"><div class="section-title">\ud83d\udc8a '+esc(ALLERGY_QUESTION.q)+'</div></div>';
     addMsg('ai',intro+'<div style="margin-top:8px"><button onclick="skipAllergy()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ef 跳过</button></div><span class="disclaimer">\u26a0\ufe0f AI辅助诊疗仅供参考，不能替代医生诊断</span>');
     return;
