@@ -546,9 +546,11 @@ async function send(){
 
   // Search KB
   var kb=searchKB(q);
+  function hlKeywords(text,query){var q=query.toLowerCase().trim();if(!q)return esc(text);var exp=_expandSynonyms(q);var terms=exp.split(/\s+/).filter(function(t){return t.length>=2;});var safe=text;if(!terms.length)return esc(text);var parts=[safe];for(var i=0;i<terms.length;i++){var t=terms[i];var newParts=[];for(var j=0;j<parts.length;j++){var p=parts[j];if(typeof p==='string'){var re=new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');var sp=p.split(re);for(var k=0;k<sp.length;k++){if(sp[k].length===0)continue;if(re.test(sp[k])){re.lastIndex=0;if(sp[k].toLowerCase()===t)newParts.push('<mark style="background:#ffeaa7;color:#2d3436;border-radius:2px;padding:0 2px">'+esc(sp[k])+'</mark>');else newParts.push(esc(sp[k]));}else newParts.push(esc(sp[k]));}}else newParts.push(p);}parts=newParts;}return parts.join('');}
+  var _hlContent=hlKeywords(kb.c,q);var _hlCM=hlKeywords(kb.cm||'',q);
   if(kb){
     consultKB=kb;consultState='asking_allergy';consultAllergy='';
-    var catBadge=kb.cat?'<span style="display:inline-block;background:var(--pri);color:#fff;border-radius:10px;padding:2px 10px;font-size:12px;margin-left:8px">'+esc(kb.cat)+'</span>':'';var intro='<b>\ud83d\udccb 初步判断：'+esc(kb.t)+catBadge+'</b><br><br>'+kb.c+'<br><br><b>\ud83d\udcea 为了给您更精准的建议：</b><br>';
+    var catBadge=kb.cat?'<span style="display:inline-block;background:var(--pri);color:#fff;border-radius:10px;padding:2px 10px;font-size:12px;margin-left:8px">'+esc(kb.cat)+'</span>':'';var intro='<b>\ud83d\udccb 初步判断：'+esc(kb.t)+catBadge+'</b><br><br>'+_hlContent+'<br><br><b>\ud83d\udcb0 中医参考：</b><br>'+_hlCM+'<br><br><b>\ud83d\udcea 为了给您更精准的建议：</b><br>';
     intro+='<div class="section"><div class="section-title">\ud83d\udc8a '+esc(ALLERGY_QUESTION.q)+'</div></div>';
     addMsg('ai',intro+'<div style="margin-top:8px"><button onclick="skipAllergy()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ef 跳过</button></div><span class="disclaimer">\u26a0\ufe0f AI辅助诊疗仅供参考，不能替代医生诊断</span>');
     return;
