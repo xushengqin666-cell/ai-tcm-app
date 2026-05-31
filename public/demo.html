@@ -656,7 +656,7 @@ function handleAllergyReply(reply){
 function askNextHistoryQ(){
   var qs=[{q:'您有慢性疾病史吗？（如高血压/糖尿病/心脏病等）',key:'chronicDisease'},
           {q:'您目前在服用什么药物？',key:'currentMeds'}];
-  if(consultHistoryIdx>=qs.length){generateAdvice();return;}
+  if(consultHistoryIdx>=qs.length){_sending=true;generateAdvice();return;}
   var hq=qs[consultHistoryIdx];
   addMsg('ai','<b>\ud83d\udcdc '+esc(hq.q)+'</b><div style="margin-top:8px"><button onclick="skipHistoryQ()" style="background:var(--pri);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;cursor:pointer">\u23ef 跳过</button></div>');
 }
