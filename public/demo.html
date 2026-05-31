@@ -7,8 +7,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚕️</text></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚕️</text></svg>">
 
 <title>岐黄智医 — AI中西医结合健康助手</title>
+<meta property="og:title" content="岐黄智医 — AI中西医结合健康助手">
+<meta property="og:description" content="免费AI智能问诊，结合中医辨证与西医诊断，给出个性化健康建议。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="岐黄智医 — AI中西医结合健康助手">
+<meta name="twitter:description" content="免费AI智能问诊，结合中医辨证与西医诊断">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' http://127.0.0.1:* https://api.groq.com https://api.deepseek.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://127.0.0.1:* https://api.groq.com https://api.deepseek.com; font-src 'self' data:;">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--pri:#1565c0;--pri-l:#42a5f5;--pri-d:#0d47a1;--acc:#ff6f00;--bg:#f8f6ff;--card:#fff;--txt:#1a1a2e;--txt2:#5c6bc0;--sh:0 2px 16px rgba(21,101,192,.12);--r:16px;--chat-bg:#f8f6ff;--input-bg:#fff;--border:#e0e4ff}
@@ -134,6 +144,18 @@ body.dark{--bg:#1a1a2e;--card:#16213e;--pri:#4cc9f0;--pri-d:#7ee8ff;--txt:#e0e0e
 <div class="model-bar" id="modelBar"></div>
 
 <!-- Chat Panel -->
+
+<div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+  <label style="font-size:13px;color:var(--txt2);display:block;margin-bottom:6px">AI 接口地址（留空使用本地AI）</label>
+  <input id="aiUrlInput" type="text" placeholder="http://127.0.0.1:28789" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box" onchange="localStorage.setItem('aiApiUrl',this.value.trim());location.reload()">
+  <div style="font-size:11px;color:var(--txt2);margin-top:4px;opacity:.7">修改后页面将自动刷新。本地AI默认端口 28789，Groq填 https://api.groq.com ，DeepSeek填 https://api.deepseek.com</div>
+</div>
+<script>
+(function(){
+  var inp=document.getElementById('aiUrlInput');
+  if(inp)inp.value=localStorage.getItem('aiApiUrl')||'';
+})();
+</script>
 <div class="panel active" id="p-chat">
   <div class="chat-area" id="chatArea" role="log" aria-live="polite"></div>
   <div class="quick-btns" id="quickBtns">
@@ -253,7 +275,7 @@ groq_llama:{name:'LLaMA 3.1',icon:'🦙',base:'https://api.groq.com/openai/v1/ch
 groq_mixtral:{name:'Mixtral',icon:'🔮',base:'https://api.groq.com/openai/v1/chat/completions',keyField:'groqKey',model:'mixtral-8x7b-32768',think:false},
 ds_r1:{name:'DeepSeek-R1',icon:'🧠',base:'https://api.deepseek.com/chat/completions',keyField:'dsKey',model:'deepseek-reasoner',think:true},
 ds_v3:{name:'DeepSeek-V3',icon:'⚡',base:'https://api.deepseek.com/chat/completions',keyField:'dsKey',model:'deepseek-chat',think:false},
-local:{name:'本地AI',icon:'🏠',base:'http://127.0.0.1:28789/v1/chat/completions',keyField:null,model:'gpt-3.5-turbo',think:false}
+local:{name:'本地AI',icon:'🏠',base:(localStorage.getItem('aiApiUrl')||'http://127.0.0.1:28789')+'/v1/chat/completions',keyField:null,model:'gpt-3.5-turbo',think:false}
 };
 var curModel=localStorage.getItem('curModel')||'local';
 var _sending=false;
@@ -989,6 +1011,41 @@ document.addEventListener('DOMContentLoaded', function(){
 document.getElementById('inp').addEventListener('keypress',function(e){
   if(e.key==='Enter'){e.preventDefault();send();}
 });
+</script>
+
+<!-- 隐私政策弹窗 -->
+<div id="privacyModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9999;justify-content:center;align-items:center;padding:20px;box-sizing:border-box">
+  <div style="background:var(--card);border-radius:20px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <h2 style="color:var(--pri-d);margin-bottom:16px;font-size:20px">隐私政策</h2>
+    <div style="font-size:14px;line-height:1.8;color:var(--txt2)">
+      <p><b>生效日期：</b>2026年1月1日</p>
+      <p><b>1. 信息收集</b><br>本应用仅在本地浏览器中处理您输入的症状描述和健康信息，不会上传至任何服务器（除非您主动使用在线AI模型）。</p>
+      <p><b>2. 数据存储</b><br>所有对话记录和健康信息仅保存在您的浏览器本地存储（localStorage/sessionStorage）中，清除浏览器数据后将被删除。</p>
+      <p><b>3. 第三方服务</b><br>当您选择使用 Groq、DeepSeek 等在线AI模型时，您输入的症状描述将被发送至对应服务商的API服务器。请查阅各服务商的隐私政策。</p>
+      <p><b>4. 数据安全</b><br>我们不会出售、出租或分享您的个人健康信息给任何第三方。</p>
+      <p><b>5. 免责声明</b><br>本应用提供的健康建议仅供参考，不能替代专业医生的诊断和治疗。如有健康问题，请及时就医。</p>
+      <p><b>6. 联系我们</b><br>如有任何疑问，请通过应用内"反馈"功能联系我们。</p>
+    </div>
+    <button onclick="document.getElementById('privacyModal').style.display='none'" style="margin-top:20px;background:var(--pri);color:#fff;border:none;border-radius:10px;padding:10px 28px;font-size:15px;cursor:pointer;display:block;margin-left:auto;margin-right:auto">我已阅读并关闭</button>
+  </div>
+</div>
+<div style="text-align:center;padding:8px;font-size:11px;color:var(--txt2);opacity:.6;cursor:pointer" onclick="document.getElementById('privacyModal').style.display='flex'">隐私政策 | 免责声明</div>
+
+<script>
+// 本地 analytics - 统计使用次数（仅本地，不上传）
+(function(){
+  try {
+    var key='qhy_analytics';
+    var d=JSON.parse(localStorage.getItem(key)||'{}');
+    d.totalQueries=(d.totalQueries||0)+1;
+    d.lastUsed=new Date().toISOString();
+    d.sessions=(d.sessions||0);
+    // 每天算一次 session
+    var today=new Date().toISOString().slice(0,10);
+    if(d.lastDate!==today){d.sessions++;d.lastDate=today;}
+    localStorage.setItem(key,JSON.stringify(d));
+  } catch(e){}
+})();
 </script>
 </body>
 </html>
