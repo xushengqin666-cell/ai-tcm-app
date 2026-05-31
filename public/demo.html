@@ -272,32 +272,84 @@ renderModelBar();
 // ========== KB Search ==========
 var _searchIdx=null;
 var _SYNONYMS={
+  // 消化
   '拉肚子':'腹泻','肚子疼':'腹痛','肚子痛':'腹痛','胃疼':'胃痛','胃痛':'胃炎 胃溃疡',
-  '头疼':'头痛','头痛':'偏头痛 紧张性头痛','血压高':'高血压','血糖高':'糖尿病',
-  '心脏不好':'冠心病','心率不齐':'心律失常','心律不齐':'心律失常',
-  '喘不上气':'呼吸困难 哮喘','气短':'呼吸困难','喘':'哮喘','咳嗽':'支气管炎 肺炎',
+  '便秘':'便秘','痔疮':'痔疮','拉血':'便血','便血':'痔疮 肠息肉',
+  '胃胀':'消化不良 胃炎','反酸':'胃食管反流','烧心':'胃食管反流',
+  '恶心':'胃炎 消化不良','呕吐':'胃肠炎 食物中毒','口臭':'胃炎 消化不良',
+  '食欲不振':'消化不良','消化不好':'消化不良','胃酸多':'胃食管反流',
+  // 头部
+  '头疼':'头痛','头痛':'偏头痛 紧张性头痛','头晕':'眩晕 脑供血不足',
+  '眩晕':'眩晕症 脑供血不足','偏头痛':'偏头痛','头昏':'脑供血不足',
+  // 呼吸
+  '喘不上气':'呼吸困难 哮喘','气短':'呼吸困难','喘':'哮喘',
+  '咳嗽':'支气管炎 肺炎','咳嗽有痰':'支气管炎 肺炎','干咳':'咽炎 支气管炎',
+  '咳血':'肺结核 肺癌','胸闷':'冠心病 哮喘',
+  // 精神/睡眠
   '失眠':'睡眠障碍','睡不着':'失眠','焦虑':'焦虑症','抑郁':'抑郁症',
+  '多梦':'睡眠障碍','易醒':'睡眠障碍','心烦':'焦虑症 更年期',
+  // 皮肤
   '过敏':'过敏性鼻炎 过敏性皮肤病','起痘':'痤疮','长痘':'痤疮','痘痘':'痤疮',
+  '湿疹':'湿疹','荨麻疹':'荨麻疹','皮肤痒':'荨麻疹 湿疹 过敏性皮肤病',
+  '皮疹':'过敏性皮肤病 湿疹','脱发':'脱发 斑秃','掉头发':'脱发',
+  // 体型
   '胖':'肥胖','减肥':'肥胖','瘦':'消瘦','贫血':'缺铁性贫血',
-  '结石':'肾结石 胆结石','腰疼':'腰痛 腰椎间盘突出','腰痛':'腰椎间盘突出 肾结石',
+  // 泌尿/结石
+  '结石':'肾结石 胆结石','尿频':'尿路感染 前列腺增生','尿急':'尿路感染',
+  '尿痛':'尿路感染 肾结石','血尿':'肾结石 尿路感染',
+  // 脊柱/关节
+  '腰疼':'腰痛 腰椎间盘突出','腰痛':'腰椎间盘突出 肾结石',
   '颈椎':'颈椎病','肩膀疼':'肩周炎','膝盖疼':'膝关节炎 骨关节炎',
+  '背疼':'背部筋膜炎 颈椎病','背痛':'背部筋膜炎',
+  '关节疼':'关节炎 骨关节炎','关节痛':'关节炎 类风湿关节炎',
+  // 四肢
+  '脚疼':'足跟痛 足底筋膜炎 痛风','脚痛':'足跟痛 足底筋膜炎 痛风',
+  '脚跟疼':'足跟痛','脚跟痛':'足跟痛','足跟疼':'足跟痛',
+  '脚底疼':'足底筋膜炎','脚底痛':'足底筋膜炎',
+  '脚麻':'糖尿病足 腰椎间盘突出','脚肿':'痛风 糖尿病足',
+  '腿疼':'下肢静脉曲张 腰椎间盘突出','腿痛':'下肢静脉曲张',
+  '腿麻':'腰椎间盘突出','腿抽筋':'缺钙 下肢静脉曲张',
+  '手麻':'颈椎病 腕管综合征','手抖':'甲状腺功能亢进 帕金森',
+  '手脚冰凉':'手脚冰凉','手脚发麻':'颈椎病 腰椎间盘突出',
+  '脚气':'足癣','灰指甲':'甲癣',
+  // 妇科
   '月经不调':'月经失调','痛经':'月经失调','大姨妈':'月经失调',
-  '上火':'口腔溃疡 咽炎','嗓子疼':'咽炎 扁桃体炎','嗓子痛':'咽炎',
-  '便秘':'便秘','痔疮':'痔疮','脚气':'足癣','灰指甲':'甲癣',
-  '近视':'近视眼','老花':'老花眼','白内障':'白内障',
+  '白带多':'阴道炎','白带异常':'阴道炎','阴道痒':'阴道炎',
+  // 五官
+  '嗓子疼':'咽炎 扁桃体炎','嗓子痛':'咽炎','喉咙疼':'咽炎 扁桃体炎','喉咙痛':'咽炎',
+  '鼻塞':'过敏性鼻炎 鼻炎','流鼻涕':'过敏性鼻炎 感冒',
   '耳鸣':'耳鸣','中耳炎':'中耳炎','鼻炎':'过敏性鼻炎 鼻炎',
+  '近视':'近视眼','老花':'老花眼','白内障':'白内障',
+  '眼睛干':'干眼症','眼睛红':'结膜炎','眼痒':'过敏性结膜炎',
+  '牙疼':'牙髓炎 龋齿','牙痛':'牙髓炎 龋齿 牙周炎',
+  // 心血管
+  '血压高':'高血压','血糖高':'糖尿病','心脏不好':'冠心病',
+  '心率不齐':'心律失常','心律不齐':'心律失常','心慌':'心律失常 甲亢',
+  '心悸':'心律失常','胸口疼':'冠心病 心绞痛','胸痛':'冠心病 心绞痛',
+  // 内分泌
   '痛风':'痛风','尿酸高':'痛风','风湿':'类风湿关节炎',
   '甲亢':'甲状腺功能亢进','甲减':'甲状腺功能减退',
-  '前列腺':'前列腺增生 前列腺炎','阳痿':'勃起功能障碍',
-  '更年期':'围绝经期综合征','湿疹':'湿疹','荨麻疹':'荨麻疹',
+  '甲状腺结节':'甲状腺结节',
+  // 泌尿生殖
+  '前列腺':'前列腺增生 前列腺炎','阳痿':'勃起功能障碍','早泄':'早泄',
+  '更年期':'围绝经期综合征',
+  // 其他
+  '上火':'口腔溃疡 咽炎','发烧':'发热','感冒':'上呼吸道感染',
   '水痘':'水痘','手足口':'手足口病','拉伤':'肌肉拉伤',
-  '发烧':'发热','感冒':'上呼吸道感染','咳嗽有痰':'支气管炎 肺炎'
+  '扭伤':'踝扭伤反复 肌肉拉伤','崴脚':'踝扭伤反复',
+  '出汗多':'多汗症','盗汗':'结核病 更年期','怕冷':'阳虚质',
+  '容易累':'气虚质 慢性疲劳','乏力':'气虚质 贫血',
+  '长包':'皮脂腺囊肿 脂肪瘤','淋巴结肿大':'淋巴结炎'
 };
 function _expandSynonyms(q){
   var q2=q.toLowerCase().trim();
   var extra=_SYNONYMS[q2];
   if(!extra)return q2;
   return q2+' '+extra;
+}
+// Split Chinese query into bigrams for better matching
+function _bigrams(s){
+  var r=[];for(var i=0;i<s.length-1;i++){var bg=s.substring(i,i+2);if(/[\u4e00-\u9fff]{2}/.test(bg))r.push(bg);}return r;
 }
 var _catMap=null;
 function _buildCatMap(){
@@ -323,20 +375,34 @@ function searchKB(q){
   var expanded=_expandSynonyms(raw);
   if(!_searchIdx)buildSearchIdx();
   var tokens=expanded.split(/[\s]+/).filter(function(t){return t.length>0;});
+  // Add bigrams from each token for partial Chinese matching
+  var allTokens=tokens.slice();
+  for(var ti=0;ti<tokens.length;ti++){
+    var bgs=_bigrams(tokens[ti]);
+    for(var bi=0;bi<bgs.length;bi++){
+      if(allTokens.indexOf(bgs[bi])<0)allTokens.push(bgs[bi]);
+    }
+  }
   var scores={};var keys=Object.keys(_searchIdx);
   for(var k=0;k<keys.length;k++){
-    var term=keys[k],w=0;
-    for(var ti=0;ti<tokens.length;ti++){
-      var qt=tokens[ti];
-      if(term===qt)w+=50;
-      else if(term.includes(qt)&&qt.length>=2)w+=12;
-      else if(qt.includes(term)&&term.length>=2)w+=8;
-      else if(qt.length>=2){for(var p=2;p<=Math.min(qt.length,4);p++){if(term.includes(qt.substring(0,p))){w+=1;break;}}}
+    var term=keys[k],w=0,isBigram=false;
+    for(var ti=0;ti<allTokens.length;ti++){
+      var qt=allTokens[ti];
+      var isBg=qt.length===2&&tokens.indexOf(qt)<0; // this is a bigram
+      if(term===qt)w+=isBg?20:50;
+      else if(term.includes(qt)&&qt.length>=2)w+=isBg?6:12;
+      else if(qt.includes(term)&&term.length>=2)w+=isBg?4:8;
     }
     if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
   }
   var best=null,bestScore=0;
-  for(var idx in scores){var s=scores[idx];if(KB[idx].c&&KB[idx].c.toLowerCase().includes(raw))s+=5;var tLow=KB[idx].t.toLowerCase();if(tLow===raw)s+=30;else if(tLow.includes(raw))s+=15;if(s>bestScore){bestScore=s;best=KB[idx];}}
+  for(var idx in scores){
+    var s=scores[idx];
+    if(KB[idx].c&&KB[idx].c.toLowerCase().includes(raw))s+=5;
+    var tLow=KB[idx].t.toLowerCase();if(tLow===raw)s+=30;else if(tLow.includes(raw))s+=15;
+    // Penalty: if query bigrams don't overlap with entry title/kw, reduce score
+    if(s>bestScore){bestScore=s;best=KB[idx];}
+  }
   return bestScore>=3?best:null;
 }
 function findSimilar(q){
@@ -344,14 +410,16 @@ function findSimilar(q){
   var expanded=_expandSynonyms(raw);
   if(!_searchIdx)buildSearchIdx();
   var qTokens=expanded.split(/[\s]+/).filter(function(t){return t.length>0;});
+  var allTokens=qTokens.slice();
+  for(var ti=0;ti<qTokens.length;ti++){var bgs=_bigrams(qTokens[ti]);for(var bi=0;bi<bgs.length;bi++){if(allTokens.indexOf(bgs[bi])<0)allTokens.push(bgs[bi]);}}
   var scores={};var keys=Object.keys(_searchIdx);
   for(var k=0;k<keys.length;k++){
     var term=keys[k],w=0;
-    for(var ti=0;ti<qTokens.length;ti++){
-      var qt=qTokens[ti];
-      if(term===qt)w+=100;
-      else if(term.includes(qt)&&qt.length>=2)w+=15;
-      else if(qt.includes(term)&&term.length>=2)w+=10;
+    for(var ti=0;ti<allTokens.length;ti++){
+      var qt=allTokens[ti];var isBg=qt.length===2&&qTokens.indexOf(qt)<0;
+      if(term===qt)w+=isBg?40:100;
+      else if(term.includes(qt)&&qt.length>=2)w+=isBg?8:15;
+      else if(qt.includes(term)&&term.length>=2)w+=isBg?5:10;
     }
     if(w>0){var idxs=_searchIdx[term];for(var j=0;j<idxs.length;j++)scores[idxs[j]]=(scores[idxs[j]]||0)+w;}
   }
