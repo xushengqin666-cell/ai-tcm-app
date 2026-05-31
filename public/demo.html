@@ -495,7 +495,7 @@ function restoreChatHistory(){
 
 function skipToConsult(){
   phase='consult';profile={gender:'未提供',age:'未提供',chronicDisease:'未提供',currentMeds:'未提供'};
-  consultState='init';document.getElementById('quickBtns').style.display='flex';
+  consultState='init';consultChronic='';consultCurrentMeds='';document.getElementById('quickBtns').style.display='flex';
   document.getElementById('inp').placeholder='描述您的症状...（如：头痛、胃痛、失眠）';
   showPhaseWelcome();
 }
@@ -613,7 +613,7 @@ async function send(){
   // Search KB
   var kb=searchKB(q);
   function hlKeywords(text,query){if(!text)return "";var q=query.toLowerCase().trim();if(!q)return esc(text);var exp=_expandSynonyms(q);var terms=exp.split(/\s+/).filter(function(t){return t.length>=2;});var safe=text;if(!terms.length)return esc(text);var parts=[safe];for(var i=0;i<terms.length;i++){var t=terms[i];var newParts=[];for(var j=0;j<parts.length;j++){var p=parts[j];if(typeof p==='string'){var re=new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');var sp=p.split(re);for(var k=0;k<sp.length;k++){if(sp[k].length===0)continue;if(re.test(sp[k])){re.lastIndex=0;if(sp[k].toLowerCase()===t)newParts.push('<mark style="background:#ffeaa7;color:#2d3436;border-radius:2px;padding:0 2px">'+esc(sp[k])+'</mark>');else newParts.push(esc(sp[k]));}else newParts.push(esc(sp[k]));}}else newParts.push(p);}parts=newParts;}return parts.join('');}
-  var _hlContent=hlKeywords(kb.c,q);var _hlCM=hlKeywords(kb.cm||'',q);
+  var _hlContent=kb?hlKeywords(kb.c,q):'';var _hlCM=kb?hlKeywords(kb.cm||'',q):'';
   if(kb){
     consultKB=kb;consultState='asking_allergy';consultAllergy='';
     var catBadge=kb.cat?'<span style="display:inline-block;background:var(--pri);color:#fff;border-radius:10px;padding:2px 10px;font-size:12px;margin-left:8px">'+esc(kb.cat)+'</span>':'';var intro='<b>\ud83d\udccb 初步判断：'+esc(kb.t)+catBadge+'</b><br><br>'+_hlContent+'<br><br><b>\ud83d\udcb0 中医参考：</b><br>'+_hlCM+'<br><br><b>\ud83d\udcea 为了给您更精准的建议：</b><br>';
@@ -635,7 +635,7 @@ async function send(){
     var errMsg='\ud83d\ude41 暂时无法连接AI服务<br><br>\ud83d\udccb 知识库暂未收录「'+esc(q)+'」';
     if(suggestions.length>0){
       errMsg+='<br><br>\ud83e\udd14 您是不是想问：<br>';
-      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\'+esc(s)+\')">'+esc(s)+'</span>';});
+      suggestions.forEach(function(s){errMsg+='<span class="tag" style="cursor:pointer;margin:2px" onclick="quickAsk(\'+s.replace(/\x27/g,"\\\\x27")+\')">'+esc(s)+'</span>';});
     }
     addMsg('ai',errMsg);
   }finally{
@@ -946,7 +946,7 @@ function clearChat(){
   phase='profile';
   profile={gender:'',age:'',chronicDisease:'',currentMeds:''};
   quizResult=null;consultState='init';consultKB=null;consultAllergy='';historyIdx=0;
-  quizIdx=0;quizAns=[];
+  quizIdx=0;quizAns=[];_sending=false;consultChronic='';consultCurrentMeds='';
   document.getElementById('quickBtns').style.display='none';
   sessionStorage.removeItem('qhy_chat');
   showPhaseWelcome();
