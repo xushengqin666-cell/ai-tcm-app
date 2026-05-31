@@ -588,7 +588,7 @@ function renderQuizResult(){
 function quickAsk(symptom){
   document.getElementById('inp').value=symptom;
   if(phase==='consult'){send();}
-  else{searchKB(symptom);showPanel('chat');}
+  else{skipToConsult();setTimeout(function(){send();},300);}
 }
 
 async function send(){
@@ -605,16 +605,14 @@ async function send(){
   }
 
   // Route by state
-  if(consultState==='asking_allergy'){
-    handleAllergyReply(q);return;
+  if(consultState==='asking_allergy'){_sending=true;handleAllergyReply(q);return;
   }
-  if(consultState==='asking_history'){
-    handleHistoryReply(q);return;
+  if(consultState==='asking_history'){_sending=true;handleHistoryReply(q);return;
   }
 
   // Search KB
   var kb=searchKB(q);
-  function hlKeywords(text,query){var q=query.toLowerCase().trim();if(!q)return esc(text);var exp=_expandSynonyms(q);var terms=exp.split(/\s+/).filter(function(t){return t.length>=2;});var safe=text;if(!terms.length)return esc(text);var parts=[safe];for(var i=0;i<terms.length;i++){var t=terms[i];var newParts=[];for(var j=0;j<parts.length;j++){var p=parts[j];if(typeof p==='string'){var re=new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');var sp=p.split(re);for(var k=0;k<sp.length;k++){if(sp[k].length===0)continue;if(re.test(sp[k])){re.lastIndex=0;if(sp[k].toLowerCase()===t)newParts.push('<mark style="background:#ffeaa7;color:#2d3436;border-radius:2px;padding:0 2px">'+esc(sp[k])+'</mark>');else newParts.push(esc(sp[k]));}else newParts.push(esc(sp[k]));}}else newParts.push(p);}parts=newParts;}return parts.join('');}
+  function hlKeywords(text,query){if(!text)return "";var q=query.toLowerCase().trim();if(!q)return esc(text);var exp=_expandSynonyms(q);var terms=exp.split(/\s+/).filter(function(t){return t.length>=2;});var safe=text;if(!terms.length)return esc(text);var parts=[safe];for(var i=0;i<terms.length;i++){var t=terms[i];var newParts=[];for(var j=0;j<parts.length;j++){var p=parts[j];if(typeof p==='string'){var re=new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');var sp=p.split(re);for(var k=0;k<sp.length;k++){if(sp[k].length===0)continue;if(re.test(sp[k])){re.lastIndex=0;if(sp[k].toLowerCase()===t)newParts.push('<mark style="background:#ffeaa7;color:#2d3436;border-radius:2px;padding:0 2px">'+esc(sp[k])+'</mark>');else newParts.push(esc(sp[k]));}else newParts.push(esc(sp[k]));}}else newParts.push(p);}parts=newParts;}return parts.join('');}
   var _hlContent=hlKeywords(kb.c,q);var _hlCM=hlKeywords(kb.cm||'',q);
   if(kb){
     consultKB=kb;consultState='asking_allergy';consultAllergy='';
@@ -651,6 +649,7 @@ function handleAllergyReply(reply){
   consultAllergy=reply;
   consultState='asking_history';
   consultHistoryIdx=0;
+  _sending=false;
   askNextHistoryQ();
 }
 
@@ -668,6 +667,7 @@ function handleHistoryReply(reply){
   if(consultHistoryIdx===0)consultChronic=reply;
   else consultCurrentMeds=reply;
   consultHistoryIdx++;
+  _sending=false;
   askNextHistoryQ();
 }
 
