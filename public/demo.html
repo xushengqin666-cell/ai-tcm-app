@@ -689,6 +689,7 @@ function skipAllergy(){
 
 async function generateAdvice(){
   var kb=consultKB;
+  if(!kb){consultState='init';return;}
   var ld=document.createElement('div');ld.className='msg loading';
   ld.innerHTML='<div class="spinner"></div>正在根据您的情况生成个性化方案...';
   chatArea.appendChild(ld);chatArea.scrollTop=99999;
@@ -777,7 +778,7 @@ async function _fetchAI(sysPrompt, userMsg, opts){
   if(!resp.body||!resp.body.getReader){var text=await resp.text();try{var j=JSON.parse(text);return{full:j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||'',thinking:'',cfg:cfg};}catch(e){throw new Error('\u60a8\u7684\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u6d41\u5f0f\u54cd\u5e94\uff0c\u8bf7\u4f7f\u7528Chrome/Safari\u6d4f\u89c8\u5668');}}
   var reader=resp.body.getReader(),decoder=new TextDecoder(),full='',thinking='';
   while(true){
-    var result=await reader.read();if(result.done)break;
+    var result=await reader.read();if(result.done||!result.value)break;
     var chunk=decoder.decode(result.value,{stream:true});var lines=chunk.split('\n');
     for(var i=0;i<lines.length;i++){
       var line=lines[i];if(!line.startsWith('data: '))continue;
