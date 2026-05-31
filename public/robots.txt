@@ -1,0 +1,10 @@
+# robots.txt for 岐黄智医
+# 允许所有爬虫
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://xushengqin666-cell.github.io/ai-tcm-app/sitemap.xml
+
+# 爬取延迟
+Crawl-delay: 1
