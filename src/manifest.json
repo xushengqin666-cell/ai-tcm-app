@@ -1,6 +1,6 @@
 {
-  "name": "彩云智药 - 家庭AI药师智能体",
-  "short_name": "彩云智药",
+  "name": "家庭药师 - 家庭AI药师智能体",
+  "short_name": "家庭药师",
   "description": "家庭AI药师智能体：药品说明书查询、药物相互作用、用药指南、家庭药箱管理",
   "start_url": "./index.html",
   "scope": "./",

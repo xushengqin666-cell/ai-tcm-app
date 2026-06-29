@@ -9,7 +9,7 @@ function createWindow() {
     height: 800,
     minWidth: 800,
     minHeight: 600,
-    title: '彩云智药 - 家庭AI药师智能体',
+    title: '家庭药师 - 家庭AI药师智能体',
     backgroundColor: '#f8f6ff',
     icon: path.join(__dirname, 'assets', 'icon.png'),
     webPreferences: {

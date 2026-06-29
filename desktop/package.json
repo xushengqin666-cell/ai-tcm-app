@@ -1,6 +1,6 @@
 {
   "name": "caiyun-pharmacy",
-  "productName": "彩云智药",
+  "productName": "家庭药师",
   "version": "1.0.0",
   "description": "家庭AI药师智能体 - 药品说明书查询、药物相互作用、用药指南",
   "main": "main.js",
@@ -23,8 +23,8 @@
   },
   "build": {
     "appId": "com.caiyun.pharmacy",
-    "productName": "彩云智药",
-    "copyright": "Copyright © 2026 彩云智药",
+    "productName": "家庭药师",
+    "copyright": "Copyright © 2026 家庭药师",
     "directories": {
       "output": "dist",
       "buildResources": "assets"
@@ -52,13 +52,13 @@
         }
       ],
       "icon": "assets/icon.png",
-      "publisherName": "CN=彩云智药",
+      "publisherName": "CN=家庭药师",
       "verifyUpdateCodeSignature": false,
       "appx": {
         "applicationId": "caiyunpharmacy",
-        "displayName": "彩云智药",
-        "publisher": "CN=彩云-pharmacy, O=彩云智药, L=Shanghai, S=Shanghai, C=CN",
-        "publisherDisplayName": "彩云智药",
+        "displayName": "家庭药师",
+        "publisher": "CN=彩云-pharmacy, O=家庭药师, L=Shanghai, S=Shanghai, C=CN",
+        "publisherDisplayName": "家庭药师",
         "identityName": "caiyunpharmacy"
       }
     },
@@ -68,7 +68,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "彩云智药"
+      "shortcutName": "家庭药师"
     },
     "mac": {
       "target": [
