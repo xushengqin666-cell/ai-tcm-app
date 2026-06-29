@@ -1,0 +1,91 @@
+{
+  "name": "caiyun-pharmacy",
+  "productName": "彩云智药",
+  "version": "1.0.0",
+  "description": "家庭AI药师智能体 - 药品说明书查询、药物相互作用、用药指南",
+  "main": "main.js",
+  "author": {
+    "name": "徐圣钦",
+    "email": "xu_fengchen@126.com"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --inspect",
+    "build:win": "electron-builder --win --x64",
+    "build:win-store": "electron-builder --win appx --x64",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux snap AppImage deb"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.caiyun.pharmacy",
+    "productName": "彩云智药",
+    "copyright": "Copyright © 2026 彩云智药",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "appx",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "publisherName": "CN=彩云智药",
+      "verifyUpdateCodeSignature": false,
+      "appx": {
+        "applicationId": "caiyunpharmacy",
+        "displayName": "彩云智药",
+        "publisher": "CN=彩云-pharmacy, O=彩云智药, L=Shanghai, S=Shanghai, C=CN",
+        "publisherDisplayName": "彩云智药",
+        "identityName": "caiyunpharmacy"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "彩云智药"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.medical"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "snap",
+        "deb"
+      ],
+      "icon": "assets/icon.png",
+      "category": "Medical"
+    }
+  }
+}
