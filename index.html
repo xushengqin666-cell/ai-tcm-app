@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1565c0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="彩云智药">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="彩云智药">
+<meta name="description" content="家庭AI药师智能体：药品说明书查询、药物相互作用、用药指南、家庭药箱管理">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -9926,6 +9937,41 @@ document.addEventListener('DOMContentLoaded',function(){
   var ti=document.getElementById('timingInput');
   if(ti)ti.addEventListener('keydown',function(e){if(e.key==='Enter')searchMedicationTiming();});
 });
+</script>
+<script>
+// ===== PWA Service Worker =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(function(reg) { console.log('[PWA] SW registered:', reg.scope); })
+      .catch(function(err) { console.warn('[PWA] SW failed:', err); });
+  });
+}
+
+var deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  console.log('[PWA] Install prompt ready');
+  var btn = document.getElementById('pwaInstallBtn');
+  if (btn) btn.style.display = 'inline-flex';
+});
+
+window.addEventListener('appinstalled', function() {
+  console.log('[PWA] App installed');
+  deferredInstallPrompt = null;
+  var btn = document.getElementById('pwaInstallBtn');
+  if (btn) btn.style.display = 'none';
+});
+
+window.installPWA = async function() {
+  if (!deferredInstallPrompt) return false;
+  deferredInstallPrompt.prompt();
+  var result = await deferredInstallPrompt.userChoice;
+  console.log('[PWA] Install outcome:', result.outcome);
+  deferredInstallPrompt = null;
+  return result.outcome === 'accepted';
+};
 </script>
 </body>
 </html>
