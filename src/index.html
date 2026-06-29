@@ -17,7 +17,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Caiyun Smart Pharmacy v5</title>
+<title>家庭药师 / Family Pharmacist v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💊</text></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -303,13 +303,13 @@ var T = {
     versionLabel:'版本',cabinetTab:'我的药箱'
   },
   en: {
-    title:'🌿 Caiyun Smart Pharmacy',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',
+    title:'🌿 Family Pharmacist',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',
     searchTitle:'🔍 Drug Search',searchPlaceholder:'Enter drug name or symptoms, e.g. ibuprofen, headache...',searchBtn:'Search',
     featureTitle:'📋 Quick Access',featChat:'📖 Manual',featSymptom:'🩺 Symptom',featContra:'⚠️ Contraindications',featInteract:'💊 Interactions',
     interactTitle:'💊 Drug Interaction Network',drugAPlaceholder:'Drug A, e.g. ibuprofen',drugBPlaceholder:'Drug B (optional)',interactBtn:'Query',
     legendDanger:'🔴 Contraindicated',legendCaution:'🟡 Caution',legendGreen:'🟢 Safe',legendBlue:'🔵 Neutral',
     chatTitle:'💬 AI Pharmacy Assistant',chatPlaceholder:'Describe your symptoms or medication question...',sendBtn:'🔍 Search',
-    chatWelcome:'👋 Hello! I am Caiyun Smart Pharmacy AI Assistant. Please describe your symptoms or medication questions.',
+    chatWelcome:'👋 Hello! I am Family Pharmacist AI Assistant. Please describe your symptoms or medication questions.',
     statusReady:'Ready',statusSending:'Sending...',statusError:'Network Error',
     searching:'Searching...',searchFail:'Search failed. Please try again.',typing:'AI analyzing',noData:'No interaction data',langBtn:'🇨🇳 中文',
     guideTitle:'📋 Usage Guide',guideTime:'⏰ Best Time',guideFoodAvoid:'🍎 Food to Avoid',guideDrugAvoid:'💊 Drug Interactions',guideNotes:'📝 Notes',noGuideData:'No usage guide data',relatedDrugs:'related drugs',interactions:'interactions',
@@ -8417,7 +8417,7 @@ var AI_SYS_PROMPT = '你是家庭药师AI智能药师助手。专业、准确地
 
 function callPollinations(text, think){
   var model = think ? 'deepseek-reasoning' : 'openai';
-  var sys = currentLang==='en' ? 'You are Caiyun Smart Pharmacy AI assistant. Answer medication questions professionally and accurately. Always remind users to consult healthcare professionals for serious conditions. Be concise but thorough.' : '你是家庭药师AI药师助手。专业、准确地回答用药问题。提醒用户严重情况需就医。简洁但完整地回答。';
+  var sys = currentLang==='en' ? 'You are Family Pharmacist AI assistant. Answer medication questions professionally and accurately. Always remind users to consult healthcare professionals for serious conditions. Be concise but thorough.' : '你是家庭药师AI药师助手。专业、准确地回答用药问题。提醒用户严重情况需就医。简洁但完整地回答。';
   var body = {model:model, messages:[{role:'system',content:sys},{role:'user',content:text}], temperature:0.3};
   var ctrl = new AbortController();
   var timer = setTimeout(function(){ctrl.abort();}, 8000);
@@ -9604,7 +9604,7 @@ function getLocalAnswer(q) {
   }
 
   // 默认回复  // 默认回复
-  return currentLang==='en' ? 'Thank you for your question. I am Caiyun Smart Pharmacy AI, currently in local mode (no internet/API key needed), with limited capability.\n\nYou can try:\n1. Enter a specific drug name (e.g. "ibuprofen", "metformin")\n2. Describe symptoms for medication advice (e.g. "fever", "hypertension")\n3. Switch to "Interactions" page to check drug interactions\n4. Switch to "Food Precautions" page for dietary restrictions\n\n💡 The local knowledge base covers ~40 common drugs and medication guidance for common conditions.' : '感谢您的提问。我是家庭药师AI药师。\n\n⚠️ **当前AI在线服务暂时不可能**（网络连接失败），以下为本地规则引擎回复，内容有限。\n\n您可以尝试:\n1. **输入具体药品名称**查询(如"布洛芬"、"二甲双胍")\n2. **描述症状**获取用药建议(如"发烧"、"高血压")\n3. 切换至"**相互作用**"页面查询药物相互作用\n4. 切换至"**饮食禁忌**"页面查询饮食注意事项\n\n💡 如需获得完整AI智能问答体验，请稍后重试或检查网络连接。';
+  return currentLang==='en' ? 'Thank you for your question. I am Family Pharmacist AI, currently in local mode (no internet/API key needed), with limited capability.\n\nYou can try:\n1. Enter a specific drug name (e.g. "ibuprofen", "metformin")\n2. Describe symptoms for medication advice (e.g. "fever", "hypertension")\n3. Switch to "Interactions" page to check drug interactions\n4. Switch to "Food Precautions" page for dietary restrictions\n\n💡 The local knowledge base covers ~40 common drugs and medication guidance for common conditions.' : '感谢您的提问。我是家庭药师AI药师。\n\n⚠️ **当前AI在线服务暂时不可能**（网络连接失败），以下为本地规则引擎回复，内容有限。\n\n您可以尝试:\n1. **输入具体药品名称**查询(如"布洛芬"、"二甲双胍")\n2. **描述症状**获取用药建议(如"发烧"、"高血压")\n3. 切换至"**相互作用**"页面查询药物相互作用\n4. 切换至"**饮食禁忌**"页面查询饮食注意事项\n\n💡 如需获得完整AI智能问答体验，请稍后重试或检查网络连接。';
 }
 
 
