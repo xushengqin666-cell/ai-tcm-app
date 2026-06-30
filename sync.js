@@ -1,245 +1,303 @@
 /**
- * 彩云智药 - 数据同步引擎
- * 负责 localStorage 和 Supabase 之间的双向同步
+ * 家庭药师 - 数据同步引擎
+ *
+ * 极简模式：无需登录。
+ * - 每个设备首次访问自动生成 family_id (UUID)，存 localStorage
+ * - 所有写操作（保存药箱/成员）后自动 push 到云端
+ * - 页面加载时自动 pull 最新数据
+ * - 订阅 realtime，新设备/手机端扫码后自动同步
+ * - 配对：另一台设备扫码拿到 family_id，输入后两设备共享同一份数据
  */
 
-(function() {
+(function () {
   'use strict';
 
-  const SYNC_KEY = 'pharmacy_sync_status';
-  const CONFLICT_RESOLUTION = 'server_wins'; // 或 'local_wins', 'merge'
+  const FAMILY_ID_KEY = 'pharmacy_family_id';
+  const SYNC_STATUS_KEY = 'pharmacy_sync_status';
+  const CABINET_KEY = 'family_pharmacist_cabinet';
+  const MEMBERS_KEY = 'family_pharmacist_members';
+  const DEBOUNCE_MS = 800;
 
-  // 获取当前用户ID
-  function getUserId() {
-    const supabase = window.pharmacySupabase?.getClient();
-    if (!supabase) return null;
-
-    const session = supabase.auth.getSession();
-    return session?.user?.id || null;
+  // ---------- family_id 管理 ----------
+  function getFamilyId() {
+    let id = localStorage.getItem(FAMILY_ID_KEY);
+    if (!id) {
+      id = (crypto.randomUUID && crypto.randomUUID()) ||
+        'fam-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem(FAMILY_ID_KEY, id);
+      console.log('[Sync] 新设备，生成 family_id:', id);
+    }
+    return id;
   }
 
-  // 推送本地数据到云端
-  async function pushToCloud() {
-    const supabase = window.pharmacySupabase?.getClient();
-    const userId = getUserId();
-
-    if (!supabase || !userId) {
-      console.warn('[Sync] 未登录，跳过推送');
-      return { success: false, reason: 'not_logged_in' };
-    }
-
-    console.log('[Sync] 开始推送数据到云端...');
-
-    try {
-      // 1. 推送药箱数据
-      const localDrugs = JSON.parse(localStorage.getItem('cabinetDrugs') || '[]');
-      const drugsResult = await syncDrugs(supabase, userId, localDrugs);
-      console.log('[Sync] 药箱同步结果:', drugsResult);
-
-      // 2. 推送家庭成员
-      const localMembers = JSON.parse(localStorage.getItem('familyMembers') || '[]');
-      const membersResult = await syncMembers(supabase, userId, localMembers);
-      console.log('[Sync] 家庭成员同步结果:', membersResult);
-
-      // 更新同步时间
-      localStorage.setItem(SYNC_KEY, JSON.stringify({
-        lastSync: new Date().toISOString(),
-        direction: 'push',
-        status: 'success'
-      }));
-
-      return { success: true };
-    } catch (err) {
-      console.error('[Sync] 推送失败:', err);
-      return { success: false, reason: err.message };
-    }
+  function setFamilyId(newId) {
+    newId = String(newId || '').trim();
+    if (!newId) return false;
+    localStorage.setItem(FAMILY_ID_KEY, newId);
+    console.log('[Sync] 配对成功，family_id 更新为:', newId);
+    return true;
   }
 
-  // 从云端拉取数据
-  async function pullFromCloud() {
-    const supabase = window.pharmacySupabase?.getClient();
-    const userId = getUserId();
-
-    if (!supabase || !userId) {
-      console.warn('[Sync] 未登录，跳过拉取');
-      return { success: false, reason: 'not_logged_in' };
-    }
-
-    console.log('[Sync] 开始从云端拉取数据...');
-
+  // ---------- 状态显示 ----------
+  function setSyncStatus(text, kind) {
     try {
-      // 1. 拉取药箱数据
-      const { data: cloudDrugs, error: drugsError } = await supabase
-        .from('cabinet_drugs')
-        .select('*')
-        .eq('user_id', userId);
-
-      if (drugsError) throw drugsError;
-
-      // 合并到本地
-      const mergedDrugs = mergeDrugs(
-        JSON.parse(localStorage.getItem('cabinetDrugs') || '[]'),
-        cloudDrugs || []
-      );
-      localStorage.setItem('cabinetDrugs', JSON.stringify(mergedDrugs));
-
-      // 2. 拉取家庭成员
-      const { data: cloudMembers, error: membersError } = await supabase
-        .from('family_members')
-        .select('*')
-        .eq('user_id', userId);
-
-      if (membersError) throw membersError;
-
-      const mergedMembers = mergeMembers(
-        JSON.parse(localStorage.getItem('familyMembers') || '[]'),
-        cloudMembers || []
-      );
-      localStorage.setItem('familyMembers', JSON.stringify(mergedMembers));
-
-      // 更新同步时间
-      localStorage.setItem(SYNC_KEY, JSON.stringify({
-        lastSync: new Date().toISOString(),
-        direction: 'pull',
-        status: 'success'
-      }));
-
-      // 触发UI刷新
-      if (typeof renderCabinet === 'function') {
-        renderCabinet();
+      const el = document.getElementById('syncStatus');
+      if (el) {
+        el.textContent = text || '';
+        el.dataset.kind = kind || '';
       }
+    } catch (e) {}
+    localStorage.setItem(SYNC_STATUS_KEY, JSON.stringify({
+      text: text || '',
+      kind: kind || '',
+      at: new Date().toISOString(),
+    }));
+  }
 
-      console.log('[Sync] 拉取完成');
+  // ---------- 数据读写 ----------
+  function readLocalData() {
+    return {
+      cabinetDrugs: JSON.parse(localStorage.getItem(CABINET_KEY) || '[]'),
+      familyMembers: JSON.parse(localStorage.getItem(MEMBERS_KEY) || '[]'),
+      remoteSyncedAt: localStorage.getItem('pharmacy_remote_synced_at') || null,
+    };
+  }
+
+  function writeLocalData(data) {
+    if (!data) return;
+    if (Array.isArray(data.cabinetDrugs)) {
+      localStorage.setItem(CABINET_KEY, JSON.stringify(data.cabinetDrugs));
+    }
+    if (Array.isArray(data.familyMembers)) {
+      localStorage.setItem(MEMBERS_KEY, JSON.stringify(data.familyMembers));
+    }
+    if (data.remoteSyncedAt) {
+      localStorage.setItem('pharmacy_remote_synced_at', data.remoteSyncedAt);
+    }
+  }
+
+  // ---------- 推送 ----------
+  let pushTimer = null;
+  function schedulePush(reason) {
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(() => pushToCloud(reason), DEBOUNCE_MS);
+  }
+
+  async function pushToCloud(reason) {
+    const client = window.pharmacySupabase?.init();
+    if (!client) {
+      setSyncStatus('⚠️ 同步未配置', 'warn');
+      return { success: false, reason: 'no_client' };
+    }
+    const familyId = getFamilyId();
+    setSyncStatus('☁️ 同步中…', 'syncing');
+    try {
+      const local = readLocalData();
+      const payload = {
+        id: familyId,
+        data: {
+          cabinetDrugs: local.cabinetDrugs,
+          familyMembers: local.familyMembers,
+        },
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await client
+        .from('pharmacy_data')
+        .upsert(payload, { onConflict: 'id' });
+      if (error) throw error;
+      localStorage.setItem('pharmacy_remote_synced_at', payload.updated_at);
+      setSyncStatus('✅ 已同步 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }), 'ok');
+      console.log('[Sync] push 成功', reason || '');
       return { success: true };
     } catch (err) {
-      console.error('[Sync] 拉取失败:', err);
+      console.error('[Sync] push 失败:', err);
+      setSyncStatus('❌ 同步失败', 'error');
       return { success: false, reason: err.message };
     }
   }
 
-  // 同步药箱数据到云端
-  async function syncDrugs(supabase, userId, localDrugs) {
-    // 先清空云端数据，再插入（简化逻辑）
-    await supabase.from('cabinet_drugs').delete().eq('user_id', userId);
-
-    if (localDrugs.length === 0) return { inserted: 0 };
-
-    const records = localDrugs.map(drug => ({
-      user_id: userId,
-      drug_name: drug.name,
-      generic_name: drug.genericName || null,
-      category: drug.category || null,
-      quantity: drug.quantity || 1,
-      unit: drug.unit || '盒',
-      expiry_date: drug.expiry || null,
-      purchase_date: drug.purchaseDate || null,
-      location: drug.location || null,
-      notes: drug.notes || null,
-      reminder_enabled: drug.reminder || false,
-    }));
-
-    const { error } = await supabase.from('cabinet_drugs').insert(records);
-    if (error) throw error;
-
-    return { inserted: records.length };
-  }
-
-  // 同步家庭成员到云端
-  async function syncMembers(supabase, userId, localMembers) {
-    await supabase.from('family_members').delete().eq('user_id', userId);
-
-    if (localMembers.length === 0) return { inserted: 0 };
-
-    const records = localMembers.map(member => ({
-      user_id: userId,
-      name: member.name,
-      relationship: member.relationship || null,
-      birth_date: member.birthDate || null,
-      notes: member.notes || null,
-    }));
-
-    const { error } = await supabase.from('family_members').insert(records);
-    if (error) throw error;
-
-    return { inserted: records.length };
-  }
-
-  // 合并药箱数据（以服务器为准）
-  function mergeDrugs(localDrugs, cloudDrugs) {
-    // 简化：云端数据优先
-    if (cloudDrugs && cloudDrugs.length > 0) {
-      return cloudDrugs.map(d => ({
-        id: d.id,
-        name: d.drug_name,
-        genericName: d.generic_name,
-        category: d.category,
-        quantity: d.quantity,
-        unit: d.unit,
-        expiry: d.expiry_date,
-        purchaseDate: d.purchase_date,
-        location: d.location,
-        notes: d.notes,
-        reminder: d.reminder_enabled,
-      }));
-    }
-    return localDrugs;
-  }
-
-  // 合并家庭成员数据
-  function mergeMembers(localMembers, cloudMembers) {
-    if (cloudMembers && cloudMembers.length > 0) {
-      return cloudMembers.map(m => ({
-        id: m.id,
-        name: m.name,
-        relationship: m.relationship,
-        birthDate: m.birth_date,
-        notes: m.notes,
-      }));
-    }
-    return localMembers;
-  }
-
-  // 自动同步（页面加载时）
-  async function autoSync() {
-    const loggedIn = await window.pharmacySupabase?.isLoggedIn();
-    if (loggedIn) {
-      console.log('[Sync] 检测到已登录，开始自动同步');
-      await pullFromCloud();
+  // ---------- 拉取 ----------
+  async function pullFromCloud(merge) {
+    const client = window.pharmacySupabase?.init();
+    if (!client) return { success: false, reason: 'no_client' };
+    const familyId = getFamilyId();
+    try {
+      const { data, error } = await client
+        .from('pharmacy_data')
+        .select('*')
+        .eq('id', familyId)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) {
+        console.log('[Sync] 云端无数据（首次使用）');
+        // 首次使用，把本地数据推上去
+        return await pushToCloud('first_sync');
+      }
+      const remote = data.data || {};
+      const local = readLocalData();
+      const finalData = merge
+        ? mergeData(local, remote, data.updated_at)
+        : {
+            cabinetDrugs: remote.cabinetDrugs || [],
+            familyMembers: remote.familyMembers || [],
+            remoteSyncedAt: data.updated_at,
+          };
+      writeLocalData(finalData);
+      setSyncStatus('☁️ 已拉取 ' + new Date(data.updated_at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }), 'ok');
+      return { success: true, data: finalData };
+    } catch (err) {
+      console.error('[Sync] pull 失败:', err);
+      setSyncStatus('❌ 拉取失败', 'error');
+      return { success: false, reason: err.message };
     }
   }
 
-  // 订阅实时变更（WebSocket）
-  function subscribeChanges() {
-    const supabase = window.pharmacySupabase?.getClient();
-    if (!supabase) return;
+  // ---------- 合并策略（去重按 name+expiry/relationship+name） ----------
+  function mergeData(local, remote, remoteUpdatedAt) {
+    const mergedDrugs = mergeByKey(
+      [...(local.cabinetDrugs || []), ...(remote.cabinetDrugs || [])],
+      d => (d.name || '') + '|' + (d.expiry || '') + '|' + (d.spec || '')
+    );
+    const mergedMembers = mergeByKey(
+      [...(local.familyMembers || []), ...(remote.familyMembers || [])],
+      m => (m.name || '') + '|' + (m.relationship || '')
+    );
+    return {
+      cabinetDrugs: mergedDrugs,
+      familyMembers: mergedMembers,
+      remoteSyncedAt: remoteUpdatedAt,
+    };
+  }
 
-    // 订阅药箱变更
-    supabase
-      .channel('cabinet_changes')
+  function mergeByKey(arr, keyFn) {
+    const map = new Map();
+    for (const item of arr) {
+      if (!item) continue;
+      const k = keyFn(item);
+      if (!k || k === '|') continue; // 跳过空记录
+      if (!map.has(k)) map.set(k, item);
+    }
+    return Array.from(map.values());
+  }
+
+  // ---------- 自动劫持 saveCabinet / saveMembers ----------
+  function hookSavers() {
+    const tryHook = () => {
+      const hooked = [];
+      // 只在原函数本身没调 pharmacySync 时才劫持（避免双推送）
+      if (typeof window.saveCabinet === 'function' && !window.saveCabinet.__hooked) {
+        const src = window.saveCabinet.toString();
+        if (src.indexOf('pharmacySync') === -1 && src.indexOf('pharmacy_sync') === -1) {
+          const orig = window.saveCabinet;
+          window.saveCabinet = function (arr) {
+            const r = orig.apply(this, arguments);
+            schedulePush('saveCabinet');
+            return r;
+          };
+          window.saveCabinet.__hooked = true;
+          hooked.push('saveCabinet');
+        }
+      }
+      if (typeof window.saveMembers === 'function' && !window.saveMembers.__hooked) {
+        const src = window.saveMembers.toString();
+        if (src.indexOf('pharmacySync') === -1 && src.indexOf('pharmacy_sync') === -1) {
+          const orig = window.saveMembers;
+          window.saveMembers = function (arr) {
+            const r = orig.apply(this, arguments);
+            schedulePush('saveMembers');
+            return r;
+          };
+          window.saveMembers.__hooked = true;
+          hooked.push('saveMembers');
+        }
+      }
+      if (hooked.length) console.log('[Sync] 劫持成功:', hooked.join(', '));
+    };
+    tryHook();
+    setTimeout(tryHook, 100);
+    setTimeout(tryHook, 500);
+    setTimeout(tryHook, 1500);
+
+    // 监听 localStorage 写入作为兜底（仅跨页面）
+    window.addEventListener('storage', (e) => {
+      if (e.key === CABINET_KEY || e.key === MEMBERS_KEY) {
+        schedulePush('storage_event');
+      }
+    });
+  }
+
+  // ---------- Realtime 订阅 ----------
+  let realtimeChannel = null;
+  function subscribeRealtime() {
+    const client = window.pharmacySupabase?.init();
+    if (!client) return;
+    if (realtimeChannel) return;
+    const familyId = getFamilyId();
+    realtimeChannel = client
+      .channel('pharmacy-data-' + familyId)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'cabinet_drugs',
+        table: 'pharmacy_data',
+        filter: 'id=eq.' + familyId,
       }, (payload) => {
-        console.log('[Sync] 收到药箱变更:', payload);
-        pullFromCloud(); // 自动拉取最新数据
+        console.log('[Sync] 收到远端变更:', payload.eventType);
+        // 收到变更时拉取最新（不带 merge，避免回环）
+        pullFromCloud(false).then(() => {
+          if (typeof renderCabinet === 'function') renderCabinet();
+        });
       })
       .subscribe();
+    console.log('[Sync] realtime 已订阅 family_id =', familyId);
   }
 
-  // 导出
+  // ---------- 配对（供 UI 调用） ----------
+  async function pairDevice(targetFamilyId) {
+    if (!setFamilyId(targetFamilyId)) {
+      return { success: false, reason: 'invalid_id' };
+    }
+    // 重新订阅 realtime
+    if (realtimeChannel) {
+      const client = window.pharmacySupabase?.getClient();
+      if (client) client.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+    }
+    subscribeRealtime();
+    // 拉取对方数据
+    return await pullFromCloud(true);
+  }
+
+  // ---------- 启动 ----------
+  async function bootstrap() {
+    const client = window.pharmacySupabase?.init();
+    if (!client) {
+      setSyncStatus('⚠️ 同步未启用', 'warn');
+      return;
+    }
+    setSyncStatus('☁️ 连接中…', 'syncing');
+    await pullFromCloud(false);
+    subscribeRealtime();
+  }
+
+  // 暴露 API
   window.pharmacySync = {
-    pushToCloud,
-    pullFromCloud,
-    autoSync,
-    subscribeChanges,
+    push: pushToCloud,
+    pushToCloud: () => pushToCloud('manual'), // 兼容旧 cabinet.html 调用
+    pull: () => pullFromCloud(true),
+    pullFromCloud: () => pullFromCloud(false), // 兼容旧 auth.js 调用
+    pair: pairDevice,
+    getFamilyId,
+    schedulePush,
   };
 
-  // 页面加载后自动同步
+  // 启动
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', autoSync);
+    document.addEventListener('DOMContentLoaded', () => {
+      hookSavers();
+      bootstrap();
+    });
   } else {
-    autoSync();
+    hookSavers();
+    bootstrap();
   }
-
 })();

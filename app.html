@@ -132,6 +132,8 @@ header h1{font-size:18px;font-weight:700}
   <button class="tab-btn" data-tab="chat" id="tabChatBtn">智能问药</button>
     <button id="tabReportBtn" data-tab="report" class="tab-btn">📋 辨证报告</button>
     <button class="tab-btn" data-tab="guide" id="tabGuideBtn">💡 用药指南</button>
+    <button class="tab-btn" data-tab="reminder" id="tabReminderBtn">⏰ 提醒</button>
+    <button class="tab-btn" data-tab="family" id="tabFamilyBtn">👨‍👩‍👧 家庭</button>
   <a href="cabinet.html" style="padding:11px 16px;font-size:14px;color:#666;text-decoration:none;text-align:center;flex:1;border-bottom:3px solid transparent" id="tabCabinetLink">💊 药箱</a>
 </div>
 
@@ -9769,6 +9771,602 @@ function runDrugOCR(imageDataUrl) {
           <div id="reportResult" style="margin-top:16px"></div>
         </div>
       </div>
+
+<!-- 服药提醒 Tab 内容 -->
+<div id="tab-reminder" class="tab-content">
+  <div class="card">
+    <div class="card-title">⏰ 服药提醒</div>
+    
+    <!-- 添加提醒表单 -->
+    <div style="background:#f8f9fa;padding:16px;border-radius:10px;margin-bottom:16px">
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">添加新提醒</div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">药品名称</label>
+        <input type="text" id="reminderDrugName" placeholder="如：布洛芬" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">服药时间</label>
+        <input type="time" id="reminderTime" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">重复频率</label>
+        <select id="reminderFrequency" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+          <option value="once">仅一次</option>
+          <option value="daily">每天</option>
+          <option value="weekday">仅工作日</option>
+          <option value="weekend">仅周末</option>
+          <option value="custom">自定义</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">剂量说明（可选）</label>
+        <input type="text" id="reminderDosage" placeholder="如：1片，饭后服用" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <button onclick="addReminder()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">+ 添加提醒</button>
+    </div>
+    
+    <!-- 提醒列表 -->
+    <div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">我的提醒</div>
+      <div id="reminderList">
+        <div style="text-align:center;color:#999;padding:20px;font-size:13px" id="noReminderHint">暂无提醒，添加您的第一个服药提醒吧</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 服药提醒功能
+let medicationReminders = [];
+
+// 加载提醒
+function loadReminders() {
+  try {
+    const saved = localStorage.getItem('medication_reminders');
+    if (saved) {
+      medicationReminders = JSON.parse(saved);
+    }
+  } catch(e) {
+    console.error('加载提醒失败:', e);
+    medicationReminders = [];
+  }
+  renderReminders();
+}
+
+// 保存提醒
+function saveReminders() {
+  try {
+    localStorage.setItem('medication_reminders', JSON.stringify(medicationReminders));
+  } catch(e) {
+    console.error('保存提醒失败:', e);
+  }
+}
+
+// 添加提醒
+function addReminder() {
+  const drugName = document.getElementById('reminderDrugName').value.trim();
+  const time = document.getElementById('reminderTime').value;
+  const frequency = document.getElementById('reminderFrequency').value;
+  const dosage = document.getElementById('reminderDosage').value.trim();
+  
+  if (!drugName) {
+    alert('请输入药品名称');
+    return;
+  }
+  
+  if (!time) {
+    alert('请选择服药时间');
+    return;
+  }
+  
+  const reminder = {
+    id: Date.now().toString(),
+    drugName: drugName,
+    time: time,
+    frequency: frequency,
+    dosage: dosage,
+    enabled: true,
+    createdAt: new Date().toISOString()
+  };
+  
+  medicationReminders.push(reminder);
+  saveReminders();
+  renderReminders();
+  
+  // 清空表单
+  document.getElementById('reminderDrugName').value = '';
+  document.getElementById('reminderTime').value = '';
+  document.getElementById('reminderDosage').value = '';
+  
+  // 请求通知权限
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  
+  alert('提醒已添加！');
+}
+
+// 删除提醒
+function deleteReminder(id) {
+  if (!confirm('确定删除此提醒？')) return;
+  
+  medicationReminders = medicationReminders.filter(r => r.id !== id);
+  saveReminders();
+  renderReminders();
+}
+
+// 切换提醒启用状态
+function toggleReminder(id) {
+  const reminder = medicationReminders.find(r => r.id === id);
+  if (reminder) {
+    reminder.enabled = !reminder.enabled;
+    saveReminders();
+    renderReminders();
+  }
+}
+
+// 渲染提醒列表
+function renderReminders() {
+  const listEl = document.getElementById('reminderList');
+  const noHint = document.getElementById('noReminderHint');
+  
+  if (medicationReminders.length === 0) {
+    if (noHint) noHint.style.display = 'block';
+    listEl.innerHTML = '';
+    if (noHint) listEl.appendChild(noHint);
+    return;
+  }
+  
+  if (noHint) noHint.style.display = 'none';
+  
+  let html = '';
+  medicationReminders.forEach(reminder => {
+    const frequencyText = {
+      'once': '仅一次',
+      'daily': '每天',
+      'weekday': '仅工作日',
+      'weekend': '仅周末',
+      'custom': '自定义'
+    }[reminder.frequency] || '每天';
+    
+    html += `
+      <div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px;${reminder.enabled ? '' : 'opacity:0.5'}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="font-size:20px">💊</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15px">${reminder.drugName}</div>
+            <div style="font-size:12px;color:#666">${reminder.time} | ${frequencyText}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onclick="toggleReminder('${reminder.id}')" style="padding:4px 8px;background:${reminder.enabled ? '#e8f5e9' : '#f5f5f5'};color:${reminder.enabled ? '#2e7d32' : '#999'};border:1px solid ${reminder.enabled ? '#2e7d32' : '#ddd'};border-radius:6px;font-size:12px;cursor:pointer">
+              ${reminder.enabled ? '✓ 启用' : '✕ 禁用'}
+            </button>
+            <button onclick="deleteReminder('${reminder.id}')" style="padding:4px 8px;background:#ffebee;color:#e53935;border:1px solid #ffcdd2;border-radius:6px;font-size:12px;cursor:pointer">删除</button>
+          </div>
+        </div>
+        ${reminder.dosage ? `<div style="font-size:13px;color:#555;padding:8px;background:#f8f9fa;border-radius:6px">${reminder.dosage}</div>` : ''}
+      </div>
+    `;
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// 检查提醒（每分钟检查一次）
+function checkReminders() {
+  const now = new Date();
+  const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+  
+  medicationReminders.forEach(reminder => {
+    if (!reminder.enabled) return;
+    
+    if (reminder.time === currentTime) {
+      // 触发提醒
+      triggerReminder(reminder);
+    }
+  });
+}
+
+// 触发提醒
+function triggerReminder(reminder) {
+  // 显示浏览器通知
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('服药提醒', {
+      body: `该服用${reminder.drugName}了！${reminder.dosage ? '\n' + reminder.dosage : ''}`,
+      icon: '/icon-192.png'
+    });
+  }
+  
+  // 播放提示音（如果有）
+  try {
+    const audio = new Audio('/reminder.mp3');
+    audio.play();
+  } catch(e) {}
+  
+  // 在页面上显示提醒
+  showReminderAlert(reminder);
+}
+
+// 显示提醒弹窗
+function showReminderAlert(reminder) {
+  const alertDiv = document.createElement('div');
+  alertDiv.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:16px 24px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;animation:slideDown 0.3s ease';  alertDiv.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">⏰ 服药提醒</div>
+    <div>该服用 <strong>${reminder.drugName}</strong> 了！</div>
+    ${reminder.dosage ? `<div style="font-size:13px;margin-top:4px;opacity:0.9">${reminder.dosage}</div>` : ''}
+  `;
+  
+  document.body.appendChild(alertDiv);
+  
+  setTimeout(() => {
+    alertDiv.style.animation = 'slideUp 0.3s ease';
+    setTimeout(() => alertDiv.remove(), 300);
+  }, 5000);
+}
+
+// 初始化提醒功能
+document.addEventListener('DOMContentLoaded', () => {
+  loadReminders();
+  
+  // 每分钟检查一次提醒
+  setInterval(checkReminders, 60000);
+  
+  // 请求通知权限
+  if ('Notification' in window && Notification.permission === 'default') {
+    setTimeout(() => {
+      Notification.requestPermission();
+    }, 2000);
+  }
+});
+
+// 添加动画样式
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideDown {
+    from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+<!-- 家庭成员管理 Tab -->
+<div id="tab-family" class="tab-content">
+  <div class="card">
+    <div class="card-title">👨‍👩‍👧 家庭成员管理</div>
+    
+    <!-- 添加成员表单 -->
+    <div style="background:#f8f9fa;padding:16px;border-radius:10px;margin-bottom:16px">
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">添加家庭成员</div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">姓名</label>
+        <input type="text" id="memberName" placeholder="如：张三" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">与您的关系</label>
+        <select id="memberRelation" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+          <option value="self">本人</option>
+          <option value="spouse">配偶</option>
+          <option value="father">父亲</option>
+          <option value="mother">母亲</option>
+          <option value="son">儿子</option>
+          <option value="daughter">女儿</option>
+          <option value="grandfather">祖父/外祖父</option>
+          <option value="grandmother">祖母/外祖母</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">性别</label>
+        <select id="memberGender" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+          <option value="">请选择</option>
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">出生年份（选填）</label>
+        <input type="number" id="memberBirthYear" placeholder="如：1985" min="1900" max="2030" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">健康状况（选填）</label>
+        <input type="text" id="memberHealth" placeholder="如：高血压、糖尿病、过敏史" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">当前用药（选填）</label>
+        <input type="text" id="memberMedications" placeholder="如：二甲双胍、氨氯地平" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <button onclick="addFamilyMember()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">+ 添加成员</button>
+    </div>
+    
+    <!-- 成员列表 -->
+    <div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">家庭成员</div>
+      <div id="familyMemberList">
+        <div style="text-align:center;color:#999;padding:20px;font-size:13px" id="noMemberHint">暂无家庭成员，添加后可在用药时获取个性化建议</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 家庭成员管理功能
+let familyMembers = [];
+
+const RELATION_MAP = {
+  'self': '本人',
+  'spouse': '配偶',
+  'father': '父亲',
+  'mother': '母亲',
+  'son': '儿子',
+  'daughter': '女儿',
+  'grandfather': '祖父/外祖父',
+  'grandmother': '祖母/外祖母',
+  'other': '其他'
+};
+
+const GENDER_MAP = {
+  'male': '男',
+  'female': '女'
+};
+
+// 计算年龄
+function getAge(birthYear) {
+  if (!birthYear) return null;
+  const currentYear = new Date().getFullYear();
+  return currentYear - parseInt(birthYear);
+}
+
+// 加载成员
+function loadFamilyMembers() {
+  try {
+    const saved = localStorage.getItem('family_members');
+    if (saved) {
+      familyMembers = JSON.parse(saved);
+    }
+  } catch(e) {
+    console.error('加载成员失败:', e);
+    familyMembers = [];
+  }
+  renderFamilyMembers();
+  
+  // 同步到Supabase
+  if (typeof schedulePush === 'function') {
+    if(window.pharmacySync)window.pharmacySync.schedulePush('loadFamilyMembers');
+  }
+}
+
+// 保存成员
+function saveFamilyMembers() {
+  try {
+    localStorage.setItem('family_members', JSON.stringify(familyMembers));
+  } catch(e) {
+    console.error('保存成员失败:', e);
+  }
+  
+  // 同步到Supabase
+  if (typeof schedulePush === 'function') {
+    if(window.pharmacySync)window.pharmacySync.schedulePush('saveFamilyMembers');
+  }
+}
+
+// 添加成员
+function addFamilyMember() {
+  const name = document.getElementById('memberName').value.trim();
+  const relation = document.getElementById('memberRelation').value;
+  const gender = document.getElementById('memberGender').value;
+  const birthYear = document.getElementById('memberBirthYear').value;
+  const health = document.getElementById('memberHealth').value.trim();
+  const medications = document.getElementById('memberMedications').value.trim();
+  
+  if (!name) {
+    alert('请输入成员姓名');
+    return;
+  }
+  
+  const member = {
+    id: Date.now().toString(),
+    name: name,
+    relationship: relation,
+    gender: gender,
+    birthYear: birthYear ? parseInt(birthYear) : null,
+    health: health,
+    medications: medications,
+    createdAt: new Date().toISOString()
+  };
+  
+  familyMembers.push(member);
+  saveFamilyMembers();
+  renderFamilyMembers();
+  
+  // 清空表单
+  document.getElementById('memberName').value = '';
+  document.getElementById('memberRelation').value = 'self';
+  document.getElementById('memberGender').value = '';
+  document.getElementById('memberBirthYear').value = '';
+  document.getElementById('memberHealth').value = '';
+  document.getElementById('memberMedications').value = '';
+  
+  alert('家庭成员已添加！');
+}
+
+// 删除成员
+function deleteMember(id) {
+  if (!confirm('确定删除此成员？')) return;
+  
+  familyMembers = familyMembers.filter(m => m.id !== id);
+  saveFamilyMembers();
+  renderFamilyMembers();
+}
+
+// 编辑成员
+function editMember(id) {
+  const member = familyMembers.find(m => m.id === id);
+  if (!member) return;
+  
+  document.getElementById('memberName').value = member.name;
+  document.getElementById('memberRelation').value = member.relationship;
+  document.getElementById('memberGender').value = member.gender || '';
+  document.getElementById('memberBirthYear').value = member.birthYear || '';
+  document.getElementById('memberHealth').value = member.health || '';
+  document.getElementById('memberMedications').value = member.medications || '';
+  
+  // 删除旧的
+  familyMembers = familyMembers.filter(m => m.id !== id);
+  saveFamilyMembers();
+  renderFamilyMembers();
+  
+  alert('请在表单中修改后点击"添加成员"保存');
+}
+
+// 获取成员年龄描述
+function getAgeDesc(birthYear) {
+  const age = getAge(birthYear);
+  if (!age) return '';
+  
+  if (age >= 65) {
+    return `${age}岁（老年人）`;
+  } else if (age >= 18) {
+    return `${age}岁`;
+  } else if (age >= 6) {
+    return `${age}岁（儿童）`;
+  } else {
+    return `${age}岁（幼儿）`;
+  }
+}
+
+// 获取用药安全提示
+function getSafetyNote(member) {
+  const notes = [];
+  const age = getAge(member.birthYear);
+  const medications = member.medications.toLowerCase();
+  
+  // 年龄相关提示
+  if (age && age >= 65) {
+    notes.push('老年人用药需注意剂量调整');
+  }
+  if (age && age < 18) {
+    notes.push('儿童用药需按体重计算剂量');
+  }
+  
+  // 健康状况提示
+  const health = member.health.toLowerCase();
+  if (health.includes('肝') || health.includes('肾')) {
+    notes.push('肝/肾功能异常需慎用经肝肾代谢的药物');
+  }
+  if (health.includes('胃')) {
+    notes.push('胃病患者注意非甾体抗炎药的胃肠道刺激');
+  }
+  
+  // 当前用药提示
+  if (medications.includes('华法林')) {
+    notes.push('华法林用药期间需定期监测INR');
+  }
+  if (medications.includes('胰岛素')) {
+    notes.push('胰岛素使用需密切监测血糖');
+  }
+  if (medications.includes('地高辛')) {
+    notes.push('地高辛用药需监测心率和电解质');
+  }
+  
+  return notes;
+}
+
+// 渲染成员列表
+function renderFamilyMembers() {
+  const listEl = document.getElementById('familyMemberList');
+  const noHint = document.getElementById('noMemberHint');
+  
+  if (familyMembers.length === 0) {
+    if (noHint) noHint.style.display = 'block';
+    listEl.innerHTML = '';
+    if (noHint) listEl.appendChild(noHint);
+    return;
+  }
+  
+  if (noHint) noHint.style.display = 'none';
+  
+  let html = '';
+  familyMembers.forEach(member => {
+    const ageDesc = getAgeDesc(member.birthYear);
+    const relationText = RELATION_MAP[member.relationship] || member.relationship;
+    const genderText = GENDER_MAP[member.gender] || '';
+    const safetyNotes = getSafetyNote(member);
+    
+    // 头像颜色
+    const avatarColors = ['#e8f5e9', '#e3f2fd', '#fff3e0', '#fce4ec', '#f3e5f5'];
+    const avatarIndex = familyMembers.indexOf(member) % avatarColors.length;
+    
+    html += `
+      <div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="width:50px;height:50px;border-radius:50%;background:${avatarColors[avatarIndex]};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+            ${member.gender === 'female' ? '👩' : '👨'}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-weight:600;font-size:16px">${member.name}</span>
+              <span style="font-size:12px;color:#666;background:#f5f5f5;padding:2px 8px;border-radius:10px">${relationText}</span>
+            </div>
+            <div style="font-size:13px;color:#666;margin-bottom:4px">
+              ${genderText ? genderText + ' | ' : ''}${ageDesc || '年龄不详'}
+            </div>
+            ${member.health ? `<div style="font-size:12px;color:#e53935;margin-bottom:4px">🏥 ${member.health}</div>` : ''}
+            ${member.medications ? `<div style="font-size:12px;color:#1565c0;margin-bottom:6px">💊 当前用药: ${member.medications}</div>` : ''}
+            
+            ${safetyNotes.length > 0 ? `
+              <div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;font-size:12px">
+                <div style="font-weight:600;color:#f57c00;margin-bottom:4px">⚠️ 用药提醒</div>
+                ${safetyNotes.map(n => `<div style="color:#666">• ${n}</div>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button onclick="editMember('${member.id}')" style="padding:4px 8px;background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb;border-radius:6px;font-size:12px;cursor:pointer">编辑</button>
+            <button onclick="deleteMember('${member.id}')" style="padding:4px 8px;background:#ffebee;color:#e53935;border:1px solid #ffcdd2;border-radius:6px;font-size:12px;cursor:pointer">删除</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// 获取指定成员
+function getFamilyMember(id) {
+  return familyMembers.find(m => m.id === id);
+}
+
+// 获取本人信息
+function getSelfInfo() {
+  return familyMembers.find(m => m.relationship === 'self');
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+  loadFamilyMembers();
+});
+</script>
+
+
+
 
 <!-- 用药指南 -->
 <div id="tab-guide" class="tab-content">

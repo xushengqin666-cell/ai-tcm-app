@@ -89,6 +89,7 @@ header a{color:#fff;text-decoration:none;font-size:13px;opacity:.9}
   <h1>💊 家庭药箱</h1>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="syncStatus" style="font-size:11px;opacity:.7"></span>
+    <button class="login-btn" onclick="openPairModal()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4)">📱 配对</button>
     <span id="userInfo"></span>
     <a href="index.html" style="color:#fff;text-decoration:none;font-size:13px;opacity:.9">← 返回</a>
   </div>
@@ -141,6 +142,79 @@ header a{color:#fff;text-decoration:none;font-size:13px;opacity:.9}
     <div id="lowStockList"></div>
   </div>
 </div>
+
+<!-- Pair Device Modal -->
+<div class="modal-overlay" id="pairModal">
+  <div class="modal">
+    <h2>📱 多设备同步</h2>
+    <p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6">
+      把你的<b>家庭 ID</b>输入到另一台设备（手机/电脑），两边药箱数据就能自动同步。
+    </p>
+    <div class="form-group">
+      <label>我的家庭 ID（复制给另一台设备）</label>
+      <div style="display:flex;gap:6px">
+        <input id="myFamilyId" readonly style="flex:1;font-family:monospace;font-size:12px">
+        <button class="btn-xs" onclick="copyFamilyId()" style="background:#2e7d32;color:#fff">复制</button>
+      </div>
+    </div>
+    <hr style="margin:14px 0;border:none;border-top:1px dashed #e0e0e0">
+    <div class="form-group">
+      <label>输入另一台设备的家庭 ID（用于配对）</label>
+      <input id="pairInput" placeholder="粘粘对方设备的 ID">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closePairModal()">取消</button>
+      <button class="btn-save" onclick="doPair()">配对</button>
+    </div>
+    <p style="font-size:11px;color:#999;margin-top:10px;line-height:1.5">
+      ⚠️ 配对后本地数据会被云端数据覆盖。配对前请确保另一台设备已同步过数据。
+    </p>
+  </div>
+</div>
+
+<script>
+function openPairModal(){
+  var id = (window.pharmacySync && window.pharmacySync.getFamilyId) ? window.pharmacySync.getFamilyId() : (localStorage.getItem('pharmacy_family_id') || '');
+  document.getElementById('myFamilyId').value = id;
+  document.getElementById('pairInput').value = '';
+  document.getElementById('pairModal').classList.add('show');
+}
+function closePairModal(){
+  document.getElementById('pairModal').classList.remove('show');
+}
+function copyFamilyId(){
+  var el = document.getElementById('myFamilyId');
+  el.select();
+  try {
+    navigator.clipboard.writeText(el.value).then(function(){
+      el.style.background = '#e8f5e9';
+      setTimeout(function(){ el.style.background = ''; }, 800);
+    });
+  } catch(e) {
+    document.execCommand('copy');
+  }
+}
+async function doPair(){
+  var id = document.getElementById('pairInput').value.trim();
+  if(!id){ alert('请输入 ID'); return; }
+  if(!window.pharmacySync || !window.pharmacySync.pair){
+    alert('同步未初始化'); return;
+  }
+  var btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '配对中…';
+  var r = await window.pharmacySync.pair(id);
+  btn.disabled = false;
+  btn.textContent = '配对';
+  if(r.success){
+    alert('配对成功！数据已同步。');
+    closePairModal();
+    if(typeof renderCabinet === 'function') renderCabinet();
+  } else {
+    alert('配对失败：' + (r.reason || '未知错误'));
+  }
+}
+</script>
 
 <!-- Add/Edit Drug Modal -->
 <div class="modal-overlay" id="drugModal">
