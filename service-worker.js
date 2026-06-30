@@ -1,5 +1,5 @@
 // sw.js - PWA Service Worker
-const CACHE = 'caiyun-pharmacy-v1';
+const CACHE = 'caiyun-pharmacy-v2';
 const ASSETS = [
   './',
   './index.html',

@@ -158,6 +158,19 @@ CREATE INDEX IF NOT EXISTS idx_medication_logs_user_id ON public.medication_logs
 CREATE INDEX IF NOT EXISTS idx_medication_logs_created_at ON public.medication_logs(created_at);
 
 -- ============================================
+-- 7. 端手同步表（无登录模式，通过 family_id 配对）
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS public.pharmacy_data (
+  id TEXT PRIMARY KEY,
+  data JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 允许匿名访问（无 RLS，基于 anon key 的访问控制）
+-- 注意：生产环境建议启用 RLS 并加 Policy
+
+-- ============================================
 -- 完成
 -- ============================================
 

@@ -1,0 +1,15 @@
+node_modules/
+android/
+.fleet/
+.pnp
+.pnp.js
+*.pyc
+__pycache__/
+.env
+.env.local
+*.log
+dist/
+build/
+*.apk
+*.aab
+*.keystore
