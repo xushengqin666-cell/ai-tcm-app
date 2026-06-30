@@ -8,6 +8,12 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>💊 家庭药箱 - 家庭药师</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💊</text></svg>">
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 同步模块 -->
+<script src="supabase-config.js"></script>
+<script src="sync.js"></script>
+<script src="auth.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#222;min-height:100vh}
@@ -72,12 +78,20 @@ header a{color:#fff;text-decoration:none;font-size:13px;opacity:.9}
 .expiry-ok{color:#2e7d32}
 .expiry-soon{color:#ff9800}
 .expiry-expired{color:#e53935}
+.login-btn{background:#2e7d32;color:#fff;border:none;padding:6px 14px;border-radius:16px;font-size:12px;cursor:pointer;font-weight:600}
+.user-badge{font-size:12px;color:#fff;cursor:pointer;opacity:.9}
+.sync-spin{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <header>
   <h1>💊 家庭药箱</h1>
-  <a href="index.html">← 返回</a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span id="syncStatus" style="font-size:11px;opacity:.7"></span>
+    <span id="userInfo"></span>
+    <a href="index.html" style="color:#fff;text-decoration:none;font-size:13px;opacity:.9">← 返回</a>
+  </div>
 </header>
 
 <div class="main">
@@ -225,9 +239,54 @@ var CURRENT_MEMBER = '';
 var EDIT_ID = null;
 
 function getCabinet(){ return JSON.parse(localStorage.getItem(CABINET_KEY)||'[]'); }
-function saveCabinet(arr){ localStorage.setItem(CABINET_KEY, JSON.stringify(arr)); }
+function saveCabinet(arr){ 
+  localStorage.setItem(CABINET_KEY, JSON.stringify(arr)); 
+  // 触发云端同步（防抖）
+  if(window.pharmacySync){
+    clearTimeout(window._syncTimer);
+    window._syncTimer = setTimeout(function(){
+      window.pharmacySync.pushToCloud();
+      updateSyncStatus('syncing');
+    }, 2000);
+  }
+}
 function getMembers(){ return JSON.parse(localStorage.getItem(MEMBERS_KEY)||'[]'); }
 function saveMembers(arr){ localStorage.setItem(MEMBERS_KEY, JSON.stringify(arr)); }
+
+// ===== Sync Status =====
+function updateSyncStatus(status){
+  var el = document.getElementById('syncStatus');
+  if(!el) return;
+  
+  if(status === 'syncing'){
+    el.innerHTML = '<span class="sync-spin">🔄</span> 同步中...';
+  } else if(status === 'success'){
+    el.innerHTML = '☁️ 已同步';
+    setTimeout(function(){ el.innerHTML = ''; }, 3000);
+  } else if(status === 'offline'){
+    el.innerHTML = '📴 离线';
+  } else if(status === 'error'){
+    el.innerHTML = '⚠️ 同步失败';
+  }
+}
+
+// 页面加载时检查同步状态
+function checkSyncStatus(){
+  var status = JSON.parse(localStorage.getItem('pharmacy_sync_status') || '{}');
+  if(status.lastSync){
+    var last = new Date(status.lastSync);
+    var now = new Date();
+    var diff = (now - last) / 60000; // 分钟
+    
+    if(diff < 5){
+      updateSyncStatus('success');
+    } else if(!navigator.onLine){
+      updateSyncStatus('offline');
+    }
+  } else if(!navigator.onLine){
+    updateSyncStatus('offline');
+  }
+}
 
 // ===== Expiry logic =====
 function daysToExpiry(expiry){
