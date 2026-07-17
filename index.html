@@ -116,6 +116,44 @@ header h1{font-size:18px;font-weight:700}
 .answer-text{line-height:1.7}
 .fallback-hint{font-size:12px;color:#999;margin-top:6px;padding-top:6px;border-top:1px dashed #ddd}
 .loading-dots{display:inline-block;color:#888}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* 入场元素初始状态 */
+.animate-in {
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+.anim-header  { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
+.anim-tabbar  { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
+.anim-card    { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
+.anim-content { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
+.anim-modal   { animation: scaleIn   0.40s cubic-bezier(.34,1.56,.64,1) var(--delay,0s) both; }
+.anim-fab     { animation: scaleIn   0.45s cubic-bezier(.34,1.56,.64,1) 0.35s both; }
+
+/* 骨架屏 shimmer */
+.skeleton {
+  background: linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%);
+  background-size: 200% auto;
+  animation: shimmer 1.8s linear infinite;
+  border-radius: 6px;
+}
+
 </style>
 
 <script>
@@ -148,7 +186,33 @@ async function callGroqAPI(question) {
 }
 </script>
 
-<!-- rebuild 20260717105133 --></head>
+<!-- rebuild 20260717105133 -->
+<script>
+// 入场动画：元素依次出现
+(function(){
+  var delay = 0;
+  function anim(cls, ms) {
+    var els = document.querySelectorAll(cls);
+    els.forEach(function(el){
+      el.style.setProperty('--delay', delay + 'ms');
+      el.classList.add('animate-in');
+      delay += ms;
+    });
+  }
+  // header → tabbar → main content → cards
+  anim('.app-header, header', 0);
+  anim('#tabBar, .tab-bar, .bottom-nav, nav', 60);
+  anim('#tab-home, #tab-interact, #tab-drugs, #tab-cabinet, #tab-symptom, .tab-content', 120);
+  anim('.drug-card, .card', 80);
+  anim('.search-box, .input-group, .btn-group', 60);
+
+  // fab 自动出现
+  var fab = document.querySelector('.fab, .camera-fab, #cameraFab, [id*=fab]');
+  if (fab) fab.classList.add('animate-in');
+})();
+</script>
+
+</head>
 <body>
 <header>
   <h1 id="title">🌿 彩云智药</h1>
