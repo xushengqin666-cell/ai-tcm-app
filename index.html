@@ -378,6 +378,52 @@ header>div{display:flex;align-items:center;gap:10px}
 .dark .chat-messages{background:#15181F}
 .dark .skeleton{background:linear-gradient(90deg,#232730 25%,#2A2E37 50%,#232730 75%);background-size:200% auto}
 </style>
+<style id="feature-css">
+/* ===== 药箱 / 家庭 / 提醒 功能样式 ===== */
+.feature-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.feature-head h3{font-size:16px;font-weight:700;color:#1a1a1a}
+.btn-primary{background:var(--c-primary,#07C160);color:#fff;border:none;padding:9px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:transform .12s}
+.btn-primary:active{transform:scale(.97)}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12px;color:#888;margin-bottom:4px;font-weight:500}
+.field input,.field select{width:100%;padding:10px 12px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:14px;background:#fff;outline:none;transition:border-color .2s;box-sizing:border-box}
+.field input:focus,.field select:focus{border-color:var(--c-primary,#07C160)}
+.card-form{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+/* 药箱列表 */
+.drug-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 6px rgba(0,0,0,.04);border-left:4px solid #07C160;position:relative}
+.drug-item.expire-soon{border-left-color:#ff9500}
+.drug-item.expired{border-left-color:#ff3b30}
+.drug-item .di-main{flex:1;min-width:0}
+.drug-item .di-name{font-size:15px;font-weight:600;color:#1a1a1a}
+.drug-item .di-meta{font-size:12px;color:#999;margin-top:3px}
+.drug-item .di-badge{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;margin:6px 6px 0 0;font-weight:600}
+.di-badge.ok{background:rgba(7,193,96,.12);color:#07C160}
+.di-badge.warn{background:rgba(255,149,0,.14);color:#ff9500}
+.di-badge.bad{background:rgba(255,59,48,.14);color:#ff3b30}
+.drug-item .di-del{background:rgba(255,59,48,.08);border:none;color:#ff3b30;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;line-height:1}
+/* 统计条 */
+.stat-row{display:flex;gap:8px;margin-bottom:14px}
+.stat-pill{flex:1;text-align:center;background:#fff;border-radius:12px;padding:10px 4px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.stat-pill .num{font-size:20px;font-weight:700}
+.stat-pill .lbl{font-size:11px;color:#999;margin-top:2px}
+.stat-pill.s-ok .num{color:#07C160}.stat-pill.s-warn .num{color:#ff9500}.stat-pill.s-bad .num{color:#ff3b30}
+/* 空状态 */
+.empty-state{text-align:center;padding:44px 20px;color:#bbb}
+.empty-state .es-icon{font-size:46px;margin-bottom:12px}
+.empty-state .es-text{font-size:14px;line-height:1.6}
+/* 家庭成员 */
+.member-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.04);margin:0 8px 8px 0;cursor:pointer;font-size:14px;border:2px solid transparent;transition:all .15s}
+.member-chip.current{border-color:var(--c-primary,#07C160);color:var(--c-primary,#07C160);font-weight:600}
+.member-chip .mc-del{color:#ccc;font-size:15px;margin-left:2px}
+.member-chip .mc-del:active{color:#ff3b30}
+/* 提醒 */
+.rem-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.rem-item .rem-time{font-size:18px;font-weight:700;color:var(--c-primary,#07C160);min-width:54px}
+.rem-item .rem-main{flex:1;min-width:0}
+.rem-item .rem-text{font-size:14px;font-weight:500;color:#1a1a1a}
+.rem-item .rem-sub{font-size:12px;color:#999;margin-top:2px}
+.rem-item .rem-del{background:rgba(255,59,48,.08);border:none;color:#ff3b30;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;line-height:1}
+</style>
 </head>
 <body>
 <header>
@@ -392,7 +438,7 @@ header>div{display:flex;align-items:center;gap:10px}
   <button class="tab-btn" data-tab="interact" id="tabInteractBtn">相互作用</button>
   <button class="tab-btn" data-tab="chat" id="tabChatBtn">智能问药</button>
     <button id="tabReportBtn" data-tab="report" class="tab-btn">📋 辨证报告</button>
-  <a href="cabinet.html" style="padding:11px 16px;font-size:14px;color:#666;text-decoration:none;text-align:center;flex:1;border-bottom:3px solid transparent" id="tabCabinetLink">💊 药箱</a>
+  <button class="tab-btn" data-tab="cabinet" id="tabCabinetBtn" onclick="openCabinet()">💊 药箱</a>
 </div>
 
 <!-- 首页 -->
@@ -413,7 +459,7 @@ header>div{display:flex;align-items:center;gap:10px}
     </div>
     <div id="symptomResults" style="margin-top:12px"></div>
   </div>
-  <div class="card">
+  <div class="card" id="manualCard">
     <div class="card-title" id="featureTitle">📋 功能入口</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button class="btn-secondary" onclick="switchTab('chat')" id="featChat">💬 AI 问药</button>
@@ -10228,12 +10274,49 @@ function showSymptomResults(query, results) {
         </div>
       </div>
 
+<!-- 药箱 -->
+<div id="tab-cabinet" class="tab-content">
+  <div class="card-form">
+    <div class="feature-head"><h3>➕ 添加药品</h3></div>
+    <div class="field"><label>药品名称</label><input id="cabName" list="drugNames" placeholder="如：布洛芬、阿莫西林"><datalist id="drugNames"></datalist></div>
+    <div class="field"><label>规格</label><input id="cabSpec" placeholder="如：0.1g×20片"></div>
+    <div class="field" style="display:flex;gap:10px"><div style="flex:1"><label>数量</label><input id="cabQty" type="number" placeholder="余量" min="0"></div><div style="flex:1"><label>有效期至</label><input id="cabExpiry" type="date"></div></div>
+    <div class="field"><label>所属成员</label><select id="cabMember"><option value="">（不指定）</option></select></div>
+    <button class="btn-primary" style="width:100%" onclick="addCabinetDrug()">加入药箱</button>
+  </div>
+  <div class="stat-row">
+    <div class="stat-pill s-ok"><div class="num" id="cabOk">0</div><div class="lbl">正常</div></div>
+    <div class="stat-pill s-warn"><div class="num" id="cabWarn">0</div><div class="lbl">临期</div></div>
+    <div class="stat-pill s-bad"><div class="num" id="cabBad">0</div><div class="lbl">过期</div></div>
+  </div>
+  <div id="cabinetList"></div>
+</div>
+
+<!-- 家庭 -->
+<div id="tab-member" class="tab-content">
+  <div class="card-form">
+    <div class="feature-head"><h3>👨‍👩‍👧 家庭成员</h3></div>
+    <div class="field"><label>添加成员</label><div style="display:flex;gap:8px"><input id="memberInput" placeholder="如：爸爸、宝宝"><button class="btn-primary" onclick="addMember()">添加</button></div></div>
+    <div id="memberList" style="margin-top:4px"></div>
+  </div>
+  <p style="font-size:12px;color:#999;padding:0 4px;line-height:1.6">点击成员设为「当前」，添加药品时可关联到 TA。</p>
+</div>
+
+<!-- 提醒 -->
+<div id="tab-reminder" class="tab-content">
+  <div class="card-form">
+    <div class="feature-head"><h3>⏰ 用药提醒</h3></div>
+    <div class="field" style="display:flex;gap:10px"><div style="flex:0 0 110px"><label>时间</label><input id="remTime" type="time" value="08:00"></div><div style="flex:1"><label>提醒内容</label><input id="remText" placeholder="如：饭后服降压药"></div></div>
+    <button class="btn-primary" style="width:100%" onclick="addReminder()">添加提醒</button>
+  </div>
+  <div id="reminderList"></div>
+</div>
 <div class="bottom-nav">
-  <a href="index.html" class="active">🏠 <span id="navHome">首页</span></a>
-  <a href="insert.html">📄 <span id="navInsert">说明书</span></a>
-  <a href="cabinet.html">💊 <span id="navCabinet">药箱</span></a>
-  <a href="member.html">👨‍👩‍👧 <span id="navMember">家庭</span></a>
-  <a href="reminder.html">⏰ <span id="navReminder">提醒</span></a>
+  <a href="javascript:void(0)" data-tab="home" class="active" onclick="switchTab('home')">🏠 <span id="navHome">首页</span></a>
+  <a href="javascript:void(0)" data-tab="manual" onclick="scrollToManual()">📄 <span id="navInsert">说明书</span></a>
+  <a href="javascript:void(0)" data-tab="cabinet" onclick="openCabinet()">💊 <span id="navCabinet">药箱</span></a>
+  <a href="javascript:void(0)" data-tab="member" onclick="openMember()">👨‍👩‍👧 <span id="navMember">家庭</span></a>
+  <a href="javascript:void(0)" data-tab="reminder" onclick="openReminder()">⏰ <span id="navReminder">提醒</span></a>
 </div>
 
 <!-- 大厂质感：Toast / Ripple / 深色模式 / 导航修复 -->
@@ -10318,6 +10401,112 @@ function showSymptomResults(query, results) {
 })();
 </script>
 
+<script>
+// ===== 药箱 / 家庭 / 提醒 功能 =====
+(function(){
+  var LS_CAB='cy_cabinet', LS_MEM='cy_members', LS_REM='cy_reminders', LS_CUR='cy_current_member';
+  function load(k,def){ try{var v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;} }
+  function save(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function daysBetween(a,b){return Math.round((a-b)/86400000);}
+
+  // ---- 药箱 ----
+  var cabinet = load(LS_CAB, []);
+  function renderCabinet(){
+    var box = document.getElementById('cabinetList'); if(!box) return;
+    var stats = {ok:0,warn:0,bad:0};
+    var now = new Date(); now.setHours(0,0,0,0);
+    var html='';
+    if(cabinet.length===0){
+      html='<div class="empty-state"><div class="es-icon">💊</div><div class="es-text">药箱还是空的<br>点击下方，添加你家常备药</div></div>';
+    } else {
+      cabinet.forEach(function(d){
+        var exp = d.expiry? new Date(d.expiry): null;
+        var cls='', badge='', txt='';
+        if(exp){
+          var diff = daysBetween(exp, now);
+          if(diff<0){cls='expired';badge='bad';txt='已过期 '+Math.abs(diff)+' 天';stats.bad++;}
+          else if(diff<=30){cls='expire-soon';badge='warn';txt=diff+' 天后到期';stats.warn++;}
+          else {badge='ok';txt=d.expiry;stats.ok++;}
+        } else {badge='ok';txt='未设有效期';stats.ok++;}
+        var qty = d.qty? (' · 余 '+esc(d.qty)):'';
+        var mem = d.member? (' · '+esc(d.member)):'';
+        var low = (parseInt(d.qty,10)<=3 && d.qty!=='' && !isNaN(parseInt(d.qty,10)))? '<span class="di-badge warn">库存偏低</span>':'';
+        html+='<div class="drug-item '+cls+'">'+
+          '<div class="di-main"><div class="di-name">'+esc(d.name)+'</div>'+
+          '<div class="di-meta">'+esc(d.spec||'')+qty+mem+'</div>'+
+          (txt?'<span class="di-badge '+badge+'">'+esc(txt)+'</span>':'')+low+
+          '</div>'+
+          '<button class="di-del" onclick="deleteCabinetDrug(\''+esc(d.id)+'\')">×</button></div>';
+      });
+    }
+    box.innerHTML=html;
+    var so=document.getElementById('cabOk'),sw=document.getElementById('cabWarn'),sb=document.getElementById('cabBad');
+    if(so)so.textContent=stats.ok; if(sw)sw.textContent=stats.warn; if(sb)sb.textContent=stats.bad;
+  }
+  window.renderCabinet=renderCabinet;
+  window.deleteCabinetDrug=function(id){ cabinet=cabinet.filter(function(d){return d.id!==id;}); save(LS_CAB,cabinet); renderCabinet(); showToast('已移除'); };
+  window.addCabinetDrug=function(){
+    var n=document.getElementById('cabName'), sp=document.getElementById('cabSpec'),
+        q=document.getElementById('cabQty'), e=document.getElementById('cabExpiry'),
+        m=document.getElementById('cabMember');
+    var name=(n.value||'').trim(); if(!name){showToast('请输入药品名称');return;}
+    var fm = (window.fuzzyMatchDrug&&fuzzyMatchDrug(name))||name;
+    cabinet.push({id:'c'+Date.now()+Math.random().toString(36).slice(2,6),name:fm,spec:sp.value.trim(),qty:q.value.trim(),expiry:e.value,member:(m.value||'')});
+    save(LS_CAB,cabinet); n.value='';sp.value='';q.value='';e.value='';
+    renderCabinet(); showToast('已加入药箱');
+  };
+  function fillDrugNames(){
+    var dl=document.getElementById('drugNames'); if(!dl||dl.childElementCount) return;
+    if(window.DRUG_GUIDE) Object.keys(DRUG_GUIDE).slice(0,400).forEach(function(k){var o=document.createElement('option');o.value=k;dl.appendChild(o);});
+  }
+
+  // ---- 家庭 ----
+  var members = load(LS_MEM, ['我']); var current = load(LS_CUR,'我');
+  function renderMembers(){
+    var box=document.getElementById('memberList'); if(!box) return;
+    var html='';
+    if(members.length===0){ html='<div class="empty-state"><div class="es-icon">👨‍👩‍👧</div><div class="es-text">还没有家庭成员</div></div>'; }
+    else { members.forEach(function(nm){ var cur=(nm===current); html+='<span class="member-chip'+(cur?' current':'')+'" onclick="setCurrentMember(\''+esc(nm)+'\')">'+esc(nm)+(cur?' ✓':'')+'<span class="mc-del" onclick="event.stopPropagation();deleteMember(\''+esc(nm)+'\')">×</span></span>'; }); }
+    box.innerHTML=html;
+    var sel=document.getElementById('cabMember'); if(sel){ sel.innerHTML='<option value="">（不指定）</option>'+members.map(function(nm){return '<option'+(nm===current?' selected':'')+'>'+esc(nm)+'</option>';}).join(''); }
+  }
+  window.renderMembers=renderMembers;
+  window.setCurrentMember=function(nm){ current=nm; save(LS_CUR,current); renderMembers(); showToast('当前：'+nm); };
+  window.deleteMember=function(nm){ if(members.length<=1){showToast('至少保留一位');return;} members=members.filter(function(x){return x!==nm;}); if(current===nm)current=members[0]; save(LS_MEM,members); save(LS_CUR,current); renderMembers(); };
+  window.addMember=function(){ var i=document.getElementById('memberInput'); var v=(i.value||'').trim(); if(!v)return; if(members.indexOf(v)<0)members.push(v); save(LS_MEM,members); i.value=''; renderMembers(); };
+
+  // ---- 提醒 ----
+  var reminders = load(LS_REM, []);
+  function renderReminders(){
+    var box=document.getElementById('reminderList'); if(!box) return;
+    var html='';
+    if(reminders.length===0){ html='<div class="empty-state"><div class="es-icon">⏰</div><div class="es-text">还没有用药提醒<br>添加一条，按时吃药不漏服</div></div>'; }
+    else { reminders.forEach(function(r){ html+='<div class="rem-item"><div class="rem-time">'+esc(r.time)+'</div><div class="rem-main"><div class="rem-text">'+esc(r.text)+'</div>'+(r.member?'<div class="rem-sub">'+esc(r.member)+'</div>':'')+'</div><button class="rem-del" onclick="deleteReminder(\''+esc(r.id)+'\')">×</button></div>'; }); }
+    box.innerHTML=html;
+  }
+  window.renderReminders=renderReminders;
+  window.deleteReminder=function(id){ reminders=reminders.filter(function(r){return r.id!==id;}); save(LS_REM,reminders); renderReminders(); showToast('已删除提醒'); };
+  window.addReminder=function(){ var t=document.getElementById('remTime'),x=document.getElementById('remText'); var v=(x.value||'').trim(); if(!v){showToast('请输入提醒内容');return;} reminders.push({id:'r'+Date.now(),time:t.value||'08:00',text:v,member:current}); save(LS_REM,reminders); x.value=''; renderReminders(); showToast('提醒已添加'); };
+
+  // ---- 导航同步 ----
+  function syncBottomNav(t){
+    document.querySelectorAll('.bottom-nav a').forEach(function(a){a.classList.remove('active');});
+    var el=document.querySelector('.bottom-nav a[data-tab="'+t+'"]'); if(el)el.classList.add('active');
+  }
+  if(typeof switchTab==='function'){
+    var _origSwitch = switchTab;
+    switchTab = function(t){ _origSwitch(t); syncBottomNav(t); };
+  }
+  window.openCabinet=function(){ fillDrugNames(); switchTab('cabinet'); renderCabinet(); };
+  window.openMember=function(){ switchTab('member'); renderMembers(); };
+  window.openReminder=function(){ switchTab('reminder'); renderReminders(); };
+  window.scrollToManual=function(){ switchTab('home'); setTimeout(function(){var m=document.getElementById('manualCard'); if(m)m.scrollIntoView({behavior:'smooth',block:'start'});},140); };
+
+  function initFeat(){ renderMembers(); }
+  if(document.readyState!=='loading'){ initFeat(); } else { document.addEventListener('DOMContentLoaded', initFeat); }
+})();
+</script>
 </body>
 </html>
 
