@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -212,6 +212,172 @@ async function callGroqAPI(question) {
 })();
 </script>
 
+<style id="premium-css">
+/* ===== 彩云智药 · 大厂质感设计系统 ===== */
+:root{
+  --c-primary:#07C160;
+  --c-primary-d:#06A050;
+  --c-primary-l:#E8F8EF;
+  --c-accent:#FF9F0A;
+  --c-danger:#FA5151;
+  --c-bg:#F2F3F5;
+  --c-card:#FFFFFF;
+  --c-text:#1A1A1A;
+  --c-text-2:#6B6F76;
+  --c-text-3:#9CA0A8;
+  --c-border:#ECECEC;
+  --sh-1:0 1px 2px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.05);
+  --sh-2:0 4px 16px rgba(0,0,0,.08);
+  --sh-primary:0 2px 10px rgba(7,193,96,.30);
+  --r-s:8px;--r-m:12px;--r-l:16px;--r-xl:24px;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --nav-h:54px;
+}
+*{ -webkit-tap-highlight-color:transparent; }
+html,body{ background:var(--c-bg); }
+body{
+  color:var(--c-text);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+  line-height:1.5;
+  padding-bottom:calc(var(--nav-h) + 24px + var(--safe-b));
+  transition:background .3s,color .3s;
+}
+/* 头部毛玻璃 */
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid rgba(0,0,0,.06);
+  color:var(--c-text);
+  padding:calc(10px + var(--safe-t)) 16px 10px;
+}
+header h1{font-size:19px;font-weight:700;letter-spacing:.2px}
+header>div{display:flex;align-items:center;gap:10px}
+.lang-switch{
+  background:rgba(0,0,0,.04);
+  border:1px solid rgba(0,0,0,.06);
+  color:var(--c-text);border-radius:20px;padding:5px 12px;font-weight:600;
+  transition:background .2s,transform .12s;
+}
+.lang-switch:active{transform:scale(.94);background:rgba(0,0,0,.08)}
+.icon-btn{
+  background:rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.06);
+  color:var(--c-text);border-radius:50%;width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;
+  transition:background .2s,transform .12s;
+}
+.icon-btn:active{transform:scale(.9);background:rgba(0,0,0,.08)}
+/* Tab栏毛玻璃 + 滑动指示器 */
+.tab-bar{
+  position:sticky;top:calc(52px + var(--safe-t));z-index:90;
+  display:flex;background:rgba(255,255,255,.72);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid rgba(0,0,0,.06);
+  padding:0 4px;
+}
+.tab-btn{
+  color:var(--c-text-3);font-weight:500;font-size:14px;
+  position:relative;border-bottom:none;padding:13px 4px;
+  transition:color .25s;
+}
+.tab-btn.active{color:var(--c-primary);font-weight:700}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:22px;height:3px;border-radius:2px;background:var(--c-primary);
+  animation:tabInd .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes tabInd{from{width:0;opacity:0}to{width:22px;opacity:1}}
+/* Tab内容切换过渡 */
+.tab-content{animation:tabFade .28s ease both}
+@keyframes tabFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* 卡片 */
+.card{
+  border-radius:var(--r-l);box-shadow:var(--sh-1);
+  border:1px solid var(--c-border);padding:16px;
+  transition:transform .15s,box-shadow .2s;
+}
+.card-title{font-size:16px;font-weight:700;color:var(--c-text);letter-spacing:.2px;margin-bottom:12px}
+.card-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--c-primary);border-radius:2px;margin-right:8px;vertical-align:-2px}
+/* 按钮 */
+.btn-primary{
+  background:var(--c-primary);border-radius:var(--r-m);box-shadow:var(--sh-primary);
+  font-weight:600;transition:transform .12s,box-shadow .2s,background .2s;
+}
+.btn-primary:active{transform:scale(.95);background:var(--c-primary-d);box-shadow:0 1px 4px rgba(7,193,96,.22)}
+.btn-primary:disabled{background:#A8DCC0;box-shadow:none}
+.btn-secondary{
+  border:1.5px solid var(--c-border);color:var(--c-text);
+  border-radius:var(--r-m);background:#fff;font-weight:600;
+  transition:transform .12s,background .2s,border-color .2s;
+}
+.btn-secondary:active{transform:scale(.96);background:var(--c-bg);border-color:#dcdcdc}
+/* 输入框 iOS风 */
+.search-box input,.union-drug-row input,input[type=text],input[type=search]{
+  border:1.5px solid var(--c-border);border-radius:var(--r-m);
+  background:#fff;font-size:15px;color:var(--c-text);
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-box input:focus,.union-drug-row input:focus,input:focus{
+  border-color:var(--c-primary);box-shadow:0 0 0 3px rgba(7,193,96,.12);outline:none;
+}
+/* 底部导航毛玻璃 */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav-h) + var(--safe-b));
+  display:flex;align-items:center;background:rgba(255,255,255,.82);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-top:1px solid rgba(0,0,0,.06);padding-bottom:var(--safe-b);z-index:100;
+}
+.bottom-nav a{
+  flex:1;text-align:center;padding:8px 0;font-size:11px;font-weight:500;
+  color:var(--c-text-3);text-decoration:none;transition:color .2s,transform .12s;
+}
+.bottom-nav a:active{transform:scale(.9)}
+.bottom-nav a.active{color:var(--c-primary);font-weight:600}
+.bottom-nav a span{display:block;margin-top:2px}
+/* 关系网画布 */
+#interactNet{border-radius:var(--r-l);box-shadow:var(--sh-1);border:1px solid var(--c-border);background:#fafbfc}
+/* 联合用药按钮 */
+.union-btn-add{background:var(--c-primary-l);color:var(--c-primary);border:1.5px dashed var(--c-primary);border-radius:var(--r-m);font-weight:600}
+.union-btn-add:active{transform:scale(.97)}
+.union-btn-check{background:var(--c-danger);border-radius:var(--r-m);box-shadow:0 2px 8px rgba(250,81,81,.25);font-weight:600}
+.union-btn-check:active{transform:scale(.95);background:#E03C3C}
+/* Toast */
+.toast-wrap{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:rgba(0,0,0,.82);color:#fff;padding:11px 20px;border-radius:24px;font-size:14px;font-weight:500;max-width:82vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.22);animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both}
+.toast.out{animation:toastOut .25s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.95)}}
+/* 骨架屏 */
+.skeleton{border-radius:var(--r-s);background:linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%);background-size:200% auto;animation:shimmer 1.8s linear infinite}
+/* 空状态 */
+.empty-state{text-align:center;padding:48px 24px;color:var(--c-text-3)}
+.empty-state .es-icon{font-size:46px;margin-bottom:12px;opacity:.5}
+.empty-state .es-text{font-size:14px;line-height:1.6}
+/* 滚动条隐藏 */
+::-webkit-scrollbar{width:0;height:0}
+/* 加载点 */
+.loading-dots::after{content:'';animation:dots 1.2s steps(4,end) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+/* ripple */
+@keyframes ripple{to{transform:scale(2.4);opacity:0}}
+/* 深色模式 */
+.dark{--c-bg:#0F1115;--c-card:#1A1D24;--c-text:#ECECEC;--c-text-2:#9CA0A8;--c-text-3:#6B6F76;--c-border:#2A2E37;--c-primary-l:#0E2A1C;--sh-1:0 1px 2px rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.3);--sh-2:0 4px 16px rgba(0,0,0,.4)}
+.dark header,.dark .tab-bar,.dark .bottom-nav{background:rgba(20,22,28,.80)}
+.dark .card{background:var(--c-card);border-color:var(--c-border)}
+.dark .search-box input,.dark input[type=text],.dark input[type=search]{background:#232730;color:var(--c-text);border-color:var(--c-border)}
+.dark .btn-secondary{background:var(--c-card);color:var(--c-text)}
+.dark #interactNet{background:#15181F}
+.dark .chat-messages{background:#15181F}
+.dark .skeleton{background:linear-gradient(90deg,#232730 25%,#2A2E37 50%,#232730 75%);background-size:200% auto}
+</style>
 </head>
 <body>
 <header>
@@ -10069,6 +10235,89 @@ function showSymptomResults(query, results) {
   <a href="member.html">👨‍👩‍👧 <span id="navMember">家庭</span></a>
   <a href="reminder.html">⏰ <span id="navReminder">提醒</span></a>
 </div>
+
+<!-- 大厂质感：Toast / Ripple / 深色模式 / 导航修复 -->
+<script>
+(function(){
+  // Toast
+  window.showToast = function(msg, dur){
+    dur = dur || 2200;
+    var wrap = document.querySelector('.toast-wrap');
+    if(!wrap){ wrap = document.createElement('div'); wrap.className='toast-wrap'; document.body.appendChild(wrap); }
+    var t = document.createElement('div'); t.className='toast'; t.textContent = msg;
+    wrap.appendChild(t);
+    setTimeout(function(){ t.classList.add('out'); setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 250); }, dur);
+  };
+  // 深色模式
+  function applyDark(d){
+    document.documentElement.classList.toggle('dark', d);
+    try{ localStorage.setItem('cy_dark', d?'1':'0'); }catch(e){}
+  }
+  window.toggleDark = function(){
+    var d = !document.documentElement.classList.contains('dark');
+    applyDark(d);
+    showToast(d ? '🌙 夜间模式' : '☀️ 日间模式', 1200);
+  };
+  try{
+    var saved = localStorage.getItem('cy_dark');
+    if(saved==='1') applyDark(true);
+    else if(saved===null && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) applyDark(true);
+  }catch(e){}
+  // 头部加深色切换按钮
+  var langBtn = document.getElementById('langBtn');
+  if(langBtn && !document.getElementById('darkBtn')){
+    var db = document.createElement('button');
+    db.className='icon-btn'; db.id='darkBtn'; db.textContent='🌙'; db.onclick=toggleDark;
+    langBtn.parentNode.insertBefore(db, langBtn);
+  }
+  // Ripple 按压反馈
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn-primary,.btn-secondary,.union-btn-add,.union-btn-check,.tab-btn,.lang-switch,.icon-btn');
+    if(!btn || btn.tagName==='A') return;
+    var rect = btn.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height);
+    var col = btn.classList.contains('btn-primary') ? 'rgba(255,255,255,.5)' : 'rgba(0,0,0,.08)';
+    var r = document.createElement('span');
+    r.style.cssText = 'position:absolute;left:'+(e.clientX-rect.left-size/2)+'px;top:'+(e.clientY-rect.top-size/2)+'px;width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+col+';pointer-events:none;transform:scale(0);animation:ripple .5s ease-out forwards;';
+    if(getComputedStyle(btn).position==='static') btn.style.position='relative';
+    btn.style.overflow='hidden';
+    btn.appendChild(r);
+    setTimeout(function(){ if(r.parentNode) r.parentNode.removeChild(r); }, 520);
+  }, true);
+  // 底部导航修复（杜绝 404）
+  function syncBottom(tab){
+    var map={home:'首页',interact:'相互作用',chat:'智能问药',report:'辨证报告'};
+    document.querySelectorAll('.bottom-nav a').forEach(function(x){
+      x.classList.toggle('active', (x.textContent||'').indexOf(map[tab]||'__')>=0);
+    });
+  }
+  document.querySelectorAll('.bottom-nav a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var txt = (a.textContent||'').trim();
+      if(txt.indexOf('首页')>=0){ switchTab('home'); }
+      else if(txt.indexOf('说明书')>=0){
+        switchTab('home');
+        setTimeout(function(){
+          var c=document.getElementById('drugManualCard');
+          if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.style.boxShadow='0 0 0 3px var(--c-primary)'; setTimeout(function(){c.style.boxShadow='';},1500); }
+        },320);
+      }
+      else if(txt.indexOf('药箱')>=0){ showToast('💊 药箱功能建设中，敬请期待'); }
+      else if(txt.indexOf('家庭')>=0){ showToast('👨‍👩‍👧 家庭档案建设中，敬请期待'); }
+      else if(txt.indexOf('提醒')>=0){ showToast('⏰ 用药提醒建设中，敬请期待'); }
+      document.querySelectorAll('.bottom-nav a').forEach(function(x){x.classList.remove('active')});
+      a.classList.add('active');
+    });
+  });
+  // 顶部 tab 切换同步底部高亮
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){
+    b.addEventListener('click', function(){ var t=b.getAttribute('data-tab'); if(t) setTimeout(function(){syncBottom(t);},50); });
+  });
+  syncBottom('home');
+})();
+</script>
+
 </body>
 </html>
 
