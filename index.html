@@ -672,9 +672,11 @@ header>div{display:flex;align-items:center;gap:10px}
     </div>
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:13px;color:#666">
       <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="thinkToggle" style="margin:0"> <span id="thinkToggleLabel">🧠 深度思考</span></label>
-      <button onclick="openDrugCamera()" id="drugCameraBtn" style="background:#fff0f0;color:#e53935;border:1px solid #ffcdd2;padding:4px 10px;border-radius:16px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px">
-        📷 <span id="cameraBtnLabel">拍照识别药品</span>
-      </button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="openDrugCamera()" id="drugCameraBtn" style="background:#fff0f0;color:#e53935;border:1px solid #ffcdd2;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;flex:1;min-width:120px">
+        📷 <span id="cameraBtnLabel">拍照识别</span>
+      </button><button onclick="openManualInput()" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;flex:1;min-width:120px">
+        📝 <span>手动输入</span>
+      </button></div>
       <span id="aiStatus" style="margin-left:auto;font-size:12px;color:#aaa"></span>
     </div>
     <div id="ocrLoading" style="display:none;text-align:center;padding:10px;color:#666;font-size:13px;background:#f8f9fa;border-radius:8px;margin-bottom:8px">
@@ -8737,6 +8739,40 @@ if(searchBtn && searchInput){
 function doSearch(){
   var q = searchInput.value.trim();
   if(!q){ searchResult.innerHTML=''; return; }
+  // 1) 先查药库说明书
+  var manuals = findDrugManual(q);
+  if(manuals && manuals.length > 0){
+    var html = '<div class="search-results">';
+    html += '<div style="color:#07C160;font-size:13px;margin-bottom:8px">📋 在药库中找到 '+manuals.length+' 条匹配</div>';
+    manuals.forEach(function(m){
+      html += '<div class="card" style="background:#F2F3F5;color:#1A1A1A;padding:12px;margin-bottom:8px;border-radius:10px">';
+      html += '<div style="font-weight:700;font-size:16px;color:#07C160;margin-bottom:6px">💊 ' + escapeHtml(m.name) + '</div>';
+      if(m.cat) html += '<div style="font-size:12px;color:#888">类别: '+escapeHtml(m.cat)+'</div>';
+      if(m.indications) html += '<div style="font-size:13px;margin-top:4px"><b>适应症:</b> '+escapeHtml(m.indications)+'</div>';
+      if(m.dosage) html += '<div style="font-size:13px;margin-top:4px"><b>用法:</b> '+escapeHtml(m.dosage)+'</div>';
+      if(m.contraindications) html += '<div style="font-size:13px;margin-top:4px"><b>禁忌:</b> '+escapeHtml(m.contraindications)+'</div>';
+      if(m.warnings) html += '<div style="font-size:13px;margin-top:4px"><b>注意:</b> '+escapeHtml(m.warnings)+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    searchResult.innerHTML = html;
+    return;
+  }
+  // 2) 药库无果，问症状搜药
+  var symResults = searchBySymptomData(q);
+  if(symResults && symResults.length > 0){
+    var sh = '<div class="search-results"><div style="color:#07C160;font-size:13px;margin-bottom:8px">🩺 症状匹配 '+symResults.length+' 条药品</div>';
+    symResults.slice(0,5).forEach(function(d){
+      sh += '<div class="card" style="background:#F2F3F5;color:#1A1A1A;padding:12px;margin-bottom:8px;border-radius:10px">';
+      sh += '<div style="font-weight:700;color:#07C160">💊 '+d.name+'</div>';
+      if(d.indications) sh += '<div style="font-size:13px;margin-top:4px">'+escapeHtml(d.indications)+'</div>';
+      sh += '</div>';
+    });
+    sh += '</div>';
+    searchResult.innerHTML = sh;
+    return;
+  }
+  // 3) 兜底走 AI
   searchResult.innerHTML = '<div class="loading-dots">'+T[currentLang].searching+'</div>';
   callAI('请根据以下问题给出专业简洁的回答(药品相关问题请结合医学常识):'+q)
     .then(function(result){
@@ -8744,7 +8780,6 @@ function doSearch(){
       searchResult.innerHTML = '<div class="msg msg-ai"><div class="bubble">'+formatText(ans)+'</div></div>';
     })
     .catch(function(){
-      // fallback 到本地
       var local = getLocalAnswer(q);
       if(local) searchResult.innerHTML = '<div class="msg msg-ai"><div class="bubble">'+formatText(local)+'</div></div><div class="fallback-hint">📋 '+T[currentLang].fallbackHint+'</div>';
       else searchResult.innerHTML = '<div class="error">'+T[currentLang].searchFail+'</div>';
@@ -8976,12 +9011,14 @@ async function sendChat() {
   // 显示用户消息
   const messagesDiv = document.getElementById('chatMessages');
   messagesDiv.innerHTML += `<div class="msg msg-user"><div class="bubble">${question}</div></div>`;
+  setTimeout(function(){ messagesDiv.scrollTop = messagesDiv.scrollHeight; window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}); }, 0);
   input.value = '';
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
   // 显示加载中
   const loadingId = 'loading-' + Date.now();
   messagesDiv.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><div class="bubble">思考中...</div></div>`;
+  setTimeout(function(){ messagesDiv.scrollTop = messagesDiv.scrollHeight; window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}); }, 0);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
   try {
@@ -8990,6 +9027,7 @@ async function sendChat() {
     
     // 更新消息
       document.getElementById(loadingId).querySelector('.bubble').textContent = answer;
+      setTimeout(function(){ messagesDiv.scrollTop = messagesDiv.scrollHeight; window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}); }, 0);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (e) {
     console.error('Groq API 失败:', e);
@@ -10132,6 +10170,28 @@ function openDrugCamera() {
   };
   fi.click();
 }
+function openManualInput(){
+  var name = prompt('请输入药盒上的药品名称(支持通用名或商品名):');
+  if(!name) return;
+  name = name.trim();
+  var ocrResult = document.getElementById('ocrResult');
+  if(!ocrResult){ alert('请在"智能问药"页使用此功能'); return; }
+  var manuals = findDrugManual(name);
+  if(manuals && manuals.length > 0){
+    var html = '<div style="margin-top:8px"><div style="color:#07C160;font-size:13px;margin-bottom:6px">✏️ 手动输入: '+escapeHtml(name)+' → 匹配 '+manuals.length+' 条</div>';
+    manuals.forEach(function(m){
+      html += '<div style="background:#F2F3F5;color:#1A1A1A;padding:10px;margin-bottom:6px;border-radius:8px">';
+      html += '<div style="font-weight:700;color:#07C160">💊 '+escapeHtml(m.name)+'</div>';
+      if(m.indications) html += '<div style="font-size:12px;margin-top:4px"><b>适应症:</b> '+escapeHtml(m.indications)+'</div>';
+      if(m.dosage) html += '<div style="font-size:12px;margin-top:4px"><b>用法:</b> '+escapeHtml(m.dosage)+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    ocrResult.innerHTML = html;
+  } else {
+    ocrResult.innerHTML = '<div style="color:#e53935;padding:12px;background:#FFF3F3;border-radius:8px;margin-top:8px">未找到「'+escapeHtml(name)+'」的说明书数据。<br>请检查药名拼写或尝试通用名(如:布洛芬、阿莫西林、二甲双胍)。</div>';
+  }
+}
 
 function runDrugOCR(imageDataUrl) {
   var loadingDiv = document.getElementById('ocrLoading');
@@ -10427,7 +10487,7 @@ function showSymptomResults(query, results) {
 
 </script>
       <!-- 辨证报告面板 -->
-      <div id="tab-report" class="tab-content" style="display:none">
+      <div id="tab-report" class="tab-content">
         <div class="card">
           <h3 id="reportTitle">📋 中医辨证报告</h3>
           <p id="reportSubtitle" style="color:#666;font-size:14px;margin-bottom:12px">基于症状、舌象、脉象生成个体化治疗方案</p>
