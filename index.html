@@ -426,40 +426,61 @@ header>div{display:flex;align-items:center;gap:10px}
 .rem-item .rem-sub{font-size:12px;color:#999;margin-top:2px}
 .rem-item .rem-del{background:rgba(255,59,48,.08);border:none;color:#ff3b30;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;line-height:1}
 </style>
-<style id="ink-css">/* ===== 水墨入场 + 登录/注册 ===== */
+<style id="ink-css">/* ===== 水墨入场（逐字特写 → 拉远） ===== */
 #splash {
   position: fixed; inset: 0; z-index: 99990;
-  background: radial-gradient(circle at 50% 44%, #fcfbf7 0%, #f4f2ea 68%, #ece9df 100%);
+  background: radial-gradient(ellipse at 50% 48%, #1c2320 0%, #0d100e 58%, #060807 100%);
   display: flex; align-items: center; justify-content: center;
   transition: opacity .7s ease, visibility .7s;
+  overflow: hidden;
 }
 #splash.hide { opacity: 0; visibility: hidden; }
-.ink-blot {
-  position: absolute; width: 150px; height: 150px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(16,32,23,.92) 0%, rgba(16,32,23,.34) 46%, rgba(16,32,23,0) 72%);
-  filter: blur(11px);
-  transform: scale(0); opacity: 0;
-  animation: inkSpread 2s cubic-bezier(.22,.61,.36,1) forwards;
-}
-.splash-title {
-  position: relative; z-index: 2;
-  font-family: "STKaiti", "Kaiti SC", "KaiTi", "Songti SC", serif;
-  font-size: 46px; font-weight: 700; letter-spacing: 16px; color: #16241b;
-  text-shadow: 0 2px 22px rgba(16,32,23,.20);
-  filter: blur(22px); opacity: 0; transform: scale(1.42);
-  animation: inkFocus 2s cubic-bezier(.22,.61,.36,1) .12s forwards;
-}
-@keyframes inkSpread {
-  0%   { transform: scale(0);   opacity: 0; }
-  35%  { opacity: .55; }
-  100% { transform: scale(12);  opacity: .15; }
-}
-@keyframes inkFocus {
-  0%   { filter: blur(22px); opacity: 0;   transform: scale(1.42); }
-  55%  { opacity: 1; }
-  100% { filter: blur(0);   opacity: 1;   transform: scale(1); }
-}
 
+.ink-stage {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  width: 260px; height: 260px;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .35s ease;
+}
+.ink-stage.gone { opacity: 0; }
+.ink-splash {
+  position: absolute; width: 230px; height: 230px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,239,229,.62) 0%, rgba(244,239,229,.22) 42%, rgba(244,239,229,0) 72%);
+  filter: blur(14px);
+  transform: scale(0); opacity: 0;
+  animation: splashIn .65s cubic-bezier(.2,.7,.4,1) forwards;
+}
+@keyframes splashIn { 0% { transform: scale(0); opacity: 0; } 45% { opacity: .75; } 100% { transform: scale(1.7); opacity: 0; } }
+.ink-char {
+  position: relative; z-index: 2;
+  font-family: "STKaiti","Kaiti SC","KaiTi","Songti SC",serif;
+  font-size: 190px; font-weight: 700; color: #f3eee5;
+  text-shadow: 0 0 28px rgba(244,239,229,.32), 0 5px 22px rgba(0,0,0,.65);
+  filter: blur(22px); opacity: 0; transform: scale(1.55);
+  animation: charIn .55s cubic-bezier(.2,.7,.4,1) forwards;
+  line-height: 1;
+}
+@keyframes charIn { 0% { filter: blur(22px); opacity: 0; transform: scale(1.55); } 100% { filter: blur(0); opacity: 1; transform: scale(1); } }
+
+.ink-title {
+  position: absolute; left: 50%; top: 50%;
+  display: flex; gap: 6px;
+  font-family: "STKaiti","Kaiti SC","KaiTi",serif;
+  font-size: 40px; font-weight: 700; letter-spacing: 10px; color: #f3eee5;
+  text-shadow: 0 0 22px rgba(244,239,229,.25), 0 3px 14px rgba(0,0,0,.7);
+  opacity: 0; transform: translate(-50%,-50%) scale(1.5);
+  white-space: nowrap;
+}
+.ink-title span { display: inline-block; opacity: 0; transform: translateY(18px); }
+.ink-title.zoom { animation: zoomOut .9s cubic-bezier(.25,.8,.3,1) forwards; }
+.ink-title.zoom span { animation: titleCharIn .55s ease forwards; }
+.ink-title.zoom span:nth-child(1) { animation-delay: .12s; }
+.ink-title.zoom span:nth-child(2) { animation-delay: .22s; }
+.ink-title.zoom span:nth-child(3) { animation-delay: .32s; }
+.ink-title.zoom span:nth-child(4) { animation-delay: .42s; }
+@keyframes zoomOut { from { opacity: 0; transform: translate(-50%,-50%) scale(1.5); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+@keyframes titleCharIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 /* 登录 / 注册 */
 #authGate {
   position: fixed; inset: 0; z-index: 99980;
@@ -10585,12 +10606,16 @@ function showSymptomResults(query, results) {
   if(document.readyState!=='loading'){ initFeat(); } else { document.addEventListener('DOMContentLoaded', initFeat); }
 })();
 </script>
-<!-- 水墨入场 -->
+<!-- 水墨入场（逐字特写 → 拉远） -->
 <div id="splash">
-  <div class="ink-blot"></div>
-  <div class="splash-title">彩云智药</div>
+  <div class="ink-stage">
+    <div class="ink-splash"></div>
+    <div class="ink-char" id="inkChar">彩</div>
+  </div>
+  <div class="ink-title">
+    <span>彩</span><span>云</span><span>智</span><span>药</span>
+  </div>
 </div>
-
 <!-- 登录 / 注册 -->
 <div id="authGate">
   <div class="auth-card">
@@ -10688,14 +10713,40 @@ function showSymptomResults(query, results) {
     if(s){ updateAccountBtn(); startApp(); }
     else { var g = document.getElementById('authGate'); if(g) g.classList.add('show'); }
   }
-  function runSplash(){
+    function runSplash(){
     var splash = document.getElementById('splash');
     if(!splash){ afterSplash(); return; }
-    setTimeout(function(){
-      splash.classList.add('hide');
-      afterSplash();                       // 立即决定登录态 / 揭示主界面
-      setTimeout(function(){ if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 800);
-    }, 2200);
+    var chars = ['彩','云','智','药'];
+    var charEl = document.getElementById('inkChar');
+    var splashEl = splash.querySelector('.ink-splash');
+    var stage = splash.querySelector('.ink-stage');
+    var title = splash.querySelector('.ink-title');
+    if(!charEl || !splashEl || !stage || !title){ afterSplash(); return; }
+    var i = 0;
+    function next(){
+      if(i >= chars.length){
+        stage.classList.add('gone');
+        setTimeout(function(){
+          if(stage && stage.parentNode) stage.parentNode.removeChild(stage);
+          title.classList.add('zoom');
+        }, 360);
+        setTimeout(function(){
+          splash.classList.add('hide');
+          afterSplash();
+          setTimeout(function(){ if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 800);
+        }, 360 + 950);
+        return;
+      }
+      charEl.textContent = chars[i];
+      charEl.style.animation = 'none';
+      splashEl.style.animation = 'none';
+      void charEl.offsetWidth;
+      charEl.style.animation = '';
+      splashEl.style.animation = '';
+      i++;
+      setTimeout(next, 600);
+    }
+    setTimeout(next, 80);
   }
   if(document.readyState !== 'loading') runSplash();
   else document.addEventListener('DOMContentLoaded', runSplash);
