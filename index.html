@@ -434,6 +434,18 @@ header>div{display:flex;align-items:center;gap:10px}
   font-display: block;
 }
 
+#splash::before {  /* 宣纸纤维 */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.84 0 0 0 0 0.81 0 0 0 0 0.74 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  opacity: .5; mix-blend-mode: overlay;
+}
+#splash::after {  /* 远山雾气 */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 6%;
+  height: 44%; pointer-events: none; opacity: .12;
+  background: radial-gradient(58% 100% at 28% 100%, #c7d2c7, transparent 70%), radial-gradient(48% 100% at 74% 100%, #c7d2c7, transparent 72%);
+  filter: blur(28px);
+}
+
 /* ===== 水墨入场（逐字特写 → 拉远） ===== */
 #splash {
   position: fixed; inset: 0; z-index: 99990;
@@ -465,11 +477,11 @@ header>div{display:flex;align-items:center;gap:10px}
   font-family: "CaiyunBrush","STKaiti",serif;
   font-size: 190px; font-weight: 700; color: #f3eee5;
   text-shadow: 0 0 28px rgba(244,239,229,.32), 0 5px 22px rgba(0,0,0,.65);
-  filter: blur(22px); opacity: 0; transform: scale(1.55);
+  filter: blur(14px); opacity: 0; transform: scale(1);
   animation: charIn .55s cubic-bezier(.2,.7,.4,1) forwards;
   line-height: 1;
 }
-@keyframes charIn { 0% { filter: blur(22px); opacity: 0; transform: scale(1.55); } 100% { filter: blur(0); opacity: 1; transform: scale(1); } }
+@keyframes charIn { 0% { opacity: 0; clip-path: inset(0 100% 0 0); filter: blur(14px); transform: scale(1.08); } 55% { opacity: 1; } 100% { opacity: 1; clip-path: inset(0 0 0 0); filter: blur(0); transform: scale(1); } }
 
 .ink-title {
   position: absolute; left: 50%; top: 50%;
@@ -489,6 +501,16 @@ header>div{display:flex;align-items:center;gap:10px}
 .ink-title.zoom span:nth-child(4) { animation-delay: .42s; }
 @keyframes zoomOut { from { opacity: 0; transform: translate(-50%,-50%) scale(1.5); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
 @keyframes titleCharIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+/* 墨溅 */
+.ink-splatter { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.ink-dot { position: absolute; width: 13px; height: 13px; border-radius: 50%; background: radial-gradient(circle, rgba(244,239,226,.9), rgba(244,239,226,0) 70%); transform: translate(-50%,-50%) scale(0); opacity: 0; }
+.ink-dot.go { animation: splat .95s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes splat { 0% { transform: translate(-50%,-50%) scale(0); opacity: 0; } 28% { opacity: .95; } 100% { transform: translate(var(--dx),var(--dy)) scale(var(--sc,1)); opacity: 0; } }
+/* 红印章 */
+.ink-seal { position: absolute; left: 50%; top: 50%; transform: translate(118px,46px) scale(1.7); opacity: 0; width: 56px; height: 56px; border-radius: 9px; background: #BE2D20; display: flex; align-items: center; justify-content: center; color: #f6efe2; font-family: "CaiyunBrush","STKaiti",serif; font-size: 33px; font-weight: 700; line-height: 1; border: 2px solid rgba(246,239,226,.85); box-shadow: 0 0 0 3px rgba(190,45,32,.3), 0 5px 16px rgba(0,0,0,.45); }
+.ink-seal.stamp { animation: sealStamp .5s cubic-bezier(.3,1.5,.5,1) forwards; }
+@keyframes sealStamp { 0% { opacity: 0; transform: translate(118px,46px) scale(1.8) rotate(-9deg); } 62% { opacity: 1; transform: translate(118px,46px) scale(.93) rotate(4deg); } 100% { opacity: 1; transform: translate(118px,46px) scale(1) rotate(0); } }
+
 /* 登录 / 注册 */
 #authGate {
   position: fixed; inset: 0; z-index: 99980;
@@ -10623,15 +10645,24 @@ function showSymptomResults(query, results) {
   if(document.readyState!=='loading'){ initFeat(); } else { document.addEventListener('DOMContentLoaded', initFeat); }
 })();
 </script>
-<!-- 水墨入场（逐字特写 → 拉远） -->
+<!-- 水墨入场（逐字书写 → 拉远 → 红印） -->
 <div id="splash">
   <div class="ink-stage">
     <div class="ink-splash"></div>
+    <div class="ink-splatter">
+      <div class="ink-dot" style="--dx:128px;--dy:-92px;--sc:1.3"></div>
+      <div class="ink-dot" style="--dx:-140px;--dy:-58px;--sc:1.1"></div>
+      <div class="ink-dot" style="--dx:150px;--dy:74px;--sc:1.25"></div>
+      <div class="ink-dot" style="--dx:-120px;--dy:96px;--sc:1.05"></div>
+      <div class="ink-dot" style="--dx:64px;--dy:-150px;--sc:.9"></div>
+      <div class="ink-dot" style="--dx:-78px;--dy:140px;--sc:1.15"></div>
+    </div>
     <div class="ink-char" id="inkChar">彩</div>
   </div>
   <div class="ink-title">
     <span>彩</span><span>云</span><span>智</span><span>药</span>
   </div>
+  <div class="ink-seal">藥</div>
 </div>
 <!-- 登录 / 注册 -->
 <div id="authGate">
@@ -10738,20 +10769,17 @@ function showSymptomResults(query, results) {
     var splashEl = splash.querySelector('.ink-splash');
     var stage = splash.querySelector('.ink-stage');
     var title = splash.querySelector('.ink-title');
+    var seal = splash.querySelector('.ink-seal');
+    var dots = splash.querySelectorAll('.ink-dot');
     if(!charEl || !splashEl || !stage || !title){ afterSplash(); return; }
+    dots.forEach(function(d,idx){ setTimeout(function(){ d.classList.add('go'); }, 120 + idx*65); });
     var i = 0;
     function next(){
       if(i >= chars.length){
         stage.classList.add('gone');
-        setTimeout(function(){
-          if(stage && stage.parentNode) stage.parentNode.removeChild(stage);
-          title.classList.add('zoom');
-        }, 360);
-        setTimeout(function(){
-          splash.classList.add('hide');
-          afterSplash();
-          setTimeout(function(){ if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 800);
-        }, 360 + 950);
+        setTimeout(function(){ if(stage && stage.parentNode) stage.parentNode.removeChild(stage); title.classList.add('zoom'); }, 360);
+        setTimeout(function(){ if(seal) seal.classList.add('stamp'); }, 360 + 620);
+        setTimeout(function(){ splash.classList.add('hide'); afterSplash(); setTimeout(function(){ if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 800); }, 360 + 620 + 1050);
         return;
       }
       charEl.textContent = chars[i];
