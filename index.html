@@ -699,6 +699,70 @@ header>div{display:flex;align-items:center;gap:10px}
 
 <script src="tcmengine.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+      <!-- 辨证报告面板 -->
+      <div id="tab-report" class="tab-content">
+        <div class="card">
+          <h3 id="reportTitle">📋 中医辨证报告</h3>
+          <p id="reportSubtitle" style="color:#666;font-size:14px;margin-bottom:12px">基于症状、舌象、脉象生成个体化治疗方案</p>
+          <label id="reportSymptomLabel" style="font-weight:600;font-size:14px;display:block;margin-bottom:4px">症状（用逗号/空格分隔，如：口干、心烦、失眠）</label>
+          <input type="text" id="reportSymptoms" placeholder="口干, 心烦, 失眠" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:8px 0;font-size:15px;box-sizing:border-box">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+            <select id="reportTongue" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择舌象 --</option><option value="红舌">红舌</option><option value="淡红">淡红舌</option><option value="淡白">淡白舌</option><option value="暗红">暗红舌</option><option value="绛红">绛红舌</option><option value="青紫">青紫舌</option></select>
+            <select id="reportPulse" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择脉象 --</option><option value="数脉">数脉（快）</option><option value="缓脉">缓脉（慢）</option><option value="弦脉">弦脉</option><option value="滑脉">滑脉</option><option value="细脉">细脉</option><option value="沉脉">沉脉</option><option value="浮脉">浮脉</option><option value="弱脉">弱脉</option></select>
+          </div>
+          <button id="reportGenerateBtn" style="padding:10px 24px;background:linear-gradient(135deg,#2e7d32,#e85d3f);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;width:100%;margin-top:4px">🔍 生成辨证报告</button>
+          <div id="reportResult" style="margin-top:16px"></div>
+        </div>
+      </div>
+
+<!-- 药箱 -->
+<div id="tab-cabinet" class="tab-content">
+  <div class="card-form">
+    <div class="feature-head"><h3>➕ 添加药品</h3></div>
+    <div class="field"><label>药品名称</label><input id="cabName" list="drugNames" placeholder="如：布洛芬、阿莫西林"><datalist id="drugNames"></datalist></div>
+    <div class="field"><label>规格</label><input id="cabSpec" placeholder="如：0.1g×20片"></div>
+    <div class="field" style="display:flex;gap:10px"><div style="flex:1"><label>数量</label><input id="cabQty" type="number" placeholder="余量" min="0"></div><div style="flex:1"><label>有效期至</label><input id="cabExpiry" type="date"></div></div>
+    <div class="field"><label>所属成员</label><select id="cabMember"><option value="">（不指定）</option></select></div>
+    <button class="btn-primary" style="width:100%" onclick="addCabinetDrug()">加入药箱</button>
+  </div>
+  <div class="stat-row">
+    <div class="stat-pill s-ok"><div class="num" id="cabOk">0</div><div class="lbl">正常</div></div>
+    <div class="stat-pill s-warn"><div class="num" id="cabWarn">0</div><div class="lbl">临期</div></div>
+    <div class="stat-pill s-bad"><div class="num" id="cabBad">0</div><div class="lbl">过期</div></div>
+  </div>
+  <div id="cabinetList"></div>
+</div>
+
+<!-- 家庭 -->
+<div id="tab-member" class="tab-content">
+  <div class="card-form">
+    <div class="feature-head"><h3>👨‍👩‍👧 家庭成员</h3></div>
+    <div class="field"><label>添加成员</label><div style="display:flex;gap:8px"><input id="memberInput" placeholder="如：爸爸、宝宝"><button class="btn-primary" onclick="addMember()">添加</button></div></div>
+    <div id="memberList" style="margin-top:4px"></div>
+  </div>
+  <p style="font-size:12px;color:#999;padding:0 4px;line-height:1.6">点击成员设为「当前」，添加药品时可关联到 TA。</p>
+</div>
+
+<!-- 提醒 -->
+<div id="tab-reminder" class="tab-content">
+  <div class="card-form">
+    <div class="feature-head"><h3>⏰ 用药提醒</h3></div>
+    <div class="field" style="display:flex;gap:10px"><div style="flex:0 0 110px"><label>时间</label><input id="remTime" type="time" value="08:00"></div><div style="flex:1"><label>提醒内容</label><input id="remText" placeholder="如：饭后服降压药"></div></div>
+    <button class="btn-primary" style="width:100%" onclick="addReminder()">添加提醒</button>
+  </div>
+  <div id="reminderList"></div>
+</div>
+<div class="bottom-nav">
+  <a href="javascript:void(0)" data-tab="home" class="active" onclick="switchTab('home')">🏠 <span id="navHome">首页</span></a>
+  <a href="javascript:void(0)" data-tab="manual" onclick="scrollToManual()">📄 <span id="navInsert">说明书</span></a>
+  <a href="javascript:void(0)" data-tab="cabinet" onclick="openCabinet()">💊 <span id="navCabinet">药箱</span></a>
+  <a href="javascript:void(0)" data-tab="member" onclick="openMember()">👨‍👩‍👧 <span id="navMember">家庭</span></a>
+  <a href="javascript:void(0)" data-tab="reminder" onclick="openReminder()">⏰ <span id="navReminder">提醒</span></a>
+</div>
+
+<!-- 大厂质感：Toast / Ripple / 深色模式 / 导航修复 -->
+
 <script>
 // ===== 翻译 =====
 var T = {
@@ -8758,14 +8822,28 @@ function doSearch(){
     searchResult.innerHTML = html;
     return;
   }
-  // 2) 药库无果，问症状搜药
-  var symResults = searchBySymptomData(q);
+  // 2) 药库无果，症状匹配（支持"我的脚疼""头疼怎么办"等口语）
+  var symResults = [];
+  try {
+    symResults = (typeof matchDrugsBySymptom === 'function') ? matchDrugsBySymptom(q) : [];
+    if(!symResults || !symResults.length){
+      var _cleaned = q.replace(/^(我的|我|我想|请问|帮我|我想知道|我想了解|我想问|请问一下|谁知道)/,'').replace(/(怎么办|怎么治疗|如何治疗|怎么治|吃什么药|该吃什么|吃啥|咋办|怎么缓解|如何缓解|的症状|应该|可以吗|吗|呢)$/,'').trim();
+      symResults = matchDrugsBySymptom(_cleaned);
+    }
+    if(!symResults || !symResults.length){
+      var _hits = [];
+      if(typeof DRUG_SYNONYMS !== 'undefined'){ for(var _sk in DRUG_SYNONYMS){ if(q.indexOf(_sk) >= 0) _hits.push(_sk); } }
+      if(_hits.length) symResults = matchDrugsBySymptom(_hits.join(' '));
+    }
+  } catch(ex) { symResults = []; }
   if(symResults && symResults.length > 0){
     var sh = '<div class="search-results"><div style="color:#07C160;font-size:13px;margin-bottom:8px">🩺 症状匹配 '+symResults.length+' 条药品</div>';
-    symResults.slice(0,5).forEach(function(d){
+    symResults.slice(0,5).forEach(function(it){
+      var dd = it.drug || it;
       sh += '<div class="card" style="background:#F2F3F5;color:#1A1A1A;padding:12px;margin-bottom:8px;border-radius:10px">';
-      sh += '<div style="font-weight:700;color:#07C160">💊 '+d.name+'</div>';
-      if(d.indications) sh += '<div style="font-size:13px;margin-top:4px">'+escapeHtml(d.indications)+'</div>';
+      sh += '<div style="font-weight:700;color:#07C160">💊 '+escapeHtml(it.name || dd.name)+'</div>';
+      if(dd.indications) sh += '<div style="font-size:13px;margin-top:4px">'+escapeHtml(dd.indications)+'</div>';
+      if(dd.dosage) sh += '<div style="font-size:13px;margin-top:4px"><b>用法:</b> '+escapeHtml(dd.dosage)+'</div>';
       sh += '</div>';
     });
     sh += '</div>';
@@ -9022,11 +9100,22 @@ async function sendChat() {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
   try {
-    // 调用 Groq API
-    const answer = await callGroqAPI(question);
-    
+        // 调用 AI（零密钥：走 Cloudflare Worker 代理，失败降级 callAI→本地）
+    let finalAnswer;
+    try {
+      const _resp = await callWorker(question);
+      finalAnswer = (_resp && _resp.answer) ? _resp.answer : '抱歉，未能获取回答。';
+    } catch (_e1) {
+      try {
+        const _resp2 = await callAI(question);
+        finalAnswer = (_resp2 && _resp2.answer) ? _resp2.answer : '抱歉，AI 服务暂时不可用，请稍后再试。';
+      } catch (_e2) {
+        finalAnswer = '抱歉，AI 服务暂时不可用，请稍后再试。';
+      }
+    }
+
     // 更新消息
-      document.getElementById(loadingId).querySelector('.bubble').textContent = answer;
+      document.getElementById(loadingId).querySelector('.bubble').textContent = finalAnswer;
       setTimeout(function(){ messagesDiv.scrollTop = messagesDiv.scrollHeight; window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}); }, 0);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (e) {
@@ -10104,7 +10193,14 @@ function getLocalAnswer(q) {
       if(plan.acupoints && plan.acupoints.length) html += '<p style="margin:4px 0"><b>针灸穴位：</b>' + plan.acupoints.join("、") + '</p>';
       html += '<p style="margin-top:10px;font-size:12px;color:#999">⚠️ 本结果仅供参考，不作为医疗诊断依据</p></div>';
       rResultDiv.innerHTML = html;
-    } catch(e) { rResultDiv.innerHTML = '<p style="color:red">引擎错误: ' + e.message + '</p>'; }
+    } catch(e) {
+      var isEngineMissing = (e && (e.message||'').indexOf('TCMEngine') >= 0);
+      if(isEngineMissing){
+        rResultDiv.innerHTML = '<div style="background:#FFF3E0;padding:16px;border-radius:12px;border-left:4px solid #FF9800"><h4 style="color:#E65100;margin-bottom:8px">⚠️ 辨证引擎未加载</h4><p style="font-size:13px;color:#555;margin:4px 0">可能原因：网络慢或脚本加载失败。</p><p style="font-size:13px;color:#555;margin:4px 0">建议：<b>刷新页面重试</b>，或检查网络。</p><p style="font-size:12px;color:#999;margin-top:8px">技术详情: '+e.message+'</p></div>';
+      } else {
+        rResultDiv.innerHTML = '<p style="color:red">引擎错误: ' + e.message + '</p>';
+      }
+    }
   });
 
 // ===== 药品说明书查询 =====
@@ -10486,68 +10582,6 @@ function showSymptomResults(query, results) {
 }
 
 </script>
-      <!-- 辨证报告面板 -->
-      <div id="tab-report" class="tab-content">
-        <div class="card">
-          <h3 id="reportTitle">📋 中医辨证报告</h3>
-          <p id="reportSubtitle" style="color:#666;font-size:14px;margin-bottom:12px">基于症状、舌象、脉象生成个体化治疗方案</p>
-          <label id="reportSymptomLabel" style="font-weight:600;font-size:14px;display:block;margin-bottom:4px">症状（用逗号/空格分隔，如：口干、心烦、失眠）</label>
-          <input type="text" id="reportSymptoms" placeholder="口干, 心烦, 失眠" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:8px 0;font-size:15px;box-sizing:border-box">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
-            <select id="reportTongue" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择舌象 --</option><option value="红舌">红舌</option><option value="淡红">淡红舌</option><option value="淡白">淡白舌</option><option value="暗红">暗红舌</option><option value="绛红">绛红舌</option><option value="青紫">青紫舌</option></select>
-            <select id="reportPulse" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择脉象 --</option><option value="数脉">数脉（快）</option><option value="缓脉">缓脉（慢）</option><option value="弦脉">弦脉</option><option value="滑脉">滑脉</option><option value="细脉">细脉</option><option value="沉脉">沉脉</option><option value="浮脉">浮脉</option><option value="弱脉">弱脉</option></select>
-          </div>
-          <button id="reportGenerateBtn" style="padding:10px 24px;background:linear-gradient(135deg,#2e7d32,#e85d3f);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;width:100%;margin-top:4px">🔍 生成辨证报告</button>
-          <div id="reportResult" style="margin-top:16px"></div>
-        </div>
-      </div>
-
-<!-- 药箱 -->
-<div id="tab-cabinet" class="tab-content">
-  <div class="card-form">
-    <div class="feature-head"><h3>➕ 添加药品</h3></div>
-    <div class="field"><label>药品名称</label><input id="cabName" list="drugNames" placeholder="如：布洛芬、阿莫西林"><datalist id="drugNames"></datalist></div>
-    <div class="field"><label>规格</label><input id="cabSpec" placeholder="如：0.1g×20片"></div>
-    <div class="field" style="display:flex;gap:10px"><div style="flex:1"><label>数量</label><input id="cabQty" type="number" placeholder="余量" min="0"></div><div style="flex:1"><label>有效期至</label><input id="cabExpiry" type="date"></div></div>
-    <div class="field"><label>所属成员</label><select id="cabMember"><option value="">（不指定）</option></select></div>
-    <button class="btn-primary" style="width:100%" onclick="addCabinetDrug()">加入药箱</button>
-  </div>
-  <div class="stat-row">
-    <div class="stat-pill s-ok"><div class="num" id="cabOk">0</div><div class="lbl">正常</div></div>
-    <div class="stat-pill s-warn"><div class="num" id="cabWarn">0</div><div class="lbl">临期</div></div>
-    <div class="stat-pill s-bad"><div class="num" id="cabBad">0</div><div class="lbl">过期</div></div>
-  </div>
-  <div id="cabinetList"></div>
-</div>
-
-<!-- 家庭 -->
-<div id="tab-member" class="tab-content">
-  <div class="card-form">
-    <div class="feature-head"><h3>👨‍👩‍👧 家庭成员</h3></div>
-    <div class="field"><label>添加成员</label><div style="display:flex;gap:8px"><input id="memberInput" placeholder="如：爸爸、宝宝"><button class="btn-primary" onclick="addMember()">添加</button></div></div>
-    <div id="memberList" style="margin-top:4px"></div>
-  </div>
-  <p style="font-size:12px;color:#999;padding:0 4px;line-height:1.6">点击成员设为「当前」，添加药品时可关联到 TA。</p>
-</div>
-
-<!-- 提醒 -->
-<div id="tab-reminder" class="tab-content">
-  <div class="card-form">
-    <div class="feature-head"><h3>⏰ 用药提醒</h3></div>
-    <div class="field" style="display:flex;gap:10px"><div style="flex:0 0 110px"><label>时间</label><input id="remTime" type="time" value="08:00"></div><div style="flex:1"><label>提醒内容</label><input id="remText" placeholder="如：饭后服降压药"></div></div>
-    <button class="btn-primary" style="width:100%" onclick="addReminder()">添加提醒</button>
-  </div>
-  <div id="reminderList"></div>
-</div>
-<div class="bottom-nav">
-  <a href="javascript:void(0)" data-tab="home" class="active" onclick="switchTab('home')">🏠 <span id="navHome">首页</span></a>
-  <a href="javascript:void(0)" data-tab="manual" onclick="scrollToManual()">📄 <span id="navInsert">说明书</span></a>
-  <a href="javascript:void(0)" data-tab="cabinet" onclick="openCabinet()">💊 <span id="navCabinet">药箱</span></a>
-  <a href="javascript:void(0)" data-tab="member" onclick="openMember()">👨‍👩‍👧 <span id="navMember">家庭</span></a>
-  <a href="javascript:void(0)" data-tab="reminder" onclick="openReminder()">⏰ <span id="navReminder">提醒</span></a>
-</div>
-
-<!-- 大厂质感：Toast / Ripple / 深色模式 / 导航修复 -->
 <script>
 (function(){
   // Toast
