@@ -210,8 +210,7 @@ async function callGroqAPI(question) {
     var fab = document.querySelector('.fab, .camera-fab, #cameraFab, [id*=fab]');
     if (fab) fab.classList.add('animate-in');
   }
-  if (document.readyState !== 'loading') start();
-  else document.addEventListener('DOMContentLoaded', start);
+  window.__cyStart = start;
 })();
 </script>
 
@@ -427,6 +426,87 @@ header>div{display:flex;align-items:center;gap:10px}
 .rem-item .rem-sub{font-size:12px;color:#999;margin-top:2px}
 .rem-item .rem-del{background:rgba(255,59,48,.08);border:none;color:#ff3b30;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;line-height:1}
 </style>
+<style id="ink-css">/* ===== 水墨入场 + 登录/注册 ===== */
+#splash {
+  position: fixed; inset: 0; z-index: 99990;
+  background: radial-gradient(circle at 50% 44%, #fcfbf7 0%, #f4f2ea 68%, #ece9df 100%);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .7s ease, visibility .7s;
+}
+#splash.hide { opacity: 0; visibility: hidden; }
+.ink-blot {
+  position: absolute; width: 150px; height: 150px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(16,32,23,.92) 0%, rgba(16,32,23,.34) 46%, rgba(16,32,23,0) 72%);
+  filter: blur(11px);
+  transform: scale(0); opacity: 0;
+  animation: inkSpread 2s cubic-bezier(.22,.61,.36,1) forwards;
+}
+.splash-title {
+  position: relative; z-index: 2;
+  font-family: "STKaiti", "Kaiti SC", "KaiTi", "Songti SC", serif;
+  font-size: 46px; font-weight: 700; letter-spacing: 16px; color: #16241b;
+  text-shadow: 0 2px 22px rgba(16,32,23,.20);
+  filter: blur(22px); opacity: 0; transform: scale(1.42);
+  animation: inkFocus 2s cubic-bezier(.22,.61,.36,1) .12s forwards;
+}
+@keyframes inkSpread {
+  0%   { transform: scale(0);   opacity: 0; }
+  35%  { opacity: .55; }
+  100% { transform: scale(12);  opacity: .15; }
+}
+@keyframes inkFocus {
+  0%   { filter: blur(22px); opacity: 0;   transform: scale(1.42); }
+  55%  { opacity: 1; }
+  100% { filter: blur(0);   opacity: 1;   transform: scale(1); }
+}
+
+/* 登录 / 注册 */
+#authGate {
+  position: fixed; inset: 0; z-index: 99980;
+  background: radial-gradient(circle at 50% 38%, #fcfbf7, #ece9df);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; opacity: 0; visibility: hidden;
+  transition: opacity .5s ease, visibility .5s;
+}
+#authGate.show { opacity: 1; visibility: visible; }
+.auth-card {
+  width: 100%; max-width: 358px; background: #fff;
+  border-radius: 22px; padding: 34px 26px 24px;
+  box-shadow: 0 20px 54px rgba(20,30,22,.15);
+  text-align: center;
+  animation: authPop .42s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes authPop { from { opacity: 0; transform: scale(.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.auth-logo { font-size: 42px; line-height: 1; }
+.auth-title {
+  font-family: "STKaiti", "Kaiti SC", "KaiTi", serif;
+  font-size: 27px; letter-spacing: 7px; color: #16241b; margin: 8px 0 3px;
+}
+.auth-sub { font-size: 12px; color: #9aa0a6; margin-bottom: 18px; }
+.auth-tabs { display: flex; background: #f2f3f5; border-radius: 12px; padding: 4px; margin-bottom: 18px; }
+.auth-tab {
+  flex: 1; border: none; background: none; padding: 9px 0; border-radius: 9px;
+  font-size: 14px; color: #6b6f76; cursor: pointer; transition: .2s;
+}
+.auth-tab.active { background: #fff; color: #07C160; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.auth-form .field { margin-bottom: 12px; }
+.auth-form input {
+  width: 100%; box-sizing: border-box; padding: 13px 14px;
+  border: 1px solid #e6e8eb; border-radius: 12px; font-size: 15px;
+  background: #fafbfc; outline: none; transition: .2s;
+}
+.auth-form input:focus { border-color: #07C160; background: #fff; }
+.auth-submit { width: 100%; margin-top: 4px; }
+.auth-wechat {
+  width: 100%; margin-top: 10px; padding: 12px; border: 1px solid #e6e8eb;
+  border-radius: 12px; background: #fff; color: #07C160; font-size: 14px; cursor: pointer;
+  transition: .2s;
+}
+.auth-wechat:active { background: #f3fbf6; }
+.auth-skip { margin-top: 16px; font-size: 12px; color: #9aa0a6; cursor: pointer; }
+.auth-skip:hover { color: #07C160; }
+.auth-msg { margin-top: 12px; min-height: 16px; font-size: 12px; color: #FA5151; }
+</style>
 </head>
 <body>
 <header>
@@ -434,6 +514,7 @@ header>div{display:flex;align-items:center;gap:10px}
   <div style="display:flex;align-items:center;gap:10px">
     <span id="version" style="font-size:10px;opacity:.7">v5</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">🇬🇧 EN</button>
+    <button class="lang-switch" id="accountBtn" onclick="cyAccount()">👤</button>
   </div>
 </header>
 <div class="tab-bar">
@@ -10508,6 +10589,122 @@ function showSymptomResults(query, results) {
 
   function initFeat(){ renderMembers(); }
   if(document.readyState!=='loading'){ initFeat(); } else { document.addEventListener('DOMContentLoaded', initFeat); }
+})();
+</script>
+<!-- 水墨入场 -->
+<div id="splash">
+  <div class="ink-blot"></div>
+  <div class="splash-title">彩云智药</div>
+</div>
+
+<!-- 登录 / 注册 -->
+<div id="authGate">
+  <div class="auth-card">
+    <div class="auth-logo">🌿</div>
+    <h1 class="auth-title">彩云智药</h1>
+    <p class="auth-sub">家庭 AI 药师 · 让用药更安全</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-auth="login" onclick="cyAuthTab('login')">登录</button>
+      <button class="auth-tab" data-auth="register" onclick="cyAuthTab('register')">注册</button>
+    </div>
+    <div class="auth-form">
+      <div class="field" id="authNameWrap" style="display:none"><input id="authName" placeholder="昵称（选填）"></div>
+      <div class="field"><input id="authPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="手机号"></div>
+      <div class="field"><input id="authPwd" type="password" placeholder="密码（6 位以上）"></div>
+      <div class="field" id="authPwd2Wrap" style="display:none"><input id="authPwd2" type="password" placeholder="确认密码"></div>
+      <button class="btn-primary auth-submit" onclick="cyAuthSubmit()">登 录</button>
+      <button class="auth-wechat" onclick="showToast('微信登录开发中',1500)">微信一键登录</button>
+      <div class="auth-skip" onclick="cyAuthSkip()">先体验，跳过 →</div>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+<script>/* 水墨入场 + 登录/注册流程 */
+(function(){
+  function startApp(){ if(window.__cyStart) window.__cyStart(); }
+  function toast(m,d){ if(window.showToast) window.showToast(m, d||1400); }
+
+  function hashPwd(p){ var h=0; for(var i=0;i<p.length;i++){ h=(h<<5)-h+p.charCodeAt(i); h=h&h; } return 'h'+h; }
+  window.cyUsers = function(){ try{ return JSON.parse(localStorage.getItem('cy_users')||'{}'); }catch(e){ return {}; } };
+  function getSession(){ try{ return JSON.parse(localStorage.getItem('cy_session')||'null'); }catch(e){ return null; } }
+
+  function updateAccountBtn(){
+    var s = getSession(); var b = document.getElementById('accountBtn');
+    if(b) b.textContent = (s && s.name) ? s.name.slice(0,1) : '👤';
+  }
+  window.updateAccountBtn = updateAccountBtn;
+
+  window.cyAuthTab = function(mode){
+    window.__authMode = mode;
+    document.querySelectorAll('.auth-tab').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-auth')===mode); });
+    document.getElementById('authNameWrap').style.display = mode==='register' ? 'block' : 'none';
+    document.getElementById('authPwd2Wrap').style.display = mode==='register' ? 'block' : 'none';
+    document.querySelector('.auth-submit').textContent = mode==='register' ? '注 册' : '登 录';
+    document.getElementById('authMsg').textContent = '';
+  };
+
+  function doLogin(phone, name){
+    try{ localStorage.setItem('cy_session', JSON.stringify({phone:phone, name:name, at:Date.now()})); }catch(e){}
+    var g = document.getElementById('authGate'); if(g) g.classList.remove('show');
+    updateAccountBtn();
+    toast('欢迎，'+name);
+    startApp();
+  }
+
+  window.cyAuthSubmit = function(){
+    var mode = window.__authMode || 'login';
+    var phone = (document.getElementById('authPhone').value||'').trim();
+    var pwd = document.getElementById('authPwd').value || '';
+    var msg = document.getElementById('authMsg');
+    if(!/^1\d{10}$/.test(phone)){ msg.textContent='请输入正确的 11 位手机号'; return; }
+    if(pwd.length<6){ msg.textContent='密码至少 6 位'; return; }
+    var users = window.cyUsers();
+    if(mode==='register'){
+      var pwd2 = document.getElementById('authPwd2').value||'';
+      if(pwd!==pwd2){ msg.textContent='两次密码不一致'; return; }
+      if(users[phone]){ msg.textContent='该手机号已注册，请直接登录'; window.cyAuthTab('login'); return; }
+      var name = (document.getElementById('authName').value||'').trim() || ('用户'+phone.slice(-4));
+      users[phone] = { name:name, pwd:hashPwd(pwd), at:Date.now() };
+      try{ localStorage.setItem('cy_users', JSON.stringify(users)); }catch(e){}
+      doLogin(phone, name);
+    } else {
+      if(!users[phone]){ msg.textContent='账号不存在，请先注册'; window.cyAuthTab('register'); return; }
+      if(users[phone].pwd !== hashPwd(pwd)){ msg.textContent='密码错误'; return; }
+      doLogin(phone, users[phone].name);
+    }
+  };
+
+  window.cyAuthSkip = function(){
+    var g = document.getElementById('authGate'); if(g) g.classList.remove('show');
+    toast('已进入体验模式');
+    startApp();
+  };
+
+  window.cyAccount = function(){
+    var s = getSession();
+    if(!s){ var g = document.getElementById('authGate'); if(g) g.classList.add('show'); return; }
+    if(window.confirm('当前登录：'+s.name+'\n确定退出登录？')){
+      try{ localStorage.removeItem('cy_session'); }catch(e){}
+      updateAccountBtn(); toast('已退出登录');
+    }
+  };
+
+  function afterSplash(){
+    var s = getSession();
+    if(s){ updateAccountBtn(); startApp(); }
+    else { var g = document.getElementById('authGate'); if(g) g.classList.add('show'); }
+  }
+  function runSplash(){
+    var splash = document.getElementById('splash');
+    if(!splash){ afterSplash(); return; }
+    setTimeout(function(){
+      splash.classList.add('hide');
+      afterSplash();                       // 立即决定登录态 / 揭示主界面
+      setTimeout(function(){ if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 800);
+    }, 2200);
+  }
+  if(document.readyState !== 'loading') runSplash();
+  else document.addEventListener('DOMContentLoaded', runSplash);
 })();
 </script>
 </body>
