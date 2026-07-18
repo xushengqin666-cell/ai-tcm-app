@@ -497,12 +497,6 @@ header>div{display:flex;align-items:center;gap:10px}
 }
 .auth-form input:focus { border-color: #07C160; background: #fff; }
 .auth-submit { width: 100%; margin-top: 4px; }
-.auth-wechat {
-  width: 100%; margin-top: 10px; padding: 12px; border: 1px solid #e6e8eb;
-  border-radius: 12px; background: #fff; color: #07C160; font-size: 14px; cursor: pointer;
-  transition: .2s;
-}
-.auth-wechat:active { background: #f3fbf6; }
 .auth-skip { margin-top: 16px; font-size: 12px; color: #9aa0a6; cursor: pointer; }
 .auth-skip:hover { color: #07C160; }
 .auth-msg { margin-top: 12px; min-height: 16px; font-size: 12px; color: #FA5151; }
@@ -10613,7 +10607,7 @@ function showSymptomResults(query, results) {
       <div class="field"><input id="authPwd" type="password" placeholder="密码（6 位以上）"></div>
       <div class="field" id="authPwd2Wrap" style="display:none"><input id="authPwd2" type="password" placeholder="确认密码"></div>
       <button class="btn-primary auth-submit" onclick="cyAuthSubmit()">登 录</button>
-      <button class="auth-wechat" onclick="showToast('微信登录开发中',1500)">微信一键登录</button>
+
       <div class="auth-skip" onclick="cyAuthSkip()">先体验，跳过 →</div>
     </div>
     <div class="auth-msg" id="authMsg"></div>
