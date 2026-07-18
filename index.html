@@ -136,8 +136,8 @@ header h1{font-size:18px;font-weight:700}
 
 /* 入场元素初始状态 */
 .animate-in {
-  opacity: 0;
-  animation-fill-mode: forwards;
+  opacity:0;
+  animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both;
 }
 .anim-header  { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
 .anim-tabbar  { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
@@ -200,15 +200,18 @@ async function callGroqAPI(question) {
     });
   }
   // header → tabbar → main content → cards
-  anim('.app-header, header', 0);
-  anim('#tabBar, .tab-bar, .bottom-nav, nav', 60);
-  anim('#tab-home, #tab-interact, #tab-drugs, #tab-cabinet, #tab-symptom, .tab-content', 120);
-  anim('.drug-card, .card', 80);
-  anim('.search-box, .input-group, .btn-group', 60);
-
-  // fab 自动出现
-  var fab = document.querySelector('.fab, .camera-fab, #cameraFab, [id*=fab]');
-  if (fab) fab.classList.add('animate-in');
+  function start(){
+    delay = 0;
+    anim('.app-header, header', 0);
+    anim('#tabBar, .tab-bar, .bottom-nav, nav', 60);
+    anim('#tab-home, #tab-interact, #tab-cabinet, #tab-member, #tab-reminder, .tab-content', 120);
+    anim('.drug-card, .card', 80);
+    anim('.search-box, .input-group, .btn-group', 60);
+    var fab = document.querySelector('.fab, .camera-fab, #cameraFab, [id*=fab]');
+    if (fab) fab.classList.add('animate-in');
+  }
+  if (document.readyState !== 'loading') start();
+  else document.addEventListener('DOMContentLoaded', start);
 })();
 </script>
 
