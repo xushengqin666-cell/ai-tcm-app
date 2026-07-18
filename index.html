@@ -33,8 +33,8 @@ header h1{font-size:18px;font-weight:700}
 .msg{margin-bottom:10px;word-break:break-word}
 .msg-user{text-align:right}
 .msg-ai{text-align:left}
-.msg-user .bubble{background:#2e7d32;color:#fff;display:inline-block;padding:8px 12px;border-radius:16px 16px 4px 16px;max-width:82%}
-.msg-ai .bubble{background:#fff;border:1px solid #e0e0e0;display:inline-block;padding:8px 12px;border-radius:16px 16px 16px 4px;max-width:82%}
+.msg-user .bubble{background:#07C160;color:#fff;display:inline-block;padding:8px 12px;border-radius:16px 16px 4px 16px;max-width:82%;font-weight:500;box-shadow:0 2px 8px rgba(7,193,96,.25)}
+.msg-ai .bubble{background:#F2F3F5;color:#1A1A1A;border:1px solid #E5E6EB;display:inline-block;padding:10px 14px;border-radius:16px 16px 16px 4px;max-width:82%;font-size:14px;line-height:1.65;font-weight:500}
 .result-item{padding:10px;border-bottom:1px solid #eee;font-size:13px}
 .result-item:last-child{border-bottom:none}
 .result-item .name{font-weight:600;color:#2e7d32;margin-bottom:3px}
@@ -688,7 +688,7 @@ header>div{display:flex;align-items:center;gap:10px}
       </div>
     </div>
 <!-- AI配置已内置，无需用户操作 -->
-    <div id="chatMessages" style="min-height:200px"></div>
+    <div id="chatMessages" style="min-height:200px;max-height:55vh;overflow-y:auto;padding:4px"></div>
   </div>
 </div>
 
@@ -8989,7 +8989,8 @@ async function sendChat() {
     const answer = await callGroqAPI(question);
     
     // 更新消息
-    document.getElementById(loadingId).querySelector('.bubble').textContent = answer;
+      document.getElementById(loadingId).querySelector('.bubble').textContent = answer;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (e) {
     console.error('Groq API 失败:', e);
     document.getElementById(loadingId).querySelector('.bubble').textContent = '抱歉，AI 服务暂时不可用，请稍后再试。';
@@ -10260,7 +10261,18 @@ var DRUG_SYNONYMS = {
   '关节疼': '关节痛', '关节肿痛': '关节痛', '风湿痛': '关节痛',
   '失眠': '失眠', '睡不着': '失眠', '安眠': '失眠',
   '抗感染': '细菌感染', '消炎': '细菌感染', '抗菌': '细菌感染',
-  '止痛': '疼痛', '镇痛': '疼痛', '止疼': '疼痛'
+  '止痛': '疼痛', '镇痛': '疼痛', '止疼': '疼痛',
+  // 身体部位疼痛
+  '脚疼': '关节痛', '脚痛': '关节痛', '足痛': '关节痛',
+  '脚后跟疼': '关节痛', '脚后跟痛': '关节痛', '脚跟痛': '关节痛',
+  '跟痛': '关节痛', '足跟痛': '关节痛', '足底痛': '关节痛',
+  '脚底痛': '关节痛', '跟腱痛': '关节痛',
+  '腿疼': '关节痛', '腿痛': '关节痛', '膝盖疼': '关节痛', '膝盖痛': '关节痛',
+  '腰疼': '疼痛', '腰痛': '疼痛', '背疼': '疼痛', '背痛': '疼痛',
+  '脖子疼': '疼痛', '脖子痛': '疼痛', '肩疼': '疼痛', '肩痛': '疼痛',
+  '胳膊疼': '关节痛', '胳膊痛': '关节痛', '手疼': '关节痛', '手痛': '关节痛',
+  '肌肉疼': '疼痛', '肌肉痛': '疼痛', '肌肉酸痛': '疼痛', '酸痛': '疼痛',
+  '痛风': '关节痛', '类风湿': '关节痛'
 };
 
 // 商品名/品牌名 → 通用名
@@ -10327,14 +10339,29 @@ function fuzzyMatchDrug(input) {
 function matchDrugsFromOCRText(text) {
   if (!text || !window.DRUG_GUIDE) return [];
   var matched = {};
-  var lines = text.split(/[\n\r\s，,。.、；;:：]+/);
-  lines.forEach(function(line) {
-    line = line.trim();
-    if (line.length < 2) return;
-    var fm = fuzzyMatchDrug(line);
+  // 清洗：保留中文/英文/数字连续段，过滤单字符噪声
+  var cleaned = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, " ");
+  var tokens = cleaned.split(/\s+/).filter(function(t){ return t.length >= 2; });
+  // 1) 整词模糊匹配
+  tokens.forEach(function(tok){
+    var fm = fuzzyMatchDrug(tok);
     if (fm && !matched[fm]) matched[fm] = true;
   });
-  // 也做整体包含匹配
+  // 2) 滑窗：取每 token 的前 2-3 字（中文），部分匹配药名
+  tokens.forEach(function(tok){
+    var cnTok = tok.match(/[\u4e00-\u9fa5]+/g);
+    if (!cnTok) return;
+    cnTok.forEach(function(cw){
+      for (var len = Math.min(cw.length, 3); len >= 2; len--){
+        for (var start = 0; start + len <= cw.length; start++){
+          var sub = cw.substr(start, len);
+          var fm2 = fuzzyMatchDrug(sub);
+          if (fm2 && !matched[fm2]) matched[fm2] = true;
+        }
+      }
+    });
+  });
+  // 3) 整体包含匹配（兜底）
   for (var k in DRUG_GUIDE) {
     if (text.toLowerCase().indexOf(k.toLowerCase()) >= 0 && !matched[k]) matched[k] = true;
   }
