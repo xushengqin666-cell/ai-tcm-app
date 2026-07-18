@@ -426,7 +426,15 @@ header>div{display:flex;align-items:center;gap:10px}
 .rem-item .rem-sub{font-size:12px;color:#999;margin-top:2px}
 .rem-item .rem-del{background:rgba(255,59,48,.08);border:none;color:#ff3b30;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;line-height:1}
 </style>
-<style id="ink-css">/* ===== 水墨入场（逐字特写 → 拉远） ===== */
+<style id="ink-css">
+@font-face {
+  font-family: "CaiyunBrush";
+  src: url(data:font/woff2;base64,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) format("woff2");
+  font-weight: 100 900;
+  font-display: block;
+}
+
+/* ===== 水墨入场（逐字特写 → 拉远） ===== */
 #splash {
   position: fixed; inset: 0; z-index: 99990;
   background: radial-gradient(ellipse at 50% 48%, #1c2320 0%, #0d100e 58%, #060807 100%);
@@ -454,7 +462,7 @@ header>div{display:flex;align-items:center;gap:10px}
 @keyframes splashIn { 0% { transform: scale(0); opacity: 0; } 45% { opacity: .75; } 100% { transform: scale(1.7); opacity: 0; } }
 .ink-char {
   position: relative; z-index: 2;
-  font-family: "STKaiti","Kaiti SC","KaiTi","Songti SC",serif;
+  font-family: "CaiyunBrush","STKaiti",serif;
   font-size: 190px; font-weight: 700; color: #f3eee5;
   text-shadow: 0 0 28px rgba(244,239,229,.32), 0 5px 22px rgba(0,0,0,.65);
   filter: blur(22px); opacity: 0; transform: scale(1.55);
@@ -466,7 +474,7 @@ header>div{display:flex;align-items:center;gap:10px}
 .ink-title {
   position: absolute; left: 50%; top: 50%;
   display: flex; gap: 6px;
-  font-family: "STKaiti","Kaiti SC","KaiTi",serif;
+  font-family: "CaiyunBrush","STKaiti",serif;
   font-size: 40px; font-weight: 700; letter-spacing: 10px; color: #f3eee5;
   text-shadow: 0 0 22px rgba(244,239,229,.25), 0 3px 14px rgba(0,0,0,.7);
   opacity: 0; transform: translate(-50%,-50%) scale(1.5);
@@ -500,7 +508,7 @@ header>div{display:flex;align-items:center;gap:10px}
 @keyframes authPop { from { opacity: 0; transform: scale(.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .auth-logo { font-size: 42px; line-height: 1; }
 .auth-title {
-  font-family: "STKaiti", "Kaiti SC", "KaiTi", serif;
+  font-family: "CaiyunBrush","STKaiti",serif;
   font-size: 27px; letter-spacing: 7px; color: #16241b; margin: 8px 0 3px;
 }
 .auth-sub { font-size: 12px; color: #9aa0a6; margin-bottom: 18px; }
