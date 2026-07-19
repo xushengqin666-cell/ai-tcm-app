@@ -847,7 +847,12 @@ var T = {
     cabMeOption:'我',
     cabMemberNoAssign:'（不指定）',
     tongueMap:{'红舌':'红舌','淡红':'淡红舌','淡白':'淡白舌','暗红':'暗红舌','绛红':'绛红舌','青紫':'青紫舌','紫暗':'紫暗舌','胖大':'胖大舌','瘦薄':'瘦薄舌','裂纹':'裂纹舌','齿痕':'齿痕舌','芒刺':'芒刺舌','瘀点':'瘀点舌'},
-    pulseMap:{'浮':'浮脉','沉':'沉脉','迟':'迟脉','数':'数脉','滑':'滑脉','涩':'涩脉','虚':'虚脉','实':'实脉','弦':'弦脉','紧':'紧脉','濡':'濡脉','洪':'洪脉','细':'细脉','弱':'弱脉','结':'结脉','代':'代脉','促':'促脉'},
+    pulseMap:{
+      '浮脉':'浮脉','沉脉':'沉脉','迟脉':'迟脉','数脉':'数脉（快）','滑脉':'滑脉','涩脉':'涩脉',
+      '虚脉':'虚脉','实脉':'实脉','弦脉':'弦脉','紧脉':'紧脉','濡脉':'濡脉','洪脉':'洪脉',
+      '细脉':'细脉','弱脉':'弱脉','结脉':'结脉','代脉':'代脉','促脉':'促脉',
+      '缓脉':'缓脉（慢）'
+    },
     gateTitle:'彩云智药',authSub:'家庭 AI 药师 · 让用药更安全',authTabLogin:'登录',authTabRegister:'注册',authPhonePh:'手机号',authPwdPh:'密码（6 位以上）',authPwd2Ph:'确认密码',authSubmitBtn:'登 录',authSkipBtn:'先体验，跳过 →'
   },
   en: {
@@ -909,7 +914,12 @@ var T = {
     cabMeOption:'Me',
     cabMemberNoAssign:'Not specified',
     tongueMap:{'红舌':'Red tongue','淡红':'Light red','淡白':'Pale','暗红':'Dark red','绛红':'Crimson','青紫':'Bluish purple','紫暗':'Purple dark','胖大':'Swollen','瘦薄':'Thin','裂纹':'Cracked','齿痕':'Tooth-marked','芒刺':'Prickly','瘀点':'Petechiae'},
-    pulseMap:{'浮':'Floating','沉':'Deep','迟':'Slow','数':'Rapid','滑':'Slippery','涩':'Choppy','虚':'Deficient','实':'Excess','弦':'Wiry','紧':'Tight','濡':'Soggy','洪':'Flooding','细':'Thin','弱':'Weak','结':'Knotted','代':'Intermittent','促':'Hasty'},
+    pulseMap:{
+      '浮脉':'Floating','沉脉':'Deep','迟脉':'Slow','数脉':'Rapid','滑脉':'Slippery','涩脉':'Choppy',
+      '虚脉':'Deficient','实脉':'Excess','弦脉':'Wiry','紧脉':'Tight','濡脉':'Soggy','洪脉':'Flooding',
+      '细脉':'Thin','弱脉':'Weak','结脉':'Knotted','代脉':'Intermittent','促脉':'Hasty',
+      '缓脉':'Moderate'
+    },
     gateTitle:'Caiyun Smart Pharmacy',authSub:'Family AI Pharmacist · Safer Medication',authTabLogin:'Log in',authTabRegister:'Register',authPhonePh:'Phone number',authPwdPh:'Password (6+ digits)',authPwd2Ph:'Confirm password',authSubmitBtn:'Log in',authSkipBtn:'Skip for now →'
   }
 };
@@ -1092,6 +1102,27 @@ if(el=document.getElementById('navProfile')) el.textContent = t.navProfile;if(el
   if(el=document.getElementById('profileAboutBtn')) el.textContent = t.profileAbout;
   if(el=document.getElementById('profileLogoutBtn')) el.textContent = t.profileLogout;
 
+
+  // Deferred translation for elements that may be created later
+  setTimeout(function(){
+    var el;
+    if(el=document.getElementById('tongueSelect')) {
+      var opts = el.querySelectorAll('option');
+      if(opts[0]) opts[0].textContent = t.tonguePlaceholder || '-- Select Tongue --';
+      for(var i=1;i<opts.length;i++){
+        var key=opts[i].value;
+        if(t.tongueMap && t.tongueMap[key]) opts[i].textContent = t.tongueMap[key];
+      }
+    }
+    if(el=document.getElementById('pulseSelect')) {
+      var opts = el.querySelectorAll('option');
+      if(opts[0]) opts[0].textContent = t.pulsePlaceholder || '-- Select Pulse --';
+      for(var i=1;i<opts.length;i++){
+        var key=opts[i].value;
+        if(t.pulseMap && t.pulseMap[key]) opts[i].textContent = t.pulseMap[key];
+      }
+    }
+  }, 100);
 }
 window.applyLang = applyLang; window.currentLang = currentLang;
   // ===== Modal 元素翻译 (Profile Edit + Auth) =====
