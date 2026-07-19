@@ -1,0 +1,16 @@
+const fs = require('fs');
+const s = fs.readFileSync('index.html', 'utf8');
+const re = /<script\b[^>]*>/g;
+let m;
+const opens = [];
+while ((m = re.exec(s))) opens.push({ pos: m.index, tag: m[0].slice(0, 60) });
+const closes = [];
+let c;
+const cre = /<\/script>/g;
+while ((c = cre.exec(s))) closes.push(c.index);
+console.log('=== <script> 开标签 ===');
+opens.forEach(o => console.log('@' + o.pos + '  ' + o.tag));
+console.log('\n=== </script> 闭标签 ===');
+closes.forEach(p => console.log('@' + p));
+console.log('\n</body> 位置:', s.indexOf('</body>'));
+console.log('\n主脚本开 @44156 对应闭:', closes.find(p => p > 44156 && p < 520000));

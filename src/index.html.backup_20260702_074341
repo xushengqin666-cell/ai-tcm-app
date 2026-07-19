@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>彩云智药 / Caiyun Smart Pharmacy v5</title>
+<title>家庭药师 / Family Pharmacist v5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💊</text></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -116,106 +116,11 @@ header h1{font-size:18px;font-weight:700}
 .answer-text{line-height:1.7}
 .fallback-hint{font-size:12px;color:#999;margin-top:6px;padding-top:6px;border-top:1px dashed #ddd}
 .loading-dots{display:inline-block;color:#888}
-
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.88); }
-  to   { opacity: 1; transform: scale(1); }
-}
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
-}
-
-/* 入场元素初始状态 */
-.animate-in {
-  opacity: 0;
-  animation-fill-mode: forwards;
-}
-.anim-header  { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
-.anim-tabbar  { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
-.anim-card    { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
-.anim-content { animation: fadeSlideUp 0.55s cubic-bezier(.22,.61,.36,1) var(--delay,0s) both; }
-.anim-modal   { animation: scaleIn   0.40s cubic-bezier(.34,1.56,.64,1) var(--delay,0s) both; }
-.anim-fab     { animation: scaleIn   0.45s cubic-bezier(.34,1.56,.64,1) 0.35s both; }
-
-/* 骨架屏 shimmer */
-.skeleton {
-  background: linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%);
-  background-size: 200% auto;
-  animation: shimmer 1.8s linear infinite;
-  border-radius: 6px;
-}
-
 </style>
-
-<script>
-// Groq API 前端直连
-async function callGroqAPI(question) {
-  // GROQ_KEY removed - use worker proxy
-  const GROQ_MODEL = 'llama-3.1-8b-instant';
-  
-  const payload = JSON.stringify({
-    model: GROQ_MODEL,
-    messages: [{ role: 'user', content: question }],
-    max_tokens: 500
-  });
-  
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + GROQ_KEY
-    },
-    body: payload
-  });
-  
-  if (!response.ok) {
-    throw new Error('API 调用失败: ' + response.status);
-  }
-  
-  const json = await response.json();
-  return json.choices[0].message.content;
-}
-</script>
-
-<!-- rebuild 20260717105133 -->
-<script>
-// 入场动画：元素依次出现
-(function(){
-  var delay = 0;
-  function anim(cls, ms) {
-    var els = document.querySelectorAll(cls);
-    els.forEach(function(el){
-      el.style.setProperty('--delay', delay + 'ms');
-      el.classList.add('animate-in');
-      delay += ms;
-    });
-  }
-  // header → tabbar → main content → cards
-  anim('.app-header, header', 0);
-  anim('#tabBar, .tab-bar, .bottom-nav, nav', 60);
-  anim('#tab-home, #tab-interact, #tab-drugs, #tab-cabinet, #tab-symptom, .tab-content', 120);
-  anim('.drug-card, .card', 80);
-  anim('.search-box, .input-group, .btn-group', 60);
-
-  // fab 自动出现
-  var fab = document.querySelector('.fab, .camera-fab, #cameraFab, [id*=fab]');
-  if (fab) fab.classList.add('animate-in');
-})();
-</script>
-
 </head>
 <body>
 <header>
-  <h1 id="title">🌿 彩云智药</h1>
+  <h1 id="title">🌿 家庭药师</h1>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="version" style="font-size:10px;opacity:.7">v5</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">🇬🇧 EN</button>
@@ -226,6 +131,9 @@ async function callGroqAPI(question) {
   <button class="tab-btn" data-tab="interact" id="tabInteractBtn">相互作用</button>
   <button class="tab-btn" data-tab="chat" id="tabChatBtn">智能问药</button>
     <button id="tabReportBtn" data-tab="report" class="tab-btn">📋 辨证报告</button>
+    <button class="tab-btn" data-tab="guide" id="tabGuideBtn">💡 用药指南</button>
+    <button class="tab-btn" data-tab="reminder" id="tabReminderBtn">⏰ 提醒</button>
+    <button class="tab-btn" data-tab="family" id="tabFamilyBtn">👨‍👩‍👧 家庭</button>
   <a href="cabinet.html" style="padding:11px 16px;font-size:14px;color:#666;text-decoration:none;text-align:center;flex:1;border-bottom:3px solid transparent" id="tabCabinetLink">💊 药箱</a>
 </div>
 
@@ -238,14 +146,6 @@ async function callGroqAPI(question) {
       <button class="btn-primary" id="searchBtn">搜索</button>
     </div>
     <div id="searchResult"></div>
-  </div>
-  <div class="card" style="margin-top:12px">
-    <div class="card-head"><span class="card-title">🩺 症状搜药</span></div>
-    <div style="display:flex;gap:8px">
-      <input id="symptomInput" type="text" placeholder="输入症状，如：头痛、发烧、咳嗽..." style="flex:1;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none">
-      <button onclick="searchBySymptom()" style="background:#2e7d32;color:#fff;border:none;padding:0 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">搜索</button>
-    </div>
-    <div id="symptomResults" style="margin-top:12px"></div>
   </div>
   <div class="card">
     <div class="card-title" id="featureTitle">📋 功能入口</div>
@@ -348,7 +248,7 @@ async function callGroqAPI(question) {
 // ===== 翻译 =====
 var T = {
   zh: {
-    title:'🌿 彩云智药',tabHome:'首页',tabInteract:'相互作用',tabChat:'智能问药',
+    title:'🌿 家庭药师',tabHome:'首页',tabInteract:'相互作用',tabChat:'智能问药',
     searchTitle:'🔍 智能搜索',searchPlaceholder:'输入药品、症状或问题,如:布洛芬能退烧吗、头痛吃什么...',searchBtn:'搜索',
     featureTitle:'📋 功能入口',featChat:'💬 智能问药',featSymptom:'🩺 症状咨询',featContra:'⚠️ 用药禁忌',featInteract:'💊 相互作用',
     interactTitle:'💊 药物相互作用关系网',drugAPlaceholder:'药物A,如:布洛芬',drugBPlaceholder:'药物B(可选)',interactBtn:'查询',
@@ -394,13 +294,13 @@ var T = {
     versionLabel:'版本',cabinetTab:'我的药箱'
   },
   en: {
-    title:'🌿 Caiyun Smart Pharmacy',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',
+    title:'🌿 Family Pharmacist',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',
     searchTitle:'🔍 Drug Search',searchPlaceholder:'Enter drug name or symptoms, e.g. ibuprofen, headache...',searchBtn:'Search',
     featureTitle:'📋 Quick Access',featChat:'📖 Manual',featSymptom:'🩺 Symptom',featContra:'⚠️ Contraindications',featInteract:'💊 Interactions',
     interactTitle:'💊 Drug Interaction Network',drugAPlaceholder:'Drug A, e.g. ibuprofen',drugBPlaceholder:'Drug B (optional)',interactBtn:'Query',
     legendDanger:'🔴 Contraindicated',legendCaution:'🟡 Caution',legendGreen:'🟢 Safe',legendBlue:'🔵 Neutral',
     chatTitle:'💬 AI Pharmacy Assistant',chatPlaceholder:'Describe your symptoms or medication question...',sendBtn:'🔍 Search',
-    chatWelcome:'👋 Hello! I am Caiyun Smart Pharmacy AI Assistant. Please describe your symptoms or medication questions.',
+    chatWelcome:'👋 Hello! I am Family Pharmacist AI Assistant. Please describe your symptoms or medication questions.',
     statusReady:'Ready',statusSending:'Sending...',statusError:'Network Error',
     searching:'Searching...',searchFail:'Search failed. Please try again.',typing:'AI analyzing',noData:'No interaction data',langBtn:'🇨🇳 中文',
     guideTitle:'📋 Usage Guide',guideTime:'⏰ Best Time',guideFoodAvoid:'🍎 Food to Avoid',guideDrugAvoid:'💊 Drug Interactions',guideNotes:'📝 Notes',noGuideData:'No usage guide data',relatedDrugs:'related drugs',interactions:'interactions',
@@ -8132,7 +8032,276 @@ var DRUG_GUIDE = {
     "contraindications": "对本品或抗胆碱能药过敏、窄角型青光眼、前列腺肥大、哺乳期。",
     "storage": "室温避光保存。"
   }
-};
+, 
+  "阿巴西普": {"indications":"类风湿关节炎（与甲氨蝶呤联用）、银屑病关节炎","ingredients":"阿巴西普（选择性T细胞共刺激调节剂）","dosage":"静脉输注：首剂、2周后、4周后各1次，之后每4周1次","adverse":"头痛、恶心、上呼吸道感染","contraindications":"活动性感染、结核","storage":"2-8°C冷藏"},
+  "阿达木单抗": {"indications":"类风湿关节炎、强直性脊柱炎、银屑病","ingredients":"阿达木单抗（TNF-α抑制剂）","dosage":"皮下注射：40mg每2周1次","adverse":"注射部位反应、感染风险","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "依那西普": {"indications":"类风湿关节炎、强直性脊柱炎","ingredients":"依那西普（TNF受体融合蛋白）","dosage":"皮下注射：25mg每周2次","adverse":"注射部位红肿、感染","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "英夫利西单抗": {"indications":"类风湿关节炎、克罗恩病、银屑病","ingredients":"英夫利西单抗（TNF-α抑制剂）","dosage":"静脉输注：3-5mg/kg每8周1次","adverse":"输注反应、感染风险","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "利妥昔单抗": {"indications":"非霍奇金淋巴瘤、类风湿关节炎","ingredients":"利妥昔单抗（CD20单抗）","dosage":"静脉输注：375mg/m²每周1次×4次","adverse":"输注反应、感染风险","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "托珠单抗": {"indications":"类风湿关节炎、细胞因子释放综合征","ingredients":"托珠单抗（IL-6受体抑制剂）","dosage":"静脉输注：8mg/kg每4周1次","adverse":"感染、肝酶升高","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "乌司奴单抗": {"indications":"银屑病、克罗恩病","ingredients":"乌司奴单抗（IL-12/23抑制剂）","dosage":"皮下注射：45mg第0、4周，之后每12周1次","adverse":"上呼吸道感染、头痛","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "司库奇尤单抗": {"indications":"银屑病、强直性脊柱炎","ingredients":"司库奇尤单抗（IL-17A抑制剂）","dosage":"皮下注射：150mg每周1次×5周，之后每4周1次","adverse":"上呼吸道感染、腹泻","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "伊匹木单抗": {"indications":"黑色素瘤、肾细胞癌","ingredients":"伊匹木单抗（CTLA-4抑制剂）","dosage":"静脉输注：3mg/kg每3周1次×4次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"},
+  "帕博利珠单抗": {"indications":"黑色素瘤、非小细胞肺癌、头颈部鳞癌","ingredients":"帕博利珠单抗（PD-1抑制剂）","dosage":"静脉输注：200mg每3周1次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"},
+  "纳武利尤单抗": {"indications":"黑色素瘤、非小细胞肺癌、肾细胞癌","ingredients":"纳武利尤单抗（PD-1抑制剂）","dosage":"静脉输注：240mg每2周1次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"},
+  "信迪利单抗": {"indications":"霍奇金淋巴瘤、非小细胞肺癌","ingredients":"信迪利单抗（PD-1抑制剂）","dosage":"静脉输注：200mg每3周1次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"},
+  "卡瑞利珠单抗": {"indications":"霍奇金淋巴瘤、肝癌、肺癌","ingredients":"卡瑞利珠单抗（PD-1抑制剂）","dosage":"静脉输注：200mg每2周1次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"},
+  "替雷利珠单抗": {"indications":"霍奇金淋巴瘤、尿路上皮癌","ingredients":"替雷利珠单抗（PD-1抑制剂）","dosage":"静脉输注：200mg每3周1次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"},
+  "特瑞普利单抗": {"indications":"黑色素瘤、鼻咽癌","ingredients":"特瑞普利单抗（PD-1抑制剂）","dosage":"静脉输注：3mg/kg每2周1次","adverse":"免疫相关不良反应","contraindications":"自身免疫病","storage":"2-8°C冷藏"}, 
+  "左乙拉西坦": {"indications":"癫痫","ingredients":"左乙拉西坦（抗癫痫药）","dosage":"口服：500-1500mg每日2次","adverse":"嗜睡、头晕","contraindications":"对本品过敏","storage":"室温"},
+  "拉莫三嗪": {"indications":"癫痫、双相情感障碍","ingredients":"拉莫三嗪（抗癫痫药）","dosage":"口服：50-200mg每日1-2次","adverse":"皮疹、头晕","contraindications":"对本品过敏","storage":"室温"},
+  "奥卡西平": {"indications":"癫痫","ingredients":"奥卡西平（抗癫痫药）","dosage":"口服：300-1200mg每日2次","adverse":"低钠血症、头晕","contraindications":"房室传导阻滞","storage":"室温"},
+  "托吡酯": {"indications":"癫痫、偏头痛预防","ingredients":"托吡酯（抗癫痫药）","dosage":"口服：25-200mg每日2次","adverse":"认知障碍、体重减轻","contraindications":"对本品过敏","storage":"室温"},
+  "丙戊酸钠": {"indications":"癫痫、双相情感障碍","ingredients":"丙戊酸钠（抗癫痫药）","dosage":"口服：200-500mg每日2-3次","adverse":"肝毒性、体重增加","contraindications":"妊娠、肝病","storage":"室温"},
+  "卡马西平": {"indications":"癫痫、三叉神经痛","ingredients":"卡马西平（抗癫痫药）","dosage":"口服：200-400mg每日2-3次","adverse":"皮疹、骨髓抑制","contraindications":"房室传导阻滞","storage":"室温"},
+  "苯妥英钠": {"indications":"癫痫","ingredients":"苯妥英钠（抗癫痫药）","dosage":"口服：100-200mg每日2-3次","adverse":"牙龈增生、共济失调","contraindications":"窦房传导阻滞","storage":"室温"},
+  "苯巴比妥": {"indications":"癫痫、失眠","ingredients":"苯巴比妥（巴比妥类）","dosage":"口服：30-60mg每日2-3次","adverse":"嗜睡、认知障碍","contraindications":"严重肝功能不全","storage":"室温"},
+  "加巴喷丁": {"indications":"癫痫、神经病理性疼痛","ingredients":"加巴喷丁（抗癫痫药）","dosage":"口服：300-600mg每日3次","adverse":"嗜睡、头晕","contraindications":"对本品过敏","storage":"室温"},
+  "普瑞巴林": {"indications":"神经病理性疼痛、癫痫","ingredients":"普瑞巴林（抗癫痫药）","dosage":"口服：75-150mg每日2次","adverse":"头晕、嗜睡","contraindications":"对本品过敏","storage":"室温"},
+  "多奈哌齐": {"indications":"阿尔茨海默病","ingredients":"多奈哌齐（胆碱酯酶抑制剂）","dosage":"口服：5-10mg每日1次睡前","adverse":"恶心、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "卡巴拉汀": {"indications":"阿尔茨海默病、帕金森痴呆","ingredients":"卡巴拉汀（胆碱酯酶抑制剂）","dosage":"口服：1.5-6mg每日2次","adverse":"恶心、呕吐","contraindications":"对本品过敏","storage":"室温"},
+  "美金刚": {"indications":"中重度阿尔茨海默病","ingredients":"美金刚（NMDA受体拮抗剂）","dosage":"口服：5-20mg每日1次","adverse":"头晕、头痛","contraindications":"严重肾功能不全","storage":"室温"},
+  "普拉克索": {"indications":"帕金森病、不宁腿综合征","ingredients":"普拉克索（多巴胺受体激动剂）","dosage":"口服：0.125-1.5mg每日3次","adverse":"嗜睡、幻觉","contraindications":"对本品过敏","storage":"室温避光"},
+  "罗匹尼罗": {"indications":"帕金森病","ingredients":"罗匹尼罗（多巴胺受体激动剂）","dosage":"口服：0.25-3mg每日3次","adverse":"嗜睡、幻觉","contraindications":"对本品过敏","storage":"室温"},
+  "恩他卡朋": {"indications":"帕金森病（辅助左旋多巴）","ingredients":"恩他卡朋（COMT抑制剂）","dosage":"口服：200mg每次左旋多巴时","adverse":"腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "司来吉兰": {"indications":"帕金森病","ingredients":"司来吉兰（MAO-B抑制剂）","dosage":"口服：5mg每日2次","adverse":"失眠、恶心","contraindications":"合用哌替啶","storage":"室温"},
+  "雷沙吉兰": {"indications":"帕金森病","ingredients":"雷沙吉兰（MAO-B抑制剂）","dosage":"口服：1mg每日1次","adverse":"头痛、恶心","contraindications":"合用哌替啶","storage":"室温"},
+  "金刚烷胺": {"indications":"帕金森病、流感","ingredients":"金刚烷胺（抗病毒药）","dosage":"口服：100mg每日2次","adverse":"头晕、幻觉","contraindications":"严重肾功能不全","storage":"室温"},
+  "苯海索": {"indications":"帕金森病","ingredients":"苯海索（抗胆碱药）","dosage":"口服：1-2mg每日3次","adverse":"口干、便秘","contraindications":"青光眼","storage":"室温"},
+  "巴氯芬": {"indications":"脊髓损伤后痉挛","ingredients":"巴氯芬（GABA受体激动剂）","dosage":"口服：5-20mg每日3次","adverse":"嗜睡、肌无力","contraindications":"癫痫","storage":"室温"},
+  "替扎尼定": {"indications":"痉挛","ingredients":"替扎尼定（α2受体激动剂）","dosage":"口服：2-8mg每日3次","adverse":"嗜睡、低血压","contraindications":"合用CYP1A2抑制剂","storage":"室温"},
+  "乙哌立松": {"indications":"肌肉痉挛","ingredients":"乙哌立松（中枢性肌松药）","dosage":"口服：50mg每日3次","adverse":"嗜睡、恶心","contraindications":"严重肝肾功能不全","storage":"室温"},
+  "利鲁唑": {"indications":"肌萎缩侧索硬化症","ingredients":"利鲁唑（谷氨酸抑制剂）","dosage":"口服：50mg每日2次","adverse":"肝毒性、乏力","contraindications":"严重肝功能不全","storage":"室温"},
+  "依达拉奉": {"indications":"肌萎缩侧索硬化症","ingredients":"依达拉奉（自由基清除剂）","dosage":"静脉输注：60mg每日×14天休14天","adverse":"肝酶升高","contraindications":"对本品过敏","storage":"室温避光"},
+  "芬戈莫德": {"indications":"多发性硬化症","ingredients":"芬戈莫德（S1P受体调节剂）","dosage":"口服：0.5mg每日1次","adverse":"心动过缓、感染","contraindications":"严重心脏疾病","storage":"室温"},
+  "特立氟胺": {"indications":"多发性硬化症","ingredients":"特立氟胺（免疫调节剂）","dosage":"口服：7-14mg每日1次","adverse":"肝毒性、脱发","contraindications":"严重肝功能不全","storage":"室温"},
+  "富马酸二甲酯": {"indications":"多发性硬化症","ingredients":"富马酸二甲酯（免疫调节剂）","dosage":"口服：120-240mg每日2次","adverse":"潮红、胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "克拉屈滨": {"indications":"多发性硬化症","ingredients":"克拉屈滨（免疫调节剂）","dosage":"口服：3.5mg/kg×2个周期","adverse":"淋巴细胞减少、感染","contraindications":"免疫抑制","storage":"2-8°C冷藏"},
+  "奥法木单抗": {"indications":"多发性硬化症","ingredients":"奥法木单抗（CD20单抗）","dosage":"静脉输注：首年20剂后每6月1剂","adverse":"输注反应、感染","contraindications":"活动性感染","storage":"2-8°C冷藏"}, 
+  "雷贝拉唑": {"indications":"胃食管反流病、消化性溃疡","ingredients":"雷贝拉唑（PPI）","dosage":"口服：10-20mg每日1次早餐前","adverse":"头痛、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "埃索美拉唑": {"indications":"胃食管反流病、消化性溃疡","ingredients":"埃索美拉唑（PPI）","dosage":"口服：20-40mg每日1次早餐前","adverse":"头痛、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "泮托拉唑": {"indications":"胃食管反流病、消化性溃疡","ingredients":"泮托拉唑（PPI）","dosage":"口服：40mg每日1次早餐前","adverse":"头痛、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "兰索拉唑": {"indications":"胃食管反流病、消化性溃疡","ingredients":"兰索拉唑（PPI）","dosage":"口服：30mg每日1次早餐前","adverse":"头痛、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "艾普拉唑": {"indications":"胃食管反流病、消化性溃疡","ingredients":"艾普拉唑（PPI）","dosage":"口服：5-10mg每日1次早餐前","adverse":"头痛、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "法莫替丁": {"indications":"消化性溃疡、胃食管反流病","ingredients":"法莫替丁（H2受体拮抗剂）","dosage":"口服：20mg每日2次或40mg睡前","adverse":"头痛、头晕","contraindications":"对本品过敏","storage":"室温"},
+  "雷尼替丁": {"indications":"消化性溃疡、胃食管反流病","ingredients":"雷尼替丁（H2受体拮抗剂）","dosage":"口服：150mg每日2次或300mg睡前","adverse":"头痛、头晕","contraindications":"对本品过敏","storage":"室温"},
+  "西咪替丁": {"indications":"消化性溃疡","ingredients":"西咪替丁（H2受体拮抗剂）","dosage":"口服：200mg每日3次+400mg睡前","adverse":"头痛、男性乳房发育","contraindications":"对本品过敏","storage":"室温"},
+  "枸橼酸铋钾": {"indications":"消化性溃疡、幽门螺杆菌根除","ingredients":"枸橼酸铋钾（铋剂）","dosage":"口服：110mg每日4次餐前","adverse":"黑便、舌苔变黑","contraindications":"严重肾功能不全","storage":"室温"},
+  "胶体果胶铋": {"indications":"消化性溃疡、幽门螺杆菌根除","ingredients":"胶体果胶铋（铋剂）","dosage":"口服：150mg每日4次餐前","adverse":"黑便","contraindications":"严重肾功能不全","storage":"室温"},
+  "铝碳酸镁": {"indications":"胃酸过多、胃食管反流病","ingredients":"铝碳酸镁（抗酸药）","dosage":"口服：0.5-1g每日3次餐后1h","adverse":"便秘或腹泻","contraindications":"严重肾功能不全","storage":"室温"},
+  "氢氧化铝": {"indications":"胃酸过多","ingredients":"氢氧化铝（抗酸药）","dosage":"口服：0.6-0.9g每日3次","adverse":"便秘","contraindications":"肾功能不全","storage":"室温"},
+  "硫糖铝": {"indications":"消化性溃疡","ingredients":"硫糖铝（胃粘膜保护剂）","dosage":"口服：1g每日4次餐前1h","adverse":"便秘","contraindications":"对本品过敏","storage":"室温"},
+  "瑞巴派特": {"indications":"胃溃疡、急性胃粘膜病变","ingredients":"瑞巴派特（胃粘膜保护剂）","dosage":"口服：100mg每日3次餐后","adverse":"腹胀、恶心","contraindications":"对本品过敏","storage":"室温"},
+  "替普瑞酮": {"indications":"胃溃疡、急性胃粘膜病变","ingredients":"替普瑞酮（胃粘膜保护剂）","dosage":"口服：50mg每日3次餐后","adverse":"腹胀、恶心","contraindications":"对本品过敏","storage":"室温"},
+  "马来酸伊索拉定": {"indications":"胃溃疡","ingredients":"伊索拉定（胃粘膜保护剂）","dosage":"口服：2mg每日2次餐后","adverse":"恶心、腹泻","contraindications":"对本品过敏","storage":"室温"},
+  "莫沙必利": {"indications":"功能性消化不良、胃食管反流病","ingredients":"莫沙必利（促胃肠动力药）","dosage":"口服：5mg每日3次餐前","adverse":"腹泻、腹痛","contraindications":"胃肠道出血","storage":"室温"},
+  "伊托必利": {"indications":"功能性消化不良","ingredients":"伊托必利（促胃肠动力药）","dosage":"口服：50mg每日3次餐前","adverse":"腹泻、腹痛","contraindications":"胃肠道出血","storage":"室温"},
+  "多潘立酮": {"indications":"功能性消化不良、胃食管反流病","ingredients":"多潘立酮（促胃肠动力药）","dosage":"口服：10mg每日3次餐前15-30分钟","adverse":"QT延长、高催乳素血症","contraindications":"胃肠道出血","storage":"室温"},
+  "甲氧氯普胺": {"indications":"化疗呕吐、胃轻瘫","ingredients":"甲氧氯普胺（促胃肠动力药）","dosage":"口服：5-10mg每日3次","adverse":"锥体外系反应","contraindications":"癫痫","storage":"室温"},
+  "昂丹司琼": {"indications":"化疗呕吐、术后呕吐","ingredients":"昂丹司琼（5-HT3拮抗剂）","dosage":"口服：8mg每日3次或静脉","adverse":"头痛、便秘","contraindications":"QT延长","storage":"室温"},
+  "格拉司琼": {"indications":"化疗呕吐","ingredients":"格拉司琼（5-HT3拮抗剂）","dosage":"口服：1mg每日2次或静脉","adverse":"头痛、便秘","contraindications":"对本品过敏","storage":"室温"},
+  "托烷司琼": {"indications":"化疗呕吐","ingredients":"托烷司琼（5-HT3拮抗剂）","dosage":"口服：5mg每日1次","adverse":"头痛、便秘","contraindications":"对本品过敏","storage":"室温"},
+  "阿瑞匹坦": {"indications":"化疗呕吐","ingredients":"阿瑞匹坦（NK1受体拮抗剂）","dosage":"口服：125mg第1天，80mg第2-3天","adverse":"乏力、呃逆","contraindications":"合用CYP3A4底物","storage":"室温"},
+  "福沙匹坦": {"indications":"化疗呕吐","ingredients":"福沙匹坦（NK1受体拮抗剂）","dosage":"静脉：150mg第1天","adverse":"乏力、头痛","contraindications":"对本品过敏","storage":"室温"},
+  "洛哌丁胺": {"indications":"急性腹泻","ingredients":"洛哌丁胺（止泻药）","dosage":"口服：首剂4mg后每腹泻2mg，最多16mg/日","adverse":"便秘","contraindications":"感染性腹泻","storage":"室温"},
+  "蒙脱石散": {"indications":"急性腹泻、慢性腹泻","ingredients":"蒙脱石（止泻药）","dosage":"口服：3g每日3次","adverse":"便秘","contraindications":"对本品过敏","storage":"室温"},
+  "地芬诺酯": {"indications":"急性腹泻","ingredients":"地芬诺酯（止泻药）","dosage":"口服：2.5-5mg每日2-4次","adverse":"嗜睡、成瘾","contraindications":"感染性腹泻","storage":"室温"},
+  "消旋卡多曲": {"indications":"急性腹泻","ingredients":"消旋卡多曲（脑啡肽酶抑制剂）","dosage":"口服：100mg每日3次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "乳果糖": {"indications":"便秘、肝性脑病","ingredients":"乳果糖（渗透性泻药）","dosage":"口服：15-30ml每日1-2次","adverse":"腹胀、腹泻","contraindications":"半乳糖血症","storage":"室温"}, 
+  "帕罗西汀": {"indications":"抑郁症、焦虑症、强迫症","ingredients":"帕罗西汀（SSRI）","dosage":"口服：20mg每日1次晨服","adverse":"性功能障碍、嗜睡","contraindications":"MAOI合用","storage":"室温"},
+  "舍曲林": {"indications":"抑郁症、焦虑症、强迫症","ingredients":"舍曲林（SSRI）","dosage":"口服：50-200mg每日1次","adverse":"性功能障碍、恶心","contraindications":"MAOI合用","storage":"室温"},
+  "氟伏沙明": {"indications":"抑郁症、强迫症","ingredients":"氟伏沙明（SSRI）","dosage":"口服：50-300mg每日1次睡前","adverse":"恶心、嗜睡","contraindications":"MAOI合用","storage":"室温"},
+  "西酞普兰": {"indications":"抑郁症、焦虑症","ingredients":"西酞普兰（SSRI）","dosage":"口服：20-40mg每日1次","adverse":"QT延长、恶心","contraindications":"MAOI合用","storage":"室温"},
+  "艾司西酞普兰": {"indications":"抑郁症、焦虑症","ingredients":"艾司西酞普兰（SSRI）","dosage":"口服：10-20mg每日1次","adverse":"恶心、失眠","contraindications":"MAOI合用","storage":"室温"},
+  "文拉法辛": {"indications":"抑郁症、焦虑症","ingredients":"文拉法辛（SNRI）","dosage":"口服：75-225mg每日1次","adverse":"高血压、恶心","contraindications":"MAOI合用","storage":"室温"},
+  "度洛西汀": {"indications":"抑郁症、焦虑症、神经病理性疼痛","ingredients":"度洛西汀（SNRI）","dosage":"口服：30-60mg每日1次","adverse":"恶心、头晕","contraindications":"MAOI合用、肝功能不全","storage":"室温"},
+  "安非他酮": {"indications":"抑郁症、戒烟辅助","ingredients":"安非他酮（NDRI）","dosage":"口服：150mg每日2次","adverse":"失眠、癫痫风险","contraindications":"癫痫史","storage":"室温"},
+  "米氮平": {"indications":"抑郁症","ingredients":"米氮平（NaSSA）","dosage":"口服：15-45mg每日1次睡前","adverse":"体重增加、嗜睡","contraindications":"MAOI合用","storage":"室温"},
+  "曲唑酮": {"indications":"抑郁症、失眠","ingredients":"曲唑酮（SARI）","dosage":"口服：50-150mg每日1次睡前","adverse":"嗜睡、直立性低血压","contraindications":"MAOI合用","storage":"室温"},
+  "阿戈美拉汀": {"indications":"抑郁症","ingredients":"阿戈美拉汀（褪黑素受体激动剂）","dosage":"口服：25-50mg每日1次睡前","adverse":"肝毒性","contraindications":"肝功能不全","storage":"室温"},
+  "伏硫西汀": {"indications":"抑郁症","ingredients":"伏硫西汀（5-HT受体调节剂）","dosage":"口服：10-20mg每日1次","adverse":"恶心、头痛","contraindications":"MAOI合用","storage":"室温"},
+  "奥氮平": {"indications":"精神分裂症、双相情感障碍","ingredients":"奥氮平（非典型抗精神病药）","dosage":"口服：5-20mg每日1次","adverse":"体重增加、代谢综合征","contraindications":"窄角型青光眼","storage":"室温"},
+  "利培酮": {"indications":"精神分裂症、双相情感障碍","ingredients":"利培酮（非典型抗精神病药）","dosage":"口服：1-6mg每日1-2次","adverse":"锥体外系反应、高催乳素血症","contraindications":"对本品过敏","storage":"室温"},
+  "喹硫平": {"indications":"精神分裂症、双相情感障碍","ingredients":"喹硫平（非典型抗精神病药）","dosage":"口服：150-750mg每日分1-2次","adverse":"嗜睡、体重增加","contraindications":"对本品过敏","storage":"室温"},
+  "阿立哌唑": {"indications":"精神分裂症、双相情感障碍","ingredients":"阿立哌唑（非典型抗精神病药）","dosage":"口服：10-30mg每日1次","adverse":"静坐不能、失眠","contraindications":"对本品过敏","storage":"室温"},
+  "齐拉西酮": {"indications":"精神分裂症、双相情感障碍","ingredients":"齐拉西酮（非典型抗精神病药）","dosage":"口服：40-160mg每日分2次","adverse":"QT延长、恶心","contraindications":"QT延长","storage":"室温"},
+  "帕利哌酮": {"indications":"精神分裂症","ingredients":"帕利哌酮（非典型抗精神病药）","dosage":"口服：3-12mg每日1次","adverse":"锥体外系反应、体重增加","contraindications":"对本品过敏","storage":"室温"},
+  "氯氮平": {"indications":"难治性精神分裂症","ingredients":"氯氮平（非典型抗精神病药）","dosage":"口服：25-450mg每日分1-2次","adverse":"粒细胞缺乏、癫痫","contraindications":"粒细胞缺乏史","storage":"室温"},
+  "鲁拉西酮": {"indications":"精神分裂症、双相情感障碍","ingredients":"鲁拉西酮（非典型抗精神病药）","dosage":"口服：40-80mg每日1次随餐","adverse":"静坐不能、恶心","contraindications":"强CYP3A4抑制剂合用","storage":"室温"},
+  "碳酸锂": {"indications":"双相情感障碍","ingredients":"碳酸锂（心境稳定剂）","dosage":"口服：300-600mg每日2-3次","adverse":"甲状腺功能减退、肾毒性","contraindications":"严重肾功能不全","storage":"室温"},
+  "丙戊酸镁": {"indications":"双相情感障碍","ingredients":"丙戊酸镁（心境稳定剂）","dosage":"口服：200-400mg每日2-3次","adverse":"肝毒性、体重增加","contraindications":"妊娠、肝病","storage":"室温"},
+  "阿普唑仑": {"indications":"焦虑症、失眠","ingredients":"阿普唑仑（苯二氮䓬类）","dosage":"口服：0.4-0.8mg每日3次","adverse":"嗜睡、成瘾","contraindications":"窄角型青光眼","storage":"室温"},
+  "劳拉西泮": {"indications":"焦虑症、失眠","ingredients":"劳拉西泮（苯二氮䓬类）","dosage":"口服：0.5-2mg每日2-3次","adverse":"嗜睡、成瘾","contraindications":"窄角型青光眼","storage":"室温"},
+  "氯硝西泮": {"indications":"癫痫、焦虑症","ingredients":"氯硝西泮（苯二氮䓬类）","dosage":"口服：0.5-2mg每日2-3次","adverse":"嗜睡、成瘾","contraindications":"窄角型青光眼","storage":"室温"},
+  "丁螺环酮": {"indications":"焦虑症","ingredients":"丁螺环酮（抗焦虑药）","dosage":"口服：5-10mg每日2-3次","adverse":"头晕、恶心","contraindications":"MAOI合用","storage":"室温"},
+  "坦度螺酮": {"indications":"焦虑症","ingredients":"坦度螺酮（抗焦虑药）","dosage":"口服：10mg每日3次","adverse":"头晕、恶心","contraindications":"对本品过敏","storage":"室温"},
+  "唑吡坦": {"indications":"失眠","ingredients":"唑吡坦（Z类药物）","dosage":"口服：5-10mg睡前","adverse":"嗜睡、记忆障碍","contraindications":"睡眠呼吸暂停","storage":"室温"},
+  "佐匹克隆": {"indications":"失眠","ingredients":"佐匹克隆（Z类药物）","dosage":"口服：3.75-7.5mg睡前","adverse":"苦味、嗜睡","contraindications":"睡眠呼吸暂停","storage":"室温"},
+  "右佐匹克隆": {"indications":"失眠","ingredients":"右佐匹克隆（Z类药物）","dosage":"口服：1-3mg睡前","adverse":"苦味、嗜睡","contraindications":"睡眠呼吸暂停","storage":"室温"}, 
+  "布地奈德": {"indications":"哮喘、COPD","ingredients":"布地奈德（ICS）","dosage":"吸入：200-800μg每日2次","adverse":"口腔念珠菌病、声音嘶哑","contraindications":"对本品过敏","storage":"室温"},
+  "氟替卡松": {"indications":"哮喘、过敏性鼻炎","ingredients":"氟替卡松（ICS）","dosage":"吸入：100-500μg每日2次","adverse":"口腔念珠菌病","contraindications":"对本品过敏","storage":"室温"},
+  "倍氯米松": {"indications":"哮喘、过敏性鼻炎","ingredients":"倍氯米松（ICS）","dosage":"吸入：200-800μg每日2次","adverse":"口腔念珠菌病","contraindications":"对本品过敏","storage":"室温"},
+  "糠酸莫米松": {"indications":"过敏性鼻炎、湿疹","ingredients":"糠酸莫米松（ICS）","dosage":"鼻喷：每侧100μg每日1次","adverse":"鼻出血、头痛","contraindications":"对本品过敏","storage":"室温"},
+  "丙酸氟替卡松": {"indications":"哮喘、过敏性鼻炎","ingredients":"丙酸氟替卡松（ICS）","dosage":"吸入：100-500μg每日2次","adverse":"口腔念珠菌病","contraindications":"对本品过敏","storage":"室温"},
+  "沙美特罗": {"indications":"哮喘、COPD","ingredients":"沙美特罗（LABA）","dosage":"吸入：50μg每日2次","adverse":"心悸、震颤","contraindications":"对本品过敏","storage":"室温"},
+  "福莫特罗": {"indications":"哮喘、COPD","ingredients":"福莫特罗（LABA）","dosage":"吸入：4.5-12μg每日2次","adverse":"心悸、震颤","contraindications":"对本品过敏","storage":"室温"},
+  "茚达特罗": {"indications":"COPD","ingredients":"茚达特罗（LABA）","dosage":"吸入：75-150μg每日1次","adverse":"咳嗽、心悸","contraindications":"对本品过敏","storage":"室温"},
+  "噻托溴铵": {"indications":"COPD","ingredients":"噻托溴铵（LAMA）","dosage":"吸入：18μg每日1次","adverse":"口干、便秘","contraindications":"窄角型青光眼","storage":"室温"},
+  "格隆溴铵": {"indications":"COPD","ingredients":"格隆溴铵（LAMA）","dosage":"吸入：44μg每日2次","adverse":"口干","contraindications":"窄角型青光眼","storage":"室温"},
+  "乌美溴铵": {"indications":"COPD","ingredients":"乌美溴铵（LAMA）","dosage":"吸入：62.5μg每日1次","adverse":"口干","contraindications":"窄角型青光眼","storage":"室温"},
+  "阿地溴铵": {"indications":"COPD","ingredients":"阿地溴铵（LAMA）","dosage":"吸入：322μg每日2次","adverse":"口干","contraindications":"窄角型青光眼","storage":"室温"},
+  "沙丁胺醇": {"indications":"哮喘急性发作","ingredients":"沙丁胺醇（SABA）","dosage":"吸入：100-200μg按需","adverse":"心悸、震颤","contraindications":"对本品过敏","storage":"室温"},
+  "特布他林": {"indications":"哮喘急性发作","ingredients":"特布他林（SABA）","dosage":"吸入：250-500μg按需","adverse":"心悸、震颤","contraindications":"对本品过敏","storage":"室温"},
+  "异丙托溴铵": {"indications":"COPD急性加重","ingredients":"异丙托溴铵（SAMA）","dosage":"吸入：20-40μg每日4次","adverse":"口干","contraindications":"窄角型青光眼","storage":"室温"},
+  "氧氟沙星滴眼液": {"indications":"细菌性结膜炎","ingredients":"氧氟沙星（喹诺酮类）","dosage":"滴眼：1-2滴每日3-4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "左氧氟沙星滴眼液": {"indications":"细菌性结膜炎","ingredients":"左氧氟沙星（喹诺酮类）","dosage":"滴眼：1-2滴每日3-4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "妥布霉素滴眼液": {"indications":"细菌性结膜炎","ingredients":"妥布霉素（氨基糖苷类）","dosage":"滴眼：1-2滴每日3-4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "氯霉素滴眼液": {"indications":"细菌性结膜炎","ingredients":"氯霉素（酰胺醇类）","dosage":"滴眼：1-2滴每日3-4次","adverse":"骨髓抑制（罕见）","contraindications":"新生儿","storage":"室温"},
+  "红霉素眼膏": {"indications":"细菌性结膜炎、角膜炎","ingredients":"红霉素（大环内酯类）","dosage":"涂眼：每日2-3次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "阿昔洛韦滴眼液": {"indications":"病毒性结膜炎、角膜炎","ingredients":"阿昔洛韦（抗病毒药）","dosage":"滴眼：1-2滴每2小时1次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "更昔洛韦眼用凝胶": {"indications":"病毒性角膜炎","ingredients":"更昔洛韦（抗病毒药）","dosage":"滴眼：1-2滴每日4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "氟米龙滴眼液": {"indications":"过敏性结膜炎、角膜炎","ingredients":"氟米龙（皮质激素）","dosage":"滴眼：1-2滴每日2-4次","adverse":"眼压升高","contraindications":"病毒性角膜炎","storage":"室温"},
+  "泼尼松龙滴眼液": {"indications":"过敏性结膜炎、葡萄膜炎","ingredients":"泼尼松龙（皮质激素）","dosage":"滴眼：1-2滴每日2-4次","adverse":"眼压升高","contraindications":"病毒性角膜炎","storage":"室温"},
+  "倍他洛尔滴眼液": {"indications":"青光眼","ingredients":"倍他洛尔（β受体阻滞剂）","dosage":"滴眼：1滴每日2次","adverse":"心动过缓","contraindications":"哮喘","storage":"室温"},
+  "噻吗洛尔滴眼液": {"indications":"青光眼","ingredients":"噻吗洛尔（β受体阻滞剂）","dosage":"滴眼：1滴每日1-2次","adverse":"心动过缓","contraindications":"哮喘","storage":"室温"},
+  "拉坦前列素滴眼液": {"indications":"青光眼","ingredients":"拉坦前列素（前列腺素类似物）","dosage":"滴眼：1滴每晚1次","adverse":"虹膜颜色加深","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "曲伏前列素滴眼液": {"indications":"青光眼","ingredients":"曲伏前列素（前列腺素类似物）","dosage":"滴眼：1滴每晚1次","adverse":"虹膜颜色加深","contraindications":"对本品过敏","storage":"室温"},
+  "布林佐胺滴眼液": {"indications":"青光眼","ingredients":"布林佐胺（碳酸酐酶抑制剂）","dosage":"滴眼：1滴每日2-3次","adverse":"口苦","contraindications":"磺胺过敏","storage":"室温"},
+  "溴莫尼定滴眼液": {"indications":"青光眼","ingredients":"溴莫尼定（α2受体激动剂）","dosage":"滴眼：1滴每日2-3次","adverse":"嗜睡、口干","contraindications":"MAOI合用","storage":"室温"},
+  "人工泪液": {"indications":"干眼症","ingredients":"羧甲基纤维素钠","dosage":"滴眼：1-2滴按需","adverse":"无","contraindications":"无","storage":"室温"},
+  "玻璃酸钠滴眼液": {"indications":"干眼症","ingredients":"玻璃酸钠","dosage":"滴眼：1-2滴每日3-4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "聚乙二醇滴眼液": {"indications":"干眼症","ingredients":"聚乙二醇","dosage":"滴眼：1-2滴每日3-4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "酮替芬滴眼液": {"indications":"过敏性结膜炎","ingredients":"酮替芬（抗过敏药）","dosage":"滴眼：1滴每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "奥洛他定滴眼液": {"indications":"过敏性结膜炎","ingredients":"奥洛他定（抗过敏药）","dosage":"滴眼":"1滴每日2次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "色甘酸钠滴眼液": {"indications":"过敏性结膜炎","ingredients":"色甘酸钠（肥大细胞稳定剂）","dosage":"滴眼：1-2滴每日4次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "吡嘧司特钾滴眼液": {"indications":"过敏性结膜炎","ingredients":"吡嘧司特钾（肥大细胞稳定剂）","dosage":"滴眼：1-2滴每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "阿托品滴眼液": {"indications":"散瞳验光、虹膜睫状体炎","ingredients":"阿托品（抗胆碱药）","dosage":"滴眼：1-2滴每日1-3次","adverse":"口干、心悸","contraindications":"青光眼","storage":"室温"},
+  "复方托吡卡胺滴眼液": {"indications":"散瞳验光","ingredients":"托吡卡胺+去氧肾上腺素","dosage":"滴眼：1-2滴验光前","adverse":"心悸","contraindications":"青光眼","storage":"室温"}, 
+  "阿达帕林凝胶": {"indications":"痤疮","ingredients":"阿达帕林（维A酸类）","dosage":"外用：每晚1次","adverse":"红斑、脱屑","contraindications":"妊娠","storage":"室温避光"},
+  "他扎罗汀凝胶": {"indications":"痤疮、银屑病","ingredients":"他扎罗汀（维A酸类）","dosage":"外用：每晚1次","adverse":"红斑、脱屑","contraindications":"妊娠","storage":"室温避光"},
+  "维A酸乳膏": {"indications":"痤疮","ingredients":"维A酸（维A酸类）","dosage":"外用：每晚1次","adverse":"红斑、脱屑","contraindications":"妊娠","storage":"室温避光"},
+  "异维A酸": {"indications":"重度痤疮","ingredients":"异维A酸（维A酸类）","dosage":"口服：0.5-1mg/kg每日分2次","adverse":"皮肤干燥、唇炎、致畸","contraindications":"妊娠","storage":"室温避光"},
+  "阿维A": {"indications":"银屑病","ingredients":"阿维A（维A酸类）","dosage":"口服：25-50mg每日1次","adverse":"皮肤干燥、唇炎","contraindications":"妊娠","storage":"室温"},
+  "克林霉素凝胶": {"indications":"痤疮","ingredients":"克林霉素（林可霉素类）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "红霉素软膏": {"indications":"皮肤感染","ingredients":"红霉素（大环内酯类）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "莫匹罗星软膏": {"indications":"皮肤感染","ingredients":"莫匹罗星（抗生素）","dosage":"外用：每日2-3次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "夫西地酸乳膏": {"indications":"皮肤感染","ingredients":"夫西地酸（抗生素）","dosage":"外用：每日2-3次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "酮康唑乳膏": {"indications":"真菌感染","ingredients":"酮康唑（咪唑类）","dosage":"外用：每日1-2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "克霉唑乳膏": {"indications":"真菌感染","ingredients":"克霉唑（咪唑类）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "咪康唑乳膏": {"indications":"真菌感染","ingredients":"咪康唑（咪唑类）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "益康唑乳膏": {"indications":"真菌感染","ingredients":"益康唑（咪唑类）","dosage":"外用：每日1-2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "特比萘芬乳膏": {"indications":"真菌感染","ingredients":"特比萘芬（丙烯胺类）","dosage":"外用：每日1-2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "联苯苄唑乳膏": {"indications":"真菌感染","ingredients":"联苯苄唑（咪唑类）","dosage":"外用：每日1次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "阿昔洛韦乳膏": {"indications":"单纯疱疹、带状疱疹","ingredients":"阿昔洛韦（抗病毒药）","dosage":"外用：每日4-6次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "喷昔洛韦乳膏": {"indications":"单纯疱疹","ingredients":"喷昔洛韦（抗病毒药）","dosage":"外用：每日4-6次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "氢化可的松乳膏": {"indications":"湿疹、皮炎","ingredients":"氢化可的松（皮质激素）","dosage":"外用：每日1-2次","adverse":"皮肤萎缩","contraindications":"皮肤感染","storage":"室温"},
+  "地塞米松乳膏": {"indications":"湿疹、皮炎","ingredients":"地塞米松（皮质激素）","dosage":"外用：每日1-2次","adverse":"皮肤萎缩","contraindications":"皮肤感染","storage":"室温"},
+  "曲安奈德乳膏": {"indications":"湿疹、皮炎","ingredients":"曲安奈德（皮质激素）","dosage":"外用：每日1-2次","adverse":"皮肤萎缩","contraindications":"皮肤感染","storage":"室温"},
+  "糠酸莫米松乳膏": {"indications":"湿疹、皮炎","ingredients":"糠酸莫米松（皮质激素）","dosage":"外用：每日1次","adverse":"皮肤萎缩","contraindications":"皮肤感染","storage":"室温"},
+  "卤米松乳膏": {"indications":"湿疹、皮炎、银屑病","ingredients":"卤米松（皮质激素）","dosage":"外用：每日1-2次","adverse":"皮肤萎缩","contraindications":"皮肤感染","storage":"室温"},
+  "丙酸氯倍他索乳膏": {"indications":"银屑病、湿疹","ingredients":"氯倍他索（强效皮质激素）","dosage":"外用：每日1-2次","adverse":"皮肤萎缩","contraindications":"皮肤感染","storage":"室温"},
+  "他克莫司软膏": {"indications":"特应性皮炎","ingredients":"他克莫司（钙调神经磷酸酶抑制剂）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "吡美莫司乳膏": {"indications":"特应性皮炎","ingredients":"吡美莫司（钙调神经磷酸酶抑制剂）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "卡泊三醇软膏": {"indications":"银屑病","ingredients":"卡泊三醇（维生素D类似物）","dosage":"外用：每日1-2次","adverse":"局部刺激","contraindications":"高钙血症","storage":"室温"},
+  "他卡西醇软膏": {"indications":"银屑病","ingredients":"他卡西醇（维生素D类似物）","dosage":"外用":"每日2次","adverse":"局部刺激","contraindications":"高钙血症","storage":"室温"},
+  "甲氨蝶呤": {"indications":"银屑病、类风湿关节炎","ingredients":"甲氨蝶呤（抗代谢药）","dosage":"口服：7.5-15mg每周1次","adverse":"肝毒性、骨髓抑制","contraindications":"妊娠、肝病","storage":"室温"},
+  "环孢素": {"indications":"银屑病、器官移植","ingredients":"环孢素（免疫抑制剂）","dosage":"口服：2.5-5mg/kg每日分2次","adverse":"肾毒性、高血压","contraindications":"肾功能不全","storage":"室温"},
+  "甲硝唑凝胶": {"indications":"玫瑰痤疮","ingredients":"甲硝唑（硝基咪唑类）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "壬二酸乳膏": {"indications":"痤疮、玫瑰痤疮","ingredients":"壬二酸（抗菌药）","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"},
+  "过氧化苯甲酰凝胶": {"indications":"痤疮","ingredients":"过氧化苯甲酰（抗菌药）","dosage":"外用：每日1-2次","adverse":"红斑、脱屑","contraindications":"对本品过敏","storage":"室温"},
+  "水杨酸软膏": {"indications":"角质层增厚、鸡眼","ingredients":"水杨酸（角质剥脱剂）","dosage":"外用：每日1次","adverse":"局部刺激","contraindications":"糖尿病","storage":"室温"},
+  "尿素软膏": {"indications":"皮肤干燥、角化过度","ingredients":"尿素（保湿剂）","dosage":"外用：每日2次","adverse":"无","contraindications":"对本品过敏","storage":"室温"},
+  "维胺酯维E乳膏": {"indications":"痤疮","ingredients":"维胺酯+维生素E","dosage":"外用：每日2次","adverse":"局部刺激","contraindications":"妊娠","storage":"室温"},
+  "炉甘石洗剂": {"indications":"湿疹、皮炎、痱子","ingredients":"炉甘石+氧化锌","dosage":"外用：每日2-3次摇匀后涂","adverse":"无","contraindications":"皮肤破损","storage":"室温"},
+  "氯化钠注射液": {"indications":"补液、药物稀释","ingredients":"氯化钠（生理盐水）","dosage":"静脉输注：按需","adverse":"水肿（过量）","contraindications":"心衰","storage":"室温"},
+  "葡萄糖注射液": {"indications":"低血糖、补液","ingredients":"葡萄糖","dosage":"静脉输注：按需","adverse":"高血糖","contraindications":"高血糖","storage":"室温"},
+  "葡萄糖酸钙": {"indications":"低钙血症、过敏","ingredients":"葡萄糖酸钙","dosage":"静脉：1-2g缓慢注射","adverse":"高钙血症","contraindications":"高钙血症","storage":"室温"},
+  "氯化钾": {"indications":"低钾血症","ingredients":"氯化钾","dosage":"口服：1-2g每日3次或静脉","adverse":"高钾血症","contraindications":"高钾血症","storage":"室温"},
+  "碳酸钙D3": {"indications":"骨质疏松、补钙","ingredients":"碳酸钙+维生素D3","dosage":"口服：1片每日1-2次","adverse":"便秘、高钙血症","contraindications":"高钙血症","storage":"室温"},
+  "葡萄糖酸锌": {"indications":"锌缺乏、食欲不振","ingredients":"葡萄糖酸锌","dosage":"口服：10-20mg每日2-3次","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "右旋糖酐铁": {"indications":"缺铁性贫血","ingredients":"右旋糖酐铁（铁剂）","dosage":"口服：50-100mg每日3次","adverse":"胃肠道不适、黑便","contraindications":"血色病","storage":"室温"},
+  "琥珀酸亚铁": {"indications":"缺铁性贫血","ingredients":"琥珀酸亚铁（铁剂）","dosage":"口服：0.1-0.2g每日3次","adverse":"胃肠道不适、黑便","contraindications":"血色病","storage":"室温"},
+  "多糖铁复合物": {"indications":"缺铁性贫血","ingredients":"多糖铁复合物","dosage":"口服：150-300mg每日1次","adverse":"胃肠道不适","contraindications":"血色病","storage":"室温"},
+  "叶酸": {"indications":"叶酸缺乏、妊娠期补充","ingredients":"叶酸（维生素B9）","dosage":"口服：0.4-5mg每日1次","adverse":"无","contraindications":"对本品过敏","storage":"室温避光"},
+  "维生素B12": {"indications":"巨幼细胞贫血、周围神经病","ingredients":"维生素B12（钴胺素）","dosage":"肌肉注射：0.025-0.1mg每日或隔日","adverse":"无","contraindications":"对本品过敏","storage":"室温避光"},
+  "甲钴胺": {"indications":"周围神经病","ingredients":"甲钴胺（活性维生素B12）","dosage":"口服：0.5mg每日3次","adverse":"无","contraindications":"对本品过敏","storage":"室温避光"},
+  "腺苷钴胺": {"indications":"巨幼细胞贫血","ingredients":"腺苷钴胺（活性维生素B12）","dosage":"口服：0.25-0.5mg每日3次","adverse":"无","contraindications":"对本品过敏","storage":"室温避光"},
+  "促红细胞生成素": {"indications":"肾性贫血","ingredients":"促红细胞生成素（EPO）","dosage":"皮下注射：50-150U/kg每周3次","adverse":"高血压、血栓","contraindications":"未控制高血压","storage":"2-8°C冷藏"},
+  "粒细胞集落刺激因子": {"indications":"中性粒细胞减少","ingredients":"G-CSF","dosage":"皮下注射：5-10μg/kg每日1次","adverse":"骨痛","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "沙格司亭": {"indications":"骨髓移植后中性粒细胞减少","ingredients":"GM-CSF","dosage":"皮下注射：250μg/m²每日1次","adverse":"发热、肌痛","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "氯雷他定": {"indications":"过敏性鼻炎、荨麻疹","ingredients":"氯雷他定（第二代抗组胺药）","dosage":"口服：10mg每日1次","adverse":"嗜睡少见","contraindications":"对本品过敏","storage":"室温"},
+  "西替利嗪": {"indications":"过敏性鼻炎、荨麻疹","ingredients":"西替利嗪（第二代抗组胺药）","dosage":"口服：10mg每日1次","adverse":"嗜睡","contraindications":"对本品过敏","storage":"室温"},
+  "非索非那定": {"indications":"过敏性鼻炎、荨麻疹","ingredients":"非索非那定（第二代抗组胺药）","dosage":"口服：60mg每日2次或180mg每日1次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "依巴斯汀": {"indications":"过敏性鼻炎、荨麻疹","ingredients":"依巴斯汀（第二代抗组胺药）","dosage":"口服：10mg每日1次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "咪唑斯汀": {"indications":"过敏性鼻炎、荨麻疹","ingredients":"咪唑斯汀（第二代抗组胺药）","dosage":"口服：10mg每日1次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "苯海拉明": {"indications":"过敏、失眠","ingredients":"苯海拉明（第一代抗组胺药）","dosage":"口服：25-50mg每日3次","adverse":"嗜睡","contraindications":"窄角型青光眼","storage":"室温"},
+  "氯苯那敏": {"indications":"过敏","ingredients":"氯苯那敏（第一代抗组胺药）","dosage":"口服：4mg每日3次","adverse":"嗜睡","contraindications":"窄角型青光眼","storage":"室温"},
+  "异丙嗪": {"indications":"过敏、止吐","ingredients":"异丙嗪（吩噻嗪类）","dosage":"口服：12.5-25mg每日2-3次","adverse":"嗜睡","contraindications":"2岁以下","storage":"室温"},
+  "酮替芬": {"indications":"过敏、哮喘预防","ingredients":"酮替芬（抗过敏药）","dosage":"口服：1mg每日2次","adverse":"嗜睡","contraindications":"对本品过敏","storage":"室温"},
+  "色甘酸钠": {"indications":"哮喘预防、过敏","ingredients":"色甘酸钠（肥大细胞稳定剂）","dosage":"吸入：20mg每日4次","adverse":"咳嗽","contraindications":"对本品过敏","storage":"室温"},
+  "孟鲁司特": {"indications":"哮喘、过敏性鼻炎","ingredients":"孟鲁司特（白三烯受体拮抗剂）","dosage":"口服：10mg每日1次睡前","adverse":"头痛、睡眠障碍","contraindications":"对本品过敏","storage":"室温"},
+  "扎鲁司特": {"indications":"哮喘","ingredients":"扎鲁司特（白三烯受体拮抗剂）","dosage":"口服：20mg每日2次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "普仑司特": {"indications":"哮喘","ingredients":"普仑司特（白三烯受体拮抗剂）","dosage":"口服：225mg每日2次","adverse":"头痛","contraindications":"对本品过敏","storage":"室温"},
+  "奥马珠单抗": {"indications":"重度哮喘、慢性荨麻疹","ingredients":"奥马珠单抗（抗IgE单抗）","dosage":"皮下注射：150-375mg每2-4周1次","adverse":"注射部位反应","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "羟氯喹": {"indications":"系统性红斑狼疮、类风湿关节炎","ingredients":"羟氯喹（抗疟药）","dosage":"口服：200-400mg每日1次","adverse":"视网膜病变","contraindications":"视网膜病变","storage":"室温"},
+  "沙利度胺": {"indications":"麻风结节性红斑、多发性骨髓瘤","ingredients":"沙利度胺（免疫调节剂）","dosage":"口服：100-300mg每日1次睡前","adverse":"周围神经病、致畸","contraindications":"妊娠","storage":"室温"},
+  "来那度胺": {"indications":"多发性骨髓瘤、骨髓增生异常综合征","ingredients":"来那度胺（免疫调节剂）","dosage":"口服：25mg每日1次×21天休7天","adverse":"骨髓抑制、血栓","contraindications":"妊娠","storage":"室温"},
+  "泊马度胺": {"indications":"多发性骨髓瘤","ingredients":"泊马度胺（免疫调节剂）","dosage":"口服：4mg每日1次×21天休7天","adverse":"骨髓抑制、血栓","contraindications":"妊娠","storage":"室温"},
+  "芦可替尼": {"indications":"骨髓纤维化、真性红细胞增多症","ingredients":"芦可替尼（JAK抑制剂）","dosage":"口服：15-20mg每日2次","adverse":"骨髓抑制、感染","contraindications":"严重血小板减少","storage":"室温"},
+  "托法替布": {"indications":"类风湿关节炎、银屑病关节炎","ingredients":"托法替布（JAK抑制剂）","dosage":"口服：5mg每日2次","adverse":"感染、恶性肿瘤","contraindications":"严重感染","storage":"室温"},
+  "巴瑞替尼": {"indications":"类风湿关节炎","ingredients":"巴瑞替尼（JAK抑制剂）","dosage":"口服：2-4mg每日1次","adverse":"感染、恶性肿瘤","contraindications":"严重感染","storage":"室温"},
+  "乌帕替尼": {"indications":"类风湿关节炎、特应性皮炎","ingredients":"乌帕替尼（JAK抑制剂）","dosage":"口服：15mg每日1次","adverse":"感染、恶性肿瘤","contraindications":"严重感染","storage":"室温"},
+  "度普利尤单抗": {"indications":"特应性皮炎、哮喘","ingredients":"度普利尤单抗（IL-4/13抑制剂）","dosage":"皮下注射：300mg首剂后150mg每2周1次","adverse":"注射部位反应","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "贝利木单抗": {"indications":"系统性红斑狼疮","ingredients":"贝利木单抗（抗BLyS单抗）","dosage":"静脉输注：10mg/kg每2周×3剂后每4周1次","adverse":"感染、输液反应","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "阿那白滞素": {"indications":"类风湿关节炎、Still病","ingredients":"阿那白滞素（IL-1受体拮抗剂）","dosage":"皮下注射：100mg每日1次","adverse":"注射部位反应、感染","contraindications":"严重感染","storage":"2-8°C冷藏"},
+  "卡那奴单抗": {"indications":"Still病、痛风急性发作","ingredients":"卡那奴单抗（IL-1β抑制剂）","dosage":"皮下注射：150mg单次","adverse":"感染","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "戈利木单抗": {"indications":"类风湿关节炎、强直性脊柱炎","ingredients":"戈利木单抗（TNF-α抑制剂）","dosage":"皮下注射：50mg每月1次","adverse":"感染","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "赛妥珠单抗": {"indications":"类风湿关节炎、克罗恩病","ingredients":"赛妥珠单抗（TNF-α抑制剂）","dosage":"皮下注射：400mg第0、2、4周后每2周200mg","adverse":"感染","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "阿巴西普": {"indications":"类风湿关节炎","ingredients":"阿巴西普（T细胞共刺激调节剂）","dosage":"皮下注射：125mg每周1次","adverse":"感染","contraindications":"活动性感染","storage":"2-8°C冷藏"},
+  "贝达喹啉": {"indications":"耐多药结核病","ingredients":"贝达喹啉（抗结核药）","dosage":"口服：400mg每日1次×2周后200mg每周3次×22周","adverse":"QT延长","contraindications":"QT延长","storage":"室温"},
+  "德拉马尼": {"indications":"耐多药结核病","ingredients":"德拉马尼（抗结核药）","dosage":"口服：100mg每日2次×24周","adverse":"QT延长","contraindications":"QT延长","storage":"室温"},
+  "利奈唑胺": {"indications":"结核病、革兰阳性菌感染","ingredients":"利奈唑胺（恶唑烷酮类）","dosage":"口服：600mg每日2次","adverse":"骨髓抑制、周围神经病","contraindications":"MAOI合用","storage":"室温"},
+  "氯法齐明": {"indications":"麻风、耐多药结核病","ingredients":"氯法齐明（抗麻风药）","dosage":"口服：100-300mg每日1次","adverse":"皮肤色素沉着","contraindications":"对本品过敏","storage":"室温"},
+  "乙胺丁醇": {"indications":"结核病","ingredients":"乙胺丁醇（抗结核药）","dosage":"口服：15-25mg/kg每日1次","adverse":"视神经炎","contraindications":"视神经炎","storage":"室温"},
+  "吡嗪酰胺": {"indications":"结核病","ingredients":"吡嗪酰胺（抗结核药）","dosage":"口服：15-30mg/kg每日1次","adverse":"肝毒性、高尿酸血症","contraindications":"严重肝功能不全","storage":"室温"},
+  "链霉素": {"indications":"结核病","ingredients":"链霉素（氨基糖苷类）","dosage":"肌肉注射：15mg/kg每日1次","adverse":"耳毒性、肾毒性","contraindications":"妊娠","storage":"室温"},
+  "对氨基水杨酸": {"indications":"结核病","ingredients":"对氨基水杨酸（抗结核药）","dosage":"口服：8-12g每日分2-3次","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "环丝氨酸": {"indications":"耐多药结核病","ingredients":"环丝氨酸（抗结核药）","dosage":"口服：250-500mg每日2次","adverse":"精神症状、癫痫","contraindications":"癫痫","storage":"室温"},
+  "卷曲霉素": {"indications":"耐多药结核病","ingredients":"卷曲霉素（多肽类）","dosage":"肌肉注射：15mg/kg每日1次","adverse":"耳毒性、肾毒性","contraindications":"肾功能不全","storage":"室温"},
+  "氨苯砜": {"indications":"麻风","ingredients":"氨苯砜（抗麻风药）","dosage":"口服：100mg每日1次","adverse":"溶血性贫血、皮疹","contraindications":"对本品过敏","storage":"室温"},
+  "氯法齐明": {"indications":"麻风","ingredients":"氯法齐明（抗麻风药）","dosage":"口服：50-100mg每日1次","adverse":"皮肤色素沉着","contraindications":"对本品过敏","storage":"室温"},
+  "利福布汀": {"indications":"结核病、鸟分枝杆菌感染","ingredients":"利福布汀（利福霉素类）","dosage":"口服：300mg每日1次","adverse":"肝毒性、葡萄膜炎","contraindications":"严重肝功能不全","storage":"室温"},
+  "利福喷丁": {"indications":"结核病","ingredients":"利福喷丁（利福霉素类）","dosage":"口服：600mg每周2次","adverse":"肝毒性、体液变红","contraindications":"严重肝功能不全","storage":"室温"},
+  "阿奇霉素": {"indications":"鸟分枝杆菌感染","ingredients":"阿奇霉素（大环内酯类）","dosage":"口服：500mg每日1次","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "克拉霉素": {"indications":"鸟分枝杆菌感染","ingredients":"克拉霉素（大环内酯类）","dosage":"口服：500mg每日2次","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "乙胺嘧啶": {"indications":"弓形虫病、疟疾","ingredients":"乙胺嘧啶（抗疟药）","dosage":"口服：25-50mg每周1次或每日","adverse":"骨髓抑制","contraindications":"妊娠","storage":"室温"},
+  "磺胺多辛-乙胺嘧啶": {"indications":"疟疾","ingredients":"磺胺多辛+乙胺嘧啶","dosage":"口服：1-3片单次","adverse":"过敏、骨髓抑制","contraindications":"磺胺过敏","storage":"室温"},
+  "青蒿琥酯": {"indications":"疟疾","ingredients":"青蒿琥酯（青蒿素类）","dosage":"口服：100mg每日1次×5天或静脉","adverse":"头晕","contraindications":"妊娠早期","storage":"室温"},
+  "蒿甲醚": {"indications":"疟疾","ingredients":"蒿甲醚（青蒿素类）","dosage":"口服：80mg每日1次×5天","adverse":"头晕","contraindications":"妊娠早期","storage":"室温"},
+  "双氢青蒿素哌喹": {"indications":"疟疾","ingredients":"双氢青蒿素+哌喹","dosage":"口服：2片每日1次×3天","adverse":"头晕","contraindications":"对本品过敏","storage":"室温"},
+  "甲硝唑": {"indications":"滴虫病、厌氧菌感染","ingredients":"甲硝唑（硝基咪唑类）","dosage":"口服：250-500mg每日3次","adverse":"恶心、金属味","contraindications":"妊娠早期","storage":"室温"},
+  "阿苯达唑": {"indications":"肠道寄生虫病","ingredients":"阿苯达唑（苯并咪唑类）","dosage":"口服：400mg单次或每日×3天","adverse":"胃肠道不适","contraindications":"妊娠","storage":"室温"},
+  "甲苯咪唑": {"indications":"肠道寄生虫病","ingredients":"甲苯咪唑（苯并咪唑类）","dosage":"口服：100mg每日2次×3天","adverse":"胃肠道不适","contraindications":"妊娠","storage":"室温"},
+  "吡喹酮": {"indications":"血吸虫病、绦虫病","ingredients":"吡喹酮（抗蠕虫药）","dosage":"口服：10-25mg/kg单次或分次","adverse":"头晕、恶心","contraindications":"对本品过敏","storage":"室温"},
+  "伊维菌素": {"indications":"疥疮、盘尾丝虫病","ingredients":"伊维菌素（抗寄生虫药）","dosage":"口服：150-200μg/kg单次","adverse":"头晕、瘙痒","contraindications":"对本品过敏","storage":"室温"},
+  "氯喹": {"indications":"疟疾、系统性红斑狼疮","ingredients":"氯喹（抗疟药）","dosage":"口服：首剂1g后0.5g每6-8h或每周","adverse":"视网膜病变","contraindications":"视网膜病变","storage":"室温"},
+  "羟氯喹": {"indications":"系统性红斑狼疮、类风湿关节炎","ingredients":"羟氯喹（抗疟药）","dosage":"口服：200-400mg每日1次","adverse":"视网膜病变","contraindications":"视网膜病变","storage":"室温"},
+  "伯氨喹": {"indications":"疟疾根治","ingredients":"伯氨喹（抗疟药）","dosage":"口服：15mg每日1次×14天","adverse":"溶血性贫血（G6PD缺乏）","contraindications":"G6PD缺乏","storage":"室温"},
+  "葡萄糖酸锑钠": {"indications":"利什曼病","ingredients":"葡萄糖酸锑钠（锑剂）","dosage":"静脉/肌肉：20mg/kg每日1次×20-30天","adverse":"心脏毒性","contraindications":"心功能不全","storage":"室温"},
+  "两性霉素B": {"indications":"深部真菌感染","ingredients":"两性霉素B（多烯类）","dosage":"静脉：0.5-1mg/kg每日1次","adverse":"肾毒性、发热","contraindications":"严重肾功能不全","storage":"2-8°C冷藏"},
+  "两性霉素B脂质体": {"indications":"深部真菌感染","ingredients":"两性霉素B脂质体","dosage":"静脉：3-5mg/kg每日1次","adverse":"肾毒性（较轻）","contraindications":"对本品过敏","storage":"2-8°C冷藏"}, 
+  "伏立康唑": {"indications":"侵袭性曲霉病","ingredients":"伏立康唑（三唑类）","dosage":"口服：200-400mg每日2次","adverse":"视觉障碍、肝毒性","contraindications":"对本品过敏","storage":"室温"},
+  "泊沙康唑": {"indications":"侵袭性真菌感染预防","ingredients":"泊沙康唑（三唑类）","dosage":"口服：200mg每日3次或300mg每日1次","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "卡泊芬净": {"indications":"侵袭性曲霉病、念珠菌病","ingredients":"卡泊芬净（棘白菌素类）","dosage":"静脉：首剂70mg后50mg每日1次","adverse":"肝酶升高","contraindications":"对本品过敏","storage":"室温"},
+  "米卡芬净": {"indications":"念珠菌病","ingredients":"米卡芬净（棘白菌素类）","dosage":"静脉：100-150mg每日1次","adverse":"肝酶升高","contraindications":"对本品过敏","storage":"室温"},
+  "阿尼芬净": {"indications":"念珠菌病","ingredients":"阿尼芬净（棘白菌素类）","dosage":"静脉：首剂200mg后100mg每日1次","adverse":"肝酶升高","contraindications":"对本品过敏","storage":"室温"},
+  "氟胞嘧啶": {"indications":"念珠菌病、隐球菌病","ingredients":"氟胞嘧啶（抗真菌药）","dosage":"口服：100-150mg/kg每日分4次","adverse":"骨髓抑制","contraindications":"对本品过敏","storage":"室温"},
+  "制霉菌素": {"indications":"口腔念珠菌病","ingredients":"制霉菌素（多烯类）","dosage":"口服：50万-100万U每日3-4次含服","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
+  "氟康唑": {"indications":"念珠菌病、隐球菌病","ingredients":"氟康唑（三唑类）","dosage":"口服：50-400mg每日1次","adverse":"肝酶升高","contraindications":"对本品过敏","storage":"室温"},
+  "伊曲康唑": {"indications":"曲霉病、组织胞浆菌病","ingredients":"伊曲康唑（三唑类）","dosage":"口服：200mg每日1-2次","adverse":"肝毒性、心衰","contraindications":"心衰","storage":"室温"},
+  "灰黄霉素": {"indications":"皮肤真菌感染","ingredients":"灰黄霉素（抗真菌药）","dosage":"口服：500mg每日1次","adverse":"头痛、肝毒性","contraindications":"妊娠","storage":"室温"},
+  "特比萘芬": {"indications":"甲真菌病、皮肤真菌感染","ingredients":"特比萘芬（丙烯胺类）","dosage":"口服：250mg每日1次×6-12周","adverse":"肝毒性","contraindications":"严重肝功能不全","storage":"室温"},
+  "阿莫罗芬": {"indications":"甲真菌病","ingredients":"阿莫罗芬（吗啉类）","dosage":"外用：每周1-2次×6-12月","adverse":"局部刺激","contraindications":"对本品过敏","storage":"室温"}};
 
 var DRUG_QA_RULES = [
   // 1. 感冒用药
@@ -8499,16 +8668,16 @@ function formatText(s){ return String(s||'').replace(/\n/g,'<br>'); }
 // ===== 兼容旧接口 =====
 // ===== AI配置（前端直连DashScope + 多级降级）=====
 var DASHSCOPE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
-// DASHSCOPE_KEY removed - use worker proxy
+var DASHSCOPE_KEY = 'sk-ws-H.RPXDXPM.QR4N.MEQCIE6SSVUu8Yes8dGMQLlsZeCRK1leXkHxV71ydOZayaG2AiBfOm0nM7Q0N84obq5gG5hO5EO2gILQeOmQ21soht7r5g';
 var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
 var SF_API = 'https://api.siliconflow.cn/v1/chat/completions';
 var SF_MODEL_THINK = 'deepseek-ai/DeepSeek-R1';
 
-var AI_SYS_PROMPT = '你是彩云智药AI智能药师助手。专业、准确地回答用药问题。直接针对问题给建议，使用emoji分段。涉及处方药提示「请在医生指导下使用」。严重症状建议就医。中文回答，简洁但完整。';
+var AI_SYS_PROMPT = '你是家庭药师AI智能药师助手。专业、准确地回答用药问题。直接针对问题给建议，使用emoji分段。涉及处方药提示「请在医生指导下使用」。严重症状建议就医。中文回答，简洁但完整。';
 
 function callPollinations(text, think){
   var model = think ? 'deepseek-reasoning' : 'openai';
-  var sys = currentLang==='en' ? 'You are Caiyun Smart Pharmacy AI assistant. Answer medication questions professionally and accurately. Always remind users to consult healthcare professionals for serious conditions. Be concise but thorough.' : '你是彩云智药AI药师助手。专业、准确地回答用药问题。提醒用户严重情况需就医。简洁但完整地回答。';
+  var sys = currentLang==='en' ? 'You are Family Pharmacist AI assistant. Answer medication questions professionally and accurately. Always remind users to consult healthcare professionals for serious conditions. Be concise but thorough.' : '你是家庭药师AI药师助手。专业、准确地回答用药问题。提醒用户严重情况需就医。简洁但完整地回答。';
   var body = {model:model, messages:[{role:'system',content:sys},{role:'user',content:text}], temperature:0.3};
   var ctrl = new AbortController();
   var timer = setTimeout(function(){ctrl.abort();}, 8000);
@@ -8615,32 +8784,45 @@ function callSiliconFlow(text, think){
 }
 
 // ===== 发送聊天 =====
-async function sendChat() {
-  const input = document.getElementById('chatInput');
-  const question = input.value.trim();
-  if (!question) return;
-
-  // 显示用户消息
-  const messagesDiv = document.getElementById('chatMessages');
-  messagesDiv.innerHTML += `<div class="msg msg-user"><div class="bubble">${question}</div></div>`;
-  input.value = '';
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-  // 显示加载中
-  const loadingId = 'loading-' + Date.now();
-  messagesDiv.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><div class="bubble">思考中...</div></div>`;
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-  try {
-    // 调用 Groq API
-    const answer = await callGroqAPI(question);
-    
-    // 更新消息
-    document.getElementById(loadingId).querySelector('.bubble').textContent = answer;
-  } catch (e) {
-    console.error('Groq API 失败:', e);
-    document.getElementById(loadingId).querySelector('.bubble').textContent = '抱歉，AI 服务暂时不可用，请稍后再试。';
-  }
+function sendChat(){
+  var q = chatInput.value.trim();
+  if(!q) return;
+  var thinkMode = document.getElementById('thinkToggle') && document.getElementById('thinkToggle').checked;
+  var aiStatusEl = document.getElementById('aiStatus');
+  chatMessages.innerHTML += '<div class="msg msg-user"><div class="bubble">'+formatText(q)+'</div></div>';
+  chatInput.value = '';
+  // 显示加载状态
+  var loadId = 'load_'+Date.now();
+  var channelHint = currentLang==='en' ? '🤖 AI' : '🤖 AI';
+  if(aiStatusEl) aiStatusEl.textContent = channelHint+' '+(currentLang==='en'?'Analyzing...':'分析中...');
+  chatMessages.innerHTML += '<div class="msg msg-ai" id="'+loadId+'"><div class="bubble"><div class="loading-dots">'+T[currentLang].thinkingText+'</div></div></div>';
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  callAI(q, thinkMode).then(function(result){
+    var el = document.getElementById(loadId);
+    if(!el) return;
+    var html = '';
+    if(result.thinking){
+      html += '<details class="think-block" open><summary>🧠 思考过程</summary><div class="think-content">'+formatText(result.thinking)+'</div></details>';
+    }
+    html += '<div class="answer-text">'+formatText(result.answer)+'</div>';
+    if(result.noMatch){
+      // 本地无匹配的特殊提示
+      if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'📋 Local KB':'📋 本地知识库';
+    } else if(result.fallback){
+      html += '<div class="fallback-hint">'+(currentLang==='en'?'📋 Local rule engine reply (AI service unavailable)':'📋 本地规则引擎回复（AI服务暂不可用）')+'</div>';
+      if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'⚠️ Local Engine':'⚠️ 本地引擎';
+    } else {
+      if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'✅ Replied':'✅ 已回复';
+    }
+    el.innerHTML = '<div class="bubble">'+html+'</div>';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }).catch(function(e){
+    var el = document.getElementById(loadId);
+    if(!el) return;
+    el.innerHTML = '<div class="bubble error">⚠️ '+(e.name==='AbortError'?(currentLang==='en'?'Request timeout, please try again':'请求超时，请稍后重试'):(currentLang==='en'?'Network error: ':'网络错误: ')+e.message)+'</div>';
+    if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'❌ Failed':'❌ 失败';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
 }
 function setStatus(s){ if(statusBar) statusBar.textContent = s; }// ===== 相互作用关系网 =====
 if(interactBtn){
@@ -8660,10 +8842,9 @@ function showInteract(){
 
   // 如果只有d1
   if(d1 && !d2){
-    var _fd1 = fuzzyMatchDrug(d1);
-    if(_fd1 && INTERACT_DB[_fd1]){
+    if(INTERACT_DB[d1]){
       // d1在DB中,以d1为中心
-      showNetwork(_fd1, _fd1);
+      showNetwork(d1, d1);
     } else {
       // d1不在DB中，提示暂无该药物数据
       interactDetail.innerHTML = '<div style="color:#e53935;text-align:center;padding:20px">'+T[currentLang].noData+': '+drugLabel(d1)+'</div>';
@@ -8673,10 +8854,9 @@ function showInteract(){
 
   // 如果只有d2
   if(!d1 && d2){
-    var _fd2 = fuzzyMatchDrug(d2);
-    if(_fd2 && INTERACT_DB[_fd2]){
+    if(INTERACT_DB[d2]){
       // d2在DB中，以d2为中心
-      showNetwork(_fd2, _fd2);
+      showNetwork(d2, d2);
     } else {
       // d2不在DB中,提示暂无该药物数据
       interactDetail.innerHTML = '<div style="color:#e53935;text-align:center;padding:20px">'+T[currentLang].noData+': '+drugLabel(d2)+'</div>';
@@ -8688,12 +8868,10 @@ function showInteract(){
   if(d1 && d2){
     if(INTERACT_DB[d1]){
       // d1在DB中,以d1为中心,d2为查询目标
-      var _fda = fuzzyMatchDrug(d1), _fdb = fuzzyMatchDrug(d2);
-      showNetwork(_fda, _fdb || _fda);
+      showNetwork(d1, d2);
     } else if(INTERACT_DB[d2]){
       // d1不在DB中但d2在,以d2为中心,d1为查询目标
-      var _fdb2 = fuzzyMatchDrug(d2), _fda2 = fuzzyMatchDrug(d1);
-      showNetwork(_fdb2, _fda2 || _fdb2);
+      showNetwork(d2, d1);
     } else {
       // 都不在DB中,提示暂无该药物数据
       interactDetail.innerHTML = '<div style="color:#e53935;text-align:center;padding:20px">'+T[currentLang].noData+': '+drugLabel(d1)+' + '+drugLabel(d2)+'</div>';
@@ -9245,7 +9423,22 @@ var DRUG_NAME_MAP = {
 '重组人血小板生成素':'Thrombopoietin',
 '左氧氟沙星':'Levofloxacin'
 
-};
+, 
+  "伊马替尼": {"indications":"慢性粒细胞白血病、胃肠道间质瘤","ingredients":"伊马替尼（酪氨酸激酶抑制剂）","dosage":"口服：400mg每日1次","adverse":"水肿、恶心、肌肉痉挛","contraindications":"妊娠","storage":"室温"},
+  "吉非替尼": {"indications":"非小细胞肺癌（EGFR突变）","ingredients":"吉非替尼（EGFR-TKI）","dosage":"口服：250mg每日1次","adverse":"皮疹、腹泻、肝酶升高","contraindications":"对EGFR-TKI过敏","storage":"室温"},
+  "厄洛替尼": {"indications":"非小细胞肺癌、胰腺癌","ingredients":"厄洛替尼（EGFR-TKI）","dosage":"口服：150mg每日1次","adverse":"皮疹、腹泻、间质性肺病","contraindications":"妊娠","storage":"室温"},
+  "索拉非尼": {"indications":"肝癌、肾细胞癌","ingredients":"索拉非尼（多靶点激酶抑制剂）","dosage":"口服：400mg每日2次","adverse":"手足综合征、腹泻、高血压","contraindications":"妊娠","storage":"室温"},
+  "舒尼替尼": {"indications":"肾细胞癌、胃肠道间质瘤","ingredients":"舒尼替尼（多靶点激酶抑制剂）","dosage":"口服：50mg每日1次×4周休2周","adverse":"乏力、腹泻、手足综合征","contraindications":"妊娠","storage":"室温"},
+  "拉帕替尼": {"indications":"HER2阳性乳腺癌","ingredients":"拉帕替尼（HER2/EGFR-TKI）","dosage":"口服：1250mg每日1次","adverse":"腹泻、皮疹、心脏毒性","contraindications":"严重肝功能不全","storage":"室温"},
+  "克唑替尼": {"indications":"ALK阳性非小细胞肺癌","ingredients":"克唑替尼（ALK/ROS1抑制剂）","dosage":"口服：250mg每日2次","adverse":"视力障碍、恶心、水肿","contraindications":"妊娠","storage":"室温"},
+  "奥希替尼": {"indications":"EGFR T790M突变非小细胞肺癌","ingredients":"奥希替尼（第三代EGFR-TKI）","dosage":"口服：80mg每日1次","adverse":"腹泻、皮疹、间质性肺病","contraindications":"妊娠","storage":"室温"},
+  "阿来替尼": {"indications":"ALK阳性非小细胞肺癌","ingredients":"阿来替尼（ALK抑制剂）","dosage":"口服：600mg每日2次","adverse":"便秘、水肿、肌痛","contraindications":"妊娠","storage":"室温"},
+  "色瑞替尼": {"indications":"ALK阳性非小细胞肺癌","ingredients":"色瑞替尼（ALK抑制剂）","dosage":"口服：450mg每日1次","adverse":"腹泻、恶心、肝酶升高","contraindications":"妊娠","storage":"室温"},
+  "仑伐替尼": {"indications":"肝癌、甲状腺癌、肾癌","ingredients":"仑伐替尼（多靶点激酶抑制剂）","dosage":"口服：8-12mg每日1次","adverse":"高血压、腹泻、乏力","contraindications":"妊娠","storage":"室温"},
+  "瑞戈非尼": {"indications":"结直肠癌、胃肠道间质瘤","ingredients":"瑞戈非尼（多靶点激酶抑制剂）","dosage":"口服：160mg每日1次×3周休1周","adverse":"手足综合征、腹泻、高血压","contraindications":"妊娠","storage":"室温"},
+  "阿昔替尼": {"indications":"肾细胞癌","ingredients":"阿昔替尼（VEGFR抑制剂）","dosage":"口服：5mg每日2次","adverse":"高血压、腹泻、乏力","contraindications":"妊娠","storage":"室温"},
+  "培唑帕尼": {"indications":"肾细胞癌、软组织肉瘤","ingredients":"培唑帕尼（多靶点激酶抑制剂）","dosage":"口服：800mg每日1次","adverse":"高血压、腹泻、肝毒性","contraindications":"妊娠","storage":"室温"},
+  "凡德他尼": {"indications":"甲状腺髓样癌","ingredients":"凡德他尼（RET/VEGFR/EGFR抑制剂）","dosage":"口服：300mg每日1次","adverse":"腹泻、皮疹、QT延长","contraindications":"QT延长","storage":"室温"}};
 function drugLabel(name){ return currentLang==='en'?(DRUG_NAME_MAP[name]||name):name; }
 // ===== 联合用药审查功能 =====
 var _unionDrugCount = 2;
@@ -9686,7 +9879,7 @@ function getLocalAnswer(q) {
   }
 
   // 默认回复  // 默认回复
-  return currentLang==='en' ? 'Thank you for your question. I am Caiyun Smart Pharmacy AI, currently in local mode (no internet/API key needed), with limited capability.\n\nYou can try:\n1. Enter a specific drug name (e.g. "ibuprofen", "metformin")\n2. Describe symptoms for medication advice (e.g. "fever", "hypertension")\n3. Switch to "Interactions" page to check drug interactions\n4. Switch to "Food Precautions" page for dietary restrictions\n\n💡 The local knowledge base covers ~40 common drugs and medication guidance for common conditions.' : '感谢您的提问。我是彩云智药AI药师。\n\n⚠️ **当前AI在线服务暂时不可能**（网络连接失败），以下为本地规则引擎回复，内容有限。\n\n您可以尝试:\n1. **输入具体药品名称**查询(如"布洛芬"、"二甲双胍")\n2. **描述症状**获取用药建议(如"发烧"、"高血压")\n3. 切换至"**相互作用**"页面查询药物相互作用\n4. 切换至"**饮食禁忌**"页面查询饮食注意事项\n\n💡 如需获得完整AI智能问答体验，请稍后重试或检查网络连接。';
+  return currentLang==='en' ? 'Thank you for your question. I am Family Pharmacist AI, currently in local mode (no internet/API key needed), with limited capability.\n\nYou can try:\n1. Enter a specific drug name (e.g. "ibuprofen", "metformin")\n2. Describe symptoms for medication advice (e.g. "fever", "hypertension")\n3. Switch to "Interactions" page to check drug interactions\n4. Switch to "Food Precautions" page for dietary restrictions\n\n💡 The local knowledge base covers ~40 common drugs and medication guidance for common conditions.' : '感谢您的提问。我是家庭药师AI药师。\n\n⚠️ **当前AI在线服务暂时不可能**（网络连接失败），以下为本地规则引擎回复，内容有限。\n\n您可以尝试:\n1. **输入具体药品名称**查询(如"布洛芬"、"二甲双胍")\n2. **描述症状**获取用药建议(如"发烧"、"高血压")\n3. 切换至"**相互作用**"页面查询药物相互作用\n4. 切换至"**饮食禁忌**"页面查询饮食注意事项\n\n💡 如需获得完整AI智能问答体验，请稍后重试或检查网络连接。';
 }
 
 
@@ -9818,11 +10011,7 @@ function runDrugOCR(imageDataUrl) {
     // Match drug names
     var matchedDrugs = [];
     Object.keys(DRUG_GUIDE).forEach(function(name) {
-      var _ocrM = matchDrugsFromOCRText(text);
-    _ocrM.forEach(function(n){ matchedDrugs.push(n); });
-    Object.keys(DRUG_GUIDE).forEach(function(name) {
-      if (_ocrM.indexOf(name) === -1 && text.toLowerCase().indexOf(name.toLowerCase()) !== -1) matchedDrugs.push(name);
-    });
+      if (text.toLowerCase().indexOf(name.toLowerCase()) !== -1) matchedDrugs.push(name);
     });
 
     if (matchedDrugs.length > 0) {
@@ -9850,201 +10039,6 @@ function runDrugOCR(imageDataUrl) {
   });
 }
 
-
-
-// ===== 统一 AI 调用（走 Cloudflare Worker 代理，无需 key）=====
-function aiWorkerChat(text, think) {
-  return fetch('https://ai-pharmacy.xushengqin666.workers.dev', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: think ? 'deepseek-r1' : 'llama-3.3-70b-versatile',
-      messages: [{ role: 'user', content: text }],
-      max_tokens: 800
-    })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(j) {
-    var ans = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
-    return { answer: ans || '暂无回复', thinking: null, fallback: false };
-  });
-}
-
-// 重写 callAI：优先走 Worker 代理
-function callAI(text, think) {
-  return aiWorkerChat(text, think).catch(function(e) {
-    console.warn('[AI] Worker 代理失败:', e.message);
-    return localFallback(text);
-  });
-}
-
-// 重写 callGroqAPI 也走代理（避免 key）
-function callGroqAPI(question) {
-  return aiWorkerChat(question, false).then(function(r) { return r.answer; });
-}
-
-// 重写 callDashScope 也走代理
-function callDashScope(text, think) {
-  return aiWorkerChat(text, think);
-}
-
-// ===== 药品模糊匹配 =====
-// 症状同义词：用户输入 → 数据库用词
-var DRUG_SYNONYMS = {
-  '发烧': '发热', '高热': '发热', '发高烧': '发热',
-  '伤风': '感冒', '着凉': '感冒', '流涕': '感冒', '鼻塞': '感冒',
-  '血压高': '高血压', '降血压': '高血压',
-  '高血糖': '糖尿病', '降糖': '糖尿病', '血糖高': '糖尿病',
-  '血脂高': '高血脂', '降脂': '高血脂',
-  '胃疼': '胃痛', '胃胀痛': '胃痛', '反酸': '胃酸过多', '烧心': '胃酸过多',
-  '拉肚子': '腹泻', '泄泻': '腹泻', '便溏': '腹泻',
-  '便秘': '便秘', '排便困难': '便秘',
-  '过敏': '过敏', '荨麻疹': '过敏', '皮疹': '过敏',
-  '咳嗽': '咳嗽', '干咳': '咳嗽', '咳痰': '咳嗽',
-  '嗓子疼': '喉咙痛', '喉咙发炎': '喉咙痛', '咽喉肿痛': '喉咙痛',
-  '头晕': '头晕', '眩晕': '头晕', '头昏': '头晕',
-  '恶心': '恶心', '想吐': '恶心', '反胃': '恶心',
-  '关节疼': '关节痛', '关节肿痛': '关节痛', '风湿痛': '关节痛',
-  '失眠': '失眠', '睡不着': '失眠', '安眠': '失眠',
-  '抗感染': '细菌感染', '消炎': '细菌感染', '抗菌': '细菌感染',
-  '止痛': '疼痛', '镇痛': '疼痛', '止疼': '疼痛'
-};
-
-// 商品名/品牌名 → 通用名
-var DRUG_BRAND_ALIAS = {
-  '芬必得': '布洛芬', '美林': '布洛芬', '恬倩': '布洛芬', '托恩': '布洛芬', '迪尔诺': '布洛芬',
-  '扑热息痛': '对乙酰氨基酚', '泰诺': '对乙酰氨基酚', '必理通': '对乙酰氨基酚', '百服宁': '对乙酰氨基酚', '醋氨酚': '对乙酰氨基酚',
-  '拜阿司匹灵': '阿司匹林', '巴米尔': '阿司匹林', '乙酰水杨酸': '阿司匹林',
-  '世福素': '头孢克肟', '阿莫仙': '阿莫西林', '阿莫灵': '阿莫西林', '联邦阿莫仙': '阿莫西林',
-  '格华止': '二甲双胍', '美迪康': '二甲双胍', '迪化': '二甲双胍',
-  '络活喜': '氨氯地平', '压氏达': '氨氯地平',
-  '波立维': '氯吡格雷', '泰嘉': '氯吡格雷',
-  '立普妥': '阿托伐他汀', '阿乐': '阿托伐他汀',
-  '洛赛克': '奥美拉唑', '奥克': '奥美拉唑', '金奥康': '奥美拉唑',
-  '代文': '缬沙坦', '缬克': '缬沙坦',
-  '心痛定': '硝苯地平', '拜新同': '硝苯地平', '伲福达': '硝苯地平',
-  '西力欣': '头孢呋辛', '达力新': '头孢呋辛',
-  '罗氏芬': '头孢曲松', '菌必治': '头孢曲松',
-  '可乐必妥': '左氧氟沙星', '左克': '左氧氟沙星',
-  '罗力得': '罗红霉素', '严迪': '罗红霉素',
-  '思密达': '蒙脱石散',
-  '顺尔宁': '孟鲁司特', '雷诺考特': '布地奈德', '普米克': '布地奈德',
-  '万托林': '沙丁胺醇', '普米克令舒': '吸入用布地奈德混悬液'
-};
-
-
-function stripDosageForm(name) {
-  return name.replace(/(缓释|控释|肠溶|分散|普通|薄膜衣|糖衣|胶囊|片|颗粒|口服液|口服溶液|注射液|粉针|粉|膏|软膏|乳膏|凝胶|糖浆|滴丸|含片|泡腾片|软胶囊|滴剂|贴剂|栓剂|气雾剂|喷雾剂|混悬液|混悬滴剂|干混悬剂|缓释胶囊|缓释片|控释片|口崩片|咀嚼片|分散片|肠溶片|肠溶胶囊|阴??道?片|阴道?软胶囊)$/g, '').trim();
-}
-
-function fuzzyMatchDrug(input) {
-  if (!input || !window.DRUG_GUIDE) return null;
-  input = (input || '').trim().replace(/药$/,'');
-  if (!input) return null;
-  var lower = input.toLowerCase();
-
-  // 1. 精确匹配
-  if (DRUG_GUIDE[input]) return input;
-
-  // 2. 去除剂型后匹配
-  var stripped = stripDosageForm(input);
-  if (DRUG_GUIDE[stripped]) return stripped;
-  for (var k in DRUG_GUIDE) {
-    if (stripDosageForm(k) === stripped) return k;
-  }
-
-  // 3. 品牌名/商品名匹配
-  if (DRUG_BRAND_ALIAS[lower]) return DRUG_BRAND_ALIAS[lower];
-  if (DRUG_BRAND_ALIAS[stripped.toLowerCase()]) return DRUG_BRAND_ALIAS[stripped.toLowerCase()];
-  for (var ba in DRUG_BRAND_ALIAS) {
-    if (DRUG_BRAND_ALIAS[ba].toLowerCase() === lower) return DRUG_BRAND_ALIAS[ba];
-    if (ba.toLowerCase().indexOf(lower) >= 0) return DRUG_BRAND_ALIAS[ba];
-  }
-
-  // 4. 包含匹配（输入包含药名 或 药名包含输入）
-  for (var k2 in DRUG_GUIDE) {
-    var kl = k2.toLowerCase();
-    if (kl.indexOf(lower) >= 0 || lower.indexOf(kl) >= 0) return k2;
-  }
-
-  return null;
-}
-
-// 从 OCR 文本中匹配药品
-function matchDrugsFromOCRText(text) {
-  if (!text || !window.DRUG_GUIDE) return [];
-  var matched = {};
-  var lines = text.split(/[\n\r\s，,。.、；;:：]+/);
-  lines.forEach(function(line) {
-    line = line.trim();
-    if (line.length < 2) return;
-    var fm = fuzzyMatchDrug(line);
-    if (fm && !matched[fm]) matched[fm] = true;
-  });
-  // 也做整体包含匹配
-  for (var k in DRUG_GUIDE) {
-    if (text.toLowerCase().indexOf(k.toLowerCase()) >= 0 && !matched[k]) matched[k] = true;
-  }
-  return Object.keys(matched);
-}
-
-// ===== 症状搜药 =====
-function searchBySymptom() {
-  var input = document.getElementById('symptomInput');
-  if (!input) return;
-  var query = input.value.trim();
-  if (!query) { showToast('请输入症状'); return; }
-  showToast('🔍 正在匹配药品...');
-  var results = matchDrugsBySymptom(query);
-  showSymptomResults(query, results);
-}
-
-function matchDrugsBySymptom(query) {
-  if (!window.DRUG_GUIDE) return [];
-  var rawKw = query.toLowerCase().split(/[\s,，、]+/).filter(function(k){return k.length >= 1;});
-  var keywords = [];
-  rawKw.forEach(function(k){
-    k = k.replace(/药$/,'');  // 剥掉结尾的"药"字
-    keywords.push(k);
-    if (DRUG_SYNONYMS[k]) keywords.push(DRUG_SYNONYMS[k]);
-    // 反向：输入是标准词时，也尝试别名
-    for (var _sk in DRUG_SYNONYMS) { if (DRUG_SYNONYMS[_sk] === k && _sk !== k) keywords.push(_sk); }
-  });
-  var results = [];
-  for (var name in DRUG_GUIDE) {
-    var d = DRUG_GUIDE[name];
-    var score = 0;
-    var text = (name + ' ' + (d.indications || '') + ' ' + (d.category || '') + ' ' + (d.ingredients || '')).toLowerCase();
-    keywords.forEach(function(kw) {
-      if (!kw) return;
-      if (text.indexOf(kw) >= 0) {
-        score += kw.length * 2;
-        if (name.toLowerCase().indexOf(kw) >= 0) score += 5;
-      }
-    });
-    if (score > 0) results.push({ name: name, score: score, drug: d });
-  }
-  results.sort(function(a, b) { return b.score - a.score; });
-  return results.slice(0, 12);
-}
-
-function showSymptomResults(query, results) {
-  var container = document.getElementById('symptomResults');
-  if (!container) return;
-  if (results.length === 0) {
-    container.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">未找到匹配「' + query + '」的药品，试试更具体的症状描述</div>';
-    return;
-  }
-  var h = '<div style="padding:10px 0;font-size:13px;color:#666;">症状「' + query + '」匹配到 ' + results.length + ' 个相关药品：</div>';
-  results.forEach(function(r) {
-    h += '<div onclick="showDrugDetail(\'' + r.name + '\')" style="background:#fff;padding:12px;margin-bottom:8px;border-radius:8px;cursor:pointer;border:1px solid #f0f0f0;box-shadow:0 1px 3px rgba(0,0,0,.05)">' +
-      '<div style="font-weight:700;color:#2e7d32;font-size:15px;">💊 ' + r.name + '</div>' +
-      '<div style="font-size:12px;color:#888;margin-top:4px;line-height:1.5;">' + (r.drug.indications || '').slice(0, 70) + '</div>' +
-      '</div>';
-  });
-  container.innerHTML = h;
-}
-
 </script>
       <!-- 辨证报告面板 -->
       <div id="tab-report" class="tab-content" style="display:none">
@@ -10062,6 +10056,673 @@ function showSymptomResults(query, results) {
         </div>
       </div>
 
+<!-- 服药提醒 Tab 内容 -->
+<div id="tab-reminder" class="tab-content">
+  <div class="card">
+    <div class="card-title">⏰ 服药提醒</div>
+    
+    <!-- 添加提醒表单 -->
+    <div style="background:#f8f9fa;padding:16px;border-radius:10px;margin-bottom:16px">
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">添加新提醒</div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">药品名称</label>
+        <input type="text" id="reminderDrugName" placeholder="如：布洛芬" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">服药时间</label>
+        <input type="time" id="reminderTime" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">重复频率</label>
+        <select id="reminderFrequency" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+          <option value="once">仅一次</option>
+          <option value="daily">每天</option>
+          <option value="weekday">仅工作日</option>
+          <option value="weekend">仅周末</option>
+          <option value="custom">自定义</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">剂量说明（可选）</label>
+        <input type="text" id="reminderDosage" placeholder="如：1片，饭后服用" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <button onclick="addReminder()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">+ 添加提醒</button>
+    </div>
+    
+    <!-- 提醒列表 -->
+    <div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">我的提醒</div>
+      <div id="reminderList">
+        <div style="text-align:center;color:#999;padding:20px;font-size:13px" id="noReminderHint">暂无提醒，添加您的第一个服药提醒吧</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 服药提醒功能
+let medicationReminders = [];
+
+// 加载提醒
+function loadReminders() {
+  try {
+    const saved = localStorage.getItem('medication_reminders');
+    if (saved) {
+      medicationReminders = JSON.parse(saved);
+    }
+  } catch(e) {
+    console.error('加载提醒失败:', e);
+    medicationReminders = [];
+  }
+  renderReminders();
+}
+
+// 保存提醒
+function saveReminders() {
+  try {
+    localStorage.setItem('medication_reminders', JSON.stringify(medicationReminders));
+  } catch(e) {
+    console.error('保存提醒失败:', e);
+  }
+}
+
+// 添加提醒
+function addReminder() {
+  const drugName = document.getElementById('reminderDrugName').value.trim();
+  const time = document.getElementById('reminderTime').value;
+  const frequency = document.getElementById('reminderFrequency').value;
+  const dosage = document.getElementById('reminderDosage').value.trim();
+  
+  if (!drugName) {
+    alert('请输入药品名称');
+    return;
+  }
+  
+  if (!time) {
+    alert('请选择服药时间');
+    return;
+  }
+  
+  const reminder = {
+    id: Date.now().toString(),
+    drugName: drugName,
+    time: time,
+    frequency: frequency,
+    dosage: dosage,
+    enabled: true,
+    createdAt: new Date().toISOString()
+  };
+  
+  medicationReminders.push(reminder);
+  saveReminders();
+  renderReminders();
+  
+  // 清空表单
+  document.getElementById('reminderDrugName').value = '';
+  document.getElementById('reminderTime').value = '';
+  document.getElementById('reminderDosage').value = '';
+  
+  // 请求通知权限
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  
+  alert('提醒已添加！');
+}
+
+// 删除提醒
+function deleteReminder(id) {
+  if (!confirm('确定删除此提醒？')) return;
+  
+  medicationReminders = medicationReminders.filter(r => r.id !== id);
+  saveReminders();
+  renderReminders();
+}
+
+// 切换提醒启用状态
+function toggleReminder(id) {
+  const reminder = medicationReminders.find(r => r.id === id);
+  if (reminder) {
+    reminder.enabled = !reminder.enabled;
+    saveReminders();
+    renderReminders();
+  }
+}
+
+// 渲染提醒列表
+function renderReminders() {
+  const listEl = document.getElementById('reminderList');
+  const noHint = document.getElementById('noReminderHint');
+  
+  if (medicationReminders.length === 0) {
+    if (noHint) noHint.style.display = 'block';
+    listEl.innerHTML = '';
+    if (noHint) listEl.appendChild(noHint);
+    return;
+  }
+  
+  if (noHint) noHint.style.display = 'none';
+  
+  let html = '';
+  medicationReminders.forEach(reminder => {
+    const frequencyText = {
+      'once': '仅一次',
+      'daily': '每天',
+      'weekday': '仅工作日',
+      'weekend': '仅周末',
+      'custom': '自定义'
+    }[reminder.frequency] || '每天';
+    
+    html += `
+      <div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px;${reminder.enabled ? '' : 'opacity:0.5'}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="font-size:20px">💊</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15px">${reminder.drugName}</div>
+            <div style="font-size:12px;color:#666">${reminder.time} | ${frequencyText}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onclick="toggleReminder('${reminder.id}')" style="padding:4px 8px;background:${reminder.enabled ? '#e8f5e9' : '#f5f5f5'};color:${reminder.enabled ? '#2e7d32' : '#999'};border:1px solid ${reminder.enabled ? '#2e7d32' : '#ddd'};border-radius:6px;font-size:12px;cursor:pointer">
+              ${reminder.enabled ? '✓ 启用' : '✕ 禁用'}
+            </button>
+            <button onclick="deleteReminder('${reminder.id}')" style="padding:4px 8px;background:#ffebee;color:#e53935;border:1px solid #ffcdd2;border-radius:6px;font-size:12px;cursor:pointer">删除</button>
+          </div>
+        </div>
+        ${reminder.dosage ? `<div style="font-size:13px;color:#555;padding:8px;background:#f8f9fa;border-radius:6px">${reminder.dosage}</div>` : ''}
+      </div>
+    `;
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// 检查提醒（每分钟检查一次）
+function checkReminders() {
+  const now = new Date();
+  const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+  
+  medicationReminders.forEach(reminder => {
+    if (!reminder.enabled) return;
+    
+    if (reminder.time === currentTime) {
+      // 触发提醒
+      triggerReminder(reminder);
+    }
+  });
+}
+
+// 触发提醒
+function triggerReminder(reminder) {
+  // 显示浏览器通知
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('服药提醒', {
+      body: `该服用${reminder.drugName}了！${reminder.dosage ? '\n' + reminder.dosage : ''}`,
+      icon: '/icon-192.png'
+    });
+  }
+  
+  // 播放提示音（如果有）
+  try {
+    const audio = new Audio('/reminder.mp3');
+    audio.play();
+  } catch(e) {}
+  
+  // 在页面上显示提醒
+  showReminderAlert(reminder);
+}
+
+// 显示提醒弹窗
+function showReminderAlert(reminder) {
+  const alertDiv = document.createElement('div');
+  alertDiv.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:16px 24px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;animation:slideDown 0.3s ease';  alertDiv.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">⏰ 服药提醒</div>
+    <div>该服用 <strong>${reminder.drugName}</strong> 了！</div>
+    ${reminder.dosage ? `<div style="font-size:13px;margin-top:4px;opacity:0.9">${reminder.dosage}</div>` : ''}
+  `;
+  
+  document.body.appendChild(alertDiv);
+  
+  setTimeout(() => {
+    alertDiv.style.animation = 'slideUp 0.3s ease';
+    setTimeout(() => alertDiv.remove(), 300);
+  }, 5000);
+}
+
+// 初始化提醒功能
+document.addEventListener('DOMContentLoaded', () => {
+  loadReminders();
+  
+  // 每分钟检查一次提醒
+  setInterval(checkReminders, 60000);
+  
+  // 请求通知权限
+  if ('Notification' in window && Notification.permission === 'default') {
+    setTimeout(() => {
+      Notification.requestPermission();
+    }, 2000);
+  }
+});
+
+// 添加动画样式
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideDown {
+    from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+<!-- 家庭成员管理 Tab -->
+<div id="tab-family" class="tab-content">
+  <div class="card">
+    <div class="card-title">👨‍👩‍👧 家庭成员管理</div>
+    
+    <!-- 添加成员表单 -->
+    <div style="background:#f8f9fa;padding:16px;border-radius:10px;margin-bottom:16px">
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">添加家庭成员</div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">姓名</label>
+        <input type="text" id="memberName" placeholder="如：张三" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">与您的关系</label>
+        <select id="memberRelation" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+          <option value="self">本人</option>
+          <option value="spouse">配偶</option>
+          <option value="father">父亲</option>
+          <option value="mother">母亲</option>
+          <option value="son">儿子</option>
+          <option value="daughter">女儿</option>
+          <option value="grandfather">祖父/外祖父</option>
+          <option value="grandmother">祖母/外祖母</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">性别</label>
+        <select id="memberGender" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+          <option value="">请选择</option>
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">出生年份（选填）</label>
+        <input type="number" id="memberBirthYear" placeholder="如：1985" min="1900" max="2030" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">健康状况（选填）</label>
+        <input type="text" id="memberHealth" placeholder="如：高血压、糖尿病、过敏史" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <div style="margin-bottom:10px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">当前用药（选填）</label>
+        <input type="text" id="memberMedications" placeholder="如：二甲双胍、氨氯地平" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+      </div>
+      
+      <button onclick="addFamilyMember()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">+ 添加成员</button>
+    </div>
+    
+    <!-- 成员列表 -->
+    <div>
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px">家庭成员</div>
+      <div id="familyMemberList">
+        <div style="text-align:center;color:#999;padding:20px;font-size:13px" id="noMemberHint">暂无家庭成员，添加后可在用药时获取个性化建议</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 家庭成员管理功能
+let familyMembers = [];
+
+const RELATION_MAP = {
+  'self': '本人',
+  'spouse': '配偶',
+  'father': '父亲',
+  'mother': '母亲',
+  'son': '儿子',
+  'daughter': '女儿',
+  'grandfather': '祖父/外祖父',
+  'grandmother': '祖母/外祖母',
+  'other': '其他'
+, 
+  "阿仑膦酸钠": {"indications":"骨质疏松","ingredients":"阿仑膦酸钠（双膦酸盐）","dosage":"口服：70mg每周1次，空腹晨服，30分钟内不进食","adverse":"食管刺激、肌肉骨骼疼痛","contraindications":"食管狭窄、肾功能不全","storage":"室温"},
+  "利塞膦酸钠": {"indications":"骨质疏松","ingredients":"利塞膦酸钠（双膦酸盐）","dosage":"口服：35mg每周1次或150mg每月1次","adverse":"胃肠道不适、肌肉骨骼疼痛","contraindications":"食管狭窄","storage":"室温"},
+  "唑来膦酸": {"indications":"骨质疏松、恶性肿瘤骨转移","ingredients":"唑来膦酸（双膦酸盐）","dosage":"静脉输注：5mg每年1次","adverse":"发热、肌痛、低钙血症","contraindications":"低钙血症、肾功能不全","storage":"室温"},
+  "地舒单抗": {"indications":"骨质疏松、骨转移","ingredients":"地舒单抗（RANKL抑制剂）","dosage":"皮下注射：60mg每6个月1次","adverse":"低钙血症、蜂窝织炎","contraindications":"低钙血症","storage":"2-8°C冷藏"},
+  "骨化三醇": {"indications":"骨质疏松、肾性骨病","ingredients":"骨化三醇（活性维生素D）","dosage":"口服：0.25-0.5μg每日1次","adverse":"高钙血症","contraindications":"高钙血症","storage":"室温避光"},
+  "阿法骨化醇": {"indications":"骨质疏松、肾性骨病","ingredients":"阿法骨化醇（维生素D类似物）","dosage":"口服：0.5-1μg每日1次","adverse":"高钙血症","contraindications":"高钙血症","storage":"室温"},
+  "依降钙素": {"indications":"骨质疏松、Paget病","ingredients":"依降钙素（降钙素类似物）","dosage":"肌肉注射：20U每周2次","adverse":"恶心、面部潮红","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "雷洛昔芬": {"indications":"绝经后骨质疏松","ingredients":"雷洛昔芬（选择性雌激素受体调节剂）","dosage":"口服：60mg每日1次","adverse":"潮热、静脉血栓","contraindications":"静脉血栓史","storage":"室温"},
+  "替勃龙": {"indications":"绝经后骨质疏松、更年期综合征","ingredients":"替勃龙（合成类固醇）","dosage":"口服：2.5mg每日1次","adverse":"阴道出血、体重增加","contraindications":"不明原因阴道出血","storage":"室温"},
+  "氯膦酸二钠": {"indications":"恶性肿瘤骨转移","ingredients":"氯膦酸二钠（双膦酸盐）","dosage":"口服：1600mg每日分2次","adverse":"胃肠道不适","contraindications":"肾功能不全","storage":"室温"},
+  "帕米膦酸二钠": {"indications":"恶性肿瘤骨转移、高钙血症","ingredients":"帕米膦酸二钠（双膦酸盐）","dosage":"静脉输注：60-90mg单次","adverse":"发热、肌痛","contraindications":"肾功能不全","storage":"室温"},
+  "伊班膦酸钠": {"indications":"骨质疏松、乳腺癌骨转移","ingredients":"伊班膦酸钠（双膦酸盐）","dosage":"口服：150mg每月1次或静脉3mg每3月1次","adverse":"胃肠道不适、流感样症状","contraindications":"食管狭窄","storage":"室温"},
+  "西格列汀": {"indications":"2型糖尿病","ingredients":"西格列汀（DPP-4抑制剂）","dosage":"口服：100mg每日1次","adverse":"鼻咽炎、头痛","contraindications":"1型糖尿病","storage":"室温"},
+  "维格列汀": {"indications":"2型糖尿病","ingredients":"维格列汀（DPP-4抑制剂）","dosage":"口服：50mg每日2次","adverse":"鼻咽炎、头晕","contraindications":"1型糖尿病","storage":"室温"},
+  "沙格列汀": {"indications":"2型糖尿病","ingredients":"沙格列汀（DPP-4抑制剂）","dosage":"口服：5mg每日1次","adverse":"上呼吸道感染、头痛","contraindications":"1型糖尿病","storage":"室温"},
+  "利格列汀": {"indications":"2型糖尿病","ingredients":"利格列汀（DPP-4抑制剂）","dosage":"口服：5mg每日1次","adverse":"鼻咽炎、背痛","contraindications":"1型糖尿病","storage":"室温"},
+  "阿格列汀": {"indications":"2型糖尿病","ingredients":"阿格列汀（DPP-4抑制剂）","dosage":"口服：25mg每日1次","adverse":"鼻咽炎、头痛","contraindications":"1型糖尿病","storage":"室温"},
+  "达格列净": {"indications":"2型糖尿病、心衰","ingredients":"达格列净（SGLT2抑制剂）","dosage":"口服：5-10mg每日1次晨服","adverse":"泌尿生殖道感染、低血糖（联用）","contraindications":"1型糖尿病","storage":"室温"},
+  "恩格列净": {"indications":"2型糖尿病、心衰","ingredients":"恩格列净（SGLT2抑制剂）","dosage":"口服：10mg每日1次","adverse":"泌尿生殖道感染","contraindications":"1型糖尿病","storage":"室温"},
+  "卡格列净": {"indications":"2型糖尿病","ingredients":"卡格列净（SGLT2抑制剂）","dosage":"口服：100mg每日1次","adverse":"泌尿生殖道感染、低血压","contraindications":"1型糖尿病","storage":"室温"}};
+
+const GENDER_MAP = {
+  'male': '男',
+  'female': '女'
+, 
+  "替米沙坦": {"indications":"高血压","ingredients":"替米沙坦（ARB）","dosage":"口服：40-80mg每日1次","adverse":"头晕、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "缬沙坦": {"indications":"高血压、心衰","ingredients":"缬沙坦（ARB）","dosage":"口服：80-160mg每日1次","adverse":"头晕、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "厄贝沙坦": {"indications":"高血压、糖尿病肾病","ingredients":"厄贝沙坦（ARB）","dosage":"口服：150-300mg每日1次","adverse":"头晕、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "坎地沙坦": {"indications":"高血压、心衰","ingredients":"坎地沙坦（ARB）","dosage":"口服：4-8mg每日1次","adverse":"头晕、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "奥美沙坦": {"indications":"高血压","ingredients":"奥美沙坦（ARB）","dosage":"口服：20mg每日1次","adverse":"头晕、腹泻","contraindications":"妊娠","storage":"室温"},
+  "氯沙坦氢氯噻嗪": {"indications":"高血压","ingredients":"氯沙坦+氢氯噻嗪（复方制剂）","dosage":"口服：50mg/12.5mg每日1次","adverse":"头晕、低钾血症","contraindications":"妊娠、无尿","storage":"室温"},
+  "缬沙坦氢氯噻嗪": {"indications":"高血压","ingredients":"缬沙坦+氢氯噻嗪（复方制剂）","dosage":"口服：80mg/12.5mg每日1次","adverse":"头晕、低钾血症","contraindications":"妊娠","storage":"室温"},
+  "培哚普利": {"indications":"高血压、心衰","ingredients":"培哚普利（ACEI）","dosage":"口服：4-8mg每日1次","adverse":"干咳、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "赖诺普利": {"indications":"高血压、心衰","ingredients":"赖诺普利（ACEI）","dosage":"口服：10-20mg每日1次","adverse":"干咳、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "雷米普利": {"indications":"高血压、心衰","ingredients":"雷米普利（ACEI）","dosage":"口服：2.5-5mg每日1次","adverse":"干咳、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "福辛普利": {"indications":"高血压、心衰","ingredients":"福辛普利（ACEI）","dosage":"口服：10-20mg每日1次","adverse":"干咳、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "贝那普利": {"indications":"高血压","ingredients":"贝那普利（ACEI）","dosage":"口服：10-20mg每日1次","adverse":"干咳、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "依那普利": {"indications":"高血压、心衰","ingredients":"依那普利（ACEI）","dosage":"口服：5-10mg每日1次","adverse":"干咳、高钾血症","contraindications":"妊娠","storage":"室温"},
+  "比索洛尔": {"indications":"高血压、心衰、冠心病","ingredients":"比索洛尔（β1阻滞剂）","dosage":"口服：2.5-10mg每日1次","adverse":"心动过缓、乏力","contraindications":"严重哮喘","storage":"室温"},
+  "卡维地洛": {"indications":"高血压、心衰","ingredients":"卡维地洛（α+β阻滞剂）","dosage":"口服：6.25-25mg每日2次","adverse":"头晕、心动过缓","contraindications":"严重哮喘","storage":"室温"},
+  "阿罗洛尔": {"indications":"高血压、心绞痛","ingredients":"阿罗洛尔（α+β阻滞剂）","dosage":"口服：10mg每日2次","adverse":"心动过缓、乏力","contraindications":"严重哮喘","storage":"室温"},
+  "奈必洛尔": {"indications":"高血压","ingredients":"奈必洛尔（β1阻滞剂）","dosage":"口服：5mg每日1次","adverse":"头痛、乏力","contraindications":"严重肝功能不全","storage":"室温"},
+  "拉贝洛尔": {"indications":"高血压（妊娠期）","ingredients":"拉贝洛尔（α+β阻滞剂）","dosage":"口服：100-200mg每日2-3次","adverse":"头晕、乏力","contraindications":"严重哮喘","storage":"室温"},
+  "特拉唑嗪": {"indications":"高血压、前列腺增生","ingredients":"特拉唑嗪（α1阻滞剂）","dosage":"口服：1-5mg每日1次睡前服","adverse":"首剂低血压、头晕","contraindications":"直立性低血压","storage":"室温"},
+  "多沙唑嗪": {"indications":"高血压、前列腺增生","ingredients":"多沙唑嗪（α1阻滞剂）","dosage":"口服：1-4mg每日1次","adverse":"首剂低血压、头晕","contraindications":"直立性低血压","storage":"室温"}};
+
+// 计算年龄
+function getAge(birthYear) {
+  if (!birthYear) return null;
+  const currentYear = new Date().getFullYear();
+  return currentYear - parseInt(birthYear);
+}
+
+// 加载成员
+function loadFamilyMembers() {
+  try {
+    const saved = localStorage.getItem('family_members');
+    if (saved) {
+      familyMembers = JSON.parse(saved);
+    }
+  } catch(e) {
+    console.error('加载成员失败:', e);
+    familyMembers = [];
+  }
+  renderFamilyMembers();
+  
+  // 同步到Supabase
+  if (typeof schedulePush === 'function') {
+    if(window.pharmacySync)window.pharmacySync.schedulePush('loadFamilyMembers');
+  }
+}
+
+// 保存成员
+function saveFamilyMembers() {
+  try {
+    localStorage.setItem('family_members', JSON.stringify(familyMembers));
+  } catch(e) {
+    console.error('保存成员失败:', e);
+  }
+  
+  // 同步到Supabase
+  if (typeof schedulePush === 'function') {
+    if(window.pharmacySync)window.pharmacySync.schedulePush('saveFamilyMembers');
+  }
+}
+
+// 添加成员
+function addFamilyMember() {
+  const name = document.getElementById('memberName').value.trim();
+  const relation = document.getElementById('memberRelation').value;
+  const gender = document.getElementById('memberGender').value;
+  const birthYear = document.getElementById('memberBirthYear').value;
+  const health = document.getElementById('memberHealth').value.trim();
+  const medications = document.getElementById('memberMedications').value.trim();
+  
+  if (!name) {
+    alert('请输入成员姓名');
+    return;
+  }
+  
+  const member = {
+    id: Date.now().toString(),
+    name: name,
+    relationship: relation,
+    gender: gender,
+    birthYear: birthYear ? parseInt(birthYear) : null,
+    health: health,
+    medications: medications,
+    createdAt: new Date().toISOString()
+  };
+  
+  familyMembers.push(member);
+  saveFamilyMembers();
+  renderFamilyMembers();
+  
+  // 清空表单
+  document.getElementById('memberName').value = '';
+  document.getElementById('memberRelation').value = 'self';
+  document.getElementById('memberGender').value = '';
+  document.getElementById('memberBirthYear').value = '';
+  document.getElementById('memberHealth').value = '';
+  document.getElementById('memberMedications').value = '';
+  
+  alert('家庭成员已添加！');
+}
+
+// 删除成员
+function deleteMember(id) {
+  if (!confirm('确定删除此成员？')) return;
+  
+  familyMembers = familyMembers.filter(m => m.id !== id);
+  saveFamilyMembers();
+  renderFamilyMembers();
+}
+
+// 编辑成员
+function editMember(id) {
+  const member = familyMembers.find(m => m.id === id);
+  if (!member) return;
+  
+  document.getElementById('memberName').value = member.name;
+  document.getElementById('memberRelation').value = member.relationship;
+  document.getElementById('memberGender').value = member.gender || '';
+  document.getElementById('memberBirthYear').value = member.birthYear || '';
+  document.getElementById('memberHealth').value = member.health || '';
+  document.getElementById('memberMedications').value = member.medications || '';
+  
+  // 删除旧的
+  familyMembers = familyMembers.filter(m => m.id !== id);
+  saveFamilyMembers();
+  renderFamilyMembers();
+  
+  alert('请在表单中修改后点击"添加成员"保存');
+}
+
+// 获取成员年龄描述
+function getAgeDesc(birthYear) {
+  const age = getAge(birthYear);
+  if (!age) return '';
+  
+  if (age >= 65) {
+    return `${age}岁（老年人）`;
+  } else if (age >= 18) {
+    return `${age}岁`;
+  } else if (age >= 6) {
+    return `${age}岁（儿童）`;
+  } else {
+    return `${age}岁（幼儿）`;
+  }
+}
+
+// 获取用药安全提示
+function getSafetyNote(member) {
+  const notes = [];
+  const age = getAge(member.birthYear);
+  const medications = member.medications.toLowerCase();
+  
+  // 年龄相关提示
+  if (age && age >= 65) {
+    notes.push('老年人用药需注意剂量调整');
+  }
+  if (age && age < 18) {
+    notes.push('儿童用药需按体重计算剂量');
+  }
+  
+  // 健康状况提示
+  const health = member.health.toLowerCase();
+  if (health.includes('肝') || health.includes('肾')) {
+    notes.push('肝/肾功能异常需慎用经肝肾代谢的药物');
+  }
+  if (health.includes('胃')) {
+    notes.push('胃病患者注意非甾体抗炎药的胃肠道刺激');
+  }
+  
+  // 当前用药提示
+  if (medications.includes('华法林')) {
+    notes.push('华法林用药期间需定期监测INR');
+  }
+  if (medications.includes('胰岛素')) {
+    notes.push('胰岛素使用需密切监测血糖');
+  }
+  if (medications.includes('地高辛')) {
+    notes.push('地高辛用药需监测心率和电解质');
+  }
+  
+  return notes;
+}
+
+// 渲染成员列表
+function renderFamilyMembers() {
+  const listEl = document.getElementById('familyMemberList');
+  const noHint = document.getElementById('noMemberHint');
+  
+  if (familyMembers.length === 0) {
+    if (noHint) noHint.style.display = 'block';
+    listEl.innerHTML = '';
+    if (noHint) listEl.appendChild(noHint);
+    return;
+  }
+  
+  if (noHint) noHint.style.display = 'none';
+  
+  let html = '';
+  familyMembers.forEach(member => {
+    const ageDesc = getAgeDesc(member.birthYear);
+    const relationText = RELATION_MAP[member.relationship] || member.relationship;
+    const genderText = GENDER_MAP[member.gender] || '';
+    const safetyNotes = getSafetyNote(member);
+    
+    // 头像颜色
+    const avatarColors = ['#e8f5e9', '#e3f2fd', '#fff3e0', '#fce4ec', '#f3e5f5'];
+    const avatarIndex = familyMembers.indexOf(member) % avatarColors.length;
+    
+    html += `
+      <div style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="width:50px;height:50px;border-radius:50%;background:${avatarColors[avatarIndex]};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+            ${member.gender === 'female' ? '👩' : '👨'}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-weight:600;font-size:16px">${member.name}</span>
+              <span style="font-size:12px;color:#666;background:#f5f5f5;padding:2px 8px;border-radius:10px">${relationText}</span>
+            </div>
+            <div style="font-size:13px;color:#666;margin-bottom:4px">
+              ${genderText ? genderText + ' | ' : ''}${ageDesc || '年龄不详'}
+            </div>
+            ${member.health ? `<div style="font-size:12px;color:#e53935;margin-bottom:4px">🏥 ${member.health}</div>` : ''}
+            ${member.medications ? `<div style="font-size:12px;color:#1565c0;margin-bottom:6px">💊 当前用药: ${member.medications}</div>` : ''}
+            
+            ${safetyNotes.length > 0 ? `
+              <div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;font-size:12px">
+                <div style="font-weight:600;color:#f57c00;margin-bottom:4px">⚠️ 用药提醒</div>
+                ${safetyNotes.map(n => `<div style="color:#666">• ${n}</div>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button onclick="editMember('${member.id}')" style="padding:4px 8px;background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb;border-radius:6px;font-size:12px;cursor:pointer">编辑</button>
+            <button onclick="deleteMember('${member.id}')" style="padding:4px 8px;background:#ffebee;color:#e53935;border:1px solid #ffcdd2;border-radius:6px;font-size:12px;cursor:pointer">删除</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// 获取指定成员
+function getFamilyMember(id) {
+  return familyMembers.find(m => m.id === id);
+}
+
+// 获取本人信息
+function getSelfInfo() {
+  return familyMembers.find(m => m.relationship === 'self');
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+  loadFamilyMembers();
+});
+</script>
+
+
+
+
+<!-- 用药指南 -->
+<div id="tab-guide" class="tab-content">
+  <div class="card">
+    <div class="card-title">🍽️ 饮食注意事项 & 食物-药物禁忌</div>
+    <div class="search-box" style="margin-bottom:10px">
+      <input id="foodDrugInput" placeholder="输入药品名称，如：头孢、华法林、二甲双胍..." style="flex:1;padding:10px 14px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;outline:none">
+      <button class="btn-primary" id="foodDrugBtn" onclick="searchFoodDrugInteraction()">查询</button>
+    </div>
+    <div id="foodDrugResult"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">⏰ 服药时间指导（时辰药理学）</div>
+    <div class="search-box" style="margin-bottom:10px">
+      <input id="timingInput" placeholder="输入药品名称，如：他汀、降压药、糖皮质激素..." style="flex:1;padding:10px 14px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;outline:none">
+      <button class="btn-primary" id="timingBtn" onclick="searchMedicationTiming()">查询</button>
+    </div>
+    <div id="timingResult"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📚 常见食物-药物禁忌速查</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+      <button onclick="quickFoodSearch('头孢')" style="background:#ffebee;color:#c62828;border:1px solid #ffcdd2;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer;font-weight:600">头孢+酒精</button>
+      <button onclick="quickFoodSearch('华法林')" style="background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer;font-weight:600">华法林+绿叶菜</button>
+      <button onclick="quickFoodSearch('二甲双胍')" style="background:#f3e5f5;color:#7b1fa2;border:1px solid #e1bee7;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer;font-weight:600">二甲双胍+酒</button>
+      <button onclick="quickFoodSearch('阿司匹林')" style="background:#fff8e1;color:#f57f17;border:1px solid #ffecb3;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer;font-weight:600">阿司匹林+银杏</button>
+      <button onclick="quickFoodSearch('他汀')" style="background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer;font-weight:600">他汀+西柚</button>
+      <button onclick="quickFoodSearch('降压药')" style="background:#fce4ec;color:#c2185b;border:1px solid #f8bbd0;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer;font-weight:600">降压药+香蕉</button>
+    </div>
+    <div id="foodQuickResult"></div>
+  </div>
+</div>
 <div class="bottom-nav">
   <a href="index.html" class="active">🏠 <span id="navHome">首页</span></a>
   <a href="insert.html">📄 <span id="navInsert">说明书</span></a>
@@ -10069,9 +10730,177 @@ function showSymptomResults(query, results) {
   <a href="member.html">👨‍👩‍👧 <span id="navMember">家庭</span></a>
   <a href="reminder.html">⏰ <span id="navReminder">提醒</span></a>
 </div>
+<script>
+// 食物-药物相互作用数据库
+const FOOD_DRUG_DB={
+  "头孢":{"food":"酒精（酒类、藿香正气水、酒心巧克力等）","effect":"双硫仑样反应：面部潮红、头痛、恶心、呕吐、心悸，严重者可发生休克甚至死亡","mechanism":"头孢类药物抑制乙醛脱氢酶，导致乙醛在体内蓄积","advice":"服用头孢期间及停药后7天内严格禁酒","level":"danger"},
+  "甲硝唑":{"food":"酒精","effect":"双硫仑样反应","mechanism":"甲硝唑抑制乙醛脱氢酶","advice":"服药期间及停药后3天内禁酒","level":"danger"},
+  "呋喃唑酮":{"food":"酒精、含酪胺食物（奶酪、酵母提取物）","effect":"双硫仑样反应、高血压危象","mechanism":"MAO抑制+乙醛脱氢酶抑制","advice":"停药2周内禁酒及含酪胺食物","level":"danger"},
+  "华法林":{"food":"绿叶蔬菜（菠菜、西兰花、芦笋）","effect":"降低华法林抗凝效果，增加血栓风险","mechanism":"维生素K是凝血因子合成必需辅酶，拮抗华法林","advice":"保持维生素K摄入稳定，勿突然大量增加或减少绿叶蔬菜","level":"caution"},
+  "华法林2":{"food":"西柚（葡萄柚）","effect":"增强华法林抗凝效果，增加出血风险","mechanism":"西柚抑制CYP3A4，减少华法林代谢","advice":"避免大量食用西柚或饮用西柚汁","level":"caution"},
+  "阿司匹林":{"food":"银杏叶、丹参、当归等活血类中药","effect":"增加出血风险","mechanism":"协同抑制血小板聚集","advice":"联用需严密监测出血倾向","level":"caution"},
+  "阿司匹林2":{"food":"酒精","effect":"增加胃肠道出血风险","mechanism":"协同损伤胃黏膜","advice":"避免饮酒，尤其是长期服用阿司匹林者","level":"caution"},
+  "二甲双胍":{"food":"酒精","effect":"增加乳酸酸中毒风险","mechanism":"酒精抑制糖异生，二甲双胍减少乳酸清除","advice":"服药期间避免大量饮酒","level":"danger"},
+  "他汀":{"food":"西柚（葡萄柚）","effect":"增加他汀血药浓度，增加肌病、肝损伤风险","mechanism":"西柚抑制CYP3A4，减少他汀代谢","advice":"服用他汀期间避免食用西柚或饮用西柚汁（阿托伐他汀、辛伐他汀尤其敏感）","level":"caution"},
+  "降压药":{"food":"香蕉、橙子、土豆等高钾食物（服用保钾利尿剂如螺内酯时）","effect":"高钾血症，严重可致心律失常","mechanism":"保钾利尿剂减少钾排泄，高钾食物进一步升高血钾","advice":"服用保钾利尿剂时限制高钾食物摄入","level":"caution"},
+  "降压药2":{"food":"甘草","effect":"升高血压，拮抗降压药效果","mechanism":"甘草酸模拟醛固酮，导致水钠潴留","advice":"服用降压药期间避免大量食用甘草或含甘草制品","level":"caution"},
+  "地高辛":{"food":"圣约翰草（贯叶连翘）","effect":"降低地高辛血药浓度，影响心衰治疗效果","mechanism":"圣约翰草诱导P-gp，增加地高辛排泄","advice":"避免同时服用圣约翰草制剂","level":"caution"},
+  "地高辛2":{"food":"高纤维食物","effect":"减少地高辛吸收","mechanism":"纤维吸附地高辛","advice":"地高辛与高纤维食物间隔2小时以上服用","level":"caution"},
+  "甲状腺素":{"food":"大豆制品、牛奶、钙片、铁剂","effect":"减少甲状腺素吸收","mechanism":"钙、铁、大豆蛋白与甲状腺素结合","advice":"甲状腺素与这些食物间隔4小时以上服用","level":"caution"},
+  "喹诺酮类":{"food":"牛奶、酸奶、钙片、含铁食物","effect":"减少抗生素吸收，降低疗效","mechanism":"金属离子与喹诺酮类螯合","advice":"服用左氧氟沙星、环丙沙星等时，与牛奶/钙/铁间隔2小时","level":"caution"},
+  "四环素":{"food":"牛奶、钙片、抗酸药","effect":"减少四环素吸收","mechanism":"钙与四环素螯合","advice":"服用四环素期间避免同时摄入乳制品或钙片","level":"caution"},
+  "左旋多巴":{"food":"高蛋白食物","effect":"减少左旋多巴吸收，影响帕金森治疗效果","mechanism":"氨基酸竞争肠道吸收通道","advice":"左旋多巴宜空腹服用，或与低蛋白餐同服","level":"caution"},
+  "MAO抑制剂":{"food":"含酪胺食物（奶酪、红酒、腌肉、酵母提取物）","effect":"高血压危象","mechanism":"MAO抑制导致酪胺无法正常代谢，大量酪胺释放去甲肾上腺素","advice":"服用MAO抑制剂期间严格限制含酪胺食物","level":"danger"},
+  "免疫抑制剂":{"food":"西柚","effect":"增加免疫抑制剂血药浓度，增加肾毒性","mechanism":"西柚抑制CYP3A4","advice":"器官移植患者服用免疫抑制剂期间禁食西柚","level":"danger"}
+, 
+  "环磷酰胺": {"indications":"淋巴瘤、白血病、乳腺癌","ingredients":"环磷酰胺（烷化剂）","dosage":"口服：50-150mg每日或静脉冲击","adverse":"骨髓抑制、出血性膀胱炎","contraindications":"妊娠","storage":"室温"},
+  "异环磷酰胺": {"indications":"软组织肉瘤、睾丸癌","ingredients":"异环磷酰胺（烷化剂）","dosage":"静脉：1.2-2.4g/m²每日×5天","adverse":"出血性膀胱炎、骨髓抑制","contraindications":"妊娠","storage":"室温"},
+  "卡莫司汀": {"indications":"脑瘤、淋巴瘤","ingredients":"卡莫司汀（亚硝脲类）","dosage":"静脉：200mg/m²每6周1次","adverse":"骨髓抑制、肺纤维化","contraindications":"妊娠","storage":"2-8°C冷藏"},
+  "洛莫司汀": {"indications":"脑瘤、霍奇金淋巴瘤","ingredients":"洛莫司汀（亚硝脲类）","dosage":"口服：100-130mg/m²每6周1次","adverse":"骨髓抑制、肺纤维化","contraindications":"妊娠","storage":"2-8°C冷藏"},
+  "甲氨蝶呤": {"indications":"白血病、骨肉瘤、类风湿关节炎","ingredients":"甲氨蝶呤（抗叶酸药）","dosage":"口服：7.5-15mg每周1次（RA）","adverse":"骨髓抑制、肝毒性、粘膜溃疡","contraindications":"妊娠、肾功能不全","storage":"室温"},
+  "氟尿嘧啶": {"indications":"结直肠癌、胃癌、乳腺癌","ingredients":"氟尿嘧啶（抗代谢药）","dosage":"静脉：370-600mg/m²每日×5天","adverse":"骨髓抑制、腹泻、口腔炎","contraindications":"妊娠","storage":"室温"},
+  "卡培他滨": {"indications":"结直肠癌、乳腺癌","ingredients":"卡培他滨（氟尿嘧啶前药）","dosage":"口服：1250mg/m²每日2次×14天休7天","adverse":"手足综合征、腹泻","contraindications":"妊娠","storage":"室温"},
+  "吉西他滨": {"indications":"胰腺癌、非小细胞肺癌","ingredients":"吉西他滨（抗代谢药）","dosage":"静脉：1000mg/m²第1、8天每3周","adverse":"骨髓抑制、恶心","contraindications":"妊娠","storage":"室温"},
+  "阿糖胞苷": {"indications":"急性白血病","ingredients":"阿糖胞苷（抗代谢药）","dosage":"静脉：100-200mg/m²每日×7天","adverse":"骨髓抑制、小脑毒性","contraindications":"妊娠","storage":"室温"},
+  "培美曲塞": {"indications":"非小细胞肺癌、间皮瘤","ingredients":"培美曲塞（抗叶酸药）","dosage":"静脉：500mg/m²每3周1次","adverse":"骨髓抑制、皮疹","contraindications":"妊娠","storage":"室温"},
+  "紫杉醇": {"indications":"乳腺癌、卵巢癌、肺癌","ingredients":"紫杉醇（紫杉烷类）","dosage":"静脉：135-175mg/m²每3周1次","adverse":"骨髓抑制、过敏、周围神经病","contraindications":"妊娠","storage":"室温"},
+  "多西他赛": {"indications":"乳腺癌、肺癌、前列腺癌","ingredients":"多西他赛（紫杉烷类）","dosage":"静脉：60-100mg/m²每3周1次","adverse":"骨髓抑制、体液潴留","contraindications":"妊娠","storage":"2-8°C冷藏"},
+  "长春新碱": {"indications":"白血病、淋巴瘤","ingredients":"长春新碱（长春花生物碱）","dosage":"静脉：1.4mg/m²每周1次","adverse":"周围神经病、便秘","contraindications":"妊娠","storage":"2-8°C冷藏"},
+  "长春瑞滨": {"indications":"非小细胞肺癌、乳腺癌","ingredients":"长春瑞滨（长春花生物碱）","dosage":"静脉：25-30mg/m²每周1次","adverse":"骨髓抑制、周围神经病","contraindications":"妊娠","storage":"2-8°C冷藏"},
+  "依托泊苷": {"indications":"小细胞肺癌、睾丸癌","ingredients":"依托泊苷（拓扑异构酶II抑制剂）","dosage":"口服：50mg每日或静脉","adverse":"骨髓抑制、脱发","contraindications":"妊娠","storage":"2-8°C冷藏"},
+  "伊立替康": {"indications":"结直肠癌","ingredients":"伊立替康（拓扑异构酶I抑制剂）","dosage":"静脉：125-180mg/m²每周×4休2周","adverse":"腹泻、骨髓抑制","contraindications":"妊娠","storage":"室温"},
+  "拓扑替康": {"indications":"卵巢癌、小细胞肺癌","ingredients":"拓扑替康（拓扑异构酶I抑制剂）","dosage":"静脉：1.5mg/m²每日×5天每3周","adverse":"骨髓抑制、恶心","contraindications":"妊娠","storage":"室温"},
+  "柔红霉素": {"indications":"急性白血病","ingredients":"柔红霉素（蒽环类）","dosage":"静脉：30-60mg/m²每日×3天","adverse":"骨髓抑制、心脏毒性","contraindications":"心功能不全","storage":"2-8°C冷藏"},
+  "多柔比星": {"indications":"乳腺癌、淋巴瘤、肉瘤","ingredients":"多柔比星（蒽环类）","dosage":"静脉：60-75mg/m²每3周1次","adverse":"骨髓抑制、心脏毒性","contraindications":"心功能不全","storage":"2-8°C冷藏"},
+  "表柔比星": {"indications":"乳腺癌、淋巴瘤","ingredients":"表柔比星（蒽环类）","dosage":"静脉：60-90mg/m²每3周1次","adverse":"骨髓抑制、心脏毒性","contraindications":"心功能不全","storage":"2-8°C冷藏"},
+  "米托蒽醌": {"indications":"乳腺癌、白血病","ingredients":"米托蒽醌（蒽醌类）","dosage":"静脉：12-14mg/m²每3周1次","adverse":"骨髓抑制、心脏毒性","contraindications":"心功能不全","storage":"室温"},
+  "博来霉素": {"indications":"霍奇金淋巴瘤、睾丸癌","ingredients":"博来霉素（抗肿瘤抗生素）","dosage":"静脉：10-20U每周1-2次","adverse":"肺纤维化、发热","contraindications":"肺功能不全","storage":"2-8°C冷藏"},
+  "丝裂霉素": {"indications":"胃癌、胰腺癌","ingredients":"丝裂霉素（抗肿瘤抗生素）","dosage":"静脉：10-20mg每6-8周1次","adverse":"骨髓抑制、肺纤维化","contraindications":"血小板减少","storage":"室温"},
+  "顺铂": {"indications":"睾丸癌、卵巢癌、肺癌","ingredients":"顺铂（铂类）","dosage":"静脉：50-100mg/m²每3-4周1次","adverse":"肾毒性、恶心呕吐、耳毒性","contraindications":"肾功能不全","storage":"室温避光"},
+  "卡铂": {"indications":"卵巢癌、肺癌","ingredients":"卡铂（铂类）","dosage":"静脉：AUC 5-7每3-4周1次","adverse":"骨髓抑制、恶心","contraindications":"严重骨髓抑制","storage":"室温"}};
+// 服药时间数据库
+const MEDICATION_TIMING_DB={
+  "他汀":{"time":"晚上服用（睡前）","reason":"胆固醇合成在夜间最为旺盛，他汀抑制HMG-CoA还原酶，夜间服用降脂效果最佳","evidence":"药代动力学研究显示，睡前服用辛伐他汀比晨服降脂效果提高约15%","note":"阿托伐他汀、瑞舒伐他汀半衰期较长，建议晚间服用"},
+  "降压药":{"time":"早晨服用（起床后）","reason":"人体血压呈昼夜节律：清晨为血压高峰，晨起服药可在血压高峰前形成血药浓度","evidence":"大型临床研究显示，晨起服用降压药可显著降低脑卒中和心肌梗死风险","note":"α受体阻滞剂（如特拉唑嗪）可能引起体位性低血压，建议睡前服用"},
+  "糖皮质激素":{"time":"早晨服用（7:00-8:00）","reason":"人体自身糖皮质激素分泌呈昼夜节律：清晨最高，夜间最低。早晨服药可最大程度减少HPA轴抑制","evidence":"早晨单次给药比多次给药更能保护肾上腺皮质功能","note":"长期服用者切勿自行突然停药，需遵医嘱逐渐减量"},
+  "骨质疏松药":{"time":"早晨空腹，起床后立即服用","reason":"双膦酸盐类对食管有刺激，需空腹用水送服，服药后30分钟内保持直立、禁食","evidence":"空腹服用双膦酸盐吸收率显著高于餐后服用","note":"服用后30分钟内不能躺卧、不能吃任何食物或饮料（除清水外）"},
+  "甲状腺片":{"time":"早晨空腹，餐前30-60分钟","reason":"食物（尤其是大豆、钙、铁）显著减少左甲状腺素吸收","evidence":"空腹服药比餐后服药吸收率提高约20-30%","note":"养成起床后立即服药的习惯，然后再洗漱、吃早餐"},
+  "质子泵抑制剂":{"time":"早晨空腹服用（餐前30-60分钟）","reason":"PPI需要在胃酸分泌最旺盛前激活，空腹服用可在进餐时达到最大抑酸效果","evidence":"餐前30-60分钟服用比餐后服用抑酸效果显著更强","note":"每天同一时间服用，整片吞服，不要咀嚼或压碎"},
+  "铁剂":{"time":"空腹服用（餐前1小时或餐后2小时）","reason":"食物减少铁吸收；维生素C可促进铁吸收","evidence":"空腹服用硫酸亚铁吸收率约20%，餐后服用降至约5%","note":"铁剂与维生素C同服可促进吸收；避免与茶、咖啡、牛奶同服"},
+  "钙剂":{"time":"晚餐后或睡前服用","reason":"夜间血钙浓度较低，睡前补钙可减少骨钙动员；分次服用吸收更好","evidence":"夜间补钙有助于维持血钙稳态，减少骨折风险","note":"钙剂与维生素D同服效果最佳；避免与铁剂、甲状腺素同时服用"},
+  "阿司匹林":{"time":"餐后服用（普通片）；肠溶片空腹服用","reason":"普通阿司匹林对胃黏膜有刺激，餐后服用可减轻刺激；肠溶片在肠道溶解，空腹服用可更快进入肠道","evidence":"肠溶阿司匹林空腹服用比餐后服用对胃刺激更小","note":"小剂量阿司匹林用于心血管保护，建议固定时间服用"},
+  "二甲双胍":{"time":"餐中或餐后服用","reason":"二甲双胍常见胃肠道副作用，餐中或餐后服用可显著减轻","evidence":"餐中服用二甲双胍胃肠道耐受性显著优于空腹服用","note":"缓释片可每日一次晚餐后服用，普通片需每日2-3次随餐服用"},
+  "非甾体抗炎药":{"time":"餐后服用","reason":"NSAIDs对胃黏膜有刺激，餐后服用可减轻胃肠损伤","evidence":"餐后服用布洛芬胃肠道副作用发生率显著低于空腹服用","note":"长期使用NSAIDs者建议同时使用胃保护剂（如PPI）"},
+  "利尿剂":{"time":"早晨服用","reason":"避免夜间频繁排尿影响睡眠","evidence":"晨服利尿剂可保持日间利尿、夜间相对稳定的睡眠连续性","note":"保钾利尿剂和排钾利尿剂都建议晨服"},
+  "镇静催眠药":{"time":"睡前服用（睡前15-30分钟）","reason":"镇静催眠药需要在入睡时间前15-30分钟服用，以匹配药物起效时间","evidence":"唑吡坦、右佐匹克隆等速效催眠药需在睡前即刻服用","note":"服用催眠药后应立即上床，避免跌倒风险；切勿与酒精同服"},
+  "抗组胺药":{"time":"睡前服用（第一代）；日间服用（第二代）","reason":"第一代抗组胺药有嗜睡副作用，适合睡前服用；第二代无明显嗜睡，可日间服用","evidence":"第一代抗组胺药的中枢抑制作用在服药后1-3小时最强","note":"开车或操作机械前勿服用第一代抗组胺药"},
+  "胰岛素":{"time":"根据类型和进餐时间确定","reason":"速效胰岛素餐前5-15分钟注射；中效胰岛素通常睡前注射；长效胰岛素每日固定时间注射","evidence":"胰岛素注射时间需与进餐时间精确匹配，以避免低血糖","note":"胰岛素方案需个体化，严格遵医嘱"},
+  "口服降糖药":{"time":"根据药物类型确定","reason":"磺脲类餐前30分钟服用；格列奈类餐前15分钟内服用；阿卡波糖与第一口饭同服","evidence":"不同类别口服降糖药的作用机制不同，服药时间需匹配机制","note":"漏服降糖药切勿下次加倍服用，应遵医嘱处理"},
+  "抗生素":{"time":"根据抗生素类型确定","reason":"青霉素类可餐前或餐后服用；四环素、喹诺酮类需空腹服用；甲硝唑餐后服用可减轻胃肠刺激","evidence":"不同抗生素的食物影响差异很大，需参照说明书","note":"抗生素需按时按量完成全程，切勿症状好转即停药"}
+, 
+  "莫西沙星": {"indications":"社区获得性肺炎、皮肤感染","ingredients":"莫西沙星（氟喹诺酮类）","dosage":"口服：400mg每日1次","adverse":"肌腱炎、QT延长、恶心","contraindications":"18岁以下、妊娠","storage":"室温"},
+  "环丙沙星": {"indications":"尿路感染、肠道感染","ingredients":"环丙沙星（氟喹诺酮类）","dosage":"口服：250-500mg每日2次","adverse":"恶心、腹泻、肌腱炎","contraindications":"18岁以下、妊娠","storage":"室温"},
+  "诺氟沙星": {"indications":"尿路感染、肠道感染","ingredients":"诺氟沙星（氟喹诺酮类）","dosage":"口服：400mg每日2次","adverse":"恶心、头痛","contraindications":"18岁以下、妊娠","storage":"室温"},
+  "克拉霉素": {"indications":"呼吸道感染、幽门螺杆菌根除","ingredients":"克拉霉素（大环内酯类）","dosage":"口服：500mg每日2次","adverse":"恶心、腹泻、味觉障碍","contraindications":"QT延长","storage":"室温"},
+  "阿奇霉素": {"indications":"呼吸道感染、皮肤感染","ingredients":"阿奇霉素（大环内酯类）","dosage":"口服：500mg每日1次×3天","adverse":"恶心、腹泻","contraindications":"严重肝功能不全","storage":"室温"},
+  "罗红霉素": {"indications":"呼吸道感染、皮肤感染","ingredients":"罗红霉素（大环内酯类）","dosage":"口服：150mg每日2次","adverse":"恶心、腹泻","contraindications":"严重肝功能不全","storage":"室温"},
+  "多西环素": {"indications":"痤疮、呼吸道感染、立克次体病","ingredients":"多西环素（四环素类）","dosage":"口服：100mg每日2次","adverse":"光敏、食管炎","contraindications":"8岁以下、妊娠","storage":"室温"},
+  "米诺环素": {"indications":"痤疮、皮肤感染","ingredients":"米诺环素（四环素类）","dosage":"口服：50-100mg每日2次","adverse":"头晕、光敏","contraindications":"8岁以下、妊娠","storage":"室温"},
+  "替硝唑": {"indications":"厌氧菌感染、滴虫病","ingredients":"替硝唑（硝基咪唑类）","dosage":"口服：1-2g每日1次","adverse":"恶心、金属味","contraindications":"妊娠早期","storage":"室温"},
+  "奥硝唑": {"indications":"厌氧菌感染","ingredients":"奥硝唑（硝基咪唑类）","dosage":"口服：500mg每日2次","adverse":"恶心、头晕","contraindications":"妊娠早期","storage":"室温"},
+  "克林霉素": {"indications":"厌氧菌感染、皮肤感染","ingredients":"克林霉素（林可霉素类）","dosage":"口服：150-300mg每日4次","adverse":"腹泻、伪膜性肠炎","contraindications":"伪膜性肠炎史","storage":"室温"},
+  "林可霉素": {"indications":"革兰阳性菌感染","ingredients":"林可霉素（林可霉素类）","dosage":"口服：500mg每日3-4次","adverse":"腹泻、恶心","contraindications":"伪膜性肠炎史","storage":"室温"},
+  "万古霉素": {"indications":"耐甲氧西林葡萄球菌感染","ingredients":"万古霉素（糖肽类）","dosage":"静脉输注：15-20mg/kg每8-12h","adverse":"红人综合征、肾毒性","contraindications":"对本品过敏","storage":"室温"},
+  "去甲万古霉素": {"indications":"耐甲氧西林葡萄球菌感染","ingredients":"去甲万古霉素（糖肽类）","dosage":"静脉输注：0.8-1.6g每日分2-3次","adverse":"肾毒性、耳毒性","contraindications":"对本品过敏","storage":"室温"},
+  "替考拉宁": {"indications":"革兰阳性菌感染","ingredients":"替考拉宁（糖肽类）","dosage":"静脉：首剂400mg后200mg每日1次","adverse":"肾毒性、过敏","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "利奈唑胺": {"indications":"耐甲氧西林葡萄球菌、VRE感染","ingredients":"利奈唑胺（恶唑烷酮类）","dosage":"口服/静脉：600mg每日2次","adverse":"骨髓抑制、周围神经病","contraindications":"MAOI合用","storage":"室温"},
+  "达托霉素": {"indications":"皮肤感染、菌血症","ingredients":"达托霉素（环脂肽类）","dosage":"静脉输注：4-6mg/kg每日1次","adverse":"肌痛、CPK升高","contraindications":"对本品过敏","storage":"2-8°C冷藏"},
+  "多粘菌素B": {"indications":"多重耐药革兰阴性菌感染","ingredients":"多粘菌素B（多肽类）","dosage":"静脉：1.5-2.5mg/kg每日分2次","adverse":"肾毒性、神经毒性","contraindications":"肾功能不全","storage":"室温"},
+  "粘菌素": {"indications":"多重耐药革兰阴性菌感染","ingredients":"粘菌素（多肽类）","dosage":"静脉：2.5-5mg/kg每日分2-4次","adverse":"肾毒性、神经毒性","contraindications":"肾功能不全","storage":"室温"},
+  "磷霉素": {"indications":"尿路感染、肠道感染","ingredients":"磷霉素（磷霉素类）","dosage":"口服：3g单剂（单纯尿路感染）","adverse":"腹泻、恶心","contraindications":"对本品过敏","storage":"室温"},
+  "呋喃妥因": {"indications":"尿路感染","ingredients":"呋喃妥因（硝基呋喃类）","dosage":"口服：50-100mg每日4次","adverse":"恶心、肺纤维化（长期）","contraindications":"肾功能不全","storage":"室温"},
+  "复方磺胺甲噁唑": {"indications":"尿路感染、PCP肺炎","ingredients":"磺胺甲噁唑+甲氧苄啶","dosage":"口服：800mg/160mg每日2次","adverse":"过敏、骨髓抑制","contraindications":"磺胺过敏","storage":"室温"},
+  "磺胺嘧啶": {"indications":"脑膜炎奈瑟菌感染、弓形虫病","ingredients":"磺胺嘧啶（磺胺类）","dosage":"口服：1g每日4次","adverse":"过敏、肾结石","contraindications":"磺胺过敏","storage":"室温"},
+  "异烟肼": {"indications":"结核病","ingredients":"异烟肼（抗结核药）","dosage":"口服：300mg每日1次","adverse":"肝毒性、周围神经病","contraindications":"严重肝功能不全","storage":"室温"},
+  "利福平": {"indications":"结核病、麻风","ingredients":"利福平（抗结核药）","dosage":"口服：450-600mg每日1次","adverse":"肝毒性、体液变红","contraindications":"严重肝功能不全","storage":"室温"}};
+// 查询函数
+function searchFoodDrugInteraction(){
+  var input=document.getElementById('foodDrugInput').value.trim();
+  var resultDiv=document.getElementById('foodDrugResult');
+  if(!input){resultDiv.innerHTML='<div style="padding:10px;background:#fff8e1;border-radius:8px;font-size:13px;color:#888">请输入药品名称</div>';return;}
+  var results=[];
+  var lowerInput=input.toLowerCase();
+  Object.keys(FOOD_DRUG_DB).forEach(function(key){
+    var entry=FOOD_DRUG_DB[key];
+    var drugName=key.replace(/[0-9]/g,'');
+    if(drugName.toLowerCase().indexOf(lowerInput)!==-1||lowerInput.indexOf(drugName.toLowerCase())!==-1){
+      if(!results.find(function(r){return r.key===key;})){
+        results.push({key:key,data:entry});
+      }
+    }
+  });
+  if(results.length===0){
+    resultDiv.innerHTML='<div style="padding:12px;background:#fff8e1;border-radius:8px;font-size:13px;color:#888">未找到"'+input+'"的食物相互作用记录。您可以尝试搜索：头孢、华法林、二甲双胍等。</div>';return;
+  }
+  var h='<div style="margin-top:10px">';
+  results.forEach(function(r){
+    var d=r.data;
+    var lc=d.level==='danger'?'#ffebee':'#fff8e1';
+    var lt=d.level==='danger'?'禁止':'注意';
+    var lbc=d.level==='danger'?'#c62828':'#f57f17';
+    h+='<div style="margin-bottom:12px;padding:14px;background:'+lc+';border-radius:10px;border-left:4px solid '+lbc+'">';
+    h+='<div style="font-weight:700;font-size:15px;color:#222;margin-bottom:6px">';
+    h+='<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;color:#fff;background:'+lbc+';margin-right:6px">'+lt+'</span>';
+    h+=r.key.replace(/[0-9]/g,'')+' + '+d.food+'</div>';
+    h+='<div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:6px"><strong>影响：</strong>'+d.effect+'</div>';
+    h+='<div style="font-size:12px;color:#888;line-height:1.5;margin-bottom:6px"><strong>机制：</strong>'+d.mechanism+'</div>';
+    h+='<div style="font-size:13px;color:#2e7d32;line-height:1.6;font-weight:600"><strong>建议：</strong>'+d.advice+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  resultDiv.innerHTML=h;
+}
+function searchMedicationTiming(){
+  var input=document.getElementById('timingInput').value.trim();
+  var resultDiv=document.getElementById('timingResult');
+  if(!input){resultDiv.innerHTML='<div style="padding:10px;background:#fff8e1;border-radius:8px;font-size:13px;color:#888">请输入药品名称</div>';return;}
+  var results=[];
+  var lowerInput=input.toLowerCase();
+  Object.keys(MEDICATION_TIMING_DB).forEach(function(key){
+    if(key.toLowerCase().indexOf(lowerInput)!==-1||lowerInput.indexOf(key.toLowerCase())!==-1){
+      results.push({key:key,data:MEDICATION_TIMING_DB[key]});
+    }
+  });
+  if(results.length===0){
+    resultDiv.innerHTML='<div style="padding:12px;background:#fff8e1;border-radius:8px;font-size:13px;color:#888">未找到"'+input+'"的服药时间指导。您可以尝试搜索：他汀、降压药、糖皮质激素等。</div>';return;
+  }
+  var h='<div style="margin-top:10px">';
+  results.forEach(function(r){
+    var d=r.data;
+    h+='<div style="margin-bottom:12px;padding:14px;background:#e8f5e9;border-radius:10px;border-left:4px solid #2e7d32">';
+    h+='<div style="font-weight:700;font-size:16px;color:#2e7d32;margin-bottom:8px">'+r.key+'</div>';
+    h+='<div style="margin-bottom:8px"><span style="display:inline-block;padding:4px 12px;background:linear-gradient(135deg,#2e7d32,#388e3c);color:#fff;border-radius:16px;font-size:13px;font-weight:600">'+d.time+'</span></div>';
+    h+='<div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:6px"><strong>原因：</strong>'+d.reason+'</div>';
+    if(d.evidence)h+='<div style="font-size:12px;color:#888;line-height:1.5;margin-bottom:6px"><strong>证据：</strong>'+d.evidence+'</div>';
+    if(d.note)h+='<div style="font-size:12px;color:#e65100;line-height:1.5;margin-top:6px;padding:6px;background:#fff8e1;border-radius:6px"><strong>注意：</strong>'+d.note+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  resultDiv.innerHTML=h;
+}
+function quickFoodSearch(drug){
+  document.getElementById('foodDrugInput').value=drug;
+  searchFoodDrugInteraction();
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var fi=document.getElementById('foodDrugInput');
+  if(fi)fi.addEventListener('keydown',function(e){if(e.key==='Enter')searchFoodDrugInteraction();});
+  var ti=document.getElementById('timingInput');
+  if(ti)ti.addEventListener('keydown',function(e){if(e.key==='Enter')searchMedicationTiming();});
+});
+</script>
 </body>
 </html>
-
 
 
 
