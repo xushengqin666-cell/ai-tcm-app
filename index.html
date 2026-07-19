@@ -593,10 +593,10 @@ header>div{display:flex;align-items:center;gap:10px}
     <div id="searchResult"></div>
   </div>
   <div class="card" style="margin-top:12px">
-    <div class="card-head"><span class="card-title">🩺 症状搜药</span></div>
+    <div class="card-head"><span class="card-title" id="homeSymptomTitle">🩺 症状搜药</span></div>
     <div style="display:flex;gap:8px">
-      <input id="symptomInput" type="text" placeholder="输入症状，如：头痛、发烧、咳嗽..." style="flex:1;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none">
-      <button onclick="searchBySymptom()" style="background:#2e7d32;color:#fff;border:none;padding:0 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">搜索</button>
+      <input id="homeSymptomInput" type="text" placeholder="输入症状，如：头痛、发烧、咳嗽..." style="flex:1;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none">
+      <button id="homeSymptomBtn" onclick="searchBySymptom()" style="background:#2e7d32;color:#fff;border:none;padding:0 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">搜索</button>
     </div>
     <div id="symptomResults" style="margin-top:12px"></div>
   </div>
@@ -611,10 +611,10 @@ header>div{display:flex;align-items:center;gap:10px}
   </div>
   <!-- 药品说明书查询 -->
   <div class="card" id="drugManualCard">
-    <div class="card-title" id="manualCardTitle">📋 药品说明书查询</div>
+    <div class="card-title" id="manualTitle">📋 药品说明书查询</div>
     <div class="search-box" style="margin-bottom:8px">
-      <input id="drugManualInput" placeholder="输入药品名称，如：布洛芬、阿莫西林、二甲双胍..." style="flex:1">
-      <button class="btn-primary" id="drugManualBtn">查询</button>
+      <input id="manualInput" placeholder="输入药品名称，如：布洛芬、阿莫西林、二甲双胍..." style="flex:1">
+      <button class="btn-primary" id="manualBtn">查询</button>
     </div>
     <div id="drugManualResult"></div>
   </div>
@@ -673,9 +673,9 @@ header>div{display:flex;align-items:center;gap:10px}
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:13px;color:#666">
       <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="thinkToggle" style="margin:0"> <span id="thinkToggleLabel">🧠 深度思考</span></label>
       <div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="openDrugCamera()" id="drugCameraBtn" style="background:#fff0f0;color:#e53935;border:1px solid #ffcdd2;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;flex:1;min-width:120px">
-        📷 <span id="cameraBtnLabel">拍照识别</span>
+        📷 <span id="cameraBtn">拍照识别</span>
       </button><button onclick="openManualInput()" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;flex:1;min-width:120px">
-        📝 <span>手动输入</span>
+        📝 <span id="manualInputBtn">手动输入</span>
       </button></div>
       <span id="aiStatus" style="margin-left:auto;font-size:12px;color:#aaa"></span>
     </div>
@@ -708,8 +708,8 @@ header>div{display:flex;align-items:center;gap:10px}
           <label id="reportSymptomLabel" style="font-weight:600;font-size:14px;display:block;margin-bottom:4px">症状（用逗号/空格分隔，如：口干、心烦、失眠）</label>
           <input type="text" id="reportSymptoms" placeholder="口干, 心烦, 失眠" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:8px 0;font-size:15px;box-sizing:border-box">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
-            <select id="reportTongue" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择舌象 --</option><option value="红舌">红舌</option><option value="淡红">淡红舌</option><option value="淡白">淡白舌</option><option value="暗红">暗红舌</option><option value="绛红">绛红舌</option><option value="青紫">青紫舌</option></select>
-            <select id="reportPulse" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择脉象 --</option><option value="数脉">数脉（快）</option><option value="缓脉">缓脉（慢）</option><option value="弦脉">弦脉</option><option value="滑脉">滑脉</option><option value="细脉">细脉</option><option value="沉脉">沉脉</option><option value="浮脉">浮脉</option><option value="弱脉">弱脉</option></select>
+            <select id="tongueSelect" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择舌象 --</option><option value="红舌">红舌</option><option value="淡红">淡红舌</option><option value="淡白">淡白舌</option><option value="暗红">暗红舌</option><option value="绛红">绛红舌</option><option value="青紫">青紫舌</option></select>
+            <select id="pulseSelect" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择脉象 --</option><option value="数脉">数脉（快）</option><option value="缓脉">缓脉（慢）</option><option value="弦脉">弦脉</option><option value="滑脉">滑脉</option><option value="细脉">细脉</option><option value="沉脉">沉脉</option><option value="浮脉">浮脉</option><option value="弱脉">弱脉</option></select>
           </div>
           <button id="reportGenerateBtn" style="padding:10px 24px;background:linear-gradient(135deg,#2e7d32,#e85d3f);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;width:100%;margin-top:4px">🔍 生成辨证报告</button>
           <div id="reportResult" style="margin-top:16px"></div>
@@ -719,17 +719,17 @@ header>div{display:flex;align-items:center;gap:10px}
 <!-- 药箱 -->
 <div id="tab-cabinet" class="tab-content">
   <div class="card-form">
-    <div class="feature-head"><h3>➕ 添加药品</h3></div>
-    <div class="field"><label>药品名称</label><input id="cabName" list="drugNames" placeholder="如：布洛芬、阿莫西林"><datalist id="drugNames"></datalist></div>
-    <div class="field"><label>规格</label><input id="cabSpec" placeholder="如：0.1g×20片"></div>
-    <div class="field" style="display:flex;gap:10px"><div style="flex:1"><label>数量</label><input id="cabQty" type="number" placeholder="余量" min="0"></div><div style="flex:1"><label>有效期至</label><input id="cabExpiry" type="date"></div></div>
-    <div class="field"><label>所属成员</label><select id="cabMember"><option value="">（不指定）</option></select></div>
-    <button class="btn-primary" style="width:100%" onclick="addCabinetDrug()">加入药箱</button>
+    <div class="feature-head"><h3 id="cabAddTitle">➕ 添加药品</h3></div>
+    <div class="field"><label id="cabNameLabel">药品名称</label><input id="cabNameInput" list="drugNames" placeholder="如：布洛芬、阿莫西林"><datalist id="drugNames"></datalist></div>
+    <div class="field"><label id="cabSpecLabel">规格</label><input id="cabSpecInput" placeholder="如：0.1g×20片"></div>
+    <div class="field" style="display:flex;gap:10px"><div style="flex:1"><label id="cabQtyLabel">数量</label><input id="cabQtyInput" type="number" placeholder="余量" min="0"></div><div style="flex:1"><label id="cabExpiryLabel">有效期至</label><input id="cabExpiry" type="date"></div></div>
+    <div class="field"><label id="cabMemberLabel">所属成员</label><select id="cabMember"><option value="">（不指定）</option></select></div>
+    <button class="btn-primary" style="width:100%" onclick="addCabinetDrug()" id="cabAddBtn">加入药箱</button>
   </div>
   <div class="stat-row">
-    <div class="stat-pill s-ok"><div class="num" id="cabOk">0</div><div class="lbl">正常</div></div>
-    <div class="stat-pill s-warn"><div class="num" id="cabWarn">0</div><div class="lbl">临期</div></div>
-    <div class="stat-pill s-bad"><div class="num" id="cabBad">0</div><div class="lbl">过期</div></div>
+    <div class="stat-pill s-ok"><div class="num" id="cabOk">0</div><div class="lbl" id="cabStatOk">正常</div></div>
+    <div class="stat-pill s-warn"><div class="num" id="cabWarn">0</div><div class="lbl" id="cabStatWarn">临期</div></div>
+    <div class="stat-pill s-bad"><div class="num" id="cabBad">0</div><div class="lbl" id="cabStatBad">过期</div></div>
   </div>
   <div id="cabinetList"></div>
 </div>
@@ -778,83 +778,117 @@ var T = {
     searching:'搜索中...',searchFail:'搜索失败,请稍后重试',typing:'AI 分析中',noData:'暂无相互作用数据',langBtn:'🇬🇧 EN',
     guideTitle:'📋 用药指南',guideTime:'⏰ 服药时间',guideFoodAvoid:'🍎 饮食禁忌',guideDrugAvoid:'💊 药物禁忌',guideNotes:'📝 注意事项',noGuideData:'暂无用药指南数据',relatedDrugs:'相关药物',interactions:'条相互作用',
     unionCheckTitle:'💊 联合用药审查',unionDrugPlaceholder:'药物',unionBtnAdd:'+ 添加药物',unionBtnCheck:'🔍 一键审查',unionResultSummary:'发现',unionResultFound:'条相互作用',unionContraindicated:'禁忌',unionCaution:'注意',unionSafe:'安全',unionNeutral:'无数据',unionDangerCount:'条禁忌',unionCautionCount:'条注意',unionHideDetail:'收起',unionShowDetail:'查看详情',
-    // 底部导航
     navHome:'首页',navInsert:'说明书',navCabinet:'药箱',navMember:'家庭',navReminder:'提醒',
-    // AI配置面板
     configTitle:'🤖 AI 配置',configStatus:'状态:',configKeyPlaceholder:'sk-xxxxxxxx（密钥安全存储在本地，不会上传）',
     configSaveBtn:'💾 保存',configClearBtn:'🗑️ 清除',configGetKeyHint:'获取密钥',
     configNeedKey:'',
     statusConfigured:'已配置',statusNotConfigured:'未配置',statusLocalEngine:'📋 本地引擎(无Key)',statusSfReady:'🟢 硅基流动API已配置(优先)',
-    manualTitle:'📋 Drug Manual Lookup',manualCatLabel:'Category:',
     manualTitle:'📋 药品说明书查询',manualCatLabel:'类别：',
     reportTitle:'📋 中医辨证报告',reportSubtitle:'基于症状、舌象、脉象生成个体化治疗方案',
     reportSymptomLabel:'症状（用逗号/空格分隔，如：口干、心烦、失眠）',
     reportGenerateBtn:'🔍 生成辨证报告',tabReport:'📋 辨证报告',
-    // 说明书页面
-    manualTitle:'📋 药品说明书',manualIndication:'适应症:',manualDosage:'用法用量:',manualTime:'⏰ 服药时间:',
+    manualIndication:'适应症:',manualDosage:'用法用量:',manualTime:'⏰ 服药时间:',
     manualNotes:'📝 注意事项:',manualContraindication:'🚫 禁忌:',manualFoodAvoid:'🍎 饮食禁忌:',
     manualDrugInteract:'💊 药物相互作用:',manualRemark:'📝 备注:',
     noManualData:'暂无详细说明书数据',manualHint:'提示:请输入药品通用名',manualSearchResult:'条搜索结果',noManualFound:'🔍 未找到「',manualCat:'📋 类别:',
-    // 用药指南
     guideDrugName:'药品',guideDetailHint:'点击查看详细说明',
-    // 关系网
     netCenter:'中心',netEdgeCount:'条相互作用',noNetData:'无相互作用数据',moreText:'更多',
-    // 联合用药审查补充
     unionChecked:'已检查',unionNoIssue:'未发现相互作用',
-    // 状态
     statusLocal:'本地模式',statusSfReadyShort:'AI已就绪',statusSfNotConfig:'AI未配置',
     statusReplied:'已回复',statusFailed:'发送失败',
-    // 深度思考
     deepThinkLabel:'🧠 深度思考',thinkingText:'思考中...',thinkProcessLabel:'🧠 思考过程',
-    // 错误提示
     errorTimeout:'请求超时，请稍后重试',errorNetwork:'网络错误，请检查网络连接',localNoMatchHint:'未找到匹配结果，请尝试其他关键词',
     fallbackHint:'本地数据库回复',
-    // 其他
-    versionLabel:'版本',cabinetTab:'我的药箱'
+    versionLabel:'版本',cabinetTab:'💊 药箱',
+    homeSymptomTitle:'🩺 症状搜药',
+    homeSymptomPlaceholder:'输入症状，如：头痛、发烧、咳嗽...',
+    homeSymptomBtn:'搜索',
+    manualPlaceholder:'输入药品名称，如：布洛芬、阿莫西林、二甲双胍...',
+    manualBtn:'查询',
+    cabAddTitle:'➕ 添加药品',
+    cabNameLabel:'药品名称',
+    cabNamePlaceholder:'如：布洛芬、阿莫西林',
+    cabSpecLabel:'规格',
+    cabSpecPlaceholder:'如：0.1g×20片',
+    cabQtyLabel:'数量',
+    cabQtyPlaceholder:'余量',
+    cabExpiryLabel:'有效期至',
+    cabMemberLabel:'所属成员',
+    cabAddBtn:'加入药箱',
+    cabStatOk:'正常',
+    cabStatWarn:'临期',
+    cabStatBad:'过期',
+    tonguePlaceholder:'-- 选择舌象 --',
+    pulsePlaceholder:'-- 选择脉象 --',
+    cameraBtn:'拍照识别',
+    manualInputBtn:'手动输入',
+    cabMeOption:'我',
+    cabMemberNoAssign:'（不指定）',
+    tongueMap:{'红舌':'红舌','淡红':'淡红舌','淡白':'淡白舌','暗红':'暗红舌','绛红':'绛红舌','青紫':'青紫舌','紫暗':'紫暗舌','胖大':'胖大舌','瘦薄':'瘦薄舌','裂纹':'裂纹舌','齿痕':'齿痕舌','芒刺':'芒刺舌','瘀点':'瘀点舌'},
+    pulseMap:{'浮':'浮脉','沉':'沉脉','迟':'迟脉','数':'数脉','滑':'滑脉','涩':'涩脉','虚':'虚脉','实':'实脉','弦':'弦脉','紧':'紧脉','濡':'濡脉','洪':'洪脉','细':'细脉','弱':'弱脉','结':'结脉','代':'代脉','促':'促脉'},
+    authTitle:'彩云智药',authSub:'家庭 AI 药师 · 让用药更安全',authTabLogin:'登录',authTabRegister:'注册',authPhonePh:'手机号',authPwdPh:'密码（6 位以上）',authPwd2Ph:'确认密码',authSubmitBtn:'登 录',authSkipBtn:'先体验，跳过 →'
   },
   en: {
     title:'🌿 Caiyun Smart Pharmacy',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',
-    searchTitle:'🔍 Drug Search',searchPlaceholder:'Enter drug name or symptoms, e.g. ibuprofen, headache...',searchBtn:'Search',
-    featureTitle:'📋 Quick Access',featChat:'📖 Manual',featSymptom:'🩺 Symptom',featContra:'⚠️ Contraindications',featInteract:'💊 Interactions',
-    interactTitle:'💊 Drug Interaction Network',drugAPlaceholder:'Drug A, e.g. ibuprofen',drugBPlaceholder:'Drug B (optional)',interactBtn:'Query',
+    searchTitle:'🔍 Smart Search',searchPlaceholder:'Enter drug name or symptom, e.g.: Can ibuprofen reduce fever...',searchBtn:'Search',
+    featureTitle:'📋 Quick Access',featChat:'💬 AI Chat',featSymptom:'🩺 Symptom Check',featContra:'⚠️ Contraindications',featInteract:'💊 Interactions',
+    interactTitle:'💊 Drug Interaction Network',drugAPlaceholder:'Drug A, e.g.: Ibuprofen',drugBPlaceholder:'Drug B (optional)',interactBtn:'Check',
     legendDanger:'🔴 Contraindicated',legendCaution:'🟡 Caution',legendGreen:'🟢 Safe',legendBlue:'🔵 Neutral',
-    chatTitle:'💬 AI Pharmacy Assistant',chatPlaceholder:'Describe your symptoms or medication question...',sendBtn:'🔍 Search',
-    chatWelcome:'👋 Hello! I am Caiyun Smart Pharmacy AI Assistant. Please describe your symptoms or medication questions.',
-    statusReady:'Ready',statusSending:'Sending...',statusError:'Network Error',
-    searching:'Searching...',searchFail:'Search failed. Please try again.',typing:'AI analyzing',noData:'No interaction data',langBtn:'🇨🇳 中文',
-    guideTitle:'📋 Usage Guide',guideTime:'⏰ Best Time',guideFoodAvoid:'🍎 Food to Avoid',guideDrugAvoid:'💊 Drug Interactions',guideNotes:'📝 Notes',noGuideData:'No usage guide data',relatedDrugs:'related drugs',interactions:'interactions',
-    unionCheckTitle:'💊 Drug Combination Review',unionDrugPlaceholder:'Drug',unionBtnAdd:'+ Add Drug',unionBtnCheck:'🔍 Check All',unionResultSummary:' interactions found in ',unionResultFound:' drugs',unionContraindicated:'Contraindicated',unionCaution:'Caution',unionSafe:'Safe',unionNeutral:'No Data',unionDangerCount:' contraindicated',unionCautionCount:' caution',unionHideDetail:'Hide',unionShowDetail:'Show Details',
-    // Bottom Navigation
+    chatTitle:'💬 AI Pharmacy Assistant',chatPlaceholder:'Ask about medications...',sendBtn:'🔍 Search',
+    chatWelcome:'',
+    statusReady:'Ready',statusSending:'Sending...',statusError:'Network error',
+    searching:'Searching...',searchFail:'Search failed, please try again later',typing:'AI analyzing',noData:'No interaction data available',langBtn:'🇨🇳 中文',
+    guideTitle:'📋 Medication Guide',guideTime:'⏰ Timing',guideFoodAvoid:'🍎 Food Avoid',guideDrugAvoid:'💊 Drug Avoid',guideNotes:'📝 Notes',noGuideData:'No guide data available',relatedDrugs:'Related drugs',interactions:'interactions',
+    unionCheckTitle:'💊 Drug Interaction Check',unionDrugPlaceholder:'Drug',unionBtnAdd:'+ Add drug',unionBtnCheck:'🔍 Check all',unionResultSummary:'Found',unionResultFound:'interactions',unionContraindicated:'Contraindicated',unionCaution:'Caution',unionSafe:'Safe',unionNeutral:'No data',unionDangerCount:'contraindicated',unionCautionCount:'cautions',unionHideDetail:'Hide',unionShowDetail:'Details',
     navHome:'Home',navInsert:'Manual',navCabinet:'Cabinet',navMember:'Family',navReminder:'Reminder',
-    // AI Config Panel
-    configTitle:'🤖 AI Configuration',configStatus:'Status:',configKeyPlaceholder:'sk-xxxxxxxx (Key stored locally, not uploaded)',
-    configSaveBtn:'💾 Save',configClearBtn:'🗑️ Clear',configGetKeyHint:'Get API Key',
+    configTitle:'🤖 AI Config',configStatus:'Status:',configKeyPlaceholder:'sk-xxxxxxxx (stored locally)',
+    configSaveBtn:'💾 Save',configClearBtn:'🗑️ Clear',configGetKeyHint:'Get API key',
     configNeedKey:'',
-    statusConfigured:'Configured',statusNotConfigured:'Not Configured',statusLocalEngine:'📋 Local Engine (No Key)',statusSfReady:'🟢 SiliconFlow API Configured (Priority)',
+    statusConfigured:'Configured',statusNotConfigured:'Not configured',statusLocalEngine:'📋 Local engine',statusSfReady:'🟢 SiliconFlow ready',
+    manualTitle:'📋 Drug Manual Lookup',manualCatLabel:'Category:',
     reportTitle:'📋 TCM Diagnosis Report',reportSubtitle:'Personalized treatment based on symptoms, tongue & pulse',
-    reportSymptomLabel:'Symptoms (comma-separated, e.g. dry mouth, insomnia)',
+    reportSymptomLabel:'Symptoms (comma-separated, e.g.: dry mouth, insomnia)',
     reportGenerateBtn:'🔍 Generate Diagnosis',tabReport:'📋 Diagnosis',
-    // Manual Page
-    manualTitle:'📋 Drug Manual',manualIndication:'Indications:',manualDosage:'Dosage:',manualTime:'⏰ Best Time:',
-    manualNotes:'📝 Notes:',manualContraindication:'🚫 Contraindications:',manualFoodAvoid:'🍎 Food to Avoid:',
-    manualDrugInteract:'💊 Drug Interactions:',manualRemark:'📝 Remarks:',
-    noManualData:'No detailed manual data available',manualHint:'Hint: Please enter generic drug name',manualSearchResult:' search results',noManualFound:'🔍 No manual data found for "',manualCat:'📋 Category:',
-    // Usage Guide
+    manualIndication:'Indications:',manualDosage:'Dosage:',manualTime:'⏰ Timing:',
+    manualNotes:'📝 Notes:',manualContraindication:'🚫 Contraindications:',manualFoodAvoid:'🍎 Food to avoid:',
+    manualDrugInteract:'💊 Drug interactions:',manualRemark:'📝 Remarks:',
+    noManualData:'No detailed manual available',manualHint:'Enter generic drug name',manualSearchResult:'results found',noManualFound:'🔍 Not found: ',manualCat:'📋 Category:',
     guideDrugName:'Drug',guideDetailHint:'Click for details',
-    // Network
-    netCenter:'Center',netEdgeCount:' interactions',noNetData:'No interaction data',moreText:'More',
-    // Union Check
+    netCenter:'Center',netEdgeCount:'interactions',noNetData:'No data',moreText:'More',
     unionChecked:'Checked',unionNoIssue:'No interactions found',
-    // Status
-    statusLocal:'Local Mode',statusSfReadyShort:'AI Ready',statusSfNotConfig:'AI Not Configured',
-    statusReplied:'Replied',statusFailed:'Send Failed',
-    // Deep Think
-    deepThinkLabel:'🧠 Deep Think',thinkingText:'Thinking...',thinkProcessLabel:'🧠 Thinking Process',
-    // Error Messages
-    errorTimeout:'Request timeout, please try again',errorNetwork:'Network error, please check connection',localNoMatchHint:'No matching results, please try other keywords',
+    statusLocal:'Local mode',statusSfReadyShort:'AI ready',statusSfNotConfig:'AI not config',
+    statusReplied:'Replied',statusFailed:'Failed',
+    deepThinkLabel:'🧠 Deep Think',thinkingText:'Thinking...',thinkProcessLabel:'🧠 Thinking process',
+    errorTimeout:'Request timeout, please retry',errorNetwork:'Network error, check connection',localNoMatchHint:'No match found, try other keywords',
     fallbackHint:'Local database reply',
-    // Others
-    versionLabel:'Version',cabinetTab:'My Cabinet'
+    versionLabel:'Version',cabinetTab:'💊 Cabinet',
+    homeSymptomTitle:'🩺 Symptom Search',
+    homeSymptomPlaceholder:'Enter symptoms, e.g.: headache, fever, cough...',
+    homeSymptomBtn:'Search',
+    manualPlaceholder:'Enter drug name, e.g.: Ibuprofen, Amoxicillin...',
+    manualBtn:'Search',
+    cabAddTitle:'➕ Add Drug',
+    cabNameLabel:'Drug Name',
+    cabNamePlaceholder:'e.g.: Ibuprofen, Amoxicillin',
+    cabSpecLabel:'Specification',
+    cabSpecPlaceholder:'e.g.: 0.1g×20 tablets',
+    cabQtyLabel:'Quantity',
+    cabQtyPlaceholder:'Remaining',
+    cabExpiryLabel:'Valid until',
+    cabMemberLabel:'Member',
+    cabAddBtn:'Add to Cabinet',
+    cabStatOk:'Normal',
+    cabStatWarn:'Expiring',
+    cabStatBad:'Expired',
+    tonguePlaceholder:'-- Select Tongue --',
+    pulsePlaceholder:'-- Select Pulse --',
+    cameraBtn:'Photo Scan',
+    manualInputBtn:'Manual Input',
+    cabMeOption:'Me',
+    cabMemberNoAssign:'Not specified',
+    tongueMap:{'红舌':'Red tongue','淡红':'Light red','淡白':'Pale','暗红':'Dark red','绛红':'Crimson','青紫':'Bluish purple','紫暗':'Purple dark','胖大':'Swollen','瘦薄':'Thin','裂纹':'Cracked','齿痕':'Tooth-marked','芒刺':'Prickly','瘀点':'Petechiae'},
+    pulseMap:{'浮':'Floating','沉':'Deep','迟':'Slow','数':'Rapid','滑':'Slippery','涩':'Choppy','虚':'Deficient','实':'Excess','弦':'Wiry','紧':'Tight','濡':'Soggy','洪':'Flooding','细':'Thin','弱':'Weak','结':'Knotted','代':'Intermittent','促':'Hasty'},
+    authTitle:'Caiyun Smart Pharmacy',authSub:'Family AI Pharmacist · Safer Medication',authTabLogin:'Log in',authTabRegister:'Register',authPhonePh:'Phone number',authPwdPh:'Password (6+ digits)',authPwd2Ph:'Confirm password',authSubmitBtn:'Log in',authSkipBtn:'Skip for now →'
   }
 };
 var currentLang = localStorage.getItem('lang') || 'zh';
@@ -934,8 +968,97 @@ function applyLang(lang){
     var navs = document.querySelectorAll('.bottom-nav span[id]');
     navs.forEach(function(n){ if(t[n.id]) n.textContent = t[n.id]; });
   } catch(e){ console.error('nav refresh error:', e); }
-  console.log('applyLang: DONE lang=', lang);
+    // ===== i18n 扩展：未翻译元素 =====
+  if(el=document.getElementById('tabCabinetBtn')) el.textContent = t.tabCabinet;
+  if(el=document.getElementById('homeSymptomTitle')) el.textContent = t.homeSymptomTitle;
+  if(el=document.getElementById('symptomInput')) el.placeholder = t.homeSymptomPlaceholder;
+  if(el=document.getElementById('homeSymptomBtn')) el.textContent = t.homeSymptomBtn;
+  if(el=document.getElementById('manualCardTitle')) el.textContent = t.manualTitle;
+  if(el=document.getElementById('drugManualInput')) el.placeholder = t.manualPlaceholder;
+  if(el=document.getElementById('drugManualBtn')) el.textContent = t.manualBtn;
+  if(el=document.getElementById('cabAddTitle')) el.textContent = t.cabAddTitle;
+  if(el=document.getElementById('cabNameLabel')) el.textContent = t.cabNameLabel;
+  if(el=document.getElementById('cabName')) el.placeholder = t.cabNamePlaceholder;
+  if(el=document.getElementById('cabSpecLabel')) el.textContent = t.cabSpecLabel;
+  if(el=document.getElementById('cabSpec')) el.placeholder = t.cabSpecPlaceholder;
+  if(el=document.getElementById('cabQtyLabel')) el.textContent = t.cabQtyLabel;
+  if(el=document.getElementById('cabQty')) el.placeholder = t.cabQtyPlaceholder;
+  if(el=document.getElementById('cabExpiryLabel')) el.textContent = t.cabExpiryLabel;
+  if(el=document.getElementById('cabMemberLabel')) el.textContent = t.cabMemberLabel;
+  if(el=document.getElementById('cabAddBtn')) el.textContent = t.cabAddBtn;
+  if(el=document.getElementById('cabStatOk')) el.textContent = t.cabStatOk;
+  if(el=document.getElementById('cabStatWarn')) el.textContent = t.cabStatWarn;
+  if(el=document.getElementById('cabStatBad')) el.textContent = t.cabStatBad;
+  if(el=document.getElementById('cameraBtnLabel')) el.textContent = t.cameraBtn;
+  if(el=document.getElementById('manualInputBtn')) el.textContent = t.manualInputBtn;
+  var _rt = document.getElementById('reportTongue'); if(_rt && _rt.options[0]) _rt.options[0].text = t.tonguePlaceholder;
+  var _rp = document.getElementById('reportPulse'); if(_rp && _rp.options[0]) _rp.options[0].text = t.pulsePlaceholder;
+  var _cm = document.getElementById('cabMember'); if(_cm){ for(var _ci=0; _ci<_cm.options.length; _ci++){ var _opt=_cm.options[_ci]; if(_opt.text==='我') _opt.text=t.cabMeOption; if(_opt.text==='（不指定）') _opt.text=t.cabMemberNoAssign; } }
+  // auth 弹窗
+  if(el=document.getElementById('authTitle')) el.textContent = t.authTitle;
+  if(el=document.getElementById('authSub')) el.textContent = t.authSub;
+  if(el=document.getElementById('authTabLogin')) el.textContent = t.authTabLogin;
+  if(el=document.getElementById('authTabRegister')) el.textContent = t.authTabRegister;
+  if(el=document.getElementById('authPhonePh')) el.placeholder = t.authPhonePh;
+  if(el=document.getElementById('authPwdPh')) el.placeholder = t.authPwdPh;
+  if(el=document.getElementById('authPwd2Ph')) el.placeholder = t.authPwd2Ph;
+  if(el=document.getElementById('authSubmitBtn')) el.textContent = t.authSubmitBtn;
+  if(el=document.getElementById('authSkipBtn')) el.textContent = t.authSkipBtn;
+console.log('applyLang: DONE lang=', lang);
+
+  // 症状搜药
+  if(el=document.getElementById('homeSymptomTitle')) el.textContent = t.homeSymptomTitle;
+  if(el=document.getElementById('homeSymptomInput')) el.placeholder = t.homeSymptomPlaceholder;
+  if(el=document.getElementById('homeSymptomBtn')) el.textContent = t.homeSymptomBtn;
+  // 药品说明书查询
+  if(el=document.getElementById('manualTitle')) el.textContent = t.manualTitle;
+  if(el=document.getElementById('manualInput')) el.placeholder = t.manualPlaceholder;
+  if(el=document.getElementById('manualBtn')) el.textContent = t.manualBtn;
+  // 药箱添加表单
+  if(el=document.getElementById('cabAddTitle')) el.textContent = t.cabAddTitle;
+  if(el=document.getElementById('cabNameLabel')) el.textContent = t.cabNameLabel;
+  if(el=document.getElementById('cabNameInput')) el.placeholder = t.cabNamePlaceholder;
+  if(el=document.getElementById('cabSpecLabel')) el.textContent = t.cabSpecLabel;
+  if(el=document.getElementById('cabSpecInput')) el.placeholder = t.cabSpecPlaceholder;
+  if(el=document.getElementById('cabQtyLabel')) el.textContent = t.cabQtyLabel;
+  if(el=document.getElementById('cabQtyInput')) el.placeholder = t.cabQtyPlaceholder;
+  if(el=document.getElementById('cabExpiryLabel')) el.textContent = t.cabExpiryLabel;
+  if(el=document.getElementById('cabMemberLabel')) el.textContent = t.cabMemberLabel;
+  if(el=document.getElementById('cabAddBtn')) el.textContent = t.cabAddBtn;
+  // 统计卡片
+  if(el=document.getElementById('cabStatOk')) el.textContent = t.cabStatOk;
+  if(el=document.getElementById('cabStatWarn')) el.textContent = t.cabStatWarn;
+  if(el=document.getElementById('cabStatBad')) el.textContent = t.cabStatBad;
+  // 舌象脉象选择器
+  if(el=document.getElementById('tongueSelect')) {
+    var opts = el.querySelectorAll('option');
+    if(opts[0]) opts[0].textContent = t.tonguePlaceholder;
+    // 翻译其他选项
+    for(var i=1;i<opts.length;i++){
+      var key=opts[i].value;
+      if(t.tongueMap && t.tongueMap[key]) opts[i].textContent = t.tongueMap[key];
+    }
+  }
+  if(el=document.getElementById('pulseSelect')) {
+    var opts = el.querySelectorAll('option');
+    if(opts[0]) opts[0].textContent = t.pulsePlaceholder;
+    // 翻译其他选项
+    for(var i=1;i<opts.length;i++){
+      var key=opts[i].value;
+      if(t.pulseMap && t.pulseMap[key]) opts[i].textContent = t.pulseMap[key];
+    }
+  }
+  // AI Chat 按钮
+  if(el=document.getElementById('cameraBtn')) el.textContent = t.cameraBtn;
+  if(el=document.getElementById('manualInputBtn')) el.textContent = t.manualInputBtn;
+  // 底部导航
+  if(el=document.getElementById('navHome')) el.textContent = t.navHome;
+  if(el=document.getElementById('navInsert')) el.textContent = t.navInsert;
+  if(el=document.getElementById('navCabinet')) el.textContent = t.navCabinet;
+  if(el=document.getElementById('navMember')) el.textContent = t.navMember;
+  if(el=document.getElementById('navReminder')) el.textContent = t.navReminder;
 }
+window.applyLang = applyLang; window.currentLang = currentLang;
 function toggleLang(){ applyLang(currentLang === 'zh' ? 'en' : 'zh'); }
 
 // ===== 药物相互作用数据库(80+ 药物)=====
@@ -8966,7 +9089,8 @@ function formatText(s){ return String(s||'').replace(/\n/g,'<br>'); }
 // ===== AI配置（前端直连DashScope + 多级降级）=====
 var DASHSCOPE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 // DASHSCOPE_KEY removed - use worker proxy
-var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
+var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
+var OCR_WORKER = 'https://ocr-pharmacy.xushengqin666.workers.dev';
 var SF_API = 'https://api.siliconflow.cn/v1/chat/completions';
 var SF_MODEL_THINK = 'deepseek-ai/DeepSeek-R1';
 
@@ -10289,36 +10413,62 @@ function openManualInput(){
   }
 }
 
-function runDrugOCR(imageDataUrl) {
+function preprocessImage(dataUrl, maxW, cb) {
+  var img = new Image();
+  img.onload = function() {
+    try {
+      var w = img.width, h = img.height;
+      var scale = Math.min(1, maxW / w);
+      var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+      var canvas = document.createElement('canvas');
+      canvas.width = cw; canvas.height = ch;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, cw, ch);
+      var id = ctx.getImageData(0, 0, cw, ch), dd = id.data;
+      for (var i = 0; i < dd.length; i += 4) {
+        var g = dd[i]*0.299 + dd[i+1]*0.587 + dd[i+2]*0.114;
+        var c = (g - 128) * 1.4 + 128;
+        if (c < 0) c = 0; else if (c > 255) c = 255;
+        dd[i] = dd[i+1] = dd[i+2] = c;
+      }
+      ctx.putImageData(id, 0, 0);
+      cb(canvas.toDataURL('image/jpeg', 0.92));
+    } catch (e) { cb(dataUrl); }
+  };
+  img.onerror = function() { cb(dataUrl); };
+  img.src = dataUrl;
+}
+
+function callCloudOCR(dataUrl, timeoutMs) {
+  return new Promise(function(resolve, reject) {
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var to = setTimeout(function(){ if (ctrl) ctrl.abort(); else reject(new Error('timeout')); }, timeoutMs || 12000);
+    fetch(OCR_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: dataUrl }),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function(r) {
+      clearTimeout(to);
+      if (!r.ok) return r.text().then(function(t){ throw new Error('OCR服务返回 ' + r.status); });
+      return r.json();
+    }).then(function(d) {
+      if (d && d.error) throw new Error(d.error);
+      resolve((d && d.text) ? d.text : '');
+    }).catch(function(e) { clearTimeout(to); reject(e); });
+  });
+}
+
+function showOCRResult(text) {
   var loadingDiv = document.getElementById('ocrLoading');
   var resultDiv = document.getElementById('ocrResult');
   var contentDiv = document.getElementById('ocrResultContent');
   var matchedDiv = document.getElementById('ocrMatchedDrug');
+  loadingDiv.style.display = 'none';
+  resultDiv.style.display = 'block';
 
-  loadingDiv.style.display = 'block';
-  resultDiv.style.display = 'none';
-  matchedDiv.innerHTML = '';
-  matchedDiv.style.display = 'none';
-  document.getElementById('ocrLoadingText').textContent = '📷 正在识别药品图片，请稍候...';
-
-  if (typeof Tesseract === 'undefined') {
     loadingDiv.style.display = 'none';
     resultDiv.style.display = 'block';
-    contentDiv.innerHTML = '<p style="color:#e53935;font-size:13px">OCR库未加载，请在联网环境下使用拍照识别功能</p>';
-    return;
-  }
-
-  Tesseract.recognize(imageDataUrl, 'eng+chi_sim', {
-    logger: function(m) {
-      if (m.status === 'recognizing text') {
-        var pct = Math.round((m.progress || 0) * 100);
-        document.getElementById('ocrLoadingText').textContent = '📷 识别中 ' + pct + '%...';
-      }
-    }
-  }).then(function(res) {
-    loadingDiv.style.display = 'none';
-    resultDiv.style.display = 'block';
-    var text = (res.data.text || '').trim();
     if (!text) {
       contentDiv.innerHTML = '<p style="color:#999;font-size:13px">未能在图片中识别到文字，请确保药品包装图片清晰，包含药品名称</p>';
       return;
@@ -10353,12 +10503,54 @@ function runDrugOCR(imageDataUrl) {
       matchedDiv.style.display = 'block';
       matchedDiv.innerHTML = '<div style="margin-top:8px;padding:10px;background:#fff8e1;border-radius:8px;font-size:13px;color:#888">未在识别文字中匹配到已知药品名。您可将识别文字复制到首页"药品说明书查询"框中搜索</div>';
     }
-  }).catch(function(err) {
+  
+}
+
+function runTesseract(dataUrl) {
+  var loadingDiv = document.getElementById('ocrLoading');
+  var resultDiv = document.getElementById('ocrResult');
+  var contentDiv = document.getElementById('ocrResultContent');
+  var matchedDiv = document.getElementById('ocrMatchedDrug');
+  if (typeof Tesseract === 'undefined') {
+    loadingDiv.style.display = 'none'; resultDiv.style.display = 'block';
+    contentDiv.innerHTML = '<p style="color:#e53935;font-size:13px">OCR库未加载，请在联网环境下使用拍照识别功能</p>';
+    return;
+  }
+Tesseract.recognize(dataUrl, 'eng+chi_sim', {
+    logger: function(m) {
+      if (m.status === 'recognizing text') {
+        var pct = Math.round((m.progress || 0) * 100);
+        document.getElementById('ocrLoadingText').textContent = '📷 识别中 ' + pct + '%...';
+      }
+    }
+  }).then(function(res) { showOCRResult((res.data.text || '').trim()); })
+.catch(function(err) {
     loadingDiv.style.display = 'none';
     resultDiv.style.display = 'block';
     contentDiv.innerHTML = '<p style="color:#e53935;font-size:13px">识别失败: ' + (err.message || '未知错误') + '，请重试</p>';
   });
 }
+
+function runDrugOCR(imageDataUrl) {
+  var loadingDiv = document.getElementById('ocrLoading');
+  var resultDiv = document.getElementById('ocrResult');
+  var contentDiv = document.getElementById('ocrResultContent');
+  var matchedDiv = document.getElementById('ocrMatchedDrug');
+  loadingDiv.style.display = 'block';
+  resultDiv.style.display = 'none';
+  matchedDiv.innerHTML = '';
+  matchedDiv.style.display = 'none';
+  document.getElementById('ocrLoadingText').textContent = '📷 正在识别药品图片，请稍候...';
+  preprocessImage(imageDataUrl, 2000, function(processed) {
+    callCloudOCR(processed).then(function(text) {
+      showOCRResult(text);
+    }).catch(function() {
+      runTesseract(processed);
+    });
+  });
+}
+
+
 
 
 
@@ -10731,7 +10923,7 @@ function showSymptomResults(query, results) {
     if(members.length===0){ html='<div class="empty-state"><div class="es-icon">👨‍👩‍👧</div><div class="es-text">还没有家庭成员</div></div>'; }
     else { members.forEach(function(nm){ var cur=(nm===current); html+='<span class="member-chip'+(cur?' current':'')+'" onclick="setCurrentMember(\''+esc(nm)+'\')">'+esc(nm)+(cur?' ✓':'')+'<span class="mc-del" onclick="event.stopPropagation();deleteMember(\''+esc(nm)+'\')">×</span></span>'; }); }
     box.innerHTML=html;
-    var sel=document.getElementById('cabMember'); if(sel){ sel.innerHTML='<option value="">（不指定）</option>'+members.map(function(nm){return '<option'+(nm===current?' selected':'')+'>'+esc(nm)+'</option>';}).join(''); }
+    var sel=document.getElementById('cabMember'); if(sel){ sel.innerHTML='<option value="">（不指定）</option>'+members.map(function(nm){return '<option'+(nm===current?' selected':'')+'>'+esc(nm)+'</option>';}).join(''); try{applyLang(currentLang);}catch(e){console.error('re-translate err:',e);} }
   }
   window.renderMembers=renderMembers;
   window.setCurrentMember=function(nm){ current=nm; save(LS_CUR,current); renderMembers(); showToast('当前：'+nm); };
@@ -10792,20 +10984,20 @@ function showSymptomResults(query, results) {
 <div id="authGate">
   <div class="auth-card">
     <div class="auth-logo">🌿</div>
-    <h1 class="auth-title">彩云智药</h1>
-    <p class="auth-sub">家庭 AI 药师 · 让用药更安全</p>
+    <h1 class="auth-title" id="authTitle">彩云智药</h1>
+    <p class="auth-sub" id="authSub">家庭 AI 药师 · 让用药更安全</p>
     <div class="auth-tabs">
-      <button class="auth-tab active" data-auth="login" onclick="cyAuthTab('login')">登录</button>
-      <button class="auth-tab" data-auth="register" onclick="cyAuthTab('register')">注册</button>
+      <button class="auth-tab active" id="authTabLogin" data-auth="login" onclick="cyAuthTab('login')">登录</button>
+      <button class="auth-tab" id="authTabRegister" data-auth="register" onclick="cyAuthTab('register')">注册</button>
     </div>
     <div class="auth-form">
       <div class="field" id="authNameWrap" style="display:none"><input id="authName" placeholder="昵称（选填）"></div>
-      <div class="field"><input id="authPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="手机号"></div>
-      <div class="field"><input id="authPwd" type="password" placeholder="密码（6 位以上）"></div>
-      <div class="field" id="authPwd2Wrap" style="display:none"><input id="authPwd2" type="password" placeholder="确认密码"></div>
-      <button class="btn-primary auth-submit" onclick="cyAuthSubmit()">登 录</button>
+      <div class="field"><input type="tel" inputmode="numeric" maxlength="11" placeholder="手机号" id="authPhonePh"></div>
+      <div class="field"><input type="password" placeholder="密码（6 位以上）" id="authPwdPh"></div>
+      <div class="field" id="authPwd2Wrap" style="display:none"><input type="password" placeholder="确认密码" id="authPwd2Ph"></div>
+      <button class="btn-primary auth-submit" onclick="cyAuthSubmit()" id="authSubmitBtn">登 录</button>
 
-      <div class="auth-skip" onclick="cyAuthSkip()">先体验，跳过 →</div>
+      <div class="auth-skip" onclick="cyAuthSkip()" id="authSkipBtn">先体验，跳过 →</div>
     </div>
     <div class="auth-msg" id="authMsg"></div>
   </div>
@@ -10883,7 +11075,7 @@ function showSymptomResults(query, results) {
   function afterSplash(){
     var s = getSession();
     if(s){ updateAccountBtn(); startApp(); }
-    else { var g = document.getElementById('authGate'); if(g) g.classList.add('show'); }
+    else { var g = document.getElementById('authGate'); if(g) { g.classList.add('show'); applyLang(currentLang); } }
   }
     function runSplash(){
     var splash = document.getElementById('splash');
