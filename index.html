@@ -993,7 +993,7 @@ function applyLang(lang){
     // ===== i18n 扩展：未翻译元素 =====
   if(el=document.getElementById('tabCabinetBtn')) el.textContent = t.tabCabinet;
   if(el=document.getElementById('homeSymptomTitle')) el.textContent = t.homeSymptomTitle;
-  if(el=document.getElementById('symptomInput')) el.placeholder = t.homeSymptomPlaceholder;
+  if(el=document.getElementById('homeSymptomInput')) el.placeholder = t.homeSymptomPlaceholder;
   if(el=document.getElementById('homeSymptomBtn')) el.textContent = t.homeSymptomBtn;
   if(el=document.getElementById('manualCardTitle')) el.textContent = t.manualTitle;
   if(el=document.getElementById('drugManualInput')) el.placeholder = t.manualPlaceholder;
@@ -1228,7 +1228,7 @@ function logout(){
 // ===== 登录/注册 =====
 let _authMode = 'login';
 function openAuthModal(mode){
-  _authMode = mode || 'login';
+  window.__authMode = _authMode = mode || 'login';
   const modal = document.getElementById('authModal');
   if(!modal) return;
   const title = document.getElementById('modalAuthTitle');
@@ -1288,7 +1288,7 @@ function doRegister(){
   loadProfile();
 }
 function switchAuthMode(){
-  _authMode = _authMode === 'login' ? 'register' : 'login';
+  window.__authMode = _authMode = _authMode === 'login' ? 'register' : 'login';
   openAuthModal(_authMode);
 }
 
@@ -9320,7 +9320,8 @@ function formatText(s){ return String(s||'').replace(/\n/g,'<br>'); }
 // ===== AI配置（前端直连DashScope + 多级降级）=====
 var DASHSCOPE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 // DASHSCOPE_KEY removed - use worker proxy
-var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
+var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
+
 var OCR_WORKER = 'https://ocr-pharmacy.xushengqin666.workers.dev';
 var SF_API = 'https://api.siliconflow.cn/v1/chat/completions';
 var SF_MODEL_THINK = 'deepseek-ai/DeepSeek-R1';
@@ -10949,7 +10950,7 @@ function matchDrugsFromOCRText(text) {
 
 // ===== 症状搜药 =====
 function searchBySymptom() {
-  var input = document.getElementById('symptomInput');
+  var input = document.getElementById('homeSymptomInput');
   if (!input) return;
   var query = input.value.trim();
   if (!query) { showToast('请输入症状'); return; }
@@ -11211,6 +11212,7 @@ function showSymptomResults(query, results) {
   </div>
   <div class="ink-seal">藥</div>
 <!-- Profile 编辑 Modal -->
+</div>
 <div id="profileEditModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9998;align-items:center;justify-content:center">
   <div class="modal-content" style="max-width:340px;padding:24px;background:var(--card-bg,#fff);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.2);position:relative;width:90%">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
@@ -11261,7 +11263,6 @@ function showSymptomResults(query, results) {
   </div>
 </div>
 
-</div>
 <!-- 登录 / 注册 -->
 <div id="authGate">
   <div class="auth-card">
@@ -11397,6 +11398,8 @@ function showSymptomResults(query, results) {
 </script>
 </body>
 </html>
+
+
 
 
 
