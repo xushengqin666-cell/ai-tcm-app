@@ -706,7 +706,7 @@ header>div{display:flex;align-items:center;gap:10px}
           <h3 id="reportTitle">📋 中医辨证报告</h3>
           <p id="reportSubtitle" style="color:#666;font-size:14px;margin-bottom:12px">基于症状、舌象、脉象生成个体化治疗方案</p>
           <label id="reportSymptomLabel" style="font-weight:600;font-size:14px;display:block;margin-bottom:4px">症状（用逗号/空格分隔，如：口干、心烦、失眠）</label>
-          <input type="text" id="reportSymptoms" placeholder="口干, 心烦, 失眠" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:8px 0;font-size:15px;box-sizing:border-box">
+          <input type="text" id="reportSymptomInput" placeholder="口干, 心烦, 失眠" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:8px 0;font-size:15px;box-sizing:border-box">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
             <select id="tongueSelect" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择舌象 --</option><option value="红舌">红舌</option><option value="淡红">淡红舌</option><option value="淡白">淡白舌</option><option value="暗红">暗红舌</option><option value="绛红">绛红舌</option><option value="青紫">青紫舌</option></select>
             <select id="pulseSelect" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择脉象 --</option><option value="数脉">数脉（快）</option><option value="缓脉">缓脉（慢）</option><option value="弦脉">弦脉</option><option value="滑脉">滑脉</option><option value="细脉">细脉</option><option value="沉脉">沉脉</option><option value="浮脉">浮脉</option><option value="弱脉">弱脉</option></select>
@@ -753,12 +753,31 @@ header>div{display:flex;align-items:center;gap:10px}
   </div>
   <div id="reminderList"></div>
 </div>
+<!-- 我的 -->
+<div id="tab-profile" class="tab-content">
+  <div class="card">
+    <div class="card-title" id="profileTitle">👤 个人中心</div>
+    <div style="text-align:center;padding:20px 0">
+      <div style="width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff">👤</div>
+      <div id="profileNicknameDisplay" style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:5px">-</div>
+      <div id="profilePhoneDisplay" style="font-size:14px;color:var(--text-secondary)">-</div>
+    </div>
+    <div class="field" style="border-top:1px solid var(--border);padding-top:15px;margin-top:15px">
+      <button class="btn-primary" id="profileEditBtn" id="profileEditBtn" onclick="editProfile()" style="width:100%;margin-bottom:10px">编辑资料</button>
+      <button class="btn-secondary" id="profileSettingsBtn" id="profileSettingsBtn" onclick="openSettings()" style="width:100%;margin-bottom:10px">设置</button>
+      <button class="btn-secondary" id="profileAboutBtn" id="profileAboutBtn" onclick="showAbout()" style="width:100%;margin-bottom:10px">关于我们</button>
+      <button class="btn-danger" id="profileLogoutBtn" id="profileLogoutBtn" onclick="logout()" style="width:100%">退出登录</button>
+    </div>
+  </div>
+</div>
+
 <div class="bottom-nav">
   <a href="javascript:void(0)" data-tab="home" class="active" onclick="switchTab('home')">🏠 <span id="navHome">首页</span></a>
   <a href="javascript:void(0)" data-tab="manual" onclick="scrollToManual()">📄 <span id="navInsert">说明书</span></a>
   <a href="javascript:void(0)" data-tab="cabinet" onclick="openCabinet()">💊 <span id="navCabinet">药箱</span></a>
   <a href="javascript:void(0)" data-tab="member" onclick="openMember()">👨‍👩‍👧 <span id="navMember">家庭</span></a>
   <a href="javascript:void(0)" data-tab="reminder" onclick="openReminder()">⏰ <span id="navReminder">提醒</span></a>
+  <a href="javascript:void(0)" data-tab="profile" onclick="openProfile()">👤 <span id="navProfile">我的</span></a>
 </div>
 
 <!-- 大厂质感：Toast / Ripple / 深色模式 / 导航修复 -->
@@ -778,14 +797,14 @@ var T = {
     searching:'搜索中...',searchFail:'搜索失败,请稍后重试',typing:'AI 分析中',noData:'暂无相互作用数据',langBtn:'🇬🇧 EN',
     guideTitle:'📋 用药指南',guideTime:'⏰ 服药时间',guideFoodAvoid:'🍎 饮食禁忌',guideDrugAvoid:'💊 药物禁忌',guideNotes:'📝 注意事项',noGuideData:'暂无用药指南数据',relatedDrugs:'相关药物',interactions:'条相互作用',
     unionCheckTitle:'💊 联合用药审查',unionDrugPlaceholder:'药物',unionBtnAdd:'+ 添加药物',unionBtnCheck:'🔍 一键审查',unionResultSummary:'发现',unionResultFound:'条相互作用',unionContraindicated:'禁忌',unionCaution:'注意',unionSafe:'安全',unionNeutral:'无数据',unionDangerCount:'条禁忌',unionCautionCount:'条注意',unionHideDetail:'收起',unionShowDetail:'查看详情',
-    navHome:'首页',navInsert:'说明书',navCabinet:'药箱',navMember:'家庭',navReminder:'提醒',
+    navHome:'首页',navInsert:'说明书',navCabinet:'药箱',navMember:'家庭',navReminder:'提醒',navProfile:'我的',profileTitle:'👤 个人中心',profileNickname:'昵称',profilePhone:'手机号',profileEdit:'编辑资料',profileSettings:'设置',profileAbout:'关于我们',profileLogout:'退出登录',
     configTitle:'🤖 AI 配置',configStatus:'状态:',configKeyPlaceholder:'sk-xxxxxxxx（密钥安全存储在本地，不会上传）',
     configSaveBtn:'💾 保存',configClearBtn:'🗑️ 清除',configGetKeyHint:'获取密钥',
     configNeedKey:'',
     statusConfigured:'已配置',statusNotConfigured:'未配置',statusLocalEngine:'📋 本地引擎(无Key)',statusSfReady:'🟢 硅基流动API已配置(优先)',
     manualTitle:'📋 药品说明书查询',manualCatLabel:'类别：',
     reportTitle:'📋 中医辨证报告',reportSubtitle:'基于症状、舌象、脉象生成个体化治疗方案',
-    reportSymptomLabel:'症状（用逗号/空格分隔，如：口干、心烦、失眠）',
+    reportSymptomLabel:'Symptoms (comma/space separated, e.g.: dry mouth, insomnia)',reportSymptomPlaceholder:'dry mouth, insomnia, anxiety',
     reportGenerateBtn:'🔍 生成辨证报告',tabReport:'📋 辨证报告',
     manualIndication:'适应症:',manualDosage:'用法用量:',manualTime:'⏰ 服药时间:',
     manualNotes:'📝 注意事项:',manualContraindication:'🚫 禁忌:',manualFoodAvoid:'🍎 饮食禁忌:',
@@ -840,7 +859,7 @@ var T = {
     searching:'Searching...',searchFail:'Search failed, please try again later',typing:'AI analyzing',noData:'No interaction data available',langBtn:'🇨🇳 中文',
     guideTitle:'📋 Medication Guide',guideTime:'⏰ Timing',guideFoodAvoid:'🍎 Food Avoid',guideDrugAvoid:'💊 Drug Avoid',guideNotes:'📝 Notes',noGuideData:'No guide data available',relatedDrugs:'Related drugs',interactions:'interactions',
     unionCheckTitle:'💊 Drug Interaction Check',unionDrugPlaceholder:'Drug',unionBtnAdd:'+ Add drug',unionBtnCheck:'🔍 Check all',unionResultSummary:'Found',unionResultFound:'interactions',unionContraindicated:'Contraindicated',unionCaution:'Caution',unionSafe:'Safe',unionNeutral:'No data',unionDangerCount:'contraindicated',unionCautionCount:'cautions',unionHideDetail:'Hide',unionShowDetail:'Details',
-    navHome:'Home',navInsert:'Manual',navCabinet:'Cabinet',navMember:'Family',navReminder:'Reminder',
+    navHome:'Home',navInsert:'Manual',navCabinet:'Cabinet',navMember:'Family',navReminder:'Reminder',navProfile:'Profile',profileTitle:'👤 Profile',profileNickname:'Nickname',profilePhone:'Phone',profileEdit:'Edit Profile',profileSettings:'Settings',profileAbout:'About Us',profileLogout:'Logout',
     configTitle:'🤖 AI Config',configStatus:'Status:',configKeyPlaceholder:'sk-xxxxxxxx (stored locally)',
     configSaveBtn:'💾 Save',configClearBtn:'🗑️ Clear',configGetKeyHint:'Get API key',
     configNeedKey:'',
@@ -905,7 +924,7 @@ function applyLang(lang){
   if(el=document.getElementById('tabReportBtn')) el.textContent = t.tabReport;
   if(el=document.getElementById('reportTitle')) el.textContent = t.reportTitle;
   if(el=document.getElementById('reportSubtitle')) el.textContent = t.reportSubtitle;
-  if(el=document.getElementById('reportSymptomLabel')) el.textContent = t.reportSymptomLabel;
+  if(el=document.getElementById('reportSymptomLabel')) el.textContent = t.reportSymptomLabel;if(el=document.getElementById('reportSymptomInput')) el.placeholder = t.reportSymptomPlaceholder || 'dry mouth, insomnia';
   if(el=document.getElementById('reportGenerateBtn')) el.textContent = t.reportGenerateBtn;
   if(el=document.getElementById('searchTitle')) el.textContent = t.searchTitle;
   if(el=document.getElementById('searchInput')) el.placeholder = t.searchPlaceholder;
@@ -1057,9 +1076,60 @@ console.log('applyLang: DONE lang=', lang);
   if(el=document.getElementById('navCabinet')) el.textContent = t.navCabinet;
   if(el=document.getElementById('navMember')) el.textContent = t.navMember;
   if(el=document.getElementById('navReminder')) el.textContent = t.navReminder;
+if(el=document.getElementById('navProfile')) el.textContent = t.navProfile;if(el=document.getElementById('profileTitle')) el.textContent = t.profileTitle;
+
+  // Profile 按钮
+  if(el=document.getElementById('profileTitle')) el.textContent = t.profileTitle;
+  if(el=document.getElementById('profileEditBtn')) el.textContent = t.profileEdit;
+  if(el=document.getElementById('profileSettingsBtn')) el.textContent = t.profileSettings;
+  if(el=document.getElementById('profileAboutBtn')) el.textContent = t.profileAbout;
+  if(el=document.getElementById('profileLogoutBtn')) el.textContent = t.profileLogout;
+
 }
 window.applyLang = applyLang; window.currentLang = currentLang;
 function toggleLang(){ applyLang(currentLang === 'zh' ? 'en' : 'zh'); }
+
+
+// ===== 我的页面 =====
+function openProfile(){
+  switchTab('profile');
+  loadProfile();
+}
+function loadProfile(){
+  const session = JSON.parse(localStorage.getItem('cy_session') || '{}');
+  const users = JSON.parse(localStorage.getItem('cy_users') || '[]');
+  const user = users.find(u => u.phone === session.phone);
+  const nickEl = document.getElementById('profileNicknameDisplay');
+  const phoneEl = document.getElementById('profilePhoneDisplay');
+  if(nickEl) nickEl.textContent = user?.nickname || session?.nickname || '未登录';
+  if(phoneEl) phoneEl.textContent = user?.phone || session?.phone || '-';
+}
+function editProfile(){
+  const session = JSON.parse(localStorage.getItem('cy_session') || '{}');
+  const users = JSON.parse(localStorage.getItem('cy_users') || '[]');
+  const user = users.find(u => u.phone === session.phone);
+  const newNick = prompt('修改昵称:', user?.nickname || session?.nickname || '');
+  if(newNick === null) return;
+  if(user) user.nickname = newNick;
+  if(session) session.nickname = newNick;
+  localStorage.setItem('cy_users', JSON.stringify(users));
+  localStorage.setItem('cy_session', JSON.stringify(session));
+  loadProfile();
+  showToast('昵称已更新');
+}
+function openSettings(){
+  showToast('设置功能开发中...');
+}
+function showAbout(){
+  alert('🌿 彩云智药 v1.0\n家庭AI药师智能体\n让用药更安全');
+}
+function logout(){
+  if(confirm('确定要退出登录吗？')){
+    localStorage.removeItem('cy_session');
+    showToast('已退出登录');
+    setTimeout(() => location.reload(), 1000);
+  }
+}
 
 // ===== 药物相互作用数据库(80+ 药物)=====
 var TYPE_COLOR = {danger:'#e53935', caution:'#ff9800', green:'#4caf50', blue:'#2196f3'};
