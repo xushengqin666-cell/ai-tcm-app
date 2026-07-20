@@ -563,9 +563,6 @@ header>div{display:flex;align-items:center;gap:10px}
   -webkit-mask-repeat: repeat; mask-repeat: repeat;
 }
 
-
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
-.modal[style*="display:flex"], .modal[style*="display: flex"] { display: flex !important; }
 </style>
 </head>
 <body>
@@ -720,15 +717,39 @@ header>div{display:flex;align-items:center;gap:10px}
       </div>
 
 <!-- 药箱 -->
-<div id="tab-cabinet" class="tab-content">
-  <div class="card-form">
-    <div class="feature-head"><h3 id="cabAddTitle">➕ 添加药品</h3></div>
-    <div class="field"><label id="cabNameLabel">药品名称</label><input id="cabNameInput" list="drugNames" placeholder="如：布洛芬、阿莫西林"><datalist id="drugNames"></datalist></div>
-    <div class="field"><label id="cabSpecLabel">规格</label><input id="cabSpecInput" placeholder="如：0.1g×20片"></div>
-    <div class="field" style="display:flex;gap:10px"><div style="flex:1"><label id="cabQtyLabel">数量</label><input id="cabQtyInput" type="number" placeholder="余量" min="0"></div><div style="flex:1"><label id="cabExpiryLabel">有效期至</label><input id="cabExpiry" type="date"></div></div>
-    <div class="field"><label id="cabMemberLabel">所属成员</label><select id="cabMember"><option value="">（不指定）</option></select></div>
-    <button class="btn-primary" style="width:100%" onclick="addCabinetDrug()" id="cabAddBtn">加入药箱</button>
+<div <div id="tab-cabinet" class="tab-content" style="display:none;padding:16px;max-width:600px;margin:0 auto;">
+  <div style="font-size:20px;font-weight:600;margin-bottom:16px;">💊 家庭药箱</div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <div style="flex:1;padding:12px;background:#fff;border-radius:12px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <div id="cabStatTotal" style="font-size:22px;font-weight:700;color:#07c160;">0</div>
+      <div style="font-size:12px;color:#888;">种药品</div>
+    </div>
+    <div style="flex:1;padding:12px;background:#fff;border-radius:12px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <div id="cabStatWarn" style="font-size:22px;font-weight:700;color:#faad14;">0</div>
+      <div style="font-size:12px;color:#888;">即将过期</div>
+    </div>
+    <div style="flex:1;padding:12px;background:#fff;border-radius:12px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <div id="cabStatBad" style="font-size:22px;font-weight:700;color:#ff4d4f;">0</div>
+      <div style="font-size:12px;color:#888;">已过期</div>
+    </div>
   </div>
+  <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+    <div style="font-size:15px;font-weight:600;margin-bottom:12px;">➕ 添加药品</div>
+    <div style="margin-bottom:10px;"><input id="cabName" type="text" placeholder="药品名称 *" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="margin-bottom:10px;"><input id="cabSpec" type="text" placeholder="规格（如：0.5g×24片）" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input id="cabQty" type="text" placeholder="数量" style="flex:1;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;">
+      <input id="cabExpiry" type="date" style="flex:1;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <select id="cabMember" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;background:#fff;">
+        <option value="self">属于：我</option>
+      </select>
+    </div>
+    <button onclick="addCabinetDrug()" style="width:100%;padding:12px;border:none;border-radius:8px;background:#07c160;color:#fff;font-size:15px;font-weight:500;cursor:pointer;">添加到药箱</button>
+  </div>
+  <div id="cabinetList" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);"></div>
+</div>
   <div class="stat-row">
     <div class="stat-pill s-ok"><div class="num" id="cabOk">0</div><div class="lbl" id="cabStatOk">正常</div></div>
     <div class="stat-pill s-warn"><div class="num" id="cabWarn">0</div><div class="lbl" id="cabStatWarn">临期</div></div>
@@ -748,12 +769,13 @@ header>div{display:flex;align-items:center;gap:10px}
 </div>
 
 <!-- 提醒 -->
-<div id="tab-reminder" class="tab-content">
-  <div class="card-form">
-    <div class="feature-head"><h3>⏰ 用药提醒</h3></div>
-    <div class="field" style="display:flex;gap:10px"><div style="flex:0 0 110px"><label>时间</label><input id="remTime" type="time" value="08:00"></div><div style="flex:1"><label>提醒内容</label><input id="remText" placeholder="如：饭后服降压药"></div></div>
-    <button class="btn-primary" style="width:100%" onclick="addReminder()">添加提醒</button>
+<div <div id="tab-reminder" class="tab-content" style="display:none;padding:16px;max-width:600px;margin:0 auto;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div style="font-size:20px;font-weight:600;">⏰ 用药提醒</div>
+    <button onclick="openReminderModal()" style="width:38px;height:38px;border-radius:50%;border:none;background:#07c160;color:#fff;font-size:22px;cursor:pointer;line-height:1;">+</button>
   </div>
+  <div id="reminderList" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);"></div>
+</div>
   <div id="reminderList"></div>
 </div>
 <!-- 我的 -->
@@ -766,10 +788,10 @@ header>div{display:flex;align-items:center;gap:10px}
       <div id="profilePhoneDisplay" style="font-size:14px;color:var(--text-secondary)">-</div>
     </div>
     <div class="field" style="border-top:1px solid var(--border);padding-top:15px;margin-top:15px">
-      <button class="btn-primary" id="profileEditBtn" onclick="editProfile()" style="width:100%;margin-bottom:10px">编辑资料</button>
-      <button class="btn-secondary" id="profileSettingsBtn" onclick="openSettings()" style="width:100%;margin-bottom:10px">设置</button>
-      <button class="btn-secondary" id="profileAboutBtn" onclick="showAbout()" style="width:100%;margin-bottom:10px">关于我们</button>
-      <button class="btn-danger" id="profileLogoutBtn" onclick="logout()" style="width:100%">退出登录</button>
+      <button class="btn-primary" id="profileEditBtn" id="profileEditBtn" onclick="editProfile()" style="width:100%;margin-bottom:10px">编辑资料</button>
+      <button class="btn-secondary" id="profileSettingsBtn" id="profileSettingsBtn" onclick="openSettings()" style="width:100%;margin-bottom:10px">设置</button>
+      <button class="btn-secondary" id="profileAboutBtn" id="profileAboutBtn" onclick="showAbout()" style="width:100%;margin-bottom:10px">关于我们</button>
+      <button class="btn-danger" id="profileLogoutBtn" id="profileLogoutBtn" onclick="logout()" style="width:100%">退出登录</button>
     </div>
   </div>
 </div>
@@ -800,7 +822,7 @@ var T = {
     searching:'搜索中...',searchFail:'搜索失败,请稍后重试',typing:'AI 分析中',noData:'暂无相互作用数据',langBtn:'🇬🇧 EN',
     guideTitle:'📋 用药指南',guideTime:'⏰ 服药时间',guideFoodAvoid:'🍎 饮食禁忌',guideDrugAvoid:'💊 药物禁忌',guideNotes:'📝 注意事项',noGuideData:'暂无用药指南数据',relatedDrugs:'相关药物',interactions:'条相互作用',
     unionCheckTitle:'💊 联合用药审查',unionDrugPlaceholder:'药物',unionBtnAdd:'+ 添加药物',unionBtnCheck:'🔍 一键审查',unionResultSummary:'发现',unionResultFound:'条相互作用',unionContraindicated:'禁忌',unionCaution:'注意',unionSafe:'安全',unionNeutral:'无数据',unionDangerCount:'条禁忌',unionCautionCount:'条注意',unionHideDetail:'收起',unionShowDetail:'查看详情',
-    navHome:'首页',navInsert:'说明书',navCabinet:'药箱',navMember:'家庭',navReminder:'提醒',navProfile:'我的',profileTitle:'👤 个人中心',profileNickname:'昵称',profilePhone:'手机号',profileEdit:'编辑资料',profileSettings:'设置',profileAbout:'关于我们',profileLogout:'退出登录',profileEditTitle:'✏️ 编辑资料',profileEditNicknameLabel:'昵称',profileEditPhoneLabel:'手机号',profileEditPhoneHint:'手机号不可修改',profileEditSave:'保存',profileEditCancel:'取消',login:'🔐 登录',register:'注册',modalAuthTitle:'🔐 登录',authTitle:'🔐 登录',authPhoneLabel:'手机号',authPwdLabel:'密码',authNicknameLabel:'昵称（选填）',authLogin:'登录',authRegister:'注册',authSwitchTip:'没有账号？立即注册',
+    navHome:'首页',navInsert:'说明书',navCabinet:'药箱',navMember:'家庭',navReminder:'提醒',navProfile:'我的',profileTitle:'👤 个人中心',profileNickname:'昵称',profilePhone:'手机号',profileEdit:'编辑资料',profileSettings:'设置',profileAbout:'关于我们',profileLogout:'退出登录',
     configTitle:'🤖 AI 配置',configStatus:'状态:',configKeyPlaceholder:'sk-xxxxxxxx（密钥安全存储在本地，不会上传）',
     configSaveBtn:'💾 保存',configClearBtn:'🗑️ 清除',configGetKeyHint:'获取密钥',
     configNeedKey:'',
@@ -847,13 +869,8 @@ var T = {
     cabMeOption:'我',
     cabMemberNoAssign:'（不指定）',
     tongueMap:{'红舌':'红舌','淡红':'淡红舌','淡白':'淡白舌','暗红':'暗红舌','绛红':'绛红舌','青紫':'青紫舌','紫暗':'紫暗舌','胖大':'胖大舌','瘦薄':'瘦薄舌','裂纹':'裂纹舌','齿痕':'齿痕舌','芒刺':'芒刺舌','瘀点':'瘀点舌'},
-    pulseMap:{
-      '浮脉':'浮脉','沉脉':'沉脉','迟脉':'迟脉','数脉':'数脉（快）','滑脉':'滑脉','涩脉':'涩脉',
-      '虚脉':'虚脉','实脉':'实脉','弦脉':'弦脉','紧脉':'紧脉','濡脉':'濡脉','洪脉':'洪脉',
-      '细脉':'细脉','弱脉':'弱脉','结脉':'结脉','代脉':'代脉','促脉':'促脉',
-      '缓脉':'缓脉（慢）'
-    },
-    gateTitle:'彩云智药',authSub:'家庭 AI 药师 · 让用药更安全',authTabLogin:'登录',authTabRegister:'注册',authPhonePh:'手机号',authPwdPh:'密码（6 位以上）',authPwd2Ph:'确认密码',authSubmitBtn:'登 录',authSkipBtn:'先体验，跳过 →'
+    pulseMap:{'浮':'浮脉','沉':'沉脉','迟':'迟脉','数':'数脉','滑':'滑脉','涩':'涩脉','虚':'虚脉','实':'实脉','弦':'弦脉','紧':'紧脉','濡':'濡脉','洪':'洪脉','细':'细脉','弱':'弱脉','结':'结脉','代':'代脉','促':'促脉'},
+    authTitle:'彩云智药',authSub:'家庭 AI 药师 · 让用药更安全',authTabLogin:'登录',authTabRegister:'注册',authPhonePh:'手机号',authPwdPh:'密码（6 位以上）',authPwd2Ph:'确认密码',authSubmitBtn:'登 录',authSkipBtn:'先体验，跳过 →'
   },
   en: {
     title:'🌿 Caiyun Smart Pharmacy',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',
@@ -867,7 +884,7 @@ var T = {
     searching:'Searching...',searchFail:'Search failed, please try again later',typing:'AI analyzing',noData:'No interaction data available',langBtn:'🇨🇳 中文',
     guideTitle:'📋 Medication Guide',guideTime:'⏰ Timing',guideFoodAvoid:'🍎 Food Avoid',guideDrugAvoid:'💊 Drug Avoid',guideNotes:'📝 Notes',noGuideData:'No guide data available',relatedDrugs:'Related drugs',interactions:'interactions',
     unionCheckTitle:'💊 Drug Interaction Check',unionDrugPlaceholder:'Drug',unionBtnAdd:'+ Add drug',unionBtnCheck:'🔍 Check all',unionResultSummary:'Found',unionResultFound:'interactions',unionContraindicated:'Contraindicated',unionCaution:'Caution',unionSafe:'Safe',unionNeutral:'No data',unionDangerCount:'contraindicated',unionCautionCount:'cautions',unionHideDetail:'Hide',unionShowDetail:'Details',
-    navHome:'Home',navInsert:'Manual',navCabinet:'Cabinet',navMember:'Family',navReminder:'Reminder',navProfile:'Profile',profileTitle:'👤 Profile',profileNickname:'Nickname',profilePhone:'Phone',profileEdit:'Edit Profile',profileSettings:'Settings',profileAbout:'About Us',profileLogout:'Logout',profileEditTitle:'✏️ Edit Profile',profileEditNicknameLabel:'Nickname',profileEditPhoneLabel:'Phone',profileEditPhoneHint:'Phone cannot be changed',profileEditSave:'Save',profileEditCancel:'Cancel',login:'🔐 Login',register:'Register',modalAuthTitle:'🔐 Login',authTitle:'🔐 Login',authPhoneLabel:'Phone',authPwdLabel:'Password',authNicknameLabel:'Nickname (optional)',authLogin:'Login',authRegister:'Register',authSwitchTip:'No account? Register now',
+    navHome:'Home',navInsert:'Manual',navCabinet:'Cabinet',navMember:'Family',navReminder:'Reminder',navProfile:'Profile',profileTitle:'👤 Profile',profileNickname:'Nickname',profilePhone:'Phone',profileEdit:'Edit Profile',profileSettings:'Settings',profileAbout:'About Us',profileLogout:'Logout',
     configTitle:'🤖 AI Config',configStatus:'Status:',configKeyPlaceholder:'sk-xxxxxxxx (stored locally)',
     configSaveBtn:'💾 Save',configClearBtn:'🗑️ Clear',configGetKeyHint:'Get API key',
     configNeedKey:'',
@@ -914,13 +931,8 @@ var T = {
     cabMeOption:'Me',
     cabMemberNoAssign:'Not specified',
     tongueMap:{'红舌':'Red tongue','淡红':'Light red','淡白':'Pale','暗红':'Dark red','绛红':'Crimson','青紫':'Bluish purple','紫暗':'Purple dark','胖大':'Swollen','瘦薄':'Thin','裂纹':'Cracked','齿痕':'Tooth-marked','芒刺':'Prickly','瘀点':'Petechiae'},
-    pulseMap:{
-      '浮脉':'Floating','沉脉':'Deep','迟脉':'Slow','数脉':'Rapid','滑脉':'Slippery','涩脉':'Choppy',
-      '虚脉':'Deficient','实脉':'Excess','弦脉':'Wiry','紧脉':'Tight','濡脉':'Soggy','洪脉':'Flooding',
-      '细脉':'Thin','弱脉':'Weak','结脉':'Knotted','代脉':'Intermittent','促脉':'Hasty',
-      '缓脉':'Moderate'
-    },
-    gateTitle:'Caiyun Smart Pharmacy',authSub:'Family AI Pharmacist · Safer Medication',authTabLogin:'Log in',authTabRegister:'Register',authPhonePh:'Phone number',authPwdPh:'Password (6+ digits)',authPwd2Ph:'Confirm password',authSubmitBtn:'Log in',authSkipBtn:'Skip for now →'
+    pulseMap:{'浮':'Floating','沉':'Deep','迟':'Slow','数':'Rapid','滑':'Slippery','涩':'Choppy','虚':'Deficient','实':'Excess','弦':'Wiry','紧':'Tight','濡':'Soggy','洪':'Flooding','细':'Thin','弱':'Weak','结':'Knotted','代':'Intermittent','促':'Hasty'},
+    authTitle:'Caiyun Smart Pharmacy',authSub:'Family AI Pharmacist · Safer Medication',authTabLogin:'Log in',authTabRegister:'Register',authPhonePh:'Phone number',authPwdPh:'Password (6+ digits)',authPwd2Ph:'Confirm password',authSubmitBtn:'Log in',authSkipBtn:'Skip for now →'
   }
 };
 var currentLang = localStorage.getItem('lang') || 'zh';
@@ -1003,7 +1015,7 @@ function applyLang(lang){
     // ===== i18n 扩展：未翻译元素 =====
   if(el=document.getElementById('tabCabinetBtn')) el.textContent = t.tabCabinet;
   if(el=document.getElementById('homeSymptomTitle')) el.textContent = t.homeSymptomTitle;
-  if(el=document.getElementById('homeSymptomInput')) el.placeholder = t.homeSymptomPlaceholder;
+  if(el=document.getElementById('symptomInput')) el.placeholder = t.homeSymptomPlaceholder;
   if(el=document.getElementById('homeSymptomBtn')) el.textContent = t.homeSymptomBtn;
   if(el=document.getElementById('manualCardTitle')) el.textContent = t.manualTitle;
   if(el=document.getElementById('drugManualInput')) el.placeholder = t.manualPlaceholder;
@@ -1018,10 +1030,6 @@ function applyLang(lang){
   if(el=document.getElementById('cabExpiryLabel')) el.textContent = t.cabExpiryLabel;
   if(el=document.getElementById('cabMemberLabel')) el.textContent = t.cabMemberLabel;
   if(el=document.getElementById('cabAddBtn')) el.textContent = t.cabAddBtn;
-  if(el=document.getElementById('profileEditBtn')) el.textContent = t.profileEdit;
-  if(el=document.getElementById('profileSettingsBtn')) el.textContent = t.profileSettings;
-  if(el=document.getElementById('profileAboutBtn')) el.textContent = t.profileAbout;
-  if(el=document.getElementById('profileLogoutBtn')) el.textContent = t.profileLogout;
   if(el=document.getElementById('cabStatOk')) el.textContent = t.cabStatOk;
   if(el=document.getElementById('cabStatWarn')) el.textContent = t.cabStatWarn;
   if(el=document.getElementById('cabStatBad')) el.textContent = t.cabStatBad;
@@ -1031,7 +1039,7 @@ function applyLang(lang){
   var _rp = document.getElementById('reportPulse'); if(_rp && _rp.options[0]) _rp.options[0].text = t.pulsePlaceholder;
   var _cm = document.getElementById('cabMember'); if(_cm){ for(var _ci=0; _ci<_cm.options.length; _ci++){ var _opt=_cm.options[_ci]; if(_opt.text==='我') _opt.text=t.cabMeOption; if(_opt.text==='（不指定）') _opt.text=t.cabMemberNoAssign; } }
   // auth 弹窗
-  if(el=document.getElementById('modalAuthTitle')) el.textContent = t.authTitle;
+  if(el=document.getElementById('authTitle')) el.textContent = t.authTitle;
   if(el=document.getElementById('authSub')) el.textContent = t.authSub;
   if(el=document.getElementById('authTabLogin')) el.textContent = t.authTabLogin;
   if(el=document.getElementById('authTabRegister')) el.textContent = t.authTabRegister;
@@ -1102,48 +1110,12 @@ if(el=document.getElementById('navProfile')) el.textContent = t.navProfile;if(el
   if(el=document.getElementById('profileAboutBtn')) el.textContent = t.profileAbout;
   if(el=document.getElementById('profileLogoutBtn')) el.textContent = t.profileLogout;
 
-
-  // Deferred translation for elements that may be created later
-  setTimeout(function(){
-    var el;
-    if(el=document.getElementById('tongueSelect')) {
-      var opts = el.querySelectorAll('option');
-      if(opts[0]) opts[0].textContent = t.tonguePlaceholder || '-- Select Tongue --';
-      for(var i=1;i<opts.length;i++){
-        var key=opts[i].value;
-        if(t.tongueMap && t.tongueMap[key]) opts[i].textContent = t.tongueMap[key];
-      }
-    }
-    if(el=document.getElementById('pulseSelect')) {
-      var opts = el.querySelectorAll('option');
-      if(opts[0]) opts[0].textContent = t.pulsePlaceholder || '-- Select Pulse --';
-      for(var i=1;i<opts.length;i++){
-        var key=opts[i].value;
-        if(t.pulseMap && t.pulseMap[key]) opts[i].textContent = t.pulseMap[key];
-      }
-    }
-  }, 100);
 }
 window.applyLang = applyLang; window.currentLang = currentLang;
-  // ===== Modal 元素翻译 (Profile Edit + Auth) =====
-  if(el=document.getElementById('profileEditTitle')) el.textContent = t.profileEditTitle;
-  if(el=document.getElementById('profileEditNicknameLabel')) el.textContent = t.profileEditNicknameLabel;
-  if(el=document.getElementById('profileEditPhoneLabel')) el.textContent = t.profileEditPhoneLabel;
-  if(el=document.getElementById('profileEditPhoneHint')) el.textContent = t.profileEditPhoneHint;
-  if(el=document.getElementById('profileEditSave')) el.textContent = t.profileEditSave;
-  if(el=document.getElementById('profileEditCancel')) el.textContent = t.profileEditCancel;
-  if(el=document.getElementById('authTitle')) el.textContent = t.gateTitle;
-  if(el=document.getElementById('authPhoneLabel')) el.textContent = t.authPhoneLabel;
-  if(el=document.getElementById('authPwdLabel')) el.textContent = t.authPwdLabel;
-  if(el=document.getElementById('authNicknameLabel')) el.textContent = t.authNicknameLabel;
-  if(el=document.getElementById('authLoginBtn')) el.textContent = t.authLogin;
-  if(el=document.getElementById('authRegisterBtn')) el.textContent = t.authRegister;
-  if(el=document.getElementById('authSwitchBtn')) el.textContent = t.authSwitchTip;
-
 function toggleLang(){ applyLang(currentLang === 'zh' ? 'en' : 'zh'); }
 
 
-// ===== 我的页面 (Modal 版) =====
+// ===== 我的页面 =====
 function openProfile(){
   switchTab('profile');
   loadProfile();
@@ -1154,173 +1126,34 @@ function loadProfile(){
   const user = users.find(u => u.phone === session.phone);
   const nickEl = document.getElementById('profileNicknameDisplay');
   const phoneEl = document.getElementById('profilePhoneDisplay');
-  const editBtn = document.getElementById('profileEditBtn');
-  const logoutBtn = document.getElementById('profileLogoutBtn');
-  if(!session.phone){
-    if(nickEl) nickEl.textContent = '未登录';
-    if(phoneEl) phoneEl.textContent = '点击登录';
-    if(editBtn) editBtn.textContent = t('login') || '🔐 登录';
-    if(logoutBtn) logoutBtn.style.display = 'none';
-  } else {
-    if(nickEl) nickEl.textContent = user?.nickname || session?.nickname || '用户';
-    if(phoneEl) phoneEl.textContent = user?.phone || session?.phone || '-';
-    if(editBtn) editBtn.textContent = t('profileEdit') || '编辑资料';
-    if(logoutBtn) logoutBtn.style.display = '';
-  }
-}
-function t(key){
-  const lang = localStorage.getItem('lang') || 'zh';
-  return (T[lang] && T[lang][key]) || T.zh[key] || key;
+  if(nickEl) nickEl.textContent = user?.nickname || session?.nickname || '未登录';
+  if(phoneEl) phoneEl.textContent = user?.phone || session?.phone || '-';
 }
 function editProfile(){
   const session = JSON.parse(localStorage.getItem('cy_session') || '{}');
-  if(!session.phone){
-    // 未登录 → 打开登录 Modal
-    openAuthModal('login');
-    return;
-  }
-  // 已登录 → 打开编辑 Modal
   const users = JSON.parse(localStorage.getItem('cy_users') || '[]');
   const user = users.find(u => u.phone === session.phone);
-  const nickInput = document.getElementById('profileEditNickname');
-  const phoneInput = document.getElementById('profileEditPhone');
-  if(nickInput) nickInput.value = user?.nickname || session?.nickname || '';
-  if(phoneInput) phoneInput.value = user?.phone || session?.phone || '';
-  const modal = document.getElementById('profileEditModal');
-  if(modal) modal.style.display = 'flex';
-}
-function closeProfileModal(){
-  const modal = document.getElementById('profileEditModal');
-  if(modal) modal.style.display = 'none';
-}
-function saveProfileEdit(){
-  const session = JSON.parse(localStorage.getItem('cy_session') || '{}');
-  const users = JSON.parse(localStorage.getItem('cy_users') || '[]');
-  const user = users.find(u => u.phone === session.phone);
-  const nickInput = document.getElementById('profileEditNickname');
-  const newNick = nickInput ? nickInput.value.trim() : '';
-  if(!newNick){
-    showToast('昵称不能为空');
-    return;
-  }
+  const newNick = prompt('修改昵称:', user?.nickname || session?.nickname || '');
+  if(newNick === null) return;
   if(user) user.nickname = newNick;
   if(session) session.nickname = newNick;
   localStorage.setItem('cy_users', JSON.stringify(users));
   localStorage.setItem('cy_session', JSON.stringify(session));
   loadProfile();
-  closeProfileModal();
-  showToast('保存成功');
+  showToast('昵称已更新');
 }
 function openSettings(){
   showToast('设置功能开发中...');
 }
 function showAbout(){
-  const modal = document.getElementById('profileEditModal');
-  if(modal){
-    // 复用 Modal 显示关于信息
-    document.getElementById('profileEditTitle').textContent = '🌿 关于我们';
-    document.getElementById('profileEditNicknameLabel').parentElement.style.display = 'none';
-    document.getElementById('profileEditPhoneLabel').parentElement.style.display = 'none';
-    document.getElementById('profileEditSave').style.display = 'none';
-    document.getElementById('profileEditCancel').textContent = '关闭';
-    modal.style.display = 'flex';
-    // 显示关于信息
-    const content = document.createElement('div');
-    content.id = 'aboutContent';
-    content.style.cssText = 'text-align:center;padding:20px 0;line-height:1.8;font-size:14px;color:var(--text-primary)';
-    content.innerHTML = '🌿 彩云智药 v1.0<br><br>家庭AI药师智能体<br>让用药更安全<br><br>基于 992 种常见药品数据<br>和中医辨证引擎';
-    const oldContent = document.getElementById('aboutContent');
-    if(oldContent) oldContent.remove();
-    document.querySelector('#profileEditModal .modal-content').insertBefore(content, document.querySelector('#profileEditModal .modal-content > div:last-child'));
-  }
+  alert('🌿 彩云智药 v1.0\n家庭AI药师智能体\n让用药更安全');
 }
 function logout(){
-  // 自定义确认 Modal
-  const modal = document.createElement('div');
-  modal.className = 'modal';
-  modal.style.cssText = 'display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center';
-  modal.innerHTML = `<div style="max-width:300px;background:var(--card-bg,#fff);border-radius:12px;padding:24px;text-align:center">
-    <div style="font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text-primary)">退出登录</div>
-    <div style="font-size:14px;color:var(--text-secondary);margin-bottom:20px">确定要退出登录吗？</div>
-    <div style="display:flex;gap:10px">
-      <button onclick="this.closest('.modal').remove()" style="flex:1;padding:10px;background:#f5f5f5;border:none;border-radius:8px;font-size:14px;cursor:pointer">取消</button>
-      <button id="confirmLogout" style="flex:1;padding:10px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">退出</button>
-    </div>
-  </div>`;
-  document.body.appendChild(modal);
-  document.getElementById('confirmLogout').onclick = function(){
+  if(confirm('确定要退出登录吗？')){
     localStorage.removeItem('cy_session');
-    modal.remove();
     showToast('已退出登录');
-    setTimeout(() => location.reload(), 800);
-  };
-}
-
-// ===== 登录/注册 =====
-let _authMode = 'login';
-function openAuthModal(mode){
-  window.__authMode = _authMode = mode || 'login';
-  const modal = document.getElementById('authModal');
-  if(!modal) return;
-  const title = document.getElementById('modalAuthTitle');
-  const nickField = document.getElementById('authNicknameField');
-  const errorEl = document.getElementById('authError');
-  if(title) title.textContent = _authMode === 'login' ? '🔐 登录' : '📝 注册';
-  if(nickField) nickField.style.display = _authMode === 'register' ? 'block' : 'none';
-  if(errorEl) errorEl.style.display = 'none';
-  // 清空输入
-  ['authPhone','authPwd','authNickname'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
-  modal.style.display = 'flex';
-  setTimeout(() => { const el = document.getElementById('authPhone'); if(el) el.focus(); }, 100);
-}
-function closeAuthModal(){
-  const modal = document.getElementById('authModal');
-  if(modal) modal.style.display = 'none';
-}
-function showAuthError(msg){
-  const errorEl = document.getElementById('authError');
-  if(errorEl){
-    errorEl.textContent = msg;
-    errorEl.style.display = 'block';
+    setTimeout(() => location.reload(), 1000);
   }
-}
-function doLogin(){
-  const phone = (document.getElementById('authPhone')?.value || '').trim();
-  const pwd = document.getElementById('authPwd')?.value || '';
-  if(!/^1[3-9]\d{9}$/.test(phone)){ showAuthError('请输入正确的11位手机号'); return; }
-  if(!pwd || pwd.length < 6){ showAuthError('密码至少6位'); return; }
-  const users = JSON.parse(localStorage.getItem('cy_users') || '[]');
-  const user = users.find(u => u.phone === phone);
-  if(!user){ showAuthError('该手机号未注册，请先注册'); return; }
-  if(user.pwd !== pwd){ showAuthError('密码错误'); return; }
-  const session = { phone: user.phone, nickname: user.nickname, loginAt: Date.now() };
-  localStorage.setItem('cy_session', JSON.stringify(session));
-  closeAuthModal();
-  showToast('登录成功');
-  loadProfile();
-}
-function doRegister(){
-  const phone = (document.getElementById('authPhone')?.value || '').trim();
-  const pwd = document.getElementById('authPwd')?.value || '';
-  const nick = (document.getElementById('authNickname')?.value || '').trim() || '用户' + phone.slice(-4);
-  if(!/^1[3-9]\d{9}$/.test(phone)){ showAuthError('请输入正确的11位手机号'); return; }
-  if(!pwd || pwd.length < 6){ showAuthError('密码至少6位'); return; }
-  const users = JSON.parse(localStorage.getItem('cy_users') || '[]');
-  if(users.find(u => u.phone === phone)){ showAuthError('该手机号已注册，请直接登录'); return; }
-  users.push({ phone, pwd, nickname: nick, createdAt: Date.now() });
-  localStorage.setItem('cy_users', JSON.stringify(users));
-  const session = { phone, nickname: nick, loginAt: Date.now() };
-  localStorage.setItem('cy_session', JSON.stringify(session));
-  closeAuthModal();
-  showToast('注册成功，已自动登录');
-  loadProfile();
-}
-function switchAuthMode(){
-  window.__authMode = _authMode = _authMode === 'login' ? 'register' : 'login';
-  openAuthModal(_authMode);
 }
 
 // ===== 药物相互作用数据库(80+ 药物)=====
@@ -9175,7 +9008,10 @@ function switchTab(tabName){
   if(tabName==='interact' && !interactRendered){
     setTimeout(function(){ showNetwork('布洛芬'); interactRendered = true; }, 80);
   }
-}
+
+  if(tabName==="cabinet"){renderCabinet();updateCabinetMemberSelect();}
+  if(tabName==="member") renderMembers();
+  if(tabName==="reminder") renderReminders();}
 document.querySelectorAll('.tab-btn').forEach(function(btn){
   btn.addEventListener('click', function(){ switchTab(btn.dataset.tab); });
 });
@@ -9351,8 +9187,7 @@ function formatText(s){ return String(s||'').replace(/\n/g,'<br>'); }
 // ===== AI配置（前端直连DashScope + 多级降级）=====
 var DASHSCOPE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 // DASHSCOPE_KEY removed - use worker proxy
-var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
-
+var AI_WORKER = 'https://ai-pharmacy.xushengqin666.workers.dev';
 var OCR_WORKER = 'https://ocr-pharmacy.xushengqin666.workers.dev';
 var SF_API = 'https://api.siliconflow.cn/v1/chat/completions';
 var SF_MODEL_THINK = 'deepseek-ai/DeepSeek-R1';
@@ -10981,7 +10816,7 @@ function matchDrugsFromOCRText(text) {
 
 // ===== 症状搜药 =====
 function searchBySymptom() {
-  var input = document.getElementById('homeSymptomInput');
+  var input = document.getElementById('symptomInput');
   if (!input) return;
   var query = input.value.trim();
   if (!query) { showToast('请输入症状'); return; }
@@ -11103,7 +10938,7 @@ function showSymptomResults(query, results) {
           if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.style.boxShadow='0 0 0 3px var(--c-primary)'; setTimeout(function(){c.style.boxShadow='';},1500); }
         },320);
       }
-      else if(txt.indexOf('药箱')>=0){ showToast('💊 药箱功能建设中，敬请期待'); }
+     
       else if(txt.indexOf('家庭')>=0){ showToast('👨‍👩‍👧 家庭档案建设中，敬请期待'); }
       else if(txt.indexOf('提醒')>=0){ showToast('⏰ 用药提醒建设中，敬请期待'); }
       document.querySelectorAll('.bottom-nav a').forEach(function(x){x.classList.remove('active')});
@@ -11242,58 +11077,7 @@ function showSymptomResults(query, results) {
     <span>彩</span><span>云</span><span>智</span><span>药</span>
   </div>
   <div class="ink-seal">藥</div>
-<!-- Profile 编辑 Modal -->
 </div>
-<div id="profileEditModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9998;align-items:center;justify-content:center">
-  <div class="modal-content" style="max-width:340px;padding:24px;background:var(--card-bg,#fff);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.2);position:relative;width:90%">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 id="profileEditTitle" style="margin:0;font-size:18px;color:var(--text-primary)">✏️ 编辑资料</h3> style="margin:0;font-size:18px;color:var(--text-primary)">✏️ 编辑资料</h3>
-      <button onclick="closeProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-secondary);padding:0;line-height:1">×</button>
-    </div>
-    <div style="margin-bottom:14px">
-      <label id="profileEditNicknameLabel" style="display:block;margin-bottom:6px;font-size:13px;color:var(--text-secondary)">昵称</label>
-      <input id="profileEditNickname" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" placeholder="请输入昵称" maxlength="20">
-    </div>
-    <div style="margin-bottom:20px">
-      <label id="profileEditPhoneLabel" style="display:block;margin-bottom:6px;font-size:13px;color:var(--text-secondary)">手机号</label>
-      <input id="profileEditPhone" type="tel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" placeholder="请输入手机号" maxlength="11" disabled>
-      <div id="profileEditPhoneHint" style="font-size:11px;color:#999;margin-top:4px">手机号不可修改</div>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button id="profileEditCancel" onclick="closeProfileModal()" style="flex:1;padding:10px;background:#f5f5f5;border:none;border-radius:8px;font-size:14px;cursor:pointer;color:var(--text-primary)">取消</button>
-      <button id="profileEditSave" onclick="saveProfileEdit()" style="flex:1;padding:10px;background:var(--primary,#1aad19);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">保存</button>
-    </div>
-  </div>
-</div>
-<!-- 登录/注册 Modal -->
-<div id="authModal" class="modal" style="display:none">
-  <div class="modal-content" style="max-width:340px;padding:24px;background:var(--card-bg,#fff);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.2);position:relative">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 id="modalAuthTitle" style="margin:0;font-size:18px;color:var(--text-primary)">🔐 登录</h3>
-      <button onclick="closeAuthModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-secondary);padding:0;line-height:1">×</button>
-    </div>
-    <div style="margin-bottom:14px">
-      <label id="authPhoneLabel" style="display:block;margin-bottom:6px;font-size:13px;color:var(--text-secondary)">手机号</label>
-      <input id="authPhone" type="tel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" placeholder="请输入11位手机号" maxlength="11">
-    </div>
-    <div style="margin-bottom:14px">
-      <label id="authPwdLabel" style="display:block;margin-bottom:6px;font-size:13px;color:var(--text-secondary)">密码</label>
-      <input id="authPwd" type="password" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" placeholder="请输入密码" maxlength="32">
-    </div>
-    <div id="authNicknameField" style="margin-bottom:14px;display:none">
-      <label id="authNicknameLabel" style="display:block;margin-bottom:6px;font-size:13px;color:var(--text-secondary)">昵称（选填）</label>
-      <input id="authNickname" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" placeholder="给自己起个名字" maxlength="20">
-    </div>
-    <div id="authError" style="display:none;color:#e74c3c;font-size:12px;margin-bottom:10px;text-align:center"></div>
-    <div style="display:flex;gap:10px;margin-bottom:14px">
-      <button id="authLoginBtn" onclick="doLogin()" style="flex:1;padding:10px;background:var(--primary,#1aad19);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">登录</button>
-      <button id="authRegisterBtn" onclick="doRegister()" style="flex:1;padding:10px;background:#f5f5f5;border:none;border-radius:8px;font-size:14px;cursor:pointer;color:var(--text-primary)">注册</button>
-      <button id="authSwitchBtn" onclick="switchAuthMode()" style="width:100%;padding:8px;background:none;border:none;color:var(--primary,#1aad19);font-size:12px;cursor:pointer;margin-top:8px">没有账号？立即注册</button>
-    </div>
-    <div id="authSwitchTip" style="text-align:center;font-size:12px;color:var(--text-secondary)"></div>
-  </div>
-</div>
-
 <!-- 登录 / 注册 -->
 <div id="authGate">
   <div class="auth-card">
@@ -11426,11 +11210,175 @@ function showSymptomResults(query, results) {
   if(document.readyState !== 'loading') runSplash();
   else document.addEventListener('DOMContentLoaded', runSplash);
 })();
+
+// ===== 药箱系统 =====
+function openCabinet(){switchTab('cabinet');renderCabinet();updateCabinetMemberSelect();}
+function addCabinetDrug(){
+  var n=document.getElementById('cabName'),sp=document.getElementById('cabSpec'),q=document.getElementById('cabQty'),ex=document.getElementById('cabExpiry'),mb=document.getElementById('cabMember');
+  if(!n.value){showToast('请输入药品名称');return;}
+  var drugs=JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+  var memberId=mb.value||'self';
+  var members=JSON.parse(localStorage.getItem('cy_members')||'[{"id":"self","name":"我"}]');
+  var memberName=(members.find(function(m){return m.id===memberId;})||{name:'我'}).name;
+  drugs.push({name:n.value,spec:sp.value,qty:q.value,expiry:ex.value,memberId:memberId,memberName:memberName,added:new Date().toISOString()});
+  localStorage.setItem('cy_cabinet',JSON.stringify(drugs));
+  n.value='';sp.value='';q.value='';ex.value='';
+  renderCabinet();showToast('药品已添加');
+}
+function renderCabinet(){
+  var drugs=JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+  var el=document.getElementById('cabinetList');
+  var now=new Date();
+  var expired=0,expiring=0;
+  drugs.forEach(function(d){
+    if(d.expiry){var ed=new Date(d.expiry);var days=(ed-now)/86400000;if(days<0)expired++;else if(days<30)expiring++;}
+  });
+  if(document.getElementById('cabStatTotal'))document.getElementById('cabStatTotal').textContent=drugs.length;
+  if(document.getElementById('cabStatWarn'))document.getElementById('cabStatWarn').textContent=expiring;
+  if(document.getElementById('cabStatBad'))document.getElementById('cabStatBad').textContent=expired;
+  if(drugs.length===0){el.innerHTML='<div style="padding:32px;text-align:center;color:#888;">药箱是空的，添加第一个药品吧</div>';return;}
+  el.innerHTML=drugs.map(function(d){
+    var status='',statusColor='';
+    if(d.expiry){var ed=new Date(d.expiry);var days=(ed-now)/86400000;if(days<0){status='已过期';statusColor='#ff4d4f';}else if(days<30){status=days.toFixed(0)+'天后过期';statusColor='#faad14';}}
+    return '<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">'+
+      '<div><div style="font-size:15px;font-weight:500;">'+d.name+'</div><div style="font-size:12px;color:#888;margin-top:2px;">'+(d.spec||'')+' · '+d.qty+' · '+d.memberName+'</div></div>'+
+      (status?'<span style="font-size:12px;color:#fff;background:'+statusColor+';padding:2px 8px;border-radius:10px;">'+status+'</span>':'')+'</div>';
+  }).join('');
+}
+function updateCabinetMemberSelect(){
+  var members=JSON.parse(localStorage.getItem('cy_members')||'[{"id":"self","name":"我"}]');
+  var sel=document.getElementById('cabMember');
+  if(!sel)return;
+  sel.innerHTML=members.map(function(m){return '<option value="'+m.id+'">属于：'+m.name+'</option>';}).join('');
+}
+// ===== 家庭成员系统 =====
+function openMember(){switchTab('member');renderMembers();}
+function renderMembers(){
+  var members=JSON.parse(localStorage.getItem('cy_members')||'[{"id":"self","name":"我"}]');
+  var el=document.getElementById('memberList');
+  el.innerHTML=members.map(function(m){
+    if(m.id==='self')return '<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;"><div style="font-size:15px;font-weight:500;">'+m.name+'（我）</div>'+(m.age?'<div style="font-size:12px;color:#888;margin-top:2px;">年龄：'+m.age+'</div>':'')+(m.conditions?'<div style="font-size:12px;color:#888;margin-top:2px;">'+m.conditions+'</div>':'')+'</div>';
+    return '<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:15px;font-weight:500;">'+m.name+'</div><div style="font-size:12px;color:#888;margin-top:2px;">'+(m.relation||'')+(m.age?' · '+m.age+'岁':'')+'</div>'+(m.conditions?'<div style="font-size:12px;color:#888;margin-top:2px;">'+m.conditions+'</div>':'')+'</div><button onclick="deleteMember(\'\''+m.id+'\'\')" style="padding:4px 10px;border:1px solid #ddd;border-radius:6px;background:#f5f5f5;font-size:12px;cursor:pointer;">删除</button></div>';
+  }).join('');
+}
+function openMemberModal(){document.getElementById('memberModal').style.display='flex';document.getElementById('memberName').value='';document.getElementById('memberAge').value='';document.getElementById('memberConditions').value='';}
+function closeMemberModal(){document.getElementById('memberModal').style.display='none';}
+function saveMember(){
+  var n=document.getElementById('memberName'),a=document.getElementById('memberAge'),c=document.getElementById('memberConditions'),r=document.getElementById('memberRelation');
+  if(!n.value){showToast('请输入姓名');return;}
+  var members=JSON.parse(localStorage.getItem('cy_members')||'[{"id":"self","name":"我"}]');
+  members.push({id:'mem_'+Date.now(),name:n.value,relation:r.value,age:a.value,conditions:c.value});
+  localStorage.setItem('cy_members',JSON.stringify(members));
+  closeMemberModal();renderMembers();updateCabinetMemberSelect();showToast('成员已添加');
+}
+function deleteMember(id){
+  var members=JSON.parse(localStorage.getItem('cy_members')||'[]');
+  localStorage.setItem('cy_members',JSON.stringify(members.filter(function(m){return m.id!==id;})));
+  renderMembers();updateCabinetMemberSelect();showToast('已删除');
+}
+// ===== 用药提醒系统 =====
+function openReminder(){switchTab('reminder');renderReminders();}
+function renderReminders(){
+  var reminders=JSON.parse(localStorage.getItem('cy_reminders')||'[]');
+  var el=document.getElementById('reminderList');
+  if(reminders.length===0){el.innerHTML='<div style="padding:32px;text-align:center;color:#888;">暂无提醒，点击右上角 + 添加</div>';return;}
+  el.innerHTML=reminders.map(function(r){
+    var checked=localStorage.getItem('cy_reminder_'+r.id)==='1';
+    var toggleBg=checked?'#07c160':'#ccc';
+    var knobPos=checked?'right:3px;left:auto':'left:3px';
+    return '<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">'+
+      '<div><div style="font-size:15px;font-weight:500;">'+r.drug+'</div><div style="font-size:12px;color:#888;margin-top:2px;">'+r.time+(r.dose?' · '+r.dose:'')+'</div></div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+        '<label style="position:relative;display:inline-block;width:40px;height:22px;"><input type="checkbox"'+(checked?' checked':'')+' onchange="toggleReminder(\'\''+r.id+'\'\','+checked+')" style="opacity:0;width:0;height:0;">'+
+          '<span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:'+toggleBg+';border-radius:22px;transition:0.3s;">'+
+            '<span style="position:absolute;height:16px;width:16px;background:#fff;border-radius:50%;top:3px;'+knobPos+';transition:0.3s;"></span></span></label>'+
+        '<button onclick="deleteReminder(\'\''+r.id+'\'\')" style="padding:4px 8px;border:1px solid #ddd;border-radius:6px;background:#f5f5f5;font-size:12px;cursor:pointer;">删除</button>'+
+      '</div></div>';
+  }).join('');
+}
+function openReminderModal(){document.getElementById('reminderModal').style.display='flex';document.getElementById('reminderDrugInput').value='';document.getElementById('reminderTime').value='08:00';document.getElementById('reminderDose').value='';}
+function closeReminderModal(){document.getElementById('reminderModal').style.display='none';}
+function saveReminder(){
+  var drug=document.getElementById('reminderDrugInput'),time=document.getElementById('reminderTime'),dose=document.getElementById('reminderDose');
+  if(!drug.value){showToast('请输入药品名称');return;}
+  var reminders=JSON.parse(localStorage.getItem('cy_reminders')||'[]');
+  reminders.push({id:'rem_'+Date.now(),drug:drug.value,time:time.value,dose:dose.value,enabled:true});
+  localStorage.setItem('cy_reminders',JSON.stringify(reminders));
+  closeReminderModal();renderReminders();showToast('提醒已添加');
+}
+function toggleReminder(id,checked){localStorage.setItem('cy_reminder_'+id,checked?'1':'0');}
+function deleteReminder(id){
+  var reminders=JSON.parse(localStorage.getItem('cy_reminders')||'[]');
+  localStorage.setItem('cy_reminders',JSON.stringify(reminders.filter(function(r){return r.id!==id;})));
+  localStorage.removeItem('cy_reminder_'+id);renderReminders();showToast('已删除');
+}
+function checkReminders(){
+  if(!('Notification'in window))return;
+  var reminders=JSON.parse(localStorage.getItem('cy_reminders')||'[]');
+  var now=new Date(),h=now.getHours(),m=now.getMinutes(),cur=h+':'+(m<10?'0':'')+m;
+  reminders.forEach(function(r){
+    if(r.time===cur&&localStorage.getItem('cy_reminder_'+r.id)==='1'&&localStorage.getItem('cy_notified_'+r.id)!==cur){
+      localStorage.setItem('cy_notified_'+r.id,cur);
+      if(Notification.permission==='granted')new Notification('用药提醒',{body:r.drug+(r.dose?' - '+r.dose:''),icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💊</text></svg>'});
+      showToast('该吃 '+r.drug+(r.dose?' ('+r.dose+')':'')+' 了！');
+    }
+  });
+}
+if(!window._reminderIntervalSet){window._reminderIntervalSet=true;if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();setInterval(checkReminders,60000);}
+// ===== Profile 编辑 =====
+function openProfileEdit(){
+  var session=JSON.parse(localStorage.getItem('cy_session')||'null');
+  if(!session){showToast('请先登录');switchTab('profile');return;}
+  var users=JSON.parse(localStorage.getItem('cy_users')||'[]');
+  var user=users.find(function(u){return u.phone===session.phone;});
+  document.getElementById('profileEditModal').style.display='flex';
+  document.getElementById('editNickname').value=user?user.nickname||'':'';
+  document.getElementById('editPhone').value=user?user.phone||'':session.phone||'';
+}
+function closeProfileEdit(){document.getElementById('profileEditModal').style.display='none';}
+function saveProfileEdit(){
+  var nickname=document.getElementById('editNickname').value,phone=document.getElementById('editPhone').value;
+  var session=JSON.parse(localStorage.getItem('cy_session')||'null');
+  var users=JSON.parse(localStorage.getItem('cy_users')||'[]');
+  var idx=users.findIndex(function(u){return u.phone===session.phone;});
+  if(idx>=0){users[idx].nickname=nickname;users[idx].phone=phone;session.nickname=nickname;session.phone=phone;}
+  localStorage.setItem('cy_users',JSON.stringify(users));
+  localStorage.setItem('cy_session',JSON.stringify(session));
+  closeProfileEdit();loadProfile();showToast('资料已保存');
+}
+
 </script>
+
+<div id="reminderModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:92%;max-width:380px;padding:24px 20px;">
+    <div style="font-size:18px;font-weight:600;margin-bottom:20px;">添加用药提醒</div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">药品名称 *</label><input id="reminderDrugInput" type="text" placeholder="输入药名" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">提醒时间 *</label><input id="reminderTime" type="time" value="08:00" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="margin-bottom:20px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">剂量说明</label><input id="reminderDose" type="text" placeholder="如：1片、2粒" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="display:flex;gap:10px;"><button onclick="closeReminderModal()" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:8px;background:#f5f5f5;font-size:15px;cursor:pointer;">取消</button><button onclick="saveReminder()" style="flex:1;padding:12px;border:none;border-radius:8px;background:#07c160;color:#fff;font-size:15px;font-weight:500;cursor:pointer;">保存</button></div>
+  </div>
+</div>
+<div id="memberModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:92%;max-width:380px;padding:24px 20px;">
+    <div style="font-size:18px;font-weight:600;margin-bottom:20px;">添加家庭成员</div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">姓名 *</label><input id="memberName" type="text" placeholder="输入姓名" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">与你的关系</label><select id="memberRelation" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;background:#fff;"><option value="配偶">配偶</option><option value="父亲">父亲</option><option value="母亲">母亲</option><option value="子女">子女</option><option value="祖父/祖母">祖父/祖母</option><option value="其他">其他</option></select></div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">年龄</label><input id="memberAge" type="number" placeholder="年龄" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="margin-bottom:20px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">慢性病 / 过敏（选填）</label><input id="memberConditions" type="text" placeholder="如：高血压、糖尿病、青霉素过敏" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="display:flex;gap:10px;"><button onclick="closeMemberModal()" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:8px;background:#f5f5f5;font-size:15px;cursor:pointer;">取消</button><button onclick="saveMember()" style="flex:1;padding:12px;border:none;border-radius:8px;background:#07c160;color:#fff;font-size:15px;font-weight:500;cursor:pointer;">保存</button></div>
+  </div>
+</div>
+<div id="profileEditModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:92%;max-width:380px;padding:24px 20px;">
+    <div style="font-size:18px;font-weight:600;margin-bottom:20px;">编辑个人资料</div>
+    <div style="margin-bottom:14px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">昵称</label><input id="editNickname" type="text" placeholder="昵称" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="margin-bottom:20px;"><label style="display:block;font-size:13px;color:#888;margin-bottom:6px;">手机号</label><input id="editPhone" type="tel" placeholder="手机号" style="width:100%;padding:10px 12px;border:1px solid #e5e5e5;border-radius:8px;font-size:14px;box-sizing:border-box;"></div>
+    <div style="display:flex;gap:10px;"><button onclick="closeProfileEdit()" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:8px;background:#f5f5f5;font-size:15px;cursor:pointer;">取消</button><button onclick="saveProfileEdit()" style="flex:1;padding:12px;border:none;border-radius:8px;background:#07c160;color:#fff;font-size:15px;font-weight:500;cursor:pointer;">保存</button></div>
+  </div>
+</div>
+
 </body>
 </html>
-
-
 
 
 
