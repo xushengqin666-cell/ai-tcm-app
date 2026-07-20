@@ -1,16 +1,49 @@
 const fs = require('fs');
 const s = fs.readFileSync('index.html', 'utf8');
-const i = s.indexOf('function doSearch()');
-// 提取到下一个 function 之前
-const end = s.indexOf('\nfunction ', i + 20);
-const code = s.slice(i, end);
-// 用 Function 构造检测语法（不执行 DOM）
-try {
-  // 把可能引用的全局包一层
-  new Function('searchInput','searchResult','findDrugManual','matchDrugsBySymptom','DRUG_SYNONYMS','escapeHtml','callAI','T','currentLang', code);
-  console.log('✅ doSearch 语法 OK, 长度', code.length);
-} catch (e) {
-  console.log('❌ doSearch 语法错误:', e.message);
-  console.log('问题代码片段:');
-  console.log(code.slice(0, 800));
+
+// 检查大括号平衡
+let depth = 0;
+for (let i = 0; i < s.length; i++) {
+  if (s[i] === '{') depth++;
+  else if (s[i] === '}') depth--;
+  if (depth < 0) {
+    console.log('ERROR: Unbalanced braces at position', i);
+    console.log('Context:', s.slice(Math.max(0,i-50), i+50));
+    process.exit(1);
+  }
 }
+console.log('Braces balanced:', depth === 0 ? 'OK' : 'FAIL (' + depth + ')');
+
+// 检查关键函数存在
+const checks = [
+  ['openProfileEdit', 'function openProfileEdit()'],
+  ['saveProfileEdit', 'function saveProfileEdit()'],
+  ['openReminder', 'function openReminder()'],
+  ['addReminder', 'function saveReminder()'],
+  ['openMember', 'function openMember()'],
+  ['addMember', 'function saveMember()'],
+  ['openCabinet', 'function openCabinet()'],
+  ['addCabinetDrug', 'function addCabinetDrug()'],
+  ['reminderModal', 'id="reminderModal"'],
+  ['memberModal', 'id="memberModal"'],
+  ['profileEditModal', 'id="profileEditModal"'],
+];
+
+checks.forEach(([name, pattern]) => {
+  const found = s.includes(pattern);
+  console.log(name + ':', found ? 'OK' : 'MISSING');
+});
+
+// 尝试解析 T 对象
+const tMatch = s.match(/var T = \{([\s\S]+?)\};\s*var currentLang/);
+if (tMatch) {
+  try {
+    const tCode = 'var T = {' + tMatch[1] + '};';
+    new Function(tCode + '; return T;')();
+    console.log('T object: OK');
+  } catch(e) {
+    console.log('T object ERROR:', e.message);
+  }
+}
+
+console.log('\nFile size:', s.length);
