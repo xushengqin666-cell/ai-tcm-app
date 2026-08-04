@@ -1,0 +1,12 @@
+node_modules/
+android/
+dist/
+temp_android_template/
+*.apk
+*.bak
+*.png
+*.jpg
+*.pdf
+_*.js
+_*.txt
+backup_*/
