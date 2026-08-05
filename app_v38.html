@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.7.8</title>
+<title>彩云智药 · 家庭AI药师 · v2.7.9</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -15652,7 +15652,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "复合维生素B片": {"indications":"B族维生素缺乏：口角炎、舌炎、脚气病、糙皮病、脂溢性皮炎；妊娠/哺乳期","ingredients":"主要成分：维生素B1、B2、B6、B12、烟酰胺、泛酸钙。规格：100片/瓶","dosage":"1-2片，每日3次","category":"维生素","warnings":"尿液变黄（正常无害）","time":"任意（饭后更佳）","foodAvoid":"","drugNotify":"B6拮抗左旋多巴；叶酸与甲氨蝶呤相互作用"},
   "维生素C泡腾片": {"indications":"预防和治疗维生素C缺乏：坏血病、牙龈出血；增强免疫力（辅助）；缺铁性贫血的辅助治疗","ingredients":"主要成分：维生素C（抗坏血酸）。规格：1g/片","dosage":"1片，每日1次，溶于200mL水中服用","category":"维生素","warnings":"肾结石病史者慎用；高剂量突然停药可致坏血病反跳","time":"任意（饭后减少刺激）","foodAvoid":"","drugNotify":"与阿司匹林/铁剂/雌激素/巴比妥类相互作用"},
   "善存多维元素片": {"indications":"预防维生素和矿物质缺乏：饮食不规律者、老年人、孕产妇；补充多种微量营养素","ingredients":"主要成分：13种维生素+12种矿物质。规格：30片/60片/瓶","dosage":"1片，每日1次，饭后服用","category":"复合维生素矿物质","warnings":"不与其他含维生素A/D的制剂同服；肾结石/高钙血症禁用；含铁，胃肠道反应","time":"饭后","foodAvoid":"浓茶/咖啡/红酒（影响铁吸收）","drugNotify":"四环素类/氟喹诺酮类/左甲状腺素/卡托普利（吸收干扰）"}
-  // [v2.7.8] Extended interactions for new drug additions
+  // [v2.7.9] Extended interactions for new drug additions
   set("华法林", "甲硝唑", "danger", "抑制S-华法林代谢，增强抗凝，出血风险显著增加", "Inhibits S-warfarin metabolism, significantly increases bleeding risk");
   set("华法林", "替硝唑", "danger", "抑制华法林代谢，增强抗凝效果", "Inhibits warfarin metabolism, increases anticoagulant effect");
   set("华法林", "左氧氟沙星", "caution", "抗菌作用改变肠道菌群，影响维生素K合成，增加INR", "Alters gut flora, reduces vitamin K synthesis, increases INR");
@@ -15980,7 +15980,7 @@ document.addEventListener('click', function(e){
 <\/script>
 <\/script>
 <script>
-// === [v2.7.8] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
+// === [v2.7.9] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
 (function(){
 
 // Category shelf life defaults (days) for drugs without DRUG_GUIDE entry
@@ -16175,7 +16175,7 @@ if (document.getElementById('tab-cabinet')) {
 })();
 <\/script><\/script>
 <script>
-// === [v2.7.8] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
+// === [v2.7.9] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
 (function(){
 var _origSwitchTab = window.switchTab;
 window.switchTab = function(tab) {
@@ -16273,7 +16273,7 @@ if (_origAddCab) {
 })();
 <\/script>
 <script>
-// === [v2.7.8] 暗色模式切换 ===
+// === [v2.7.9] 暗色模式切换 ===
 (function(){
 var _darkOn=localStorage.getItem('cy_dark_mode')==='1';
 if(_darkOn)document.body.classList.add('dark-mode');
