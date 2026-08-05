@@ -713,7 +713,21 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
 }
 </style>
 
-</head>
+
+<style id="cy-dark-mode">
+:root {
+  --cy-bg:#0f0f0f;--cy-bg2:#1a1a1a;--cy-bg3:#242424;--cy-surface:#1e1e1e;
+  --cy-text:#e8e8e8;--cy-text2:#a0a0a0;--cy-border:#333;
+}
+body.dark-mode,body.dark-mode *{background-color:var(--cy-bg,#0f0f0f)!important;color:var(--cy-text,#e8e8e8)!important;border-color:var(--cy-border,#333)!important}
+body.dark-mode .tab-content,body.dark-mode .bottom-nav{background:var(--cy-bg,#0f0f0f)!important}
+body.dark-mode .card,body.dark-mode [style*="border-radius:16px"]{background:var(--cy-surface,#1e1e1e)!important;box-shadow:0 1px 4px rgba(0,0,0,0.4)!important}
+body.dark-mode .bottom-nav a{color:#666!important}
+body.dark-mode .bottom-nav a.active{color:#07C160!important}
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:var(--cy-bg3,#242424)!important;color:var(--cy-text,#e8e8e8)!important;border-color:var(--cy-border,#333)!important}
+body.dark-mode .modal{background:var(--cy-surface,#1e1e1e)!important}
+body.dark-mode .modal-overlay{background:rgba(0,0,0,0.8)!important}
+</style></head>
 <body>
 <script>
 // 修复：北京时间 / 说明书滚动（原先缺失定义导致加载期每秒抛错 + 说明书导航无反应）
@@ -16198,6 +16212,29 @@ if (_origAddCab) {
     return _origAddCab.apply(this, arguments);
   };
 }
+})();
+<\/script>
+<script>
+// === [v2.7.8] 暗色模式切换 ===
+(function(){
+var _darkOn=localStorage.getItem('cy_dark_mode')==='1';
+if(_darkOn)document.body.classList.add('dark-mode');
+window.toggleDarkMode=function(){
+  _darkOn=!_darkOn;
+  if(_darkOn){document.body.classList.add('dark-mode');localStorage.setItem('cy_dark_mode','1');}
+  else{document.body.classList.remove('dark-mode');localStorage.setItem('cy_dark_mode','0');}
+};
+function _btn(){
+  if(document.getElementById('cy-dark-btn'))return;
+  var b=document.createElement('a');
+  b.id='cy-dark-btn';b.href='javascript:void(0)';
+  b.onclick=function(){window.toggleDarkMode();};
+  b.style.cssText='position:fixed;bottom:90px;right:20px;width:44px;height:44px;border-radius:50%;background:#1e1e1e;box-shadow:0 2px 12px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:9999;border:none;';
+  b.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8e8e8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  document.body.appendChild(b);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_btn);
+else _btn();
 })();
 <\/script>
 </body>
