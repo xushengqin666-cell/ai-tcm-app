@@ -691,7 +691,7 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
 .pull-indicator svg{width:20px;height:20px;fill:#07C160;animation:spin 1s linear infinite;}
 </style>
 
-  <meta name="description" content="彩云智药 — 家庭AI药师智能体。拍照识别药品、查询药物相互作用、智能症状搜药、中医辨证、家庭药箱管理、用药提醒。专业、安全、可信。">
+  <meta name="description" content="彩云智药 — 家庭AI药师智能体。拍照识别药品、查询药物相互作用、智能症状搜药、中医辨证、家庭药箱管理、用药提醒。专业、安全、可��。">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%2307C160'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='130' font-family='serif'>💊</text></svg>">
@@ -1106,67 +1106,67 @@ var T = {
     searchTitle:'智能搜索',searchPlaceholder:'输入药品、症状或问题,如:布洛芬能退烧吗、头痛吃什么...',searchBtn:'搜索',
     featureTitle:'功能入口',heroSub:'家庭 AI 药师 · 让每一次用药更安心',featReport:'辨证报告',featManual:'用药指南',featChat:'智能问药',featSymptom:'症状咨询',featContra:'用药禁忌',featInteract:'相互作用',featCabinet:'家庭药箱',featMember:'家庭成员',featReminder:'用药提醒',featSettings:'设置',
     interactTitle:'药物相互作用关系网',drugAPlaceholder:'药物A,如:布洛芬',drugBPlaceholder:'药物B(可选)',interactBtn:'查询',
-    legendDanger:'禁忌',legendCaution:'注意',legendGreen:'可联用',legendBlue:'中性',
-    chatTitle:'智能问药',chatPlaceholder:'输入药品或用药问题,如:布洛芬能和感冒药一起吃吗...',sendBtn:'查询',
+    legendDanger:'禁忌',legendCaution:'注意',legendGreen:'可联用',legendBlue:'Neutral',
+    chatTitle:'AI Consultation',chatPlaceholder:'Ask about drugs or medication, e.g.: Can ibuprofen be taken with cold medicine...',sendBtn:'Send',
     chatWelcome:'',
-    statusReady:'准备就绪',statusSending:'发送中...',statusError:'网络错误',
-    searching:'搜索中...',searchFail:'搜索失败,请稍后重试',typing:'AI 分析中',noData:'暂无相互作用数据',langBtn:'EN',
-    guideTitle:'用药指南',guideTime:'服药时间',guideFoodAvoid:'饮食禁忌',guideDrugAvoid:'药物禁忌',guideNotes:'注意事项',noGuideData:'暂无用药指南数据',relatedDrugs:'相关药物',interactions:'条相互作用',
-    unionCheckTitle:'联合用药审查',unionDrugPlaceholder:'药物',unionBtnAdd:'+ 添加药物',unionBtnCheck:'一键审查',unionResultSummary:'发现',unionResultFound:'条相互作用',unionContraindicated:'禁忌',unionCaution:'注意',unionSafe:'安全',unionNeutral:'无数据',unionDangerCount:'条禁忌',unionCautionCount:'条注意',unionHideDetail:'收起',unionShowDetail:'查看详情',
-    navHome:'首页',navInsert:'说明书',navCabinet:'药箱',navMember:'家庭',navReminder:'提醒',navProfile:'我的',profileTitle:'个人中心',profileNickname:'昵称',profilePhone:'手机号',profileEdit:'编辑资料',profileSettings:'设置',profileAbout:'关于我们',profileLogout:'退出登录',
-    configTitle:'AI 配置',configStatus:'状态:',configKeyPlaceholder:'sk-xxxxxxxx（密钥安全存储在本地，不会上传）',
-    configGetKeyHint:'获取密钥',
+    statusReady:'Ready',statusSending:'Sending...',statusError:'Network error',
+    searching:'Searching...',searchFail:'Search failed, please try again',typing:'AI analyzing...',noData:'No interaction data',langBtn:'EN',
+    guideTitle:'Drug Guide',guideTime:'Administration Time',guideFoodAvoid:'Food Interactions',guideDrugAvoid:'Drug Interactions',guideNotes:'Notes',noGuideData:'No guide data available',relatedDrugs:'Related Drugs',interactions:' interactions',
+    unionCheckTitle:'Multi-Drug Interaction Check',unionDrugPlaceholder:'Drug',unionBtnAdd:'+ Add Drug',unionBtnCheck:'Check All',unionResultSummary:'Found',unionResultFound:' interactions',unionContraindicated:'Contraindicated',unionCaution:'Use Caution',unionSafe:'Safe',unionNeutral:'No Data',unionDangerCount:' contraindicated',unionCautionCount:' caution',unionHideDetail:'Collapse',unionShowDetail:'Show Details',
+    navHome:'Home',navInsert:'Manual',navCabinet:'Cabinet',navMember:'Family',navReminder:'Reminders',navProfile:'My',profileTitle:'Personal Center',profileNickname:'Nickname',profilePhone:'Phone',profileEdit:'Edit Profile',profileSettings:'Settings',profileAbout:'About Us',profileLogout:'Logout',
+    configTitle:'AI Configuration',configStatus:'Status:',configKeyPlaceholder:'sk-xxxxxxxx (key stored locally, never uploaded)',
+    configGetKeyHint:'Get API Key',
     configNeedKey:'',
-    statusConfigured:'已配置',statusNotConfigured:'未配置',statusLocalEngine:'本地引擎(无Key)',statusSfReady:'硅基流动API已配置(优先)',
-    manualTitle:'药品说明书查询',manualCatLabel:'类别：',
-    reportTitle:'中医辨证报告',reportSubtitle:'基于症状、舌象、脉象生成个体化治疗方案',
-    reportSymptomLabel:'症状（用逗号/空格分隔，如：口干、心烦、失眠）',reportSymptomPlaceholder:'口干, 心烦, 失眠,焦虑',
-    reportGenerateBtn:'生成辨证报告',tabReport:'辨证报告',
-    manualIndication:'适应症:',manualDosage:'用法用量:',manualTime:'服药时间:',
-    manualNotes:'注意事项:',manualContraindication:'禁忌:',manualFoodAvoid:'饮食禁忌:',
-    manualDrugInteract:'药物相互作用:',manualRemark:'备注:',
-    noManualData:'暂无详细说明书数据',manualHint:'提示:请输入药品通用名',manualSearchResult:'条搜索结果',noManualFound:'未找到「',manualCat:'类别:',
-    guideDrugName:'药品',guideDetailHint:'点击查看详细说明',
-    netCenter:'中心',netEdgeCount:'条相互作用',noNetData:'无相互作用数据',moreText:'更多',
-    unionChecked:'已检查',unionNoIssue:'未发现相互作用',
-    statusLocal:'本地模式',statusSfReadyShort:'AI已就绪',statusSfNotConfig:'AI未配置',
-    statusReplied:'已回复',statusFailed:'发送失败',
-    deepThinkLabel:'深度思考',thinkingText:'思考中...',thinkProcessLabel:'思考过程',
-    errorTimeout:'请求超时，请稍后重试',errorNetwork:'网络错误，请检查网络连接',localNoMatchHint:'未找到匹配结果，请尝试其他关键词',
-    fallbackHint:'本地数据库回复',
-    versionLabel:'版本',cabinetTab:'药箱',
-    homeSymptomTitle:'症状搜药',
-    homeSymptomPlaceholder:'输入症状，如：头痛、发烧、咳嗽...',
-    homeSymptomBtn:'搜索',
-    manualPlaceholder:'输入药品名称，如：布洛芬、阿莫西林、二甲双胍...',
-    manualBtn:'查询',
-    cabAddTitle:'添加药品',
-    cabNameLabel:'药品名称',
-    cabNamePlaceholder:'如：布洛芬、阿莫西林',
-    cabSpecLabel:'规格',
-    cabSpecPlaceholder:'如：0.1g×20片',
-    cabQtyLabel:'数量',
-    cabQtyPlaceholder:'余量',
-    cabExpiryLabel:'有效期至',
-    cabMemberLabel:'所属成员',
-    cabAddBtn:'加入药箱',
-    cabStatOk:'正常',
-    cabStatWarn:'临期',
-    cabStatBad:'过期',
-    tonguePlaceholder:'-- 选择舌象 --',
-    pulsePlaceholder:'-- 选择脉象 --',
-    cameraBtn:'拍照识别',
-    manualInputBtn:'手动输入',
-    cabMeOption:'我',
-    cabMemberNoAssign:'（不指定）',
+    statusConfigured:'Configured',statusNotConfigured:'Not configured',statusLocalEngine:'Local mode (no key)',statusSfReady:'SiliconFlow API ready (priority)',
+    manualTitle:'Drug Manual Search',manualCatLabel:'Category: ',
+    reportTitle:'TCM Diagnosis Report',reportSubtitle:'Personalized treatment plan based on symptoms, tongue, and pulse',
+    reportSymptomLabel:'Symptoms (comma/space separated, e.g.: dry mouth, irritability, insomnia)',reportSymptomPlaceholder:'Dry mouth, irritability, insomnia, anxiety',
+    reportGenerateBtn:'Generate Report',tabReport:'Diagnosis',
+    manualIndication:'Indications:',manualDosage:'Dosage:',manualTime:'Administration:',
+    manualNotes:'Notes:',manualContraindication:'Contraindications:',manualFoodAvoid:'Food Interactions:',
+    manualDrugInteract:'Drug Interactions:',manualRemark:'Remarks:',
+    noManualData:'No detailed data available',manualHint:'Enter generic drug name',manualSearchResult:' results',noManualFound:'No results for "',manualCat:'Category:',
+    guideDrugName:'Drug',guideDetailHint:'Tap for details',
+    netCenter:'Center',netEdgeCount:' interactions',noNetData:'No interaction data',moreText:'More',
+    unionChecked:'Checked',unionNoIssue:'No interactions found',
+    statusLocal:'Local mode',statusSfReadyShort:'AI ready',statusSfNotConfig:'AI not configured',
+    statusReplied:'Replied',statusFailed:'Failed',
+    deepThinkLabel:'Deep Thinking',thinkingText:'Thinking...',thinkProcessLabel:'Thought Process',
+    errorTimeout:'Request timeout, please try again',errorNetwork:'Network error, please check connection',localNoMatchHint:'No results found, try another keyword',
+    fallbackHint:'Local database response',
+    versionLabel:'Version',cabinetTab:'Cabinet',
+    homeSymptomTitle:'Symptom Checker',
+    homeSymptomPlaceholder:'Enter symptoms, e.g.: headache, fever, cough...',
+    homeSymptomBtn:'Search',
+    manualPlaceholder:'Enter drug name, e.g.: ibuprofen, amoxicillin, metformin...',
+    manualBtn:'Search',
+    cabAddTitle:'Add Drug',
+    cabNameLabel:'Drug Name',
+    cabNamePlaceholder:'e.g.: ibuprofen, amoxicillin',
+    cabSpecLabel:'Specification',
+    cabSpecPlaceholder:'e.g.: 0.1g x 20 tablets',
+    cabQtyLabel:'Quantity',
+    cabQtyPlaceholder:'Remaining quantity',
+    cabExpiryLabel:'Expiry Date',
+    cabMemberLabel:'For Whom',
+    cabAddBtn:'Add to Cabinet',
+    cabStatOk:'OK',
+    cabStatWarn:'Expiring',
+    cabStatBad:'Expired',
+    tonguePlaceholder:'-- Select tongue --',
+    pulsePlaceholder:'-- Select pulse --',
+    cameraBtn:'Take Photo',
+    manualInputBtn:'Type manually',
+    cabMeOption:'Me',
+    cabMemberNoAssign:'(unassigned)',
     tongueMap:{'红舌':'红舌','淡红':'淡红舌','淡白':'淡白舌','暗红':'暗红舌','绛红':'绛红舌','青紫':'青紫舌','紫暗':'紫暗舌','胖大':'胖大舌','瘦薄':'瘦薄舌','裂纹':'裂纹舌','齿痕':'齿痕舌','芒刺':'芒刺舌','瘀点':'瘀点舌'},
     pulseMap:{'浮':'浮脉','沉':'沉脉','迟':'迟脉','数':'数脉','滑':'滑脉','涩':'涩脉','虚':'虚脉','实':'实脉','弦':'弦脉','紧':'紧脉','濡':'濡脉','洪':'洪脉','细':'细脉','弱':'弱脉','结':'结脉','代':'代脉','促':'促脉'},
-    authTitle:'彩云智药',authSub:'家庭 AI 药师 · 让用药更安全',authTabLogin:'登录',authTabRegister:'注册',authPhonePh:'手机号',authPwdPh:'密码（6 位以上）',authPwd2Ph:'确认密码',authSubmitBtn:'登 录',authSkipBtn:'先体验，跳过 →',
+    authTitle:'Caiyun Smart Pharmacy',authSub:'Family AI Pharmacist · Safer Medication for Every Dose',authTabLogin:'Login',authTabRegister:'Register',authPhonePh:'Phone number',authPwdPh:'Password (6+ chars)',authPwd2Ph:'Confirm password',authSubmitBtn:'  LOGIN  ',authSkipBtn:'Try first, skip for now',
     /* ===== 药品详情弹窗 ===== */
-    ddTitle:'药品详情',ddCat:'分类',ddIndications:'适应症',ddIngredients:'成分',ddDosage:'用法用量',ddTime:'服药时间',ddFood:'食物禁忌',ddAdverse:'不良反应',ddContra:'禁忌症',ddNote:'注意事项',ddStorage:'贮藏',ddWarn:'安全警示',
-    ddCabinet:'我的药箱信息',ddSpec:'规格',ddQty:'余量',ddExpiry:'有效期',ddOwner:'归属',ddAddTime:'添加时间',ddInteractInfo:'相互作用',ddInteractDanger:'禁忌',ddInteractCaution:'注意',ddInteractTotal:'条相互作用',
-    ddEmpty:'暂无数据',ddDash:'—',ddNotFound:'未找到该药品的详细资料',ddClose:'关闭',ddFav:'收藏',ddFaved:'已收藏',ddRemind:'设提醒',ddGoInteract:'查相互作用',ddDelete:'从药箱移除',
-    ddFavTitle:'我的收藏',ddFavEmpty:'还没有收藏任何药品，在药品详情里点「收藏」试试',ddDisclaimer:'以上信息仅供参考，具体用药请遵医嘱或咨询药师。',featScan:'拍照识别',featAdr:'不良反应自查',featHealth:'健康追踪',scanPanelTitle:'📷 拍照识别药品',scanCamera:'📷 拍照',scanAlbum:'🖼️ 相册',scanRecognize:'🔍 识别',scanReset:'重新选择',scanManualPh:'识别不准确？手动输入药名',scanManualBtn:'手动搜索',scanNoMatch:'未匹配到药品库中的药物，请手动输入',scanNotFound:'未找到「X」，试试更精确的药名（如：布洛芬、阿莫西林）',scanOCRProgress:'正在识别文字…（首次加载约需 10-30 秒）',scanOCRDone:'识别中… X%',scanOCRNoText:'未识别到文字，请换一张更清晰的照片，或手动输入',scanOCRError:'识别出错：',scanOCRException:'识别异常：',scanHint:'请先选择图片',scanCandidatePrefix:'识别到 X 个候选药品：',scanAddCabinet:'＋药箱',scanAdded:'已将「X」加入药箱',scanInCabinet:'「X」已在药箱中',scanErrAdd:'加入失败：',adrPanelTitle:'⚠️ 不良反应自查',adClose:'关闭',adrHint:'输入正在服用的药物与出现的不适，智能比对药品说明书不良反应。仅供参考，不替代医生诊断。',adrDrugsLabel:'正在服用的药物（逗号分隔）',adrDrugsPh:'如：布洛芬, 阿莫西林, 阿托伐他汀',adrSymptomLabel:'出现的不适症状',adrSymptomPh:'如：恶心、头晕、皮疹、胃痛',adrCheckBtn:'自查',adrEmpty:'请先输入正在服用的药物',adrNeedSym:'请输入出现的不适症状',adrSafe:'✅ 在已知药品说明书中未直接匹配到与您症状的关联。若不适持续或加重，仍建议咨询医生。',adrFoundPrefix:'⚠️ 发现 X 项可能关联：',adrHitLabel:'关联症状：',adrAdverseLabel:'说明书不良反应：',adrViewFull:'查看完整说明书',adrDisclaimer:'⚕️ 本结果基于药品说明书文字匹配，仅供参考，不能替代专业医疗诊断。如症状严重或持续，请及时就医。',healthPanelTitle:'💗 健康追踪',healthHint:'记录血压 / 血糖，追踪趋势，异常时提醒。仅供个人参考。',healthTabBp:'血压',healthTabGlu:'血糖',healthSaveBtn:'保存记录',healthEmpty:'还没有记录，点击上方表单添加第一条吧',healthRecentLabel:'最近记录',healthSysPh:'收缩压(高压)',healthDiaPh:'舒张压(低压)',healthHrPh:'心率(可选)',healthGluPh:'血糖(mmol/L)',healthGluFasting:'空腹',healthGluPost:'餐后',healthGluRandom:'随机',healthTrendLabel:'趋势（最近 X 次，红色=收缩压，青色=舒张压）',healthNeedBp:'请填写收缩压和舒张压',healthNeedGlu:'请填写血糖值',healthSaved:'已保存',healthDelete:'删除'
+    ddTitle:'Drug Details',ddCat:'Category',ddIndications:'Indications',ddIngredients:'Ingredients',ddDosage:'Dosage',ddTime:'Best Time',ddFood:'Food Avoid',ddAdverse:'Side Effects',ddContra:'Contraindications',ddNote:'Notes',ddStorage:'Storage',ddWarn:'Safety Warning',
+    ddCabinet:'My Cabinet Info',ddSpec:'Spec',ddQty:'Qty',ddExpiry:'Expiry',ddOwner:'Owner',ddAddTime:'Best Time',ddInteractInfo:'Interactions',ddInteractDanger:'Contraindicated',ddInteractCaution:'Use Caution',ddInteractTotal:' interactions',
+    ddEmpty:'No data',ddDash:'—',ddNotFound:'Detailed data not available for this drug',ddClose:'Close',ddFav:'Favorite',ddFaved:'Favorited',ddRemind:'Set Reminder',ddGoInteract:'Check Interactions',ddDelete:'Remove from Cabinet',
+    ddFavTitle:'My Favorites',ddFavEmpty:'No favorites yet. Try favoriting from drug details.',ddDisclaimer:'This information is for reference only. Follow your doctor or pharmacist for specific medication decisions.',featScan:'Photo Recognition',featAdr:'ADR Self-Check',featHealth:'Health Tracker',scanPanelTitle:'Photo Drug Recognition',scanCamera:'Take Photo',scanAlbum:'Gallery',scanRecognize:'Recognize',scanReset:'Reset',scanManualPh:'Recognition not accurate? Type manually.',scanManualBtn:'Manual Search',scanNoMatch:'No drug matched. Try a more precise name.',scanNotFound:'No results for "X". Try a more specific name.',scanOCRProgress:'Recognizing text... (first load ~10-30s)',scanOCRDone:'Recognizing... X%',scanOCRNoText:'No text detected. Try a clearer photo or type manually.',scanOCRError:'Recognition error:',scanOCRException:'Recognition exception:',scanHint:'Please select an image first',scanCandidatePrefix:'Candidates found (X):',scanAddCabinet:'My Cabinet Info',scanAdded:'Added to cabinet',scanInCabinet:'Already in cabinet',scanErrAdd:'Add failed:',adrPanelTitle:'Adverse Reaction Self-Check',adClose:'Close',adrHint:'Enter medications and symptoms for intelligent ADR matching. For reference only.',adrDrugsLabel:'Current medications (comma-separated)',adrDrugsPh:'e.g.: ibuprofen, amoxicillin, atorvastatin',adrSymptomLabel:'Experienced symptoms',adrSymptomPh:'e.g.: nausea, dizziness, rash, stomach pain',adrCheckBtn:'Check',adrEmpty:'Please enter your medications first',adrNeedSym:'Please enter your symptoms',adrSafe:'No direct ADR match found. Consult a doctor if symptoms persist or worsen.',adrFoundPrefix:'Possible associations found (X):',adrHitLabel:'Matched symptom:',adrAdverseLabel:'Listed ADR:',adrViewFull:'View full drug guide',adrDisclaimer:'Results based on drug label text matching. Cannot replace professional medical diagnosis.',healthPanelTitle:'Health Tracker',healthHint:'Record BP/blood sugar, track trends, and get alerts for abnormalities. For personal reference only.',healthTabBp:'Blood Pressure',healthTabGlu:'Blood Sugar',healthSaveBtn:'Save Record',healthEmpty:'No records yet. Add your first record above.',healthRecentLabel:'Recent Records',healthSysPh:'Systolic (mmHg)',healthDiaPh:'Diastolic (mmHg)',healthHrPh:'Heart rate (optional)',healthGluPh:'Blood Sugar (mmol/L)',healthGluFasting:'Fasting',healthGluPost:'Post-meal',healthGluRandom:'Random',healthTrendLabel:'Trend (last X readings: red=SYS, cyan=DIA)',healthNeedBp:'Please fill in systolic and diastolic',healthNeedGlu:'Please fill in blood sugar',healthSaved:'Saved',healthDelete:'Delete'
   },
   en: {
     title:'Caiyun Smart Pharmacy',tabHome:'Home',tabInteract:'Interactions',tabChat:'AI Chat',tabCabinet:'Cabinet',tabMember:'Family',tabReminder:'Reminders',tabProfile:'Me',
@@ -1928,7 +1928,7 @@ var INTERACT_DB = {};
   set('左旋多巴/卡比多巴','抗精神病药','danger','抗精神病药拮抗左旋多巴作用','Antipsychotics antagonize L-dopa effect');
 
   // 前列腺
-  set('坦索罗辛','降压药','caution','体位性低血压叠加','Additive orthostatic hypotension');
+  set('坦索罗辛','降压药','caution','体位性低血压叠��','Additive orthostatic hypotension');
   set('坦索罗辛','西地那非','caution','低血压叠加风险','Additive hypotension risk');
   set('非那雄胺','PSA检测','caution','非那雄胺使PSA降低约50%,需校正','Finasteride reduces PSA ~50%, needs correction');
 
@@ -2089,7 +2089,7 @@ var DRUG_GUIDE = {
   "布洛芬": {
     "indications": "缓解轻至中度疼痛：头痛、关节痛、偏头痛、牙痛、肌肉痛、神经痛、痛经；感冒或流感引起的发热；类风湿关节炎、骨关节炎、强直性脊柱炎（长期用药需医师指导）；普通感冒或流感引起的发热、退烧",
     "ingredients": "主要成分：布洛芬（丙酸类NSAIDs）。常见规格：0.1g/0.2g片剂/胶囊；0.6g缓释胶囊；20mg/mL口服液/滴剂；5%凝胶/乳膏（外用）",
-    "dosage": "成人解热镇痛：一次0.2-0.4g，每4-6小时1次，24小时内不超过1.2g。儿童：按体重5-10mg/kg，每6-8小时1次，24小时不超过4次。缓释制剂：一次0.3-0.6g，一日2次，整粒吞服不可嚼碎。外用凝胶：适量涂于患处，一日3-4次。饭后服用可减轻胃肠道刺激。",
+    "dosage": "成人解热镇痛：一次0.2-0.4g，每4-6小时1次，24小时内不超过1.2g。儿童：按体重5-10mg/kg，每6-8小时1次，24小时不超过4次。缓释制剂：一���0.3-0.6g，一日2次，整粒吞服不可嚼碎。外用凝胶：适量涂于患处，一日3-4次。饭后服用可减轻胃肠道刺激。",
     "adverse": "胃肠道反应（最常见，胃痛、消化不良、恶心、消化道出血，约10-20%患者出现，长期使用或高风险者建议联用质子泵抑制剂如奥美拉唑）；心血管风险（长期使用大剂量可增加心肌梗死、卒中风险，美国FDA要求加黑框警告）；肾功能损害（减少肾脏前列腺素合成，致急性肾损伤，老年人及肾功能不全者慎用）；肝功能障碍（罕见但严重，转氨酶升高、黄疸，立即停药就医）；过敏反应（皮疹、荨麻疹、支气管痉挛，阿司匹林诱发哮喘者禁用所有NSAIDs）",
     "contraindications": "对布洛芬或其他NSAIDs过敏者；阿司匹林诱发哮喘/荨麻疹/过敏反应者（交叉过敏约10-20%）；活动性消化道溃疡/出血；严重心力衰竭（NYHA III-IV级）；严重肝功能不全（Child-Pugh C级）；严重肾功能不全（eGFR<30mL/min）；妊娠晚期（孕30周后，可致胎儿动脉导管早闭）；哺乳期；冠状动脉搭桥术围手术期镇痛禁用",
     "storage": "密封，避光，室温（15-30℃）保存。缓释制剂需整粒吞服，不可嚼碎或压碎。外用凝胶避免接触黏膜及破损皮肤。"
@@ -2221,7 +2221,7 @@ var DRUG_GUIDE = {
     "adverse": "干咳（与普利类相关，约10-20%患者出现）；低血压（尤其首剂效应）；高钾血症；血管神经性水肿（罕见但严重，需停药就医）；肾功能恶化（双侧肾动脉狭窄者）；味觉障碍",
     "contraindications": "对ACEI过敏者；血管神经性水肿病史；妊娠期（孕中期及晚期，致胎儿畸形）；双侧肾动脉狭窄；严重肾功能不全（血肌酐>3mg/dL）",
     "storage": "密封，避光，室温保存。",
-    "丙戊酸": {"indications":"用于治疗癫痫失神发作、全面性强直-阵挛发作、部分性发作，以及预防偏头痛和双相情感障碍的躁狂发作。","ingredients":"丙戊酸钠，常见剂型规格为500mg片剂、200mg/5ml口服溶液、500mg缓释片。","dosage":"成人初始剂量500mg/日，分2次服用，最大剂量不超过2000mg/日，餐后服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、嗜睡；严重不良反应有肝功能异常、胰腺炎、血液系统异常。","contraindications":"对丙戊酸过敏者禁用；与中枢抑制剂合用时需谨慎，避免加重镇静作用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"定期监测肝功能"},
+    "丙戊酸": {"indications":"用于治疗癫痫失神发作、全面性强直-阵挛发作、部分性发作，以及预防偏头痛和双相情感障碍的躁狂发作。","ingredients":"丙戊酸钠，常见剂型规格为500mg片剂、200mg/5ml口服溶液、500mg缓释片。","dosage":"成人初始剂量500mg/日，分2次服用，最大剂量不超过2000mg/日，餐��服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、嗜睡；严重不良反应有肝功能异常、胰腺炎、血液系统异常。","contraindications":"对丙戊酸过敏者禁用；与中枢抑制剂合用时需谨慎，避免加重镇静作用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"定期监测肝功能"},
     "别嘌醇": {"indications":"用于治疗高尿酸血症、痛风性关节炎急性发作、慢性痛风、肾结石及肾功能不全患者的高尿酸血症。","ingredients":"主要成分为别嘌醇，常见剂型规格为100mg/片、300mg/片。","dosage":"成人常用剂量为每日100-300mg，分1-2次服用，餐后服用以减少胃肠道刺激。","adverse":"常见不良反应包括皮疹、恶心、呕吐、腹泻；严重不良反应有肝功能异常、粒细胞减少、严重过敏反应。","contraindications":"对别嘌醇过敏者禁用；严重肝肾功能不全患者禁用；与硫唑嘌呤或巯嘌呤合用时禁用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"定期监测肝肾功能"},
     "地塞米松": {"indications":"用于治疗类风湿性关节炎、系统性红斑狼疮、哮喘急性发作、严重过敏反应及肾上腺皮质功能不全。","ingredients":"主要成分为地塞米松，常见剂型规格为5mg/片、10mg/片、0.75mg/ml注射液。","dosage":"成人常用剂量为每日0.75-9mg，分次服用，饭后或与食物同服。","adverse":"常见不良反应包括胃部不适、失眠、情绪波动；严重不良反应有高血糖、骨质疏松、免疫抑制。","contraindications":"禁用于对地塞米松过敏者、活动性消化道溃疡患者及严重真菌感染患者。","storage":"密封，在阴凉干燥处保存，避免阳光直射。","note":"长期使用需监测血糖和骨密度。"},
     "地高辛": {"indications":"用于治疗慢性心力衰竭、心房颤动、心房扑动、阵发性室上性心动过速及某些类型的充血性心力衰竭。","ingredients":"地高辛，常见剂型规格为0.25mg/片、0.125mg/片、0.5mg/片。","dosage":"成人常用剂量为每日0.125-0.25mg，分次服用，餐后服用。","adverse":"常见不良反应：恶心、呕吐、腹泻、头痛、视觉异常；严重不良反应：心律失常、低钾血症、中毒性休克。","contraindications":"禁用于洋地黄类药物过敏者、严重心动过缓、肥厚型梗阻性心肌病、预激综合征患者；与奎尼丁、维拉帕米等药物有相互作用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"监测心电图和血钾水平。"},
@@ -2262,7 +2262,7 @@ var DRUG_GUIDE = {
     "氨溴索": {"indications":"用于治疗支气管炎、肺炎、慢性阻塞性肺疾病急性发作、支气管扩张症及哮喘伴黏痰不易咳出的患者。","ingredients":"主要成分为氨溴索，常见剂型规格为片剂（15mg/片）、口服液（10mg/5ml）。","dosage":"成人常用剂量为每次30mg，每日3次，饭后服用。","adverse":"常见不良反应包括恶心、胃部不适、腹泻和皮疹；严重不良反应有呼吸困难、过敏性休克和肝功能异常。","contraindications":"对本品过敏者禁用；与抗酸药或镇咳药合用时需谨慎，避免影响疗效。","storage":"遮光，密封，在阴凉干燥处保存。","note":"避免长期使用"},
     "氯苯那敏": {"indications":"用于过敏性鼻炎、荨麻疹、湿疹、接触性皮炎及药物过敏等疾病的治疗，也可缓解皮肤瘙痒和过敏性结膜炎症状。","ingredients":"主要成分为氯苯那敏，常见剂型规格为1mg/片、2mg/片、10mg/片及复方制剂。","dosage":"成人常用剂量为每次1-2mg，每日3次，饭后服用，避免空腹使用。","adverse":"常见不良反应包括嗜睡、口干、头晕、恶心；严重不良反应有呼吸困难、心律失常、过敏性休克。","contraindications":"对本品过敏者禁用；与中枢神经系统抑制剂合用时禁用，孕妇及哺乳期妇女慎用。","storage":"密封，在阴凉干燥处保存，避免阳光直射。","note":"服药期间避免驾驶或操作机械。"},
     "氯雷他定": {"indications":"用于治疗过敏性鼻炎、慢性自发性荨麻疹、特应性皮炎、过敏性结膜炎及食物过敏引起的皮肤瘙痒等症状。","ingredients":"主要成分为氯雷他定，常见剂型规格为10mg/片、5mg/片。","dosage":"成人常用剂量为每日10mg，可于早晨或晚上服用，具体遵医嘱。","adverse":"常见不良反应包括嗜睡、口干、头痛、乏力和胃肠道不适；严重不良反应有肝功能异常、过敏性休克和心律失常。","contraindications":"禁用于对氯雷他定过敏者，禁与酮康唑、伊曲康唑等CYP3A4抑制剂联用。","storage":"遮光、密封，在阴凉干燥处保存，避免儿童接触。","note":"避免驾驶或操作机械"},
-    "沙丁胺醇": {"indications":"用于支气管哮喘、慢性阻塞性肺疾病、支气管炎、过敏性鼻炎及运动诱发的支气管痉挛的缓解治疗。","ingredients":"沙丁胺醇，常见剂型规格为2.5mg/1ml注射液、100μg/喷雾剂、4mg/片剂。","dosage":"成人常用剂量为每次100μg，每日3-4次，吸入或口服，饭前或饭后均可服用。","adverse":"常见不良反应包括心悸、震颤、头痛、恶心；严重不良反应有心动过速、高血压、低钾血症。","contraindications":"对沙丁胺醇过敏者禁用；与β受体阻滞剂合用时禁用，严重心脏病患者慎用。","storage":"遮光，密闭，在阴凉干燥处保存，避免高温和潮湿。","note":"避免长期大量使用"},
+    "沙丁胺醇": {"indications":"用于支气管哮喘、慢性阻塞性肺疾病、支气管炎、过敏性鼻炎及运动诱发的支气管痉挛的缓解治疗。","ingredients":"沙丁胺醇，常见剂型规格为2.5mg/1ml注射液、100μg/喷雾剂、4mg/片剂。","dosage":"成人常用剂量为每次100μg，每日3-4次，吸入或口服，饭前或饭后均可服用。","adverse":"常见不良反应包括心悸、震颤、头痛、恶心；严重不良反应有心动过速、高血压、低钾血症。","contraindications":"对沙丁胺��过敏者禁用；与β受体阻滞剂合用时禁用，严重心脏病患者慎用。","storage":"遮光，密闭，在阴凉干燥处保存，避免高温和潮湿。","note":"避免长期大量使用"},
     "泮托拉唑": {"indications":"用于治疗胃溃疡、十二指肠溃疡、反流性食管炎、幽门螺杆菌感染及预防非甾体抗炎药引起的胃部损伤。","ingredients":"主要成分为泮托拉唑钠，常见剂型规格为40mg片剂和40mg冻干粉针剂。","dosage":"成人常用剂量为每日40mg，空腹或餐前30分钟服用，疗程根据病情调整。","adverse":"常见不良反应包括腹泻、头痛、恶心；严重不良反应有肝功能异常、过敏反应及低镁血症。","contraindications":"对本品过敏者禁用；与氯吡格雷合用时禁用，因可能降低其抗血小板作用。","storage":"密封，在阴凉干燥处保存，避免阳光直射。","note":"定期监测肝功能"},
     "泼尼松": {"indications":"用于治疗类风湿性关节炎、系统性红斑狼疮、哮喘急性发作、严重过敏反应及器官移植后排斥反应。","ingredients":"泼尼松（Prednisone），常见剂型规格为5mg、10mg、20mg片剂。","dosage":"成人常用剂量为每日5-60mg，分次服用，饭后服用以减少胃部刺激。","adverse":"常见不良反应包括消化道不适、体重增加、失眠；严重不良反应有骨质疏松、高血压、血糖升高。","contraindications":"禁用于对泼尼松过敏者、活动性消化性溃疡患者及严重感染未控制者。与某些药物如利福平、苯妥英钠有相互作用。","storage":"密封，避光，置于阴凉干燥处，温度不超过25℃。","note":"长期使用需监测血糖和骨密度。"},
     "瑞舒伐他汀": {"indications":"用于治疗高胆固醇血症、混合型血脂异常、冠心病患者的降脂治疗、预防动脉粥样硬化性心血管疾病及降低低密度脂蛋白胆固醇水平。","ingredients":"瑞舒伐他汀钙，常见剂型规格为5mg、10mg、20mg片剂。","dosage":"成人常用剂量为每日5-20mg，餐前或餐后服用，具体剂量需根据血脂水平调整。","adverse":"常见不良反应包括肌肉疼痛、乏力、胃肠道不适；严重不良反应有肌病、横纹肌溶解、肝功能异常。","contraindications":"对本品过敏者禁用；严重肝功能不全患者禁用；与某些药物如胺碘酮、环孢素联用时禁用。","storage":"密封，在阴凉干燥处保存，避免阳光直射。","note":"定期监测肝功能和肌酸激酶"},
@@ -2283,7 +2283,7 @@ var DRUG_GUIDE = {
     "阿奇霉素": {"indications":"用于治疗敏感菌引起的呼吸道感染（如肺炎、支气管炎）、皮肤软组织感染、中耳炎、鼻窦炎及泌尿系统感染。","ingredients":"主要成分为阿奇霉素，常见剂型包括片剂（250mg、500mg）和干混悬剂（100mg/5ml）。","dosage":"成人常用剂量为每日一次，每次250mg，连续服用3天；或首日500mg，之后每日250mg，共服用5天。空腹或餐后服用。","adverse":"常见不良反应：腹泻、恶心、呕吐、腹痛、皮疹。严重不良反应：肝功能异常、心律失常、过敏性休克。","contraindications":"对阿奇霉素过敏者禁用；与某些抗心律失常药（如特非那定、阿司咪唑）合用禁用；孕妇及哺乳期妇女慎用。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"避免与特定药物同用"},
     "阿莫西林": {"indications":"用于治疗敏感菌引起的呼吸道感染（如肺炎、支气管炎）、泌尿系统感染（如膀胱炎、肾盂肾炎）、皮肤软组织感染、中耳炎及淋病等。","ingredients":"主要成分为阿莫西林，常见剂型规格包括0.25g/片、0.5g/片、1g/片及500mg/袋。","dosage":"成人常用剂量为每次0.5g，每6小时一次，空腹或餐后服用，疗程一般为7-14天。","adverse":"常见不良反应有恶心、呕吐、腹泻、皮疹；严重不良反应包括过敏性休克、肝功能异常、血液系统异常。","contraindications":"对青霉素类药物过敏者禁用；与丙磺舒合用时需谨慎，避免增加血药浓度。","storage":"密封，在阴凉干燥处保存，避免受潮。","note":"过敏者禁用，遵医嘱用药。"},
     "青霉素": {"indications":"用于治疗链球菌感染（如咽炎、扁桃体炎）、肺炎、脑膜炎、梅毒及淋病等细菌感染性疾病。","ingredients":"主要成分为青霉素G钾盐，常见剂型规格为40万单位/支、80万单位/支。","dosage":"成人常用剂量为每次40万-80万单位，每4-6小时一次，空腹或餐后服用。","adverse":"常见不良反应包括皮疹、恶心、呕吐；严重不良反应有过敏性休克、肝功能异常、肾功能损害。","contraindications":"对青霉素过敏者禁用；与丙磺舒合用时需慎用，可能增加血药浓度。","storage":"遮光，密闭，在阴凉干燥处保存，避免受热受潮。","note":"用药前需做皮试"},
-    "非洛地平": {"indications":"用于治疗高血压、冠心病、心绞痛、慢性心力衰竭及外周血管疾病。适用于需降低血压或改善心脏供血的患者。","ingredients":"主要成分为非洛地平，常见剂型规格为5mg/片、10mg/片。","dosage":"成人常用剂量为每日5-10mg，分一次或两次服用，建议在早晨服用。","adverse":"常见不良反应包括头痛、面部潮红、水肿、头晕和乏力；严重不良反应有低血压、心动过速和过敏性休克。","contraindications":"禁用于对本品过敏者、严重主动脉狭窄患者及与强效CYP3A4抑制剂联用者。","storage":"遮光，密封，在阴凉干燥处保存。","note":"监测血压变化"},
+    "非洛地平": {"indications":"用于治疗高血压、冠心病、心绞痛、慢性心力衰竭及外周血管疾病。适用于需降低血压或改善心脏供血的患者。","ingredients":"主要成分为非洛地平，常见剂型规格为5mg/片、10mg/片。","dosage":"成人常用剂量为每日5-10mg，分一次或两次服用，建议在早晨服��。","adverse":"常见不良反应包括头痛、面部潮红、水肿、头晕和乏力；严重不良反应有低血压、心动过速和过敏性休克。","contraindications":"禁用于对本品过敏者、严重主动脉狭窄患者及与强效CYP3A4抑制剂联用者。","storage":"遮光，密封，在阴凉干燥处保存。","note":"监测血压变化"},
     "丙戊酸钠": {"indications":"用于治疗癫痫失神发作、全面性强直-阵挛性发作、部分性发作，以及预防偏头痛和双相情感障碍的躁狂期。","ingredients":"主要成分为丙戊酸钠，常见剂型包括片剂（200mg、500mg）、缓释片（300mg、500mg）和注射液（200mg/ml）。","dosage":"成人常用剂量为每日1000-3000mg，分2-3次服用，餐后服用以减少胃肠道刺激。","adverse":"常见不良反应包括恶心、呕吐、腹泻、嗜睡和体重增加；严重不良反应包括肝功能异常、胰腺炎和血液系统异常。","contraindications":"对丙戊酸钠过敏者禁用；与抗凝药物如华法林合用时需谨慎，可能增强出血风险。","storage":"密封，避光，于阴凉干燥处保存，温度不超过25℃。","note":"定期监测肝功能"},
     "丙硫氧嘧啶": {"indications":"用于治疗甲状腺功能亢进症，预防甲状腺手术后甲状腺功能亢进症复发，以及用于甲状腺危象的辅助治疗。还可用于诊断甲状腺功能亢进症。","ingredients":"主要成分为丙硫氧嘧啶，常见剂型为片剂，规格为50mg/片。","dosage":"成人常用剂量为每日100-300mg，分2-3次服用，餐后服用。","adverse":"常见不良反应包括皮疹、瘙痒、恶心、呕吐；严重不良反应包括粒细胞减少、肝功能异常、过敏性休克。","contraindications":"对丙硫氧嘧啶过敏者禁用；严重肝功能不全患者禁用；妊娠早期禁用（可能致畸）。","storage":"遮光，密封，在阴凉干燥处保存。","note":"定期监测肝功能和血常规。"},
     "两性霉素B": {"indications":"用于治疗深部真菌感染，如隐球菌性脑膜炎、念珠菌病、曲霉病、组织胞浆菌病及毛霉病等。","ingredients":"两性霉素B，常见剂型为注射用冻干粉，规格为50mg/瓶。","dosage":"成人常用剂量为0.1-0.3mg/kg，每日一次静脉滴注，根据病情调整剂量。","adverse":"常见不良反应包括发热、寒战、恶心、呕吐；严重不良反应有肾功能损害、电解质紊���、心律失常。","contraindications":"对两性霉素B过敏者禁用；与肾毒性药物联用时需谨慎。","storage":"避光、密闭，在2-8℃冷藏保存。","note":"监测肾功能和电解质"},
@@ -2292,7 +2292,7 @@ var DRUG_GUIDE = {
     "伊曲康唑": {"indications":"用于治疗念珠菌病、曲霉病、隐球菌病、皮肤真菌感染及系统性真菌感染。","ingredients":"主要成分为伊曲康唑，常见剂型包括胶囊（100mg）、片剂（50mg、100mg）和注射液（50mg/5ml）。","dosage":"成人常用剂量为每日200mg，分两次服用，餐后服用以提高吸收率。","adverse":"常见不良反应包括恶心、呕吐、腹泻、头痛和肝功能异常；严重不良反应包括心律失常、肝毒性及过敏反应。","contraindications":"禁用于对伊曲康唑过敏者、严重肝功能不全者及与某些药物（如特非那定、阿司咪唑）联用者。","storage":"遮光、密封，在阴凉干燥处保存，避免高温和潮湿。","note":"定期监测肝功能"},
     "伏立康唑": {"indications":"用于治疗侵袭性曲霉病、侵袭性念珠菌病、镰刀菌感染及某些真菌性角膜炎。适用于免疫功能低下患者的严重真菌感染。","ingredients":"伏立康唑，常见剂型为片剂（50mg、100mg）和注射剂（50mg/mL）。","dosage":"成人常用剂量为首日静脉注射6mg/kg每12小时一次，随后改为200mg每日两次口服或静脉给药，具体根据病情调整。","adverse":"常见不良反应包括肝功能异常、恶心、呕吐、皮疹；严重不良反应有视觉障碍、心律失常、肝毒性。","contraindications":"对伏立康唑过敏者禁用；与CYP3A4强效抑制剂如酮康唑联用时禁用。","storage":"遮光，密闭，在25℃以下干燥处保存。","note":"监测肝功能"},
     "伐昔洛韦": {"indications":"用于治疗带状疱疹、单纯疱疹病毒感染、生殖器疱疹、水痘及由疱疹病毒引起的角膜炎。","ingredients":"主要成分为伐昔洛韦，常见剂型规格为500mg片剂和300mg片剂。","dosage":"成人常用剂量为每次500mg，每日2次，餐前或餐后服用，疗程通常为7-10天。","adverse":"常见不良反应包括恶心、头痛、腹泻、疲劳和皮疹；严重不良反应有肾功能损害、过敏性休克和血液系统异常。","contraindications":"对伐昔洛韦过敏者禁用；严重肾功能不全患者禁用；与丙磺舒合用时需慎用。","storage":"遮光，密封，在阴凉干燥处保存，避免受潮。","note":"注意肾功能监测"},
-    "佐匹克隆": {"indications":"用于治疗失眠，包括入睡困难、睡眠维持困难及早醒。适用于焦虑性失眠、神经衰弱引起的睡眠障碍以及短期急性失眠。","ingredients":"主要成分为佐匹克隆，常见剂型规格为片剂，每片7.5mg或12.5mg。","dosage":"成人常用剂量为7.5mg，睡前服用，最大日剂量不超过12.5mg。","adverse":"常见不良反应包括嗜睡、头晕、乏力、口干和胃肠道不适；严重不良反应有呼吸抑制、过敏性休克和依赖性。","contraindications":"禁用于对佐匹克隆过敏者、重症肌无力患者及严重呼吸功能不全者；避免与酒精或其他中枢神经系统抑制剂合用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"避免长期使用"},
+    "佐匹克隆": {"indications":"用于治疗失眠，包括入睡困难、睡眠维持困难及早醒。适用于焦虑性失眠、神经衰弱引起的睡眠障碍以及短期急性失眠。","ingredients":"主要成分为佐匹克隆，常见剂型规格为片剂，每片7.5mg或12.5mg。","dosage":"成人常用剂量为7.5mg，睡前服用，最大日剂量不超过12.5mg。","adverse":"常见不良反应包括嗜睡、头晕、乏力、口干和胃肠���不适；严重不良反应有呼吸抑制、过敏性休克和依赖性。","contraindications":"禁用于对佐匹克隆过敏者、重症肌无力患者及严重呼吸功能不全者；避免与酒精或其他中枢神经系统抑制剂合用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"避免长期使用"},
     "利巴韦林": {"indications":"用于治疗呼吸道合胞病毒（RSV）感染，流感病毒、副流感病毒和腺病毒引起的肺炎及支气管炎，以及肝功能异常患者的慢性丙型肝炎。","ingredients":"利巴韦林，常见剂型包括片剂（100mg/片）、注射液（200mg/5ml）和口服溶液（100mg/5ml）。","dosage":"成人常用剂量为每日3次，每次200mg，餐后服用，疗程一般为7-14天。","adverse":"常见不良反应包括恶心、呕吐、腹泻、皮疹；严重不良反应有溶血性贫血、肝功能异常、呼吸困难。","contraindications":"对利巴韦林过敏者禁用，孕妇及计划怀孕者禁用，与干扰素联用时需谨慎。","storage":"遮光，密封，在阴凉干燥处保存，避免阳光直射。","note":"定期监测血常规和肝功能。"},
     "利拉鲁肽": {"indications":"用于治疗2型糖尿病患者的血糖控制，以及用于肥胖或超重患者的体重管理。适用于伴有至少一种体重相关合并症的患者。适用于饮食和运动疗法无法有效控制的高血糖患者。","ingredients":"利拉鲁肽，常见剂型规格为0.6mg/1.2mg/1.8mg预填充注射笔","dosage":"起始剂量0.6mg每日一次，逐渐增加至1.8mg每日一次，餐前或餐后1小时内使用","adverse":"常见不良反应包括恶心、腹泻、呕吐、便秘、食欲下降；严重不良反应包括胰腺炎、甲状腺肿瘤风险、低血糖（与降糖药联用时）","contraindications":"对利拉鲁肽过敏者禁用；有甲状腺髓样癌个人或家族史者禁用；与GLP-1受体激动剂联用时禁用","storage":"未开封药品需冷藏于2-8°C，已开封药品可在室温下保存不超过30天","note":"监测胰腺炎症状"},
     "卡维地洛": {"indications":"用于治疗高血压、心绞痛、慢性心力衰竭及左心室功能不全。适用于伴有心动过速的高血压患者，也可用于稳定型心绞痛和冠心病患者的长期治疗。","ingredients":"主要成分为卡维地洛，常见剂型规格为12.5mg/片、25mg/片。","dosage":"成人常用剂量为每日1次，起始剂量为12.5mg，根据病情可增至25mg，建议在早晨服用。","adverse":"常见不良反应包括头晕、乏力、低血压、心动过缓和水肿；严重不良反应包括支气管哮喘加重、严重心动过缓和急性心力衰竭恶化。","contraindications":"禁用于严重心动过缓、窦房结功能障碍、重度房室传导阻滞、支气管哮喘及对本品过敏者。与某些降压药或β受体阻滞剂合用时需谨慎。","storage":"密封，在阴凉干燥处保存，避免阳光直射。","note":"监测血压和心率"},
@@ -2332,7 +2332,7 @@ var DRUG_GUIDE = {
     "阿莫西林克拉维酸钾": {"indications":"用于治疗敏感菌引起的呼吸道感染、泌尿系统感染、皮肤软组织感染及牙源性感染。具体包括肺炎、支气管炎、扁桃体炎、膀胱炎和中耳炎。","ingredients":"阿莫西林与克拉维酸钾复合制剂，常见剂型规格为250mg/125mg片剂和625mg/125mg片剂。","dosage":"成人常用剂量为每次250mg-500mg，每12小时一次，餐后服用。","adverse":"常见不良反应包括腹泻、恶心、呕吐、皮疹和头痛；严重不良反应有肝功能异常、过敏性休克和二重感染。","contraindications":"对青霉素类或头孢菌素类药物过敏者禁用；与丙磺舒合用时需慎用；孕妇及哺乳期妇女慎用。","storage":"遮光、密封，在阴凉干燥处保存，避免受潮。","note":"过敏者禁用，定期检查肝肾功能。"},
     "雷尼替丁": {"indications":"用于治疗胃溃疡、十二指肠溃疡、反流性食管炎、卓-艾综合征引起的胃酸过多及预防应激性溃疡出血。","ingredients":"雷尼替丁，常见剂型规格为150mg/片、300mg/片。","dosage":"成人常用剂量为每次150mg，每日2次，餐后或睡前服用。","adverse":"常见不良反应包括腹泻、便秘、头痛、恶心、乏力；严重不良反应有肝功能异常、粒细胞减少、过敏性休克。","contraindications":"对雷尼替丁过敏者禁用；与某些药物如地西泮、华法林等合用时需谨慎，避免相互作用。","storage":"密封，在阴凉干燥处保存，避免受潮。","note":"定期监测肝功能"},
     "非布司他": {"indications":"用于治疗高尿酸血症及痛风患者，降低血尿酸水平；适用于慢性肾病患者伴有高尿酸血症；用于预防尿酸性肾结石复发；用于肿瘤化疗引起的高尿酸血症；用于继发性高尿酸血症。","ingredients":"非布司他，常见剂型规格为40mg和80mg片剂。","dosage":"成人常用剂量为每日40mg或80mg，空腹或餐后服用，根据血尿酸水平调整剂量。","adverse":"常见不良反应包括肝功能异常、腹泻、头痛、关节痛、皮疹；严重不良反应有肝衰竭、心肌梗死、致命性过敏反应。","contraindications":"对非布司他过敏者禁用；严重肝功能不全患者禁用；与硫唑嘌呤或mercaptopurine合用时禁用。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"定期监测肝功能"},
-    "非那雄胺": {"indications":"治疗男性雄激素性脱发；治疗良性前列腺增生症；缓解前列腺增生引起的排尿困难症状；降低前列腺癌风险；改善前列腺特异性抗原（PSA）水平。","ingredients":"非那雄胺，常见剂型规格为1mg片剂。","dosage":"成人每日一次，每次1mg，空腹或餐后服用均可。","adverse":"常见不良反应包括性欲减退、勃起功能障碍、射精量减少、乳房触痛或肿胀；严重不良反应包括抑郁、肝功能异常、过敏反应。","contraindications":"禁用于女性和儿童；禁用于对本品过敏者；禁与CYP3A4强效抑制剂联用。","storage":"密封，避光，于25℃以下干燥处保存。","note":"避免接触孕妇"},
+    "非那雄胺": {"indications":"治疗男性雄激素性脱发；治疗良性前列腺增生症；缓解前列腺增生引起的排尿困难症状；降低前列腺癌风险；改善前列腺特异性抗原（PSA）水平。","ingredients":"非那雄胺，常见剂型规格为1mg片剂。","dosage":"成人每日一次，每次1mg，空腹或餐后服用均可。","adverse":"常见不良反应包括性欲减退、勃起功能��碍、射精量减少、乳房触痛或肿胀；严重不良反应包括抑郁、肝功能异常、过敏反应。","contraindications":"禁用于女性和儿童；禁用于对本品过敏者；禁与CYP3A4强效抑制剂联用。","storage":"密封，避光，于25℃以下干燥处保存。","note":"避免接触孕妇"},
     "丙磺舒": {"indications":"用于治疗痛风性关节炎急性发作、慢性痛风症、高尿酸血症及预防尿酸性肾结石。也用于降低其他药物（如硫嘌呤类）的肾毒性。","ingredients":"主要成分为丙磺舒，常见剂型为片剂，规格为0.25g/片。","dosage":"成人常用剂量为每次0.25g，每日2-3次，餐后服用，根据病情调整剂量。","adverse":"常见不良反应包括胃肠道不适、皮疹、头痛、眩晕；严重不良反应有肝功能异常、过敏性休克、血液系统异常。","contraindications":"对丙磺舒过敏者禁用；与青霉素类抗生素合用时禁用；严重肝肾功能不全者禁用。","storage":"遮光，密封，在阴凉干燥处保存。","note":"定期监测肝肾功能"},
     "保婴丹": {"indications":"用于治疗小儿感冒引起的发热、咳嗽、流涕、鼻塞及消化不良等症状。","ingredients":"主要成分为朱砂、雄黄、冰片、麝香、牛黄，常见剂型为丸剂，规格为每丸0.3g。","dosage":"成人常用剂量为每次1-2丸，每日2次，饭后服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、皮疹；严重不良反应有肝功能异常、肾功能损害。","contraindications":"孕妇禁用，对本品过敏者禁用；避免与含汞药物同用。","storage":"密封，置阴凉干燥处保存。","note":"孕妇禁用"},
     "克林霉素": {"indications":"用于治疗敏感菌引起的呼吸道感染（如肺炎、支气管炎）、皮肤软组织感染、中耳炎及牙周感染等。也用于预防手术后感染。","ingredients":"主要成分为克林霉素磷酸酯，常见剂型包括片剂（150mg、300mg）和注射剂（0.3g/瓶）。","dosage":"成人常用剂量为每次150-300mg，每日2-4次，餐后服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻和皮疹；严重不良反应有伪膜性肠炎、过敏性休克和肝功能异常。","contraindications":"对克林霉素过敏者禁用；与红霉素等大环内酯类药物存在相互作用，避免同时使用。","storage":"遮光、密封，在阴凉干燥处保存，避免受潮。","note":"注意过敏反应"},
@@ -2391,7 +2391,7 @@ var DRUG_GUIDE = {
     "倍氯米松": {"indications":"用于治疗支气管哮喘、过敏性鼻炎、慢性阻塞性肺疾病、皮肤炎症及过敏性结膜炎等疾病。","ingredients":"主要成分为倍氯米松，常见剂型规格为吸入用气雾剂（50μg/喷）、片剂（250μg/片）。","dosage":"成人常用剂量为每次1-2喷，每日2次，饭前或饭后均可服用。","adverse":"常见不良反应包括口干、喉咙刺激、咳嗽、口腔念珠菌感染；严重不良反应有骨质疏松、肾上腺功能抑制、高血压。","contraindications":"对本品过敏者禁用；与某些抗真菌药（如酮康唑）合用时需避免。","storage":"密封，避光，置于阴凉干燥处，温度不超过25℃。","note":"长期使用需监测副作用"},
     "利多卡因": {"indications":"用于治疗室性心律失常、局部麻醉、心脏手术前预防心律失常、急性心肌梗死后的心律失常、癫痫持续状态的辅助治疗。","ingredients":"主要成分为利多卡因，常见剂型规格为5%注射液（10ml/支）、1%注射液（20ml/支）。","dosage":"静脉注射：每次1-1.5mg/kg，最大不超过3mg/kg；口服：每次100-200mg，每日3次，餐后服用。","adverse":"常见不良反应：头晕、嗜睡、恶心、呕吐；严重不良反应：心律失常、惊厥、呼吸抑制。","contraindications":"对利多卡因过敏者禁用；严重心动过缓、心脏传导阻滞患者禁用；与奎尼丁合用时禁用。","storage":"遮光，密闭，在阴凉干燥处保存，避免高温和阳光直射。","note":"监测心电图和血药浓度。"},
     "利格列汀": {"indications":"用于2型糖尿病患者的血糖控制，适用于单用二甲双胍疗效不佳时的联合治疗，以及作为饮食和运动的辅助治疗。适用于需要减少血糖波动的患者，也可用于改善胰岛功能不足的情况。","ingredients":"利格列汀，常见剂型为片剂，规格为5mg/片。","dosage":"成人常用剂量为每日一次，每次5mg，餐前或餐后均可服用，无需根据进食调整剂量。","adverse":"常见不良反应包括头痛、腹泻、恶心；严重不良反应包括低血糖、肝功能异常、过敏反应。","contraindications":"对利格列汀过敏者禁用；严重肝功能不全患者禁用；与强效CYP3A4抑制剂联用时禁用。","storage":"密封，在阴凉干燥处保存，避免阳光直射。","note":"监测肝功能"},
-    "加兰他敏": {"indications":"用于治疗阿尔茨海默病、帕金森病痴呆、血管性痴呆及轻度认知障碍。也可用于改善记忆功能和认知能力。","ingredients":"加兰他敏，常见剂型为片剂（5mg、10mg）和缓释胶囊（8mg、16mg）。","dosage":"成人起始剂量5mg/日，分2次服用；最大剂量不超过10mg/日，餐后服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、头痛和乏力；严重不良反应有心律失常、癫痫发作和肝功能异常。","contraindications":"对加兰他敏过敏者禁用；与胆碱酯酶抑制剂合用时需谨慎；孕妇及哺乳期妇女禁用。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"定期监测肝功能"},
+    "加兰他敏": {"indications":"用于治疗阿尔茨海默病、帕金森病痴呆、血管性痴呆及轻度认知障碍。也可用于改善记忆功能和认知能力。","ingredients":"加兰他敏，常见剂型为片剂（5mg、10mg）和缓释胶囊（8mg、16mg）。","dosage":"成人起始剂量5mg/���，分2次服用；最大剂量不超过10mg/日，餐后服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、头痛和乏力；严重不良反应有心律失常、癫痫发作和肝功能异常。","contraindications":"对加兰他敏过敏者禁用；与胆碱酯酶抑制剂合用时需谨慎；孕妇及哺乳期妇女禁用。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"定期监测肝功能"},
     "卡托普利": {"indications":"用于治疗高血压、心力衰竭、冠心病、糖尿病肾病及左心室功能不全。适用于伴有蛋白尿的糖尿病患者。","ingredients":"主要成分为卡托普利，常见剂型规格为12.5mg、25mg、50mg片剂。","dosage":"成人常用剂量为12.5mg每日1-2次，根据血压调整，餐前1小时服用。","adverse":"常见不良反应包括咳嗽、头晕、乏力、低血压和味觉异常；严重不良反应有高钾血症、肾功能损害和血管性水肿。","contraindications":"禁用于妊娠期妇女、双侧肾动脉狭窄患者及对本品过敏者。与含锂药物、保钾利尿剂合用需谨慎。","storage":"遮光，密封，在阴凉干燥处保存。","note":"监测血压和肾功能"},
     "卡格列净": {"indications":"用于治疗2型糖尿病患者的高血糖，改善心血管结局，降低心力衰竭住院风险，减少慢性肾病进展，控制体重。","ingredients":"主要成分为卡格列净，常见剂型规格为100mg/片、200mg/片。","dosage":"成人常用剂量为100mg或200mg，每日一次，餐前或餐后服用，根据肾功能调整剂量。","adverse":"常见不良反应包括尿路感染、生殖器真菌感染、腹泻；严重不良反应包括急性肾损伤、骨折风险增加。","contraindications":"禁用于严重肾功能不全患者（eGFR<30ml/min/1.73m²）、对药物过敏者及妊娠期女性。避免与强效CYP3A4抑制剂联用。","storage":"密封，在25℃以下干燥处保存。","note":"监测肾功能和电解质"},
     "卤米松": {"indications":"用于治疗湿疹、接触性皮炎、神经性皮炎、脂溢性皮炎及过敏性鼻炎等炎症性皮肤病。","ingredients":"主要成分为卤米松，常见剂型规格为0.05%乳膏剂（10g/支）和软膏剂（15g/支）。","dosage":"成人每日2次，每次适量涂抹于患处，避免长期大面积使用。","adverse":"常见不良反应包括皮肤刺激、瘙痒、干燥、烧灼感；严重不良反应有皮肤萎缩、毛细血管扩张、继发感染。","contraindications":"对卤米松过敏者禁用；禁用于皮肤结核、梅毒、病毒感染患者；与其他糖皮质激素类药物存在相互作用。","storage":"遮光，密闭，在25℃以下干燥处保存。","note":"避免接触眼睛和黏膜"},
@@ -2432,7 +2432,7 @@ var DRUG_GUIDE = {
     "来那度胺": {"indications":"多发性骨髓瘤、骨髓增生异常综合征、套细胞淋巴瘤、滤泡性淋巴瘤、慢性淋巴细胞白血病。","ingredients":"来那度胺，常见剂型规格为25mg、10mg、5mg胶囊。","dosage":"成人常用剂量为25mg每日一次，空腹或餐后服用，具体根据病情调整。","adverse":"常见不良反应包括贫血、腹泻、疲劳、便秘、皮疹；严重不良反应包括深静脉血栓、肺栓塞、感染。","contraindications":"对来那度胺过敏者禁用，孕妇及可能怀孕的女性禁用，与强效CYP3A4抑制剂合用时禁用。","storage":"密封，避光，贮存于25℃以下干燥处。","note":"避免怀孕，定期监测血象"},
     "柳氮磺吡啶": {"indications":"用于治疗类风湿性关节炎、强直性脊柱炎、溃疡性结肠炎及克罗恩病等炎症性肠道疾病。","ingredients":"柳氮磺吡啶，常见剂型为片剂（500mg/片）和缓释片（1g/片）。","dosage":"成人常用剂量为每日2-3g，分2-3次服用，餐后服用以减少胃肠道刺激。","adverse":"常见不良反应包括恶心、呕吐、皮疹、腹泻；严重不良反应有溶血性贫血、粒细胞减少、肝功能异常。","contraindications":"对磺胺类药物过敏者禁用，严重肝肾功能不全者禁用，与甲氨蝶呤合用时需避免。","storage":"遮光，密封，在阴凉干燥处保存。","note":"定期检查血常规和肝功能。"},
     "格列喹酮": {"indications":"用于治疗2型糖尿病患者的高血糖，适用于胰岛β细胞功能尚存的患者。也可用于妊娠期糖尿病及糖尿病合并轻中度肾功能不全者。","ingredients":"主要成分为格列喹酮，常见剂型规格为50mg片剂。","dosage":"成人常用剂量为每次50mg，每日3次，餐前服用，根据血糖调整剂量。","adverse":"常见不良反应包括低血糖、胃肠道不适、皮疹；严重不良反应有肝功能异常、血液系统异常。","contraindications":"禁用于1型糖尿病患者、严重肝肾功能不全者、对本品过敏者。与酒精或其他降糖药合用时需谨慎。","storage":"密封，在阴凉干燥处保存，避免受潮。","note":"监测血糖，避免低血糖"},
-    "格列本脲": {"indications":"用于2型糖尿病患者的血糖控制，适用于饮食和运动治疗无效的成年患者，以及需要胰岛素治疗但不愿或不能使用胰岛素的患者。也用于妊娠期糖尿病及某些特殊类型的糖尿病。","ingredients":"主要成分为格列本脲，常见剂型规格为1.25mg、2.5mg、5mg片剂。","dosage":"成人常用剂量为每日1.25-5mg，分1-2次服用，通常在餐前30分钟服用。","adverse":"常见不良反应包括低血糖、恶心、腹泻、体重增加；严重不良反应有肝功能异常、血液系统异常、过敏反应。","contraindications":"禁用于1型糖尿病患者、糖尿病酮症酸中毒患者、严重肝肾功能不全者，以及对磺胺类药物过敏者。与酒精或其他降糖药合用时需谨慎。","storage":"遮光，密封，在阴凉干燥处保存，避免受潮。","note":"监测血糖，避免低血糖"},
+    "格列本脲": {"indications":"用于2型糖尿病患者的血糖控制，适用于饮食和运动治疗无效的成年患者，以及需要胰岛素治疗但不愿或不能使用胰岛素的患者。也用于妊娠期糖尿病及某些特殊类型的糖尿病。","ingredients":"主要成分为格列本脲，常见剂型规格为1.25mg、2.5mg、5mg片剂。","dosage":"成人常用剂量为每日1.25-5mg，分1-2次服用，通常在餐前30分钟服用。","adverse":"常见不良反应包括低血糖、恶心、腹泻、体重增加；严重不良反应有肝功能异常、血液系统异常、过敏反应。","contraindications":"禁用于1型糖尿病患者、糖尿病酮症酸中毒患者���严重肝肾功能不全者，以及对磺胺类药物过敏者。与酒精或其他降糖药合用时需谨慎。","storage":"遮光，密封，在阴凉干燥处保存，避免受潮。","note":"监测血糖，避免低血糖"},
     "氢化可的松": {"indications":"用于治疗系统性红斑狼疮、严重过敏反应、类风湿性关节炎、哮喘急性发作及肾上腺皮质功能不全。","ingredients":"氢化可的松，常见剂型规格为10mg/ml注射液、20mg/片口服片剂。","dosage":"成人常用剂量为每日40-80mg，分次服用，餐后或遵医嘱服用。","adverse":"常见不良反应包括胃部不适、失眠、情绪波动；严重不良反应包括高血糖、骨质疏松、感染风险增加。","contraindications":"对氢化可的松过敏者禁用，活动性结核病患者慎用，与疫苗同时使用需避免。","storage":"遮光，密封，在阴凉干燥处保存。","note":"长期使用需监测血糖和骨密度。"},
     "氨基己酸": {"indications":"用于治疗纤维蛋白溶解亢进引起的出血，如肺结核咯血、支气管扩张咯血、子宫出血、前列腺手术后出血等。也用于预防和治疗因纤维蛋白溶解亢进导致的术后出血。","ingredients":"主要成分为氨基己酸，常见剂型规格为500mg/片、1g/片、5%注射液。","dosage":"成人常用剂量为每次1-2g，每日3-4次，口服或静脉注射，应在出血发生后尽快使用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、皮疹；严重不良反应有肾功能损害、过敏性休克、血栓形成。","contraindications":"禁用于有血栓病史或血栓风险者，禁与抗凝药物如华法林联用，禁用于对本品过敏者。","storage":"遮光，密封，在阴凉干燥处保存。","note":"注意肾功能监测"},
     "氨基葡萄糖": {"indications":"用于治疗骨关节炎、类风湿性关节炎、骨质疏松症、关节疼痛及软骨损伤。","ingredients":"主要成分为氨基葡萄糖盐酸盐，常见剂型规格为500mg/片、1.5g/袋。","dosage":"成人常用剂量为每日1.5g，分2次服用，餐后服用以减少胃部刺激。","adverse":"常见不良反应包括恶心、腹泻、胃部不适、便秘；严重不良反应有肝功能异常、过敏性休克。","contraindications":"对氨基葡萄糖过敏者禁用，孕妇及哺乳期妇女慎用，与抗凝药物合用需谨慎。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"避免长期大剂量使用"},
@@ -2471,7 +2471,7 @@ var DRUG_GUIDE = {
     "米诺环素": {"indications":"用于治疗痤疮、细菌性皮肤感染、支气管炎、肺炎及由敏感菌引起的其他感染。也用于预防和治疗莱姆病。","ingredients":"米诺环素，常见剂型规格为50mg、100mg片剂及胶囊。","dosage":"成人常用剂量为每次100mg，每日2次，空腹或餐后服用，疗程根据病情而定。","adverse":"常见不良反应包括恶心、呕吐、腹泻、皮疹；严重不良反应有肝功能异常、过敏反应及光敏反应。","contraindications":"对米诺环素过敏者禁用；孕妇及8岁以下儿童禁用；与抗酸药、铁剂同服时需间隔2小时以上。","storage":"遮光，密封，在阴凉干燥处保存。","note":"避免日晒"},
     "米非司酮": {"indications":"用于终止妊娠（早期妊娠）、治疗子宫肌瘤、调节月经周期、缓解子宫内膜异位症症状及作为紧急避孕药使用。","ingredients":"米非司酮，常见剂型为片剂，规格为10mg/片。","dosage":"通常为25-50mg/日，分次服用，需在医生指导下使用，服药时机根据具体适应症而定。","adverse":"常见不良反应包括恶心、呕吐、腹痛、阴道出血和头痛；严重不良反应可能有大出血、过敏反应和肝功能异常。","contraindications":"禁用于已知对米非司酮过敏者、妊娠晚期患者、严重肝肾功能不全者及与某些药物（如利福平）同时使用时。","storage":"遮光，密封，在阴凉干燥处保存，避免儿童接触。","note":"严格遵医嘱，注意出血情况。"},
     "糠酸莫米松": {"indications":"用于治疗过敏性鼻炎、哮喘、湿疹、皮炎及接触性皮炎等疾病。适用于缓解皮肤瘙痒、红肿及炎症症状。","ingredients":"主要成分为糠酸莫米松，常见剂型为乳膏（0.1%）、吸入剂（400mcg/喷）及鼻喷雾剂（50mcg/喷）。","dosage":"成人常用剂量为每日1-2次，每次1喷或适量涂抹患处，建议在早晨或睡前使用。","adverse":"常见不良反应包括局部刺激、瘙痒、干燥及烧灼感；严重不良反应可能有皮肤萎缩、毛细血管扩张及继发感染。","contraindications":"禁用于对本品成分过敏者，避免与强效CYP3A4抑制剂同时使用。","storage":"密封，避光，置于��凉干燥处，温度不超过25℃。","note":"避免接触眼睛和黏膜。"},
-    "索利那新": {"indications":"用于治疗膀胱过度活动症引起的尿急、尿频和急迫性尿失禁；适用于神经源性膀胱功能障碍导致的排尿困难；用于慢性前列腺炎引起的排尿症状；用于女性压力性尿失禁的辅助治疗；用于改善因前列腺增生引起的下尿路症状。","ingredients":"主要成分为索利那新，常见剂型规格为5mg/片和10mg/片。","dosage":"成人常用剂量为每日一次，每次5mg或10mg，空腹或餐后服用，具体根据病情调整。","adverse":"常见不良反应包括口干、便秘、头晕、头痛和乏力；严重不良反应包括尿潴留、心律失常和过敏反应。","contraindications":"禁用于对索利那新过敏者；禁用于严重肾功能不全患者；禁用于与强效CYP3A4抑制剂联用者。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"定期监测肾功能"},
+    "索利那新": {"indications":"用于治疗膀胱过度活动症引起的尿急、尿频和急迫性尿失禁；适用于神经源性膀胱功能障碍导致的排尿困难；用于慢性前列腺炎引起的排尿症状；用于女性压力性尿失禁的辅助治疗；用于改善因前列腺增生引起的下尿路症状。","ingredients":"主要成分为索利那新，常见剂型规格为5mg/片和10mg/片。","dosage":"成人常用剂量为每日一次，每次5mg或10mg，空腹或餐后服用，具体根据病��调整。","adverse":"常见不良反应包括口干、便秘、头晕、头痛和乏力；严重不良反应包括尿潴留、心律失常和过敏反应。","contraindications":"禁用于对索利那新过敏者；禁用于严重肾功能不全患者；禁用于与强效CYP3A4抑制剂联用者。","storage":"密封，避光，干燥处保存，温度不超过25℃。","note":"定期监测肾功能"},
     "维A酸": {"indications":"用于治疗寻常型银屑病、痤疮、角化异常性皮肤病、毛囊角化病及皮肤老化相关病变。","ingredients":"维A酸，常见剂型为0.025%、0.05%软膏及凝胶。","dosage":"每日1次，睡前涂抹于患处，避免日间使用。","adverse":"局部刺激、干燥、脱皮、红斑；严重者可出现过敏反应、皮肤灼热感。","contraindications":"孕妇禁用，哺乳期妇女慎用；与过氧苯甲酰等药物联用时需谨慎。","storage":"避光，密封，阴凉干燥处保存。","note":"避免接触眼唇黏膜"},
     "维生素K1": {"indications":"用于治疗维生素K缺乏引起的出血性疾病，如新生儿出血症、肝病导致的凝血功能障碍、口服抗凝药物过量及手术前预防出血。","ingredients":"主要成分为维生素K1，常见剂型规格为10mg/1ml注射液或5mg/片口服片剂。","dosage":"成人常用剂量为10-20mg/日，分1-2次服用；注射剂通常静脉或肌内注射，每日10-20mg。","adverse":"常见不良反应包括注射部位疼痛、恶心、呕吐；严重不良反应有呼吸困难、过敏性休克、溶血性贫血。","contraindications":"禁用于对维生素K过敏者；禁与抗凝药物如华法林同时使用，可能增强抗凝效果。","storage":"遮光，密封，在阴凉干燥处保存，避免高温和潮湿。","note":"避免过量，监测凝血功能。"},
     "缩宫素": {"indications":"用于引产或催产，产后出血预防与治疗，以及促进哺乳。适用于宫缩乏力性产后出血、难产及分娩过程中宫缩不足的情况。","ingredients":"主要成分为缩宫素，常见剂型为注射液，规格包括10U/ml、20U/ml等。","dosage":"静脉滴注，常用剂量为2.5-20U/小时，根据宫缩情况调整，通常在分娩过程中使用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、头痛；严重不良反应包括子宫破裂、胎儿窘迫、过敏性休克。","contraindications":"对缩宫素过敏者禁用，有剖宫产史或子宫手术史者慎用，与其他宫缩药物合用时需注意相互作用。","storage":"遮光，密闭，在2-8℃冷藏保存。","note":"监测宫缩和胎心"},
@@ -2539,7 +2539,7 @@ var DRUG_GUIDE = {
     "notesEn": "Abrupt discontinuation may cause rebound hypertension/angina, taper gradually; may mask hypoglycemia symptoms; caution in asthma/COPD",
     "indications": "高血压；心绞痛；心肌梗死后二级预防；心力衰竭（NYHA II-III级，稳态后加用）；心律失常（窦性心动过速、房颤心室率控制）；甲状腺功能亢进辅助治疗",
     "ingredients": "主要成分：酒石酸美托洛尔（平片）/ 琥珀酸美托洛尔（缓释片）。常见规格：25mg/50mg/100mg（平片）；47.5mg/95mg（缓释）",
-    "dosage": "高血压/心绞痛：平片一次25-50mg，一日2次，维持剂量100-200mg/日。缓释片：一次47.5-95mg，一日1次。心力衰竭：起始11.875-23.75mg，逐渐滴定。心率靶目标：静息55-60次/分。",
+    "dosage": "高血压/心绞痛：平片一次25-50mg，一日2次，���持剂量100-200mg/日。缓释片：一次47.5-95mg，一日1次。心力衰竭：起始11.875-23.75mg，逐渐滴定。心率靶目标：静息55-60次/分。",
     "adverse": "心动过缓；疲乏、头晕；肢端发冷；心力衰竭加重（滴定期间）；支气管痉挛（哮喘患者慎用）；失眠、恶梦；掩盖低血糖症状（糖尿病患者）",
     "contraindications": "严重心动过缓（心率<50次/分）；病态窦房结综合征；二度及以上房室传导阻滞；心源性休克；严重心力衰竭急性期（NYHA IV级失代偿）；支气管哮喘",
     "storage": "避光，密封，30℃以下保存。缓释片不可掰开或嚼碎。"
@@ -2675,7 +2675,7 @@ var DRUG_GUIDE = {
   "氟西汀": {
     "indications": "抑郁症（伴或不伴焦虑）；强迫症（成人及儿童≥7岁）；恐慌障碍（伴或不伴广场恐怖症）；经前烦躁障碍；神经性贪食症（辅助治疗，减少暴食/催吐行为）",
     "ingredients": "主要成分：盐酸氟西汀（SSRI类抗抑郁药，半衰期最长）。常见规格：10mg/20mg 胶囊/片剂",
-    "dosage": "抑郁症：起始剂量一次10-20mg，一日1次，早晨服用（氟西汀可致失眠，避免晚上服用）。根据疗效每周增量，最大剂量80mg/日（通常20-40mg/日已足够）。强迫症：起始20mg/日，逐渐滴定至20-60mg/日。停药：氟西汀半衰期长（主动代谢产物去甲氟西汀半衰期7-15天），通常无需逐渐减量，但大剂量长期用药仍建议逐渐减量。",
+    "dosage": "抑郁症：起始剂���一次10-20mg，一日1次，早晨服用（氟西汀可致失眠，避免晚上服用）。根据疗效每周增量，最大剂量80mg/日（通常20-40mg/日已足够）。强迫症：起始20mg/日，逐渐滴定至20-60mg/日。停药：氟西汀半衰期长（主动代谢产物去甲氟西汀半衰期7-15天），通常无需逐渐减量，但大剂量长期用药仍建议逐渐减量。",
     "adverse": "胃肠道反应（恶心、腹泻、消化不良，约20%患者出现，通常1-2周后耐受）；中枢神经系统（失眠、焦虑、激越、头痛、震颤，约10-20%患者出现，用药初期最明显）；性功能障碍（性欲减退、勃起功能障碍、性高潮延迟，约30-50%患者出现）；出汗增多；体重变化（初期可能体重减轻，长期用药可能体重增加）；皮疹；5-羟色胺综合征（与MAOI等联用）；撤药综合征（相对少见，因半衰期长）",
     "contraindications": "对氟西汀或其他SSRI类过敏者；正在使用单胺氧化酶抑制剂（MAOI，需停用MAOI至少14天后使用氟西汀，停用氟西汀至少5周（因半衰期长）后使用MAOI）；与匹莫齐特联用（可致QT间期延长/心律失常）；癫痫未控制；双相情感障碍抑郁发作（未联用心境稳定剂时可转相躁狂）；严重肝功能不全；妊娠期（尤其孕晚期，新生儿撤药综合征/持续性肺动脉高压）；哺乳期妇女",
     "storage": "避光，密封，室温保存。早晨服用，避免失眠。"
@@ -3205,7 +3205,7 @@ var DRUG_GUIDE = {
     "notesEn": "Contraindicated in hepatic impairment; do not stop abruptly; serotonin syndrome risk; alcohol increases liver injury"
   },
   "奥氮平": {
-    "indications": "精神分裂症：阳性及阴性症状；双相情感障碍的急性躁狂发作和维持治疗",
+    "indications": "精神分裂症：阳性及阴性症状；双相���感障碍的急性躁狂发作和维持治疗",
     "ingredients": "主要成分：奥氮平（非典型抗精神病药）。5mg/片",
     "dosage": "口服。精神分裂症：5-10mg一日1次，根据症状调整5-20mg；躁狂：10-15mg一日1次",
     "adverse": "体重增加最显著（代谢综合征风险）；嗜睡；高血糖/糖尿病（需监测血糖）；血脂升高；头晕",
@@ -3628,7 +3628,7 @@ var DRUG_GUIDE = {
     "indications": "敏感菌所致的呼吸道、泌尿生殖道、皮肤软组织感染",
     "ingredients": "主要成分：头孢拉定。胶囊0.25g/0.5g",
     "dosage": "口服。成人一次0.25-0.5g，每6小时1次，日最大量4g",
-    "adverse": "胃肠道反应；过敏反应（皮疹）；肾功能损害（大剂量）",
+    "adverse": "胃肠道���应；过敏反应（皮疹）；肾功能损害（大剂量）",
     "contraindications": "对头孢菌素类过敏者；有青霉素过敏性休克史者慎用",
     "storage": "密封，室温保存"
   },
@@ -4015,7 +4015,7 @@ var DRUG_GUIDE = {
   "连花清瘟胶囊": {
     "indications": "流行性感冒（热毒袭肺证）：发热或高热、恶寒、肌肉酸痛、鼻塞流涕、咳嗽、头痛、咽干咽痛；新型冠状病毒肺炎（轻型、普通型，疗程7-10日）；急性上呼吸道感染（病毒所致）",
     "ingredients": "主要成分：连翘、金银花、炙麻黄、炒苦杏仁、石膏、板蓝根、绵马贯众、鱼腥草、广藿香、大黄、红景天、薄荷脑、甘草。常见规格：0.35g/粒，每盒24粒/36粒",
-    "dosage": "口服：成人一次4粒，一日3次，餐后服用（减少胃肠刺激）。新型冠状病毒肺炎轻型、普通型：一次4粒，一日3次，疗程7-10日（需联合其他治疗）。儿童按体重减量（一次2粒，一日3次，或遵医嘱）。风寒感冒者不宜使用（本品辛凉宣泄、清热解毒，适用于风热感冒或流感）。用药期间忌食辛辣、油腻、生冷食物（助热生痰）。疗程一般3-5日，如发热超过38.5℃持续3日或症状未缓解需就医（警惕细菌性感染、肺炎）。",
+    "dosage": "口服：成人一次4粒，一日3次，餐后服用（减少胃肠刺激）。新型冠状病毒肺炎轻型、普通型：一次4粒，一日3次，疗程7-10日（需联合其他治疗）。儿童按体重减量（一次2粒，一日3次，或遵医嘱）。风寒感冒者不宜使用（本品辛凉宣泄、清热解毒，适用于风热感冒或流感）。用药期间忌食辛辣、油腻、生冷食物（助热生痰）。疗程一般3-5日，如发热超过38.5℃持续3日或症状未缓解需就医（警惕细菌性感染���肺炎）。",
     "adverse": "胃肠道反应（恶心、呕吐、腹泻、腹痛，约5-10%，餐后服用可减轻，脾胃虚寒者症状可能加重）；过敏反应（皮疹、荨麻疹、瘙痒，罕见血管神经性水肿、支气管痉挛，需停药并就医）；肝功能异常（长期用药可致转氨酶升高，尤其原有肝病者需定期监测肝功能）；中枢神经系统反应（头晕、头痛、乏力，约3-5%）；心悸、胸闷（��黄碱成分可致交感神经兴奋，高血压、心脏病患者慎用）；药物相互作用（与地高辛合用可增加地高辛血药浓度，致地高辛中毒；与华法林合用可增加出血风险）",
     "contraindications": "对本品任何成分过敏者；风寒感冒者（恶寒重、发热轻、无汗、鼻流清涕、咳嗽痰白稀，本品清热解毒可加重症状）；脾胃虚寒者（胃痛、腹胀、大便溏薄、畏寒肢冷，方中大黄、石膏、鱼腥草寒凉，可损伤脾胃阳气，加重症状）；高血压患者（麻黄碱可致血压升高、心悸，需谨慎使用并监测血压）；心脏病患者（麻黄碱可致心动过速、心律失常，尤其冠心病、心力衰竭者慎用）；孕妇（麻黄碱可兴奋子宫、增加流产风险，孕早期禁用）；哺乳期妇女（成分可通过乳汁分泌，麻黄碱可致婴儿烦躁不安、睡眠障碍）；青光眼、前列腺增生者（麻黄碱可致瞳孔扩大、尿潴留）；运动员慎用（麻黄碱是兴奋剂，尿检可呈阳性）",
     "storage": "密封，避光，室温（15-30℃）保存，防潮。胶囊需整粒吞服，不可嚼碎（苦味重）。儿童需在成人监护下服用。用药期间监测血压、心率（尤其高血压、心脏病患者）。如服药3日症状未缓解或加重，需就医。"
@@ -4840,7 +4840,7 @@ var DRUG_GUIDE = {
     "indications": "乳腺癌（绝经后，激素受体阳性）",
     "ingredients": "阿那曲唑（芳香化酶抑制剂）",
     "dosage": "口服：1mg/日。绝经后使用。",
-    "adverse": "潮热、关节痛、骨痛、恶心、体重增加。",
+    "adverse": "潮热、关节���、骨痛、恶心、体重增加。",
     "contraindications": "绝经前、孕妇、对本品过敏。",
     "storage": "室温避光保存。"
   },
@@ -5087,7 +5087,7 @@ var DRUG_GUIDE = {
   "复方角菜酸酯栓": {
     "indications": "痔疮：内痔、混合痔的肛门肿胀、疼痛、出血；肛管炎；直肠黏膜的炎症防护",
     "ingredients": "主要成分：角菜酸酯、二氧化钛、氧化锌、利多卡因。3.25g/枚",
-    "dosage": "直肠内塞入。一次1枚，一日1-2次，塞入前可稍湿润",
+    "dosage": "直肠内塞入。一次1枚��一日1-2次，塞入前可稍湿润",
     "adverse": "偶见轻微局部刺激；罕见过敏",
     "contraindications": "对本品过敏者禁用",
     "storage": "25℃以下保存，避免冷冻"
@@ -5312,7 +5312,7 @@ var DRUG_GUIDE = {
     "indications": "表虚不固：自汗恶风、易感冒（过敏性鼻炎、上呼吸道感染反复发作者）；体虚易感人群的预防",
     "ingredients": "主要成分：黄芪、白术（炒）、防风。5g/袋",
     "dosage": "开水冲服。一次5g（1袋），一日3次",
-    "adverse": "偶见轻微胃肠不适",
+    "adverse": "偶见轻微胃���不适",
     "contraindications": "对成份过敏者；感冒发热期间停服",
     "storage": "密封"
   },
@@ -5529,7 +5529,7 @@ var DRUG_GUIDE = {
     "ingredients": "主要成分：单硝酸异山梨酯。20mg/片",
     "dosage": "口服。一次20mg一日2-3次，或40mg一日2次；为避免耐药，每日应有10-14小时无药间期",
     "adverse": "头痛（最常见，硝基酯类特征）；面部潮红、低血压；反射性心动过速；罕见皮疹",
-    "contraindications": "对硝酸酯类过敏；急性心梗伴低血压；严重低血压；休克；重度主动脉瓣狭窄；与PDE5抑制剂（伟哥等）禁联用",
+    "contraindications": "对硝酸酯类���敏；急性心梗伴低血压；严重低血压；休克；重度主动脉瓣狭窄；与PDE5抑制剂（伟哥等）禁联用",
     "storage": "密封，遮光，干燥处"
   },
   "麝香保心丸": {
@@ -6161,7 +6161,7 @@ var DRUG_GUIDE = {
     "ingredients": "主要成分：罗红霉素（大环内酯类抗生素）。150mg/片",
     "dosage": "口服。150mg一日2次，餐前服；严重感染300mg一日2次",
     "adverse": "胃肠道反应（恶心、腹痛、腹泻）；肝酶升高；皮疹；Q-T间期延长（罕见）",
-    "contraindications": "对大环内酯类抗生素过敏；严重肝功能不全；与西沙必利/匹莫齐特/特非那定联用",
+    "contraindications": "对大环内酯类抗生素过敏；严重肝功能不全��与西沙必利/匹莫齐特/特非那定联用",
     "storage": "密封，遮光，干燥处"
   },
   "阿奇霉素片": {
@@ -6734,7 +6734,7 @@ var DRUG_GUIDE = {
   },
   "氯甲酚甲酯凝胶": {
     "indications": "颞下颌关节紊乱综合征（张口困难、关节弹响、面部疼痛）；牙关紧闭",
-    "ingredients": "氯甲酚甲酯",
+    "ingredients": "氯甲���甲酯",
     "dosage": "外用，涂于颞颌关节处，每日2-3次，轻轻按摩",
     "adverse": "局部刺激、皮肤过敏",
     "contraindications": "对本品成分过敏禁用",
@@ -9774,7 +9774,7 @@ var DRUG_SYNONYMS = {
   "眼屎多":"结膜炎",
   "细菌性结膜炎":"细菌性结膜炎",
   "病毒性结膜炎":"病毒性结膜炎",
-  "过敏性结膜炎":"过敏性结膜炎",
+  "过敏性结膜炎":"���敏性结膜炎",
   "春季卡他性结膜炎":"春季卡他性结膜炎",
   "角膜炎":"角膜炎",
   "眼黑发炎":"角膜炎",
@@ -10232,7 +10232,7 @@ var DRUG_SYNONYMS = {
   "ADHD":"注意力缺陷多动障碍",
   "儿童抽动":"抽动障碍",
   "孩子抽动":"抽动障碍",
-  "眨眼耸肩":"抽动障碍",
+  "眨���耸肩":"抽动障碍",
   "儿童近视":"近视",
   "孩子近视":"近视",
   "假性近视":"假性近视",
@@ -15011,7 +15011,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
     scanManualMatch: '手动输入: ',
     scanManualArrow: ' → 匹配 ',
     scanManualNo: '未找到「',
-    scanManualNoHint: '」的说明书数据。请检查药名拼写或尝试通用名(如:布洛芬、阿莫西林、二甲双胍)。',
+    scanManualNoHint: '��的说明书数据。请检查药名拼写或尝试通用名(如:布洛芬、阿莫西林、二甲双胍)。',
 
     // ADR 不良反应
     featAdr: '不良反应自查',
@@ -15309,7 +15309,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "左氧氟沙星": {"indications":"敏感菌引起的呼吸道、泌尿生殖道、胃肠道、皮肤软组织、骨关节感染；伤寒","ingredients":"左氧氟沙星（氟喹诺酮类）。规格：0.1g/0.2g/0.5g片剂","dosage":"成人：0.2-0.5g，每日1-2次","category":"抗生素","warnings":"18岁以下禁用（软骨损伤）；QT间期延长；肌腱断裂风险；癫痫患者禁用","time":"任意","foodAvoid":"含钙/镁/铁/锌食物/抗酸剂","drugAvoid":"NSAIDs（癫痫风险）、华法林、茶碱"},
   "莫西沙星": {"indications":"敏感菌引起的呼吸道感染（社区获得性肺炎、慢性支气管炎急性发作）、皮肤软组织感染","ingredients":"莫西沙星（氟喹诺酮类）。规格：0.4g片剂","dosage":"成人：0.4g，每日1次，疗程5-21天","category":"抗生素","warnings":"QT间期延长；肌腱断裂；18岁以下禁用；肝功能异常慎用","time":"任意","foodAvoid":"含钙/镁/铝/铁/锌食物","drugAvoid":"IA/III类抗心律失常药、华法林、泼尼松"},
   "甲硝唑": {"indications":"厌氧菌感染（腹腔、盆腔、肺部）；阿米巴痢疾；滴虫性阴道炎；幽门螺杆菌根除","ingredients":"甲硝唑。规格：0.2g/0.25g/0.5g片剂","dosage":"厌氧菌：0.5-0.75g，每日3次；阿米巴：0.4-0.8g，每日3次；滴虫：0.2g，每日3次，7天","category":"抗生素","warnings":"中枢神经系统副作用；周围神经病变；双硫仑样反应","time":"饭后","foodAvoid":"酒精","drugAvoid":"华法林、锂剂、双硫仑"},
-  "替硝唑": {"indications":"厌氧菌感染；阿米巴痢疾；滴虫性阴道炎；手术后厌氧菌感染预防","ingredients":"替硝唑。规格：0.25g/0.5g/1g片剂","dosage":"厌氧菌：1g，每日1次，首日2g；阿米巴：2g，每日1次，3天；滴虫：2g单次","category":"抗生素","warnings":"中枢神经系统副作用；双硫仑样反应；妊娠早期禁用","time":"饭后","foodAvoid":"酒精","drugAvoid":"华法林、双硫仑"},
+  "替硝唑": {"indications":"厌氧菌感染；阿米巴痢疾；滴虫性阴道炎；手术后厌��菌感染预防","ingredients":"替硝唑。规格：0.25g/0.5g/1g片剂","dosage":"厌氧菌：1g，每日1次，首日2g；阿米巴：2g，每日1次，3天；滴虫：2g单次","category":"抗生素","warnings":"中枢神经系统副作用；双硫仑样反应；妊娠早期禁用","time":"饭后","foodAvoid":"酒精","drugAvoid":"华法林、双硫仑"},
   "诺氟沙星": {"indications":"敏感菌引起的泌尿道感染（单纯性膀胱炎）；细菌性肠道感染","ingredients":"诺氟沙星（喹诺酮类）。规格：0.1g/0.2g/0.4g片剂","dosage":"单纯泌尿道感染：0.2-0.4g，每日2次；肠道感染：0.4g，每日2次，3-5天","category":"抗生素","warnings":"18岁以下禁用；光敏反应；肌腱断裂；癫痫患者慎用","time":"空腹","foodAvoid":"含钙/镁/铝食物/抗酸剂","drugAvoid":"NSAIDs、茶碱、华法林"},
   "奥美拉唑": {"indications":"胃溃疡、十二指肠溃疡、胃食管反流病（GERD）、卓-艾综合征；幽门螺杆菌根除","ingredients":"奥美拉唑（质子泵抑制剂）。规格：10mg/20mg肠溶片/胶囊","dosage":"十二指肠溃疡：20mg，每日1次，4周；GERD：20mg，每日1次，4-8周","category":"消化系统","warnings":"长期使用增加骨折风险；低镁血症；影响维生素B12吸收","time":"早餐前30分钟空腹","foodAvoid":"","drugNotify":"减弱氯吡格雷抗血小板作用；增强华法林、苯妥英、地高辛效果"},
   "泮托拉唑": {"indications":"胃溃疡、十二指肠溃疡、胃食管反流病、卓-艾综合征；NSAIDs相关溃疡预防","ingredients":"泮托拉唑（质子泵抑制剂）。规格：20mg/40mg肠溶片","dosage":"40mg，每日1次，4-8周；维持治疗20mg/d","category":"消化系统","warnings":"肝功能异常慎用；长期使用注意骨折风险、低镁血症","time":"早餐前30分钟空腹","foodAvoid":"","drugAvoid":"酮康唑、伊曲康唑、铁盐、厄洛替尼"},
@@ -15342,7 +15342,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "达格列净": {"indications":"2型糖尿病；心力衰竭（降低心血管事件）","ingredients":"达格列净（SGLT2抑制剂）。规格：5mg/10mg片剂","dosage":"10mg，每日1次；空腹或进食均可","category":"降糖药/SGLT2抑制剂","warnings":"泌尿生殖道真菌感染；糖尿病酮症酸中毒；低血容量/低血压","time":"任意（早晨）","foodAvoid":"","drugNotify":"利尿剂（增加低血容量风险）；胰岛素/磺脲类（低血糖风险）"},
   "恩格列净": {"indications":"2型糖尿病；心力衰竭（降低心血管死亡和心衰住院风险）","ingredients":"恩格列净（SGLT2抑制剂）。规格：10mg/25mg片剂","dosage":"10-25mg，每日1次","category":"降糖药/SGLT2抑制剂","warnings":"泌尿生殖道感染；糖尿病酮症酸中毒；低血容量","time":"任意","foodAvoid":"","drugAvoid":""},
   "阿卡波糖": {"indications":"2型糖尿病；糖耐量异常（糖尿病前期）","ingredients":"阿卡波糖（α-葡萄糖苷酶抑制剂）。规格：50mg/100mg片剂","dosage":"起始50mg，每日3次；维持100mg，每日3次","category":"降糖药/α-葡萄糖苷酶抑制剂","warnings":"胃肠道反应（腹胀、排气、腹泻）；肠梗阻/炎症性肠病禁用","time":"随第一口饭嚼服","foodAvoid":"高糖食物（加重腹泻）","drugNotify":"与磺脲类/胰岛素联用时注意低血糖"},
-  "右美沙芬": {"indications":"干咳（感冒、咽炎、支气管炎等引起的咳嗽）","ingredients":"氢溴酸右美沙芬。规格：10mg/15mg片剂/糖浆","dosage":"成人：10-20mg，每4-8小时1次；最大120mg/d","category":"镇咳药","warnings":"痰多咳嗽禁用（抑制咳嗽反射导致痰液滞留）；单胺氧化酶抑制剂禁用","time":"任意","foodAvoid":"酒精","drugAvoid":"MAO抑制剂（5周内禁用）、SSRIs（血清素综合征风险）"},
+  "右美沙芬": {"indications":"干咳（感冒、咽炎、支气管炎等引起的咳嗽）","ingredients":"氢溴酸右美沙芬。规格：10mg/15mg片剂/糖浆","dosage":"成人：10-20mg，每4-8小时1次；最大120mg/d","category":"镇咳药","warnings":"痰多咳嗽禁用（抑制咳嗽反射导致痰液滞留）；单胺���化酶抑制剂禁用","time":"任意","foodAvoid":"酒精","drugAvoid":"MAO抑制剂（5周内禁用）、SSRIs（血清素综合征风险）"},
   "氨溴索": {"indications":"痰液粘稠：急慢性支气管炎、支气管哮喘、支气管扩张症、肺结核、手术后排痰","ingredients":"盐酸氨溴索。规格：30mg片剂；口服液；雾化液","dosage":"成人：30-60mg，每日3次；雾化：15-30mg，每日2-3次","category":"祛痰药","warnings":"胃肠道反应；皮疹；严重肝肾功能不全慎用","time":"饭后","foodAvoid":"","drugNotify":"与抗生素联用可增强肺组织浓度"},
   "桉柠蒎肠溶胶囊": {"indications":"急慢性鼻窦炎、急慢性支气管炎、肺炎、支气管扩张症、肺气肿","ingredients":"桉油精+柠檬烯+α-蒎烯（桃金娘科植物提取物）。规格：0.3g/粒","dosage":"成人：0.3g，每日3-4次；空腹凉水送服","category":"祛痰药/黏液动力药","warnings":"餐前半小时空腹凉水送服；餐后服用降低疗效；过敏反应","time":"饭前30分钟空腹","foodAvoid":"餐后服用","drugAvoid":""},
   "孟鲁司特": {"indications":"支气管哮喘的预防和长期治疗；过敏性鼻炎；运动诱发性支气管收缩","ingredients":"孟鲁司特钠（白三烯受体拮抗剂）。规格：4mg（颗粒）；5mg/10mg片剂","dosage":"哮喘/过敏性鼻炎：10mg，每日1次；2-5岁：4mg，每日1次","category":"平喘药/白三烯受体拮抗剂","warnings":"精神/神经副作用（失眠、焦虑、抑郁、自杀倾向）；肝功能异常","time":"任意（晚间服用对哮喘效果更佳）","foodAvoid":"","drugAvoid":"苯巴比妥（降低孟鲁司特血药浓度）"},
@@ -15412,7 +15412,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "罗红霉素": {"indications":"敏感菌引起的呼吸道感染、皮肤软组织感染、支原体/衣原体感染","ingredients":"主要成分：罗红霉素（大环内酯类）。规格：0.15g/0.3g片剂/胶囊","dosage":"成人：0.15g，每日2次；严重感染0.3g，每日2次","category":"抗生素","warnings":"肝功能异常慎用；空腹服用吸收更好","time":"空腹饭前1小时或饭后2小时","foodAvoid":"食物","drugAvoid":"华法林、地高辛、咪达唑仑"},
   "左氧氟沙星": {"indications":"敏感菌引起的呼吸道、泌尿生殖道、胃肠道、皮肤软组织、骨关节感染；伤寒","ingredients":"主要成分：左氧氟沙星。规格：0.1g/0.2g/0.5g片剂；注射剂","dosage":"成人：0.2-0.5g，每日1-2次；单纯感染0.5g/d","category":"抗生素","warnings":"18岁以下禁用（软骨损伤）；QT间期延长；肌腱断裂风险；癫痫患者禁用","time":"任意","foodAvoid":"含钙/镁/铁/锌食物/抗酸剂","drugAvoid":"NSAIDs（癫痫风险）、华法林、茶碱、含多价阳离子药物"},
   "莫西沙星": {"indications":"敏感菌引起的呼吸道感染（社区获得性肺炎、慢性支气管炎急性发作）、皮肤软组织感染","ingredients":"主要成分：莫西沙星（氟喹诺酮类）。规格：0.4g片剂/注射剂","dosage":"成人：0.4g，每日1次，疗程5-21天","category":"抗生素","warnings":"QT间期延长；肌腱断裂；18岁以下禁用；肝功能异常慎用","time":"任意","foodAvoid":"含钙/镁/铝/铁/锌食物","drugAvoid":"IA/III类抗心律失常药、华法林、泼尼松"},
-  "甲硝唑": {"indications":"厌氧菌感染（腹腔、盆腔、肺部、脑膜）；阿米巴痢疾/肠外阿米巴；滴虫性阴道炎；幽门螺杆菌","ingredients":"主要成分：甲硝唑。规格：0.2g/0.25g/0.5g片剂；栓剂；注射剂","dosage":"厌氧菌：0.5-0.75g，每日3次；阿米巴：0.4-0.8g，每日3次；滴虫：0.2g，每日3次，7天","category":"抗生素","warnings":"中枢神经系统副作用（头晕、抽搐）；周围神经病变；双硫仑样反应","time":"饭后（减少胃肠刺激）","foodAvoid":"酒精（双硫仑样反应）","drugAvoid":"华法林（增强抗凝）、锂剂、双硫仑"},
+  "甲硝唑": {"indications":"厌氧菌感染（腹腔、盆腔、肺部、脑膜）；阿米巴痢疾/肠外阿米巴；滴虫性阴道炎；幽门螺杆菌","ingredients":"主要成分：甲硝唑。规格：0.2g/0.25g/0.5g片剂；栓剂；注射剂","dosage":"厌氧菌：0.5-0.75g，每日3次；阿米巴：0.4-0.8g，每日3次；滴虫：0.2g，每日3次，7天","category":"抗生素","warnings":"中枢神经系统副作用（头晕、抽搐）；周围神经病变；双硫仑样反应","time":"饭后（减少胃肠刺激）","foodAvoid":"酒精（双硫仑样反应）","drugAvoid":"华法林（增强抗凝）、锂��、双硫仑"},
   "替硝唑": {"indications":"厌氧菌感染；阿米巴痢疾；滴虫性阴道炎；手术后厌氧菌感染预防","ingredients":"主要成分：替硝唑。规格：0.25g/0.5g/1g片剂","dosage":"厌氧菌：1g，每日1次，首日2g；阿米巴：2g，每日1次，3天；滴虫：2g单次","category":"抗生素","warnings":"中枢神经系统副作用；双硫仑样反应；妊娠早期禁用","time":"饭后","foodAvoid":"酒精","drugAvoid":"华法林、双硫仑"},
   "诺氟沙星": {"indications":"敏感菌引起的泌尿道感染（单纯性膀胱炎）、细菌性肠道感染（志贺菌、沙门氏菌）","ingredients":"主要成分：诺氟沙星（喹诺酮类）。规格：0.1g/0.2g/0.4g片剂/胶囊","dosage":"单纯性泌尿道感染：0.2-0.4g，每日2次；肠道感染：0.4g，每日2次，3-5天","category":"抗生素","warnings":"18岁以下禁用；光敏反应；肌腱断裂；癫痫患者慎用","time":"空腹（吸收更好）","foodAvoid":"含钙/镁/铝食物/抗酸剂","drugAvoid":"NSAIDs、茶碱、华法林、含多价阳离子药物"},
   "奥美拉唑": {"indications":"胃溃疡、十二指肠溃疡、胃食管反流病（GERD）、卓-艾综合征；幽门螺杆菌根除方案","ingredients":"主要成分：奥美拉唑（质子泵抑制剂）。规格：10mg/20mg肠溶片/胶囊","dosage":"十二指肠溃疡：20mg，每日1次，4周；GERD：20mg，每日1次，4-8周；HP根除：20mg，每日2次，14天","category":"消化系统","warnings":"长期使用（>1年）增加骨折、骨质疏松风险；低镁血症；影响维生素B12吸收","time":"早餐前30分钟空腹","foodAvoid":"","drugNotify":"抑制以下药物代谢（增加血药浓度）：氯吡格雷（减弱抗血小板）、华法林、苯妥英、地高辛"},
@@ -15443,7 +15443,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "二甲双胍": {"indications":"2型糖尿病（尤其是肥胖患者）；糖尿病前期；多囊卵巢综合征","ingredients":"主要成分：盐酸二甲双胍。规格：0.25g/0.5g/0.85g片剂；肠溶片；缓释片","dosage":"起始0.5g，每日2次或0.85g每日1次；最大2g/d","category":"降糖药","warnings":"乳酸酸中毒（罕见但严重，肾/肝功能不全禁用）；维生素B12缺乏；造影剂使用前后48h停用","time":"随餐（减少胃肠道反应）","foodAvoid":"酒精","drugNotify":"造影剂（前后48h停用）；避免与酒精同服"},
   "格列齐特缓释片": {"indications":"2型糖尿病（单用或联合二甲双胍）","ingredients":"主要成分：格列齐特。规格：30mg/60mg缓释片","dosage":"30-60mg，每日1次早餐时；最大120mg/d","category":"降糖药/磺脲类","warnings":"低血糖风险（老年/肝肾功能减退者风险高）；体重增加；过敏反应","time":"早餐时","foodAvoid":"饮酒（加重低血糖）","drugNotify":"CYP2C9抑制剂（氟康唑）增强降糖作用；β受体阻滞剂掩盖低血糖症状"},
   "格列美脲": {"indications":"2型糖尿病（单用或联合二甲双胍/胰岛素）","ingredients":"主要成分：格列美脲（磺脲类）。规格：1mg/2mg/3mg/4mg片剂","dosage":"起始1-2mg，每日1次；最大6mg/d","category":"降糖药/磺脲类","warnings":"低血糖风险；体重增加；肝功能异常患者起始0.5mg","time":"早餐时或第一餐时","foodAvoid":"饮酒","drugNotify":"CYP2C9抑制剂；华法林（增强/减弱作用）；β受体阻滞剂"},
-  "西格列汀": {"indications":"2型糖尿病（单用或联合二甲双胍/磺脲类/胰岛素）","ingredients":"主要成分：磷酸西格列汀（DPP-4抑制剂）。规格：50mg/100mg片剂","dosage":"100mg，每日1次","category":"降糖药/DPP-4抑制剂","warnings":"胰腺炎（罕见）；关节痛（停药可逆）；心衰风险（沙格列汀/利格列汀）","time":"任意","foodAvoid":"","drugNotify":"肾功能不全需调整剂量；与磺脲类联用低血糖风险"},
+  "西格列汀": {"indications":"2型糖尿病（单用或联合二甲双胍/磺脲类/胰岛素）","ingredients":"主要成分：磷酸西格列��（DPP-4抑制剂）。规格：50mg/100mg片剂","dosage":"100mg，每日1次","category":"降糖药/DPP-4抑制剂","warnings":"胰腺炎（罕见）；关节痛（停药可逆）；心衰风险（沙格列汀/利格列汀）","time":"任意","foodAvoid":"","drugNotify":"肾功能不全需调整剂量；与磺脲类联用低血糖风险"},
   "利格列汀": {"indications":"2型糖尿病（单用或联合其他降糖药）","ingredients":"主要成分：利格列汀（DPP-4抑制剂）。规格：5mg片剂","dosage":"5mg，每日1次","category":"降糖药/DPP-4抑制剂","warnings":"胰腺炎（罕见）；关节痛；无需根据肾功能调整剂量（优势）","time":"任意","foodAvoid":"","drugAvoid":""},
   "达格列净": {"indications":"2型糖尿病；心力衰竭（降低心血管事件，射血分数降低型心衰）","ingredients":"主要成分：达格列净（SGLT2抑制剂）。规格：5mg/10mg片剂","dosage":"10mg，每日1次；空腹或进食均可","category":"降糖药/SGLT2抑制剂","warnings":"泌尿生殖道真菌感染（外阴阴道念珠菌病）；糖尿病酮症酸中毒（罕见）；低血容量/低血压；截肢风险（卡格列净）","time":"任意（早晨）","foodAvoid":"","drugNotify":"利尿剂（增加低血容量风险）；胰岛素/磺脲类（低血糖风险）"},
   "恩格列净": {"indications":"2型糖尿病；心力衰竭（降低心血管死亡和心衰住院风险）","ingredients":"主要成分：恩格列净（SGLT2抑制剂）。规格：10mg/25mg片剂","dosage":"10-25mg，每日1次","category":"降糖药/SGLT2抑制剂","warnings":"泌尿生殖道感染；糖尿病酮症酸中毒；低血容量；截肢风险","time":"任意","foodAvoid":"","drugAvoid":""},
@@ -15473,7 +15473,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "强力枇杷露": {"indications":"咳嗽痰多：支气管炎、上呼吸道感染；阴虚咳嗽","ingredients":"主要成分：枇杷叶、罂粟壳、桔梗、薄荷脑等。规格：120mL/瓶","dosage":"15mL，每日3次；儿童减半","category":"止咳中成药","warnings":"含罂粟壳（可待因类似物），不宜长期服用；痰多者慎用；妊娠禁用","time":"任意","foodAvoid":"辛辣","drugAvoid":""},
   "急支糖浆": {"indications":"外感风热引起的咳嗽：急性支气管炎、感冒咳嗽、咽喉炎","ingredients":"主要成分：鱼腥草、金荞麦、四季青、麻黄等。规格：100mL/瓶","dosage":"20-30mL，每日3-4次；儿童酌减","category":"止咳中成药","warnings":"糖尿病患者（含糖）；寒咳（清稀痰）不宜；妊娠慎用","time":"任意","foodAvoid":"辛辣刺激、生冷","drugAvoid":""},
   "复方氨酚烷胺胶囊": {"indications":"感冒引起的头痛、发热、鼻塞、喷嚏、流涕、咽痛、四肢酸痛","ingredients":"主要成分：对乙酰氨基酚+金刚烷胺+咖啡因+氯苯那敏+人工牛黄。规格：胶囊","dosage":"成人：1粒，每日2次；儿童禁用或遵医嘱","category":"复方感冒药","warnings":"嗜睡（氯苯那敏）；肝毒性（对乙酰氨基酚过量）；驾驶员禁用；妊娠/哺乳禁用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他含对乙酰氨基酚制剂"},
-  "感冒灵颗粒": {"indications":"感冒引起的头痛、发热、鼻塞、流涕、咽痛","ingredients":"主要成分：三叉苦、金盏银盘、野菊花、岗梅、咖啡因、对乙酰氨基酚、氯苯那敏。规格：10g/袋","dosage":"10g（1袋），每日3次","category":"复方感冒药","warnings":"嗜睡（氯苯那敏）；驾驶员/高空作业禁用；肝肾功能不全慎用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他含对乙酰氨基酚制剂"},
+  "感冒灵颗粒": {"indications":"感冒引起的头痛、发热、鼻塞、流涕、咽痛","ingredients":"主要成分：三叉苦、金盏银盘、野菊花、岗梅、咖啡因、对乙酰氨基酚、氯苯那敏。规格：10g/袋","dosage":"10g（1袋），每日3次","category":"复方感冒药","warnings":"嗜睡（氯苯那敏）；驾驶员/高空作业禁用；肝肾功能不全慎用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他��对乙酰氨基酚制剂"},
   "板蓝根颗粒": {"indications":"风热感冒：咽喉肿痛、口咽干燥；急性扁桃体炎、腮腺炎；病毒性感染","ingredients":"主要成分：板蓝根。规格：5g/袋（无糖型）或10g/袋（含糖）","dosage":"5-10g，每日3-4次","category":"清热解毒中成药","warnings":"风寒感冒（清涕/恶寒）禁用；脾胃虚寒者慎用","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
   "连花清瘟颗粒": {"indications":"流行性感冒属热毒袭肺证：发热/高热、恶寒、肌肉酸痛、鼻塞流涕、咽干咽痛","ingredients":"主要成分：连翘、金银花、炙麻黄、炒苦杏仁、石膏、板蓝根、绵马贯众、鱼腥草、广藿香等。规格：6g/袋","dosage":"6g，每日3次","category":"清热解毒中成药","warnings":"风寒感冒禁用；脾胃虚寒者慎用（腹泻）；妊娠禁用","time":"任意","foodAvoid":"辛辣油腻生冷","drugAvoid":""},
   "双黄连口服液": {"indications":"风热感冒：发热、咳嗽、咽痛；上呼吸道感染、急性支气管炎","ingredients":"主要成分：金银花、黄芩、连翘。规格：10mL/支","dosage":"20mL（2支），每日3次；儿童酌减","category":"清热解毒中成药","warnings":"风寒感冒禁用；脾胃虚寒（腹泻）慎用；糖尿病患者（含糖）","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
@@ -15505,7 +15505,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "萘普生": {"indications":"缓解轻至中度疼痛：类风湿关节炎、骨关节炎、痛经、头痛、肌肉痛；退热","ingredients":"主要成分：萘普生（丙酸类NSAIDs）。规格：0.1g/0.25g片剂；0.25g缓释片","dosage":"成人：0.25-0.5g，每日2次；缓释片每日1次；儿童禁用","category":"解热镇痛抗炎","warnings":"胃肠道出血/穿孔风险；心血管事件风险；严重肾/肝功能不全禁用","time":"饭后","foodAvoid":"酒精","drugAvoid":"华法林、甲氨蝶呤、锂剂、其他NSAIDs"},
   "双氯芬酸": {"indications":"缓解急慢性类风湿关节炎、骨关节炎、痛经、偏头痛、术后疼痛","ingredients":"主要成分：双氯芬酸钠/钾。规格：25mg肠溶片；75mg缓释胶囊；1%凝胶外用","dosage":"成人：25-50mg，每日2-3次；缓释75mg每日1次","category":"解热镇痛抗炎","warnings":"肝酶升高风险；心血管事件风险；妊娠晚期禁用","time":"饭后","foodAvoid":"酒精","drugAvoid":"华法林、甲氨蝶呤、锂剂、SSRIs"},
   "塞来昔布": {"indications":"缓解骨关节炎、类风湿关节炎、强直性脊柱炎的症状；急性疼痛","ingredients":"主要成分：塞来昔布（选择性COX-2抑制剂）。规格：0.1g/0.2g胶囊","dosage":"骨关节炎：0.2g，每日1次；类风湿关节炎：0.1-0.2g，每日2次","category":"解热镇痛抗炎","warnings":"心血管事件风险增加；严重胃肠道事件风险；磺胺过敏禁用","time":"任意","foodAvoid":"高脂饮食","drugAvoid":"华法林、ACE抑制剂、利尿剂、氟康唑"},
-  "阿莫西林克拉维酸钾": {"indications":"敏感菌引起的呼吸道、泌尿道、皮肤软组织、腹腔感染；中耳炎、鼻窦炎","ingredients":"主要成分：阿莫西林+克拉维酸钾。规格：0.375g/0.75g片剂","dosage":"成人：0.375-0.75g，每日3次；严重感染可加倍","category":"抗生素","warnings":"青霉素过敏禁用；肝功能异常慎用；克拉维酸钾含钾","time":"饭后","foodAvoid":"","drugAvoid":"华法林、甲氨蝶呤、口服避孕药"},
+  "阿莫西林克拉维酸钾": {"indications":"敏感菌引起��呼吸道、泌尿道、皮肤软组织、腹腔感染；中耳炎、鼻窦炎","ingredients":"主要成分：阿莫西林+克拉维酸钾。规格：0.375g/0.75g片剂","dosage":"成人：0.375-0.75g，每日3次；严重感染可加倍","category":"抗生素","warnings":"青霉素过敏禁用；肝功能异常慎用；克拉维酸钾含钾","time":"饭后","foodAvoid":"","drugAvoid":"华法林、甲氨蝶呤、口服避孕药"},
   "头孢氨苄": {"indications":"敏感菌引起的呼吸道、泌尿生殖道、皮肤软组织感染；中耳炎","ingredients":"主要成分：头孢氨苄（第一代头孢）。规格：0.125g/0.25g胶囊","dosage":"成人：0.25-0.5g，每日4次","category":"抗生素","warnings":"青霉素过敏者慎用；肾功能减退需调整剂量","time":"空腹或饭后","foodAvoid":"","drugAvoid":"氨基糖苷类（协同肾毒性）、呋塞米"},
   "头孢克洛": {"indications":"敏感菌引起的呼吸道感染、泌尿道感染、中耳炎、皮肤感染","ingredients":"主要成分：头孢克洛（第二代头孢）。规格：0.25g/0.5g胶囊","dosage":"成人：0.25g，每日3次；严重感染0.5g，每日3次","category":"抗生素","warnings":"青霉素过敏者慎用；饭后服用吸收更好","time":"饭后","foodAvoid":"","drugAvoid":"氨基糖苷类、华法林"},
   "头孢克肟": {"indications":"敏感菌引起的支气管炎、肺炎、肾盂肾炎、膀胱炎、淋病、中耳炎","ingredients":"主要成分：头孢克肟（第三代头孢）。规格：0.1g/0.2g/0.4g片剂","dosage":"成人：0.1-0.2g，每日2次；淋病单次0.4g","category":"抗生素","warnings":"青霉素过敏者慎用；严重肾功能不全需调整","time":"任意","foodAvoid":"","drugAvoid":"氨基糖苷类、华法林"},
@@ -15569,7 +15569,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "急支糖浆": {"indications":"外感风热引起的咳嗽：急性支气管炎、感冒咳嗽、咽喉炎","ingredients":"主要成分：鱼腥草、金荞麦、四季青、麻黄等。规格：100mL/瓶","dosage":"20-30mL，每日3-4次；儿童酌减","category":"止咳中成药","warnings":"糖尿病患者（含糖）；寒咳不宜；妊娠慎用","time":"任意","foodAvoid":"辛辣刺激、生冷","drugAvoid":""},
   "复方氨酚烷胺胶囊": {"indications":"感冒引起的头痛、发热、鼻塞、喷嚏、流涕、咽痛、四肢酸痛","ingredients":"主要成分：对乙酰氨基酚+金刚烷胺+咖啡因+氯苯那敏+人工牛黄","dosage":"成人：1粒，每日2次；儿童禁用或遵医嘱","category":"复方感冒药","warnings":"嗜睡（氯苯那敏）；肝毒性；对乙酰氨基酚过量危险；驾驶员禁用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他含对乙酰氨基酚制剂"},
   "感冒灵颗粒": {"indications":"感冒引起的头痛、发热、鼻塞、流涕、咽痛","ingredients":"主要成分：三叉苦、金盏银盘、野菊花、岗梅、咖啡因、对乙酰氨基酚、氯苯那敏。规格：10g/袋","dosage":"10g（1袋），每日3次","category":"复方感冒药","warnings":"嗜睡；驾驶员/高空作业禁用；肝肾功能不全慎用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他含对乙酰氨基酚制剂"},
-  "板蓝根颗粒": {"indications":"风热感冒：咽喉肿痛、口咽干燥；急性扁桃体炎、腮腺炎；病毒性感染","ingredients":"主要成分：板蓝根。规格：5g/袋（无糖型）或10g/袋（含糖）","dosage":"5-10g，每日3-4次","category":"清热解毒中成药","warnings":"风寒感冒（清涕/恶寒）禁用；脾胃虚寒者慎用","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
+  "板蓝根颗粒": {"indications":"风热感冒：咽喉肿痛、口咽干燥；急性扁桃体炎、腮腺炎；病毒性感染","ingredients":"主要成分：板蓝根。规格：5g/袋（无糖型）或10g/袋（含糖）","dosage":"5-10g，每日3-4次","category":"清热解毒中成药","warnings":"风寒感冒（清涕/恶寒）禁用；脾胃虚寒者慎用","time":"任意","foodAvoid":"辛辣���腻","drugAvoid":""},
   "连花清瘟颗粒": {"indications":"流行性感冒属热毒袭肺证：发热/高热、恶寒、肌肉酸痛、鼻塞流涕、咽干咽痛","ingredients":"主要成分：连翘、金银花、炙麻黄、炒苦杏仁、石膏、板蓝根、绵马贯众、鱼腥草、广藿香等。规格：6g/袋","dosage":"6g，每日3次","category":"清热解毒中成药","warnings":"风寒感冒禁用；脾胃虚寒者慎用（腹泻）；妊娠禁用","time":"任意","foodAvoid":"辛辣油腻生冷","drugAvoid":""},
   "双黄连口服液": {"indications":"风热感冒：发热、咳嗽、咽痛；上呼吸道感染、急性支气管炎","ingredients":"主要成分：金银花、黄芩、连翘。规格：10mL/支","dosage":"20mL（2支），每日3次；儿童酌减","category":"清热解毒中成药","warnings":"风寒感冒禁用；脾胃虚寒（腹泻）慎用；糖尿病患者（含糖）","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
   "藿香正气水": {"indications":"外感风寒内伤湿滞（暑湿感冒）：头痛昏重、胸膈痞闷、脘腹胀痛、呕吐泄泻；胃肠型感冒","ingredients":"主要成分：广藿香油、紫苏叶油、生半夏、厚朴、苍术等。含乙醇40-50%。规格：10mL/支","dosage":"5-10mL，每日2次；儿童酌减","category":"祛暑化湿中成药","warnings":"含乙醇，驾驶员禁用；头孢类抗生素（双硫仑样反应）；妊娠禁用","time":"任意","foodAvoid":"酒精、生冷","drugNotify":"头孢类、硝基咪唑类、甲苯磺丁脲（双硫仑样反应）"},
@@ -15618,7 +15618,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   set("华法林", "帕罗西汀", "caution", "SSRIs抑制血小板聚集，增加出血风险", "SSRIs inhibit platelet aggregation, increase bleeding risk");
   set("华法林", "氟哌噻吨美利曲辛", "caution", "抗抑郁药可能增强抗凝效果", "Antidepressants may enhance anticoagulant effect");
   set("华法林", "艾司唑仑", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
-  set("华法林", "佐匹克隆", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
+  set("华法林", "佐匹克隆", "caution", "两者均影响CNS���协同镇静", "Both affect CNS, synergistic sedation");
   set("华法林", "劳拉西泮", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
   set("华法林", "复方丹参滴丸", "danger", "丹参抑制血小板聚集，显著增加出血风险", "Danshen inhibits platelet aggregation, significantly increases bleeding risk");
   set("华法林", "银杏叶片", "danger", "银杏抑制血小板聚集，显著增加出血风险", "Ginkgo inhibits platelet aggregation, significantly increases bleeding risk");
@@ -15717,7 +15717,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   set("塞来昔布", "阿司匹林", "caution", "COX-2抑制剂仍与阿司匹林存在血小板相互作用", "COX-2 inhibitors still interact with aspirin on platelets");
   set("萘普生", "华法林", "danger", "NSAIDs抑制血小板+损伤胃黏膜，出血风险极高", "NSAIDs inhibit platelets + damage gastric mucosa, extremely high bleeding risk");
   set("双氯芬酸", "华法林", "danger", "NSAIDs增强抗凝+胃黏膜损伤，出血风险极高", "NSAIDs enhance anticoagulation + damage gastric mucosa, extremely high bleeding risk");
-  set("塞来昔布", "华法林", "caution", "COX-2抑制剂增强华法林抗凝效果", "COX-2 inhibitors enhance warfarin anticoagulant effect");
+  set("塞来昔布", "华法林", "caution", "COX-2抑制剂增强华法林抗凝效���", "COX-2 inhibitors enhance warfarin anticoagulant effect");
   set("双氯芬酸", "甲氨蝶呤", "danger", "NSAIDs竞争肾小管分泌甲氨蝶呤，毒性显著增加", "NSAIDs inhibit renal secretion of methotrexate, significantly increases toxicity");
   set("萘普生", "甲氨蝶呤", "danger", "NSAIDs减少甲氨蝶呤清除，毒性增加", "NSAIDs reduce methotrexate clearance, increases toxicity");
   set("双氯芬酸", "ACE抑制剂", "caution", "NSAIDs减弱ACE抑制剂降压效果，增加肾损害风险", "NSAIDs reduce ACE inhibitor antihypertensive effect, increase renal impairment risk");
