@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 / Caiyun Smart Pharmacy v2.1</title>
+<title>彩云智药 · 家庭AI药师 · v2.7.5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -690,6 +690,29 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
 .pull-indicator.pulling{transform:translateX(-50%) translateY(0) rotate(180deg);}
 .pull-indicator svg{width:20px;height:20px;fill:#07C160;animation:spin 1s linear infinite;}
 </style>
+
+  <meta name="description" content="彩云智药 — 家庭AI药师智能体。拍照识别药品、查询药物相互作用、智能症状搜药、中医辨证、家庭药箱管理、用药提醒。专业、安全、可信。">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%2307C160'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='130' font-family='serif'>💊</text></svg>">
+  <meta name="mobile-web-app-capable" content="yes">
+
+<style id="ripple-css">
+/* Ripple touch effect */
+.ripple{
+  position:absolute;border-radius:50%;background:rgba(255,255,255,.35);
+  transform:scale(0);animation:ripple-anim .55s linear;pointer-events:none;
+  width:100%;height:100%;left:0;top:0;
+}
+@keyframes ripple-anim{
+  to{transform:scale(4);opacity:0}
+}
+[onclick]{position:relative;overflow:hidden}
+.btn-primary,.drug-btn,.action-btn,.search-btn,[class*="btn"]{
+  position:relative;overflow:hidden;
+}
+</style>
+
 </head>
 <body>
 <script>
@@ -15557,6 +15580,242 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "复合维生素B片": {"indications":"B族维生素缺乏：口角炎、舌炎、脚气病、糙皮病、脂溢性皮炎；妊娠/哺乳期","ingredients":"主要成分：维生素B1、B2、B6、B12、烟酰胺、泛酸钙。规格：100片/瓶","dosage":"1-2片，每日3次","category":"维生素","warnings":"尿液变黄（正常无害）","time":"任意（饭后更佳）","foodAvoid":"","drugNotify":"B6拮抗左旋多巴；叶酸与甲氨蝶呤相互作用"},
   "维生素C泡腾片": {"indications":"预防和治疗维生素C缺乏：坏血病、牙龈出血；增强免疫力（辅助）；缺铁性贫血的辅助治疗","ingredients":"主要成分：维生素C（抗坏血酸）。规格：1g/片","dosage":"1片，每日1次，溶于200mL水中服用","category":"维生素","warnings":"肾结石病史者慎用；高剂量突然停药可致坏血病反跳","time":"任意（饭后减少刺激）","foodAvoid":"","drugNotify":"与阿司匹林/铁剂/雌激素/巴比妥类相互作用"},
   "善存多维元素片": {"indications":"预防维生素和矿物质缺乏：饮食不规律者、老年人、孕产妇；补充多种微量营养素","ingredients":"主要成分：13种维生素+12种矿物质。规格：30片/60片/瓶","dosage":"1片，每日1次，饭后服用","category":"复合维生素矿物质","warnings":"不与其他含维生素A/D的制剂同服；肾结石/高钙血症禁用；含铁，胃肠道反应","time":"饭后","foodAvoid":"浓茶/咖啡/红酒（影响铁吸收）","drugNotify":"四环素类/氟喹诺酮类/左甲状腺素/卡托普利（吸收干扰）"}
+  // [v2.7.5] Extended interactions for new drug additions
+  set("华法林", "甲硝唑", "danger", "抑制S-华法林代谢，增强抗凝，出血风险显著增加", "Inhibits S-warfarin metabolism, significantly increases bleeding risk");
+  set("华法林", "替硝唑", "danger", "抑制华法林代谢，增强抗凝效果", "Inhibits warfarin metabolism, increases anticoagulant effect");
+  set("华法林", "左氧氟沙星", "caution", "抗菌作用改变肠道菌群，影响维生素K合成，增加INR", "Alters gut flora, reduces vitamin K synthesis, increases INR");
+  set("华法林", "诺氟沙星", "caution", "抗菌作用改变肠道菌群，影响维生素K合成，增加INR", "Alters gut flora, affects vitamin K synthesis, increases INR");
+  set("华法林", "莫西沙星", "caution", "抗菌作用影响维生素K，增加INR和出血风险", "Affects vitamin K, increases INR and bleeding risk");
+  set("华法林", "阿奇霉素", "caution", "可能增强华法林抗凝效果，增加出血风险", "May enhance warfarin anticoagulant effect, increases bleeding risk");
+  set("华法林", "克拉霉素", "danger", "强效CYP3A4抑制剂，显著增强华法林作用，增加出血", "Strong CYP3A4 inhibitor, significantly enhances warfarin, increases bleeding");
+  set("华法林", "奥美拉唑", "caution", "奥美拉唑抑制CYP2C19，轻度增强华法林", "Omeprazole inhibits CYP2C19, mildly enhances warfarin");
+  set("华法林", "雷贝拉唑", "caution", "轻度影响华法林代谢，监测INR", "Mildly affects warfarin metabolism, monitor INR");
+  set("华法林", "铝碳酸镁", "caution", "减少华法林吸收，降低抗凝效果", "Reduces warfarin absorption, decreases anticoagulant effect");
+  set("华法林", "蒙脱石散", "caution", "减少华法林吸收，降低抗凝效果", "Reduces warfarin absorption, decreases anticoagulant effect");
+  set("华法林", "二甲双胍", "caution", "可能增强华法林抗凝效果，监测INR", "May enhance warfarin effect, monitor INR");
+  set("华法林", "阿托伐他汀", "caution", "部分CYP相互作用，轻度增强抗凝", "Mild CYP interaction, slightly enhances anticoagulant");
+  set("华法林", "瑞舒伐他汀", "caution", "轻度影响华法林代谢，监测INR", "Mildly affects warfarin metabolism, monitor INR");
+  set("华法林", "氨氯地平", "caution", "CYP3A4竞争，轻度增强华法林", "CYP3A4 competition, mildly enhances warfarin");
+  set("华法林", "贝那普利", "caution", "ACE抑制剂可能增强抗凝，增加出血风险", "ACE inhibitors may enhance anticoagulant, increase bleeding risk");
+  set("华法林", "培哚普利", "caution", "ACE抑制剂可能增强抗凝，增加出血风险", "ACE inhibitors may enhance anticoagulant, increase bleeding risk");
+  set("华法林", "美托洛尔", "caution", "两药均影响心率，协同作用需监测", "Both affect heart rate, synergistic effect needs monitoring");
+  set("华法林", "胺碘酮", "danger", "强效CYP2C9抑制剂，显著增强华法林，增加出血风险", "Strong CYP2C9 inhibitor, significantly enhances warfarin, increases bleeding risk");
+  set("华法林", "舍曲林", "caution", "SSRIs抑制血小板聚集，增加出血风险", "SSRIs inhibit platelet aggregation, increase bleeding risk");
+  set("华法林", "帕罗西汀", "caution", "SSRIs抑制血小板聚集，增加出血风险", "SSRIs inhibit platelet aggregation, increase bleeding risk");
+  set("华法林", "氟哌噻吨美利曲辛", "caution", "抗抑郁药可能增强抗凝效果", "Antidepressants may enhance anticoagulant effect");
+  set("华法林", "艾司唑仑", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
+  set("华法林", "佐匹克隆", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
+  set("华法林", "劳拉西泮", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
+  set("华法林", "复方丹参滴丸", "danger", "丹参抑制血小板聚集，显著增加出血风险", "Danshen inhibits platelet aggregation, significantly increases bleeding risk");
+  set("华法林", "银杏叶片", "danger", "银杏抑制血小板聚集，显著增加出血风险", "Ginkgo inhibits platelet aggregation, significantly increases bleeding risk");
+  set("华法林", "云南白药", "danger", "含三七等活血成分，显著增加出血风险", "Contains danshen/pseudo-ginseng, significantly increases bleeding risk");
+  set("华法林", "阿司匹林", "danger", "双重抗凝机制，胃肠道出血风险极高", "Dual anticoagulant mechanism, extremely high GI bleeding risk");
+  set("华法林", "氯吡格雷", "danger", "双联抗血小板+抗凝，出血风险极高", "Dual antiplatelet + anticoagulant, extremely high bleeding risk");
+  set("华法林", "萘普生", "danger", "NSAIDs抑制血小板+损伤胃黏膜，胃肠道出血风险极高", "NSAIDs inhibit platelets + damage gastric mucosa, extremely high GI bleeding risk");
+  set("华法林", "双氯芬酸", "danger", "NSAIDs增加胃肠道出血风险和抗凝强度", "NSAIDs increase GI bleeding risk and anticoagulant intensity");
+  set("华法林", "塞来昔布", "caution", "COX-2选择性NSAID，胃肠道风险较低但仍增加出血", "COX-2 selective NSAID, lower GI risk but still increases bleeding");
+  set("华法林", "布洛芬", "danger", "NSAIDs抑制血小板+损伤胃黏膜，胃肠道出血风险极高", "NSAIDs inhibit platelets + damage gastric mucosa, extremely high GI bleeding risk");
+  set("华法林", "泼尼松", "danger", "糖皮质激素增加胃黏膜损伤+血小板抑制，显著增加出血", "Corticosteroids increase gastric damage + platelet inhibition, significantly increases bleeding");
+  set("华法林", "地塞米松", "danger", "糖皮质激素增加胃黏膜损伤，显著增加出血", "Corticosteroids increase gastric damage, significantly increases bleeding");
+  set("华法林", "孟鲁司特", "caution", "轻度影响华法林代谢，监测INR", "Mildly affects warfarin metabolism, monitor INR");
+  set("华法林", "西替利嗪", "caution", "H1抗组胺可能增强抗凝", "H1 antihistamines may enhance anticoagulant effect");
+  set("华法林", "氯雷他定", "caution", "H1抗组胺可能增强抗凝", "H1 antihistamines may enhance anticoagulant effect");
+  set("华法林", "碳酸钙D3", "caution", "减少华法林吸收，降低抗凝效果", "Reduces warfarin absorption, decreases anticoagulant effect");
+  set("华法林", "复合维生素B", "caution", "B族维生素（尤其K）可能影响抗凝", "B vitamins (especially K) may affect anticoagulation");
+  set("华法林", "维生素C", "caution", "高剂量维生素C可能增强华法林效果", "High-dose vitamin C may enhance warfarin effect");
+  set("阿莫西林克拉维酸钾", "华法林", "caution", "抗菌作用改变肠道菌群，影响维生素K合成", "Alters gut flora, affects vitamin K synthesis");
+  set("头孢氨苄", "华法林", "caution", "抗菌作用改变肠道菌群，影响维生素K合成", "Alters gut flora, affects vitamin K synthesis");
+  set("头孢克洛", "华法林", "caution", "抗菌作用改变肠道菌群，影响维生素K合成", "Alters gut flora, affects vitamin K synthesis");
+  set("头孢克肟", "华法林", "caution", "抗菌作用改变肠道菌群，影响维生素K合成", "Alters gut flora, affects vitamin K synthesis");
+  set("阿奇霉素", "华法林", "caution", "可能增强华法林抗凝效果", "May enhance warfarin anticoagulant effect");
+  set("克拉霉素", "华法林", "danger", "强效CYP3A4抑制剂，显著增强华法林", "Strong CYP3A4 inhibitor, significantly enhances warfarin");
+  set("左氧氟沙星", "华法林", "caution", "改变肠道菌群，影响维生素K，增加INR", "Alters gut flora, affects vitamin K, increases INR");
+  set("莫西沙星", "华法林", "caution", "改变肠道菌群，影响维生素K，增加INR", "Alters gut flora, affects vitamin K, increases INR");
+  set("甲硝唑", "华法林", "danger", "抑制S-华法林代谢，显著增强抗凝，出血风险显著增加", "Inhibits S-warfarin metabolism, significantly enhances anticoagulation");
+  set("替硝唑", "华法林", "danger", "抑制华法林代谢，增强抗凝", "Inhibits warfarin metabolism, enhances anticoagulation");
+  set("诺氟沙星", "华法林", "caution", "改变肠道菌群，影响维生素K，增加INR", "Alters gut flora, affects vitamin K, increases INR");
+  set("阿莫西林克拉维酸钾", "甲氨蝶呤", "danger", "青霉素竞争性抑制肾小管分泌甲氨蝶呤，显著增加毒性", "Penicillins inhibit renal tubular secretion of methotrexate, increases toxicity");
+  set("头孢克肟", "甲氨蝶呤", "caution", "竞争肾小管分泌，增加甲氨蝶呤血药浓度", "Compete renal tubular secretion, increase methotrexate concentration");
+  set("左氧氟沙星", "茶碱", "caution", "增强茶碱作用，增加毒性风险", "Enhances theophylline effect, increases toxicity risk");
+  set("莫西沙星", "茶碱", "danger", "显著增强茶碱作用，增加中毒风险", "Significantly enhances theophylline effect, increases toxicity risk");
+  set("克拉霉素", "阿托伐他汀", "danger", "CYP3A4强抑制剂，显著增加他汀血药浓度，肌病风险极高", "CYP3A4 inhibitor, significantly increases statin levels, very high myopathy risk");
+  set("克拉霉素", "瑞舒伐他汀", "caution", "增加瑞舒伐他汀暴露，肌病风险增加", "Increases rosuvastatin exposure, increases myopathy risk");
+  set("克拉霉素", "辛伐他汀", "danger", "CYP3A4强抑制，禁忌联用，肌溶解风险极高", "CYP3A4 strong inhibitor, contraindicated, very high rhabdomyolysis risk");
+  set("克拉霉素", "氯雷他定", "caution", "CYP3A4竞争，氯雷他定血药浓度增加", "CYP3A4 competition, increases loratadine concentration");
+  set("阿奇霉素", "氯雷他定", "caution", "轻度影响氯雷他定代谢", "Mildly affects loratadine metabolism");
+  set("左氧氟沙星", "铝碳酸镁", "caution", "氟喹诺酮与金属离子螯合，吸收降低40-90%", "Fluoroquinolones chelate metal ions, absorption reduced 40-90%");
+  set("左氧氟沙星", "氢氧化铝", "caution", "氟喹诺酮与铝离子螯合，吸收降低", "Fluoroquinolones chelate aluminum, reduced absorption");
+  set("左氧氟沙星", "钙剂", "caution", "氟喹诺酮与钙离子螯合，吸收降低", "Fluoroquinolones chelate calcium, reduced absorption");
+  set("左氧氟沙星", "铁剂", "caution", "氟喹诺酮与铁离子螯合，吸收降低", "Fluoroquinolones chelate iron, reduced absorption");
+  set("莫西沙星", "铝碳酸镁", "caution", "氟喹诺酮与金属离子螯合，吸收降低", "Fluoroquinolones chelate metal ions, reduced absorption");
+  set("诺氟沙星", "铝碳酸镁", "caution", "氟喹诺酮与金属离子螯合，吸收降低", "Fluoroquinolones chelate metal ions, reduced absorption");
+  set("诺氟沙星", "茶碱", "caution", "减少茶碱清除，增强CNS毒性", "Reduces theophylline clearance, enhances CNS toxicity");
+  set("阿莫西林克拉维酸钾", "口服避孕药", "caution", "抗菌药物降低避孕药肝肠循环，避孕效果下降", "Antibiotics reduce contraceptive efficacy via enterohepatic circulation");
+  set("头孢类", "口服避孕药", "caution", "抗菌药物可能降低口服避孕药效果，建议加用屏障法", "Antibiotics may reduce contraceptive efficacy, add barrier method");
+  set("甲硝唑", "口服避孕药", "caution", "甲硝唑可能降低口服避孕药效果，建议加用屏障法", "Metronidazole may reduce contraceptive efficacy, add barrier method");
+  set("枯草杆菌二联活菌", "口服抗生素", "caution", "抗生素可能灭活益生菌，分开服用至少间隔2-3小时", "Antibiotics may inactivate probiotics, take 2-3 hours apart");
+  set("二甲双胍", "造影剂", "danger", "造影剂（碘化）可导致急性肾功能损害，二甲双胍蓄积致乳酸酸中毒", "Iodinated contrast agents can cause acute kidney injury, metformin accumulation causes lactic acidosis");
+  set("二甲双胍", "华法林", "caution", "可能增强华法林抗凝效果，监测INR", "May enhance warfarin effect, monitor INR");
+  set("二甲双胍", "西咪替丁", "caution", "西咪替丁减少二甲双胍肾清除，增加浓度", "Cimetidine reduces renal clearance of metformin, increases concentration");
+  set("格列齐特", "华法林", "caution", "增强华法林抗凝效果，低血糖风险增加", "Enhances warfarin, increased hypoglycemia risk");
+  set("格列美脲", "华法林", "caution", "增强华法林抗凝效果，低血糖风险增加", "Enhances warfarin, increased hypoglycemia risk");
+  set("格列齐特", "萘普生", "caution", "NSAIDs增强磺脲类降糖效果，低血糖风险增加", "NSAIDs enhance sulfonylurea hypoglycemic effect");
+  set("格列美脲", "萘普生", "caution", "NSAIDs增强磺脲类降糖效果，低血糖风险增加", "NSAIDs enhance sulfonylurea hypoglycemic effect");
+  set("格列齐特", "阿司匹林", "caution", "阿司匹林增强磺脲类降糖，低血糖风险", "Aspirin enhances sulfonylurea hypoglycemic effect");
+  set("格列美脲", "阿司匹林", "caution", "阿司匹林增强磺脲类降糖，低血糖风险", "Aspirin enhances sulfonylurea hypoglycemic effect");
+  set("西格列汀", "ACE抑制剂", "caution", "ACE抑制剂和DPP-4抑制剂均可能引起血管性水肿", "Both ACE inhibitors and DPP-4 inhibitors may cause angioedema");
+  set("达格列净", "胰岛素", "caution", "联用增强降糖，糖尿病酮症酸中毒风险增加", "Enhanced hypoglycemia, increased DKA risk");
+  set("达格列净", "磺脲类", "caution", "联用增强降糖，糖尿病酮症酸中毒风险增加", "Enhanced hypoglycemia, increased DKA risk");
+  set("恩格列净", "胰岛素", "caution", "联用增强降糖，糖尿病酮症酸中毒风险增加", "Enhanced hypoglycemia, increased DKA risk");
+  set("阿卡波糖", "二甲双胍", "caution", "联用降糖作用增强", "Enhanced hypoglycemic effect");
+  set("阿卡波糖", "格列齐特", "caution", "联用降糖作用增强，低血糖风险增加", "Enhanced hypoglycemic effect, increased hypoglycemia risk");
+  set("阿卡波糖", "胰岛素", "caution", "联用降糖作用增强，低血糖风险增加", "Enhanced hypoglycemic effect, increased hypoglycemia risk");
+  set("西格列汀", "胺碘酮", "caution", "胺碘酮影响血糖，联用时注意血糖监测", "Amiodarone affects blood sugar, monitor glucose");
+  set("贝那普利", "华法林", "caution", "ACE抑制剂可能增强抗凝，增加出血风险", "ACE inhibitors may enhance anticoagulant, increase bleeding risk");
+  set("培哚普利", "华法林", "caution", "ACE抑制剂可能增强抗凝，增加出血风险", "ACE inhibitors may enhance anticoagulant, increase bleeding risk");
+  set("厄贝沙坦", "华法林", "caution", "ARB可能增强抗凝，增加出血风险", "ARBs may enhance anticoagulant, increase bleeding risk");
+  set("坎地沙坦", "华法林", "caution", "ARB可能增强抗凝，增加出血风险", "ARBs may enhance anticoagulant, increase bleeding risk");
+  set("美托洛尔", "华法林", "caution", "两药均影响心率，协同作用需监测", "Both affect heart rate, synergistic effect needs monitoring");
+  set("比索洛尔", "华法林", "caution", "两药均影响心率，协同作用需监测", "Both affect heart rate, synergistic effect needs monitoring");
+  set("比索洛尔", "胰岛素", "caution", "β受体阻滞剂掩盖低血糖症状，增加低血糖风险", "Beta-blockers mask hypoglycemia symptoms, increase hypoglycemia risk");
+  set("美托洛尔", "胰岛素", "caution", "β受体阻滞剂掩盖低血糖症状，增加低血糖风险", "Beta-blockers mask hypoglycemia symptoms, increase hypoglycemia risk");
+  set("美托洛尔", "磺脲类", "caution", "β受体阻滞剂掩盖心动过速等低血糖症状", "Beta-blockers mask tachycardia, a hypoglycemia symptom");
+  set("比索洛尔", "磺脲类", "caution", "β受体阻滞剂掩盖心动过速等低血糖症状", "Beta-blockers mask tachycardia, a hypoglycemia symptom");
+  set("氨氯地平", "辛伐他汀", "danger", "氨氯地平抑制CYP3A4，辛伐他汀日剂量不超过20mg", "Amlodipine inhibits CYP3A4, simvastatin dose should not exceed 20mg/day");
+  set("氨氯地平", "阿托伐他汀", "caution", "氨氯地平增加阿托伐他汀暴露，注意肌病", "Amlodipine increases atorvastatin exposure, watch for myopathy");
+  set("氨氯地平", "瑞舒伐他汀", "caution", "氨氯地平增加瑞舒伐他汀暴露，肌病风险略增", "Amlodipine increases rosuvastatin exposure, slightly increases myopathy risk");
+  set("螺内酯", "二甲双胍", "caution", "两者均可能影响肾功能，监测肾功能和电解质", "Both may affect kidney function, monitor renal function and electrolytes");
+  set("呋塞米", "氨基糖苷类", "danger", "袢利尿剂增强氨基糖苷类耳毒性和肾毒性", "Loop diuretics enhance aminoglycoside ototoxicity and nephrotoxicity");
+  set("呋塞米", "万古霉素", "caution", "增强万古霉素肾毒性", "Enhances vancomycin nephrotoxicity");
+  set("呋塞米", "地高辛", "caution", "低钾血症增强地高辛心脏毒性，监测血钾和地高辛浓度", "Hypokalemia enhances digoxin cardiac toxicity, monitor potassium and digoxin level");
+  set("螺内酯", "地高辛", "caution", "螺内酯增加地高辛清除，但也有相互作用，监测地高辛浓度", "Spironolactone affects digoxin clearance, monitor digoxin level");
+  set("氢氯噻嗪", "地高辛", "caution", "低钾血症增强地高辛心脏毒性", "Hypokalemia enhances digoxin cardiac toxicity");
+  set("氢氯噻嗪", "胺碘酮", "caution", "低钾血症增加胺碘酮致心律失常风险", "Hypokalemia increases amiodarone arrhythmia risk");
+  set("坎地沙坦", "螺内酯", "caution", "ACE抑制剂/ARB+螺内酯+二甲双胍=三药高钾血症风险", "ACE/ARB + spironolactone + metformin = triple hyperkalemia risk");
+  set("贝那普利", "螺内酯", "caution", "高钾血症风险增加，监测血钾", "Increased hyperkalemia risk, monitor potassium");
+  set("培哚普利", "螺内酯", "caution", "高钾血症风险增加，监测血钾", "Increased hyperkalemia risk, monitor potassium");
+  set("厄贝沙坦", "螺内酯", "caution", "高钾血症风险增加，监测血钾", "Increased hyperkalemia risk, monitor potassium");
+  set("缬沙坦", "螺内酯", "caution", "高钾血症风险增加，监测血钾", "Increased hyperkalemia risk, monitor potassium");
+  set("达格列净", "螺内酯", "caution", "两者均可引起电解质紊乱，监测血钾", "Both may cause electrolyte imbalance, monitor potassium");
+  set("达格列净", "呋塞米", "caution", "利尿剂+达格列净增加低血容量风险", "Diuretics + dapagliflozin increase hypovolemia risk");
+  set("萘普生", "阿司匹林", "danger", "竞争COX-1，萘普生削弱阿司匹林心血管保护", "Compete for COX-1, naproxen reduces aspirin cardio-protection");
+  set("双氯芬酸", "阿司匹林", "danger", "双氯芬酸竞争COX-1，削弱阿司匹林心血管保护", "Diclofenac competes for COX-1, reduces aspirin cardio-protection");
+  set("塞来昔布", "阿司匹林", "caution", "COX-2抑制剂仍与阿司匹林存在血小板相互作用", "COX-2 inhibitors still interact with aspirin on platelets");
+  set("萘普生", "华法林", "danger", "NSAIDs抑制血小板+损伤胃黏膜，出血风险极高", "NSAIDs inhibit platelets + damage gastric mucosa, extremely high bleeding risk");
+  set("双氯芬酸", "华法林", "danger", "NSAIDs增强抗凝+胃黏膜损伤，出血风险极高", "NSAIDs enhance anticoagulation + damage gastric mucosa, extremely high bleeding risk");
+  set("塞来昔布", "华法林", "caution", "COX-2抑制剂增强华法林抗凝效果", "COX-2 inhibitors enhance warfarin anticoagulant effect");
+  set("双氯芬酸", "甲氨蝶呤", "danger", "NSAIDs竞争肾小管分泌甲氨蝶呤，毒性显著增加", "NSAIDs inhibit renal secretion of methotrexate, significantly increases toxicity");
+  set("萘普生", "甲氨蝶呤", "danger", "NSAIDs减少甲氨蝶呤清除，毒性增加", "NSAIDs reduce methotrexate clearance, increases toxicity");
+  set("双氯芬酸", "ACE抑制剂", "caution", "NSAIDs减弱ACE抑制剂降压效果，增加肾损害风险", "NSAIDs reduce ACE inhibitor antihypertensive effect, increase renal impairment risk");
+  set("萘普生", "ACE抑制剂", "caution", "NSAIDs减弱ACE抑制剂降压效果，增加肾损害风险", "NSAIDs reduce ACE inhibitor antihypertensive effect, increase renal impairment risk");
+  set("双氯芬酸", "螺内酯", "caution", "NSAIDs减弱利尿剂效果，增加肾损害风险", "NSAIDs reduce diuretic effect, increase renal impairment risk");
+  set("萘普生", "螺内酯", "caution", "NSAIDs减弱利尿剂效果，增加肾损害风险", "NSAIDs reduce diuretic effect, increase renal impairment risk");
+  set("双氯芬酸", "地高辛", "caution", "NSAIDs可损害肾功能，增加地高辛蓄积风险", "NSAIDs may damage kidney function, increase digoxin accumulation risk");
+  set("塞来昔布", "甲氨蝶呤", "caution", "塞来昔布轻度增加甲氨蝶呤浓度", "Celecoxib mildly increases methotrexate concentration");
+  set("舍曲林", "华法林", "caution", "SSRIs抑制血小板聚集，增加出血风险", "SSRIs inhibit platelet aggregation, increase bleeding risk");
+  set("帕罗西汀", "华法林", "caution", "SSRIs抑制血小板聚集，增加出血风险", "SSRIs inhibit platelet aggregation, increase bleeding risk");
+  set("舍曲林", "曲马多", "danger", "SSRIs+曲马多=5-羟色胺综合征风险，可致命", "SSRIs + tramadol = serotonin syndrome risk, potentially fatal");
+  set("帕罗西汀", "曲马多", "danger", "SSRIs+曲马多=5-羟色胺综合征风险，可致命", "SSRIs + tramadol = serotonin syndrome risk, potentially fatal");
+  set("氟哌噻吨美利曲辛", "曲马多", "danger", "两药均可增加5-HT综合征风险", "Both drugs can increase serotonin syndrome risk");
+  set("舍曲林", "MAO抑制剂", "danger", "SSRIs与MAO抑制剂联用可致5-HT综合征，禁忌（需停2周）", "SSRIs + MAOIs = serotonin syndrome, contraindicated (need 2-week washout)");
+  set("帕罗西汀", "MAO抑制剂", "danger", "SSRIs与MAO抑制剂联用可致5-HT综合征，禁忌（需停2周）", "SSRIs + MAOIs = serotonin syndrome, contraindicated (need 2-week washout)");
+  set("氟哌噻吨美利曲辛", "MAO抑制剂", "danger", "与MAO抑制剂联用可致5-HT综合征，禁忌", "Serotonin syndrome risk with MAOIs, contraindicated");
+  set("艾司唑仑", "阿片类", "danger", "苯二氮卓类+阿片类=呼吸抑制风险增加，呼吸衰竭可致命", "Benzodiazepines + opioids = increased respiratory depression, potentially fatal");
+  set("佐匹克隆", "阿片类", "danger", "非苯二氮卓类安眠药+阿片类=呼吸抑制风险增加", "Non-benzodiazepine hypnotics + opioids = increased respiratory depression");
+  set("劳拉西泮", "阿片类", "danger", "苯二氮卓类+阿片类=呼吸抑制风险增加", "Benzodiazepines + opioids = increased respiratory depression");
+  set("艾司唑仑", "酒精", "danger", "酒精增强苯二氮卓类CNS抑制，呼吸抑制可致命", "Alcohol enhances benzodiazepine CNS depression, respiratory depression may be fatal");
+  set("佐匹克隆", "酒精", "danger", "酒精增强安眠药CNS抑制，记忆障碍/呼吸抑制风险", "Alcohol enhances hypnotic CNS depression, amnesia/respiratory depression risk");
+  set("劳拉西泮", "酒精", "danger", "酒精增强苯二氮卓类CNS抑制，呼吸抑制可致命", "Alcohol enhances benzodiazepine CNS depression, respiratory depression may be fatal");
+  set("佐匹克隆", "氟哌噻吨美利曲辛", "caution", "两者均有CNS抑制作用，联用需谨慎", "Both have CNS depression, use with caution");
+  set("左甲状腺素", "铝碳酸镁", "danger", "铝离子螯合左甲状腺素，吸收降低25-40%，疗效显著下降", "Aluminum chelates levothyroxine, absorption reduced 25-40%, significantly reduces efficacy");
+  set("左甲状腺素", "氢氧化铝", "danger", "铝离子螯合左甲状腺素，吸收降低，疗效下降", "Aluminum chelates levothyroxine, absorption reduced");
+  set("左甲状腺素", "钙剂", "caution", "钙剂减少左甲状腺素吸收，分开服用至少4小时", "Calcium reduces levothyroxine absorption, take 4 hours apart");
+  set("左甲状腺素", "铁剂", "caution", "铁剂减少左甲状腺素吸收，分开服用至少4小时", "Iron reduces levothyroxine absorption, take 4 hours apart");
+  set("左甲状腺素", "奥美拉唑", "caution", "PPI减少胃酸，影响左甲状腺素吸收，监测TSH", "PPIs reduce gastric acid, affect levothyroxine absorption, monitor TSH");
+  set("左甲状腺素", "雷贝拉唑", "caution", "PPI减少胃酸，影响左甲状腺素吸收，监测TSH", "PPIs reduce gastric acid, affect levothyroxine absorption, monitor TSH");
+  set("泼尼松", "布洛芬", "danger", "糖皮质激素+NSAIDs=胃肠道溃疡和出血风险显著增加", "Corticosteroids + NSAIDs = significantly increased GI ulcer and bleeding risk");
+  set("地塞米松", "布洛芬", "danger", "糖皮质激素+NSAIDs=胃肠道溃疡和出血风险显著增加", "Corticosteroids + NSAIDs = significantly increased GI ulcer and bleeding risk");
+  set("泼尼松", "阿司匹林", "danger", "糖皮质激素+阿司匹林=胃肠道溃疡和出血风险显著增加", "Corticosteroids + aspirin = significantly increased GI ulcer and bleeding risk");
+  set("泼尼松", "华法林", "danger", "糖皮质激素增强华法林+损伤胃黏膜，出血风险极高", "Corticosteroids enhance warfarin + damage gastric mucosa, extremely high bleeding risk");
+  set("地塞米松", "华法林", "danger", "糖皮质激素增强华法林+损伤胃黏膜，出血风险极高", "Corticosteroids enhance warfarin + damage gastric mucosa, extremely high bleeding risk");
+  set("布地奈德吸入剂", "酮康唑", "danger", "酮康唑强效抑制CYP3A4，显著增加吸入布地奈德血药浓度", "Ketoconazole strongly inhibits CYP3A4, significantly increases inhaled budesonide level");
+  set("沙丁胺醇", "普萘洛尔", "caution", "非选择性β受体阻滞剂拮抗沙丁胺醇支气管舒张作用", "Non-selective beta-blockers antagonize bronchodilator effect of salbutamol");
+  set("异丙托溴铵", "普萘洛尔", "caution", "非选择性β受体阻滞剂可能拮抗异丙托溴铵作用", "Non-selective beta-blockers may antagonize ipratropium effect");
+  set("奥美拉唑", "氯吡格雷", "danger", "奥美拉唑抑制CYP2C19，削弱氯吡格雷抗血小板效果", "Omeprazole inhibits CYP2C19, reduces clopidogrel antiplatelet effect");
+  set("泮托拉唑", "氯吡格雷", "caution", "泮托拉唑对CYP2C19影响较小，优于奥美拉唑", "Pantoprazole has less CYP2C19 effect, preferable to omeprazole");
+  set("兰索拉唑", "氯吡格雷", "caution", "兰索拉唑中度影响CYP2C19", "Lansoprazole moderately affects CYP2C19");
+  set("铝碳酸镁", "左氧氟沙星", "caution", "金属离子螯合氟喹诺酮，吸收降低40-90%", "Metal ions chelate fluoroquinolones, absorption reduced 40-90%");
+  set("铝碳酸镁", "诺氟沙星", "caution", "金属离子螯合氟喹诺酮，吸收降低", "Metal ions chelate fluoroquinolones, reduced absorption");
+  set("铝碳酸镁", "阿奇霉素", "caution", "铝剂降低阿奇霉素吸收", "Aluminum reduces azithromycin absorption");
+  set("铝碳酸镁", "左甲状腺素", "danger", "铝剂螯合左甲状腺素，吸收降低25-40%", "Aluminum chelates levothyroxine, absorption reduced 25-40%");
+  set("铝碳酸镁", "铁剂", "caution", "铝剂和铁剂相互影响吸收，分开服用", "Aluminum and iron affect each other absorption, take separately");
+  set("多潘立酮", "酮康唑", "danger", "QT间期延长风险叠加，禁忌联用", "QT prolongation risk叠加, contraindicated");
+  set("多潘立酮", "伊曲康唑", "danger", "QT间期延长风险叠加，禁忌联用", "QT prolongation risk叠加, contraindicated");
+  set("多潘立酮", "氟康唑", "caution", "氟康唑抑制CYP3A4，增加多潘立酮心脏毒性风险", "Fluconazole inhibits CYP3A4, increases cardiac toxicity risk");
+  set("多潘立酮", "红霉素", "danger", "红霉素强效CYP3A4抑制剂，显著增加多潘立酮心脏毒性", "Erythromycin strongly inhibits CYP3A4, significantly increases cardiac toxicity risk");
+  set("多潘立酮", "克拉霉素", "danger", "克拉霉素强效CYP3A4抑制剂，显著增加多潘立酮心脏毒性", "Clarithromycin strongly inhibits CYP3A4, significantly increases cardiac toxicity risk");
+  set("多潘立酮", "胺碘酮", "danger", "两者均延长QT间期，联用心脏毒性风险极高", "Both prolong QT interval, very high cardiac toxicity risk");
+  set("多潘立酮", "氟哌噻吨美利曲辛", "caution", "两者均影响心律，联用需监测心电图", "Both affect cardiac rhythm, monitor ECG when combined");
+  set("复方丹参滴丸", "华法林", "danger", "丹参抑制血小板聚集，显著增加华法林出血风险", "Danshen inhibits platelet aggregation, significantly increases warfarin bleeding risk");
+  set("银杏叶片", "华法林", "danger", "银杏抑制血小板聚集，显著增加华法林出血风险", "Ginkgo inhibits platelet aggregation, significantly increases warfarin bleeding risk");
+  set("云南白药", "华法林", "danger", "含三七等活血成分，显著增加华法林出血风险", "Contains danshen/pseudo-ginseng, significantly increases warfarin bleeding risk");
+  set("藿香正气水", "头孢类", "danger", "含乙醇40-50%，与头孢类联用产生双硫仑样反应（面红/胸闷/低血压）", "Contains ethanol 40-50%, disulfiram-like reaction with cephalosporins");
+  set("藿香正气水", "甲硝唑", "danger", "含乙醇与甲硝唑联用产生双硫仑样反应", "Contains ethanol, disulfiram-like reaction with metronidazole");
+  set("藿香正气水", "替硝唑", "danger", "含乙醇与替硝唑联用产生双硫仑样反应", "Contains ethanol, disulfiram-like reaction with tinidazole");
+  set("藿香正气水", "酮康唑", "danger", "含乙醇与酮康唑联用产生双硫仑样反应", "Contains ethanol, disulfiram-like reaction with ketoconazole");
+  set("藿香正气水", "阿莫西林克拉维酸钾", "danger", "含乙醇与阿莫西林克拉维酸钾联用可能产生双硫仑样反应", "Contains ethanol, possible disulfiram-like reaction");
+  set("复方甘草片", "氢氯噻嗪", "danger", "甘草酸引起水钠潴留，拮抗氢氯噻嗪利尿作用，血压升高", "Glycyrrhizin causes sodium retention, antagonizes hydrochlorothiazide diuretic effect");
+  set("复方甘草片", "呋塞米", "caution", "甘草酸引起水钠潴留，拮抗呋塞米利尿作用", "Glycyrrhizin causes sodium retention, antagonizes furosemide diuretic effect");
+  set("复方甘草片", "螺内酯", "danger", "甘草酸拮抗螺内酯保钾利尿作用，减弱疗效", "Glycyrrhizin antagonizes spironolactone potassium-sparing effect");
+  set("六味地黄丸", "氨基糖苷类", "caution", "六味地黄丸可能增加氨基糖苷类肾毒性", "Liu Wei Di Huang Wan may increase aminoglycoside nephrotoxicity");
+  set("连花清瘟颗粒", "华法林", "caution", "连花清瘟可能增强华法林抗凝效果，监测INR", "Lianhua Qingwen may enhance warfarin effect, monitor INR");
+  set("六味地黄丸", "二甲双胍", "caution", "两者均有降糖作用，联用时注意低血糖", "Both have hypoglycemic effect, watch for hypoglycemia");
+  set("逍遥丸", "舍曲林", "caution", "柴胡成分可能与SSRIs有5-HT相互作用", "Bupleurum component may have 5-HT interaction with SSRIs");
+  set("复方丹参滴丸", "氯吡格雷", "caution", "丹参增强双联抗血小板作用，出血风险增加", "Danshen enhances dual antiplatelet effect, increases bleeding risk");
+  set("云南白药", "氯吡格雷", "danger", "含三七等活血成分，显著增加双联抗血小板出血风险", "Contains blood-activating herbs, significantly increases dual antiplatelet bleeding risk");
+  set("云南白药", "阿司匹林", "danger", "云南白药+阿司匹林=双重抗血小板，出血风险极高", "Yunnan Baiyao + aspirin = dual antiplatelet, extremely high bleeding risk");
+  set("银杏叶片", "氯吡格雷", "danger", "银杏+氯吡格雷=双重抗血小板，出血风险显著增加", "Ginkgo + clopidogrel = dual antiplatelet, significantly increases bleeding risk");
+  set("银杏叶片", "阿司匹林", "danger", "银杏+阿司匹林=双重抗血小板，出血风险显著增加", "Ginkgo + aspirin = dual antiplatelet, significantly increases bleeding risk");
+  set("银杏叶片", "萘普生", "caution", "两者均影响血小板，出血风险增加", "Both affect platelets, bleeding risk increases");
+  set("银杏叶片", "双氯芬酸", "caution", "两者均影响血小板，出血风险增加", "Both affect platelets, bleeding risk increases");
+  set("复方丹参滴丸", "阿司匹林", "danger", "丹参+阿司匹林=双重抗血小板，出血风险极高", "Danshen + aspirin = dual antiplatelet, extremely high bleeding risk");
+  set("复方丹参滴丸", "布洛芬", "danger", "丹参+布洛芬=双重抗血小板，出血风险极高", "Danshen + ibuprofen = dual antiplatelet, extremely high bleeding risk");
+  set("右美沙芬", "MAO抑制剂", "danger", "MAO抑制剂+右美沙芬=5-HT综合征，5周内禁用", "MAOIs + dextromethorphan = serotonin syndrome, contraindicated within 5 weeks");
+  set("右美沙芬", "氟哌噻吨美利曲辛", "danger", "SSRIs+右美沙芬=5-HT综合征风险", "SSRIs + dextromethorphan = serotonin syndrome risk");
+  set("右美沙芬", "舍曲林", "danger", "SSRIs+右美沙芬=5-HT综合征风险", "SSRIs + dextromethorphan = serotonin syndrome risk");
+  set("右美沙芬", "帕罗西汀", "danger", "SSRIs+右美沙芬=5-HT综合征风险", "SSRIs + dextromethorphan = serotonin syndrome risk");
+  set("右美沙芬", "曲马多", "danger", "两药均可影响5-HT，联用5-HT综合征风险", "Both affect 5-HT, serotonin syndrome risk");
+  set("右美沙芬", "氯雷他定", "caution", "右美沙芬代谢受CYP3A4影响，氯雷他定轻度抑制", "Dextromethorphan metabolism affected by CYP3A4, loratadine mildly inhibits");
+  set("氨溴索", "抗生素", "caution", "氨溴索增强阿莫西林、克拉霉素等在肺组织中的浓度", "Ambroxol enhances antibiotic concentration in lung tissue");
+  set("孟鲁司特", "华法林", "caution", "孟鲁司特轻度影响华法林代谢，监测INR", "Montelukast mildly affects warfarin metabolism, monitor INR");
+  set("孟鲁司特", "苯巴比妥", "caution", "苯巴比妥诱导CYP酶，降低孟鲁司特血药浓度", "Phenobarbital induces CYP enzymes, reduces montelukast concentration");
+  set("布地奈德吸入剂", "酮康唑", "danger", "酮康唑强效CYP3A4抑制剂，显著增加吸入布地奈德暴露", "Ketoconazole strongly inhibits CYP3A4, significantly increases inhaled budesonide");
+  set("沙丁胺醇", "呋塞米", "caution", "袢利尿剂引起的低钾血症增强沙丁胺醇心律失常风险", "Loop diuretic-induced hypokalemia enhances salbutamol arrhythmia risk");
+  set("碳酸钙D3", "左甲状腺素", "caution", "钙剂减少左甲状腺素吸收，分开服用至少4小时", "Calcium reduces levothyroxine absorption, take 4 hours apart");
+  set("碳酸钙D3", "铁剂", "caution", "钙剂抑制铁剂吸收，分开服用至少2小时", "Calcium inhibits iron absorption, take 2 hours apart");
+  set("碳酸钙D3", "左氧氟沙星", "caution", "钙剂螯合氟喹诺酮，吸收降低", "Calcium chelates fluoroquinolones, reduced absorption");
+  set("铁剂", "左氧氟沙星", "danger", "铁剂与氟喹诺酮螯合，吸收降低50-90%，禁止同服", "Iron chelates fluoroquinolones, absorption reduced 50-90%, do not take together");
+  set("铁剂", "诺氟沙星", "danger", "铁剂与氟喹诺酮螯合，吸收显著降低，禁止同服", "Iron chelates fluoroquinolones, absorption significantly reduced, do not take together");
+  set("铁剂", "左甲状腺素", "caution", "铁剂减少左甲状腺素吸收，分开服用4小时", "Iron reduces levothyroxine absorption, take 4 hours apart");
+  set("铁剂", "铝碳酸镁", "caution", "铝剂和铁剂相互抑制吸收，分开服用", "Aluminum and iron mutually inhibit absorption, take separately");
+  set("铁剂", "甲氨蝶呤", "caution", "铁剂和甲氨蝶呤在肠道相互作用，影响吸收", "Iron and methotrexate interact in gut, affect absorption");
+  set("善存多维元素片", "左氧氟沙星", "caution", "含钙/镁/铁/锌，螯合氟喹诺酮，吸收降低", "Contains Ca/Mg/Fe/Zn, chelates fluoroquinolones, reduced absorption");
+  set("善存多维元素片", "左甲状腺素", "caution", "多种矿物质减少左甲状腺素吸收，分开服用", "Multiple minerals reduce levothyroxine absorption, take separately");
+  set("维生素C", "铁剂", "green", "维生素C增强铁剂吸收，是好搭档", "Vitamin C enhances iron absorption, a good combination");
+  set("维生素C", "华法林", "caution", "高剂量维生素C可能影响INR，监测凝血", "High-dose vitamin C may affect INR, monitor coagulation");
+  set("复合维生素B", "华法林", "caution", "B族维生素（尤其K）影响华法林效果", "B vitamins (especially K) affect warfarin effect");
+  set("复合维生素B", "左甲状腺素", "caution", "B族维生素可能影响左甲状腺素吸收", "B vitamins may affect levothyroxine absorption");
+  set("碳酸钙D3", "胺碘酮", "caution", "胺碘酮和钙剂联用需监测心律失常风险", "Amiodarone and calcium need arrhythmia risk monitoring");
+  set("碳酸钙D3", "地高辛", "caution", "高钙血症增强地高辛心脏毒性", "Hypercalcemia enhances digoxin cardiac toxicity");
+  set("碳酸锂", "氢氯噻嗪", "danger", "噻嗪类利尿剂减少锂排泄，显著增加锂中毒风险", "Thiazide diuretics reduce lithium excretion, significantly increases lithium toxicity risk");
+  set("碳酸锂", "呋塞米", "caution", "袢利尿剂可能增加锂中毒风险", "Loop diuretics may increase lithium toxicity risk");
+  set("碳酸锂", "螺内酯", "caution", "保钾利尿剂影响锂排泄，监测血锂浓度", "Potassium-sparing diuretics affect lithium excretion, monitor lithium level");
+  set("阿普唑仑", "阿片类", "danger", "苯二氮卓类+阿片类=呼吸抑制可致命", "Benzodiazepines + opioids = respiratory depression may be fatal");
+  set("曲马多", "艾司唑仑", "danger", "曲马多+苯二氮卓类=呼吸抑制和中枢抑制风险增加", "Tramadol + benzodiazepines = increased respiratory/CNS depression risk");
+  set("曲马多", "佐匹克隆", "danger", "曲马多+安眠药=呼吸抑制和中枢抑制风险增加", "Tramadol + hypnotics = increased respiratory/CNS depression risk");
+  set("盐酸乙哌立松片", "苯巴比妥", "caution", "两者均有中枢肌松和镇静作用", "Both have central muscle relaxant and sedative effects");
+  set("盐酸羟甲唑啉滴鼻液", "MAO抑制剂", "danger", "MAO抑制剂禁用拟交感胺类鼻减充血剂", "MAOIs contraindicated with sympathomimetic nasal decongestants");
+
 });
   }
 
@@ -15575,6 +15834,27 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   window._patchI18n = apply;
 })();
 <script>window.showOnboarding=showOnboarding;window.closeOnboard=closeOnboard;</script>
+
+<script>
+// Add ripple effect to all clickable buttons on click
+document.addEventListener('click', function(e){
+  var el = e.target.closest('[onclick], button, .btn-primary, .drug-btn, .action-btn, .search-btn, .tab-btn');
+  if(!el || el.querySelector('.ripple')) return;
+  var ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  var rect = el.getBoundingClientRect();
+  var size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + 'px';
+  var x = e.clientX - rect.left - size/2;
+  var y = e.clientY - rect.top - size/2;
+  ripple.style.left = x + 'px';
+  ripple.style.top = y + 'px';
+  el.style.position = el.style.position || 'relative';
+  el.style.overflow = 'hidden';
+  el.appendChild(ripple);
+  setTimeout(function(){ if(ripple.parentNode) ripple.remove(); }, 600);
+}, false);
+</script>
 </body>
 </html>
 
