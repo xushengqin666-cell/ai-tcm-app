@@ -16050,12 +16050,103 @@ if (document.getElementById('tab-cabinet')) {
 
 // Also enhance whenever switchTab to cabinet
 })();
-<\/script></body>
-</html>
+<\/script><\/script>
+<script>
+// === [v2.7.7] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
+(function(){
+var _origSwitchTab = window.switchTab;
+window.switchTab = function(tab) {
+  var r = (_origSwitchTab ? _origSwitchTab.apply(this, arguments) : undefined);
+  if (tab === 'cabinet') {
+    var _enhance = function() {
+      var list = document.getElementById('cabinetList');
+      if (!list) return;
+      // Inject expiry warning banner
+      if (!document.getElementById('cabinetExpiryBanner')) {
+        var cab = document.getElementById('tab-cabinet');
+        if (!cab) return;
+        var hdr = cab.querySelector('[id="cabStatTotal"]');
+        if (hdr) {
+          var banner = document.createElement('div');
+          banner.id = 'cabinetExpiryBanner';
+          banner.style.cssText = 'display:none;margin:0 16px 12px;padding:10px 14px;background:#fff2f0;border-radius:10px;border:1.5px solid #ffccc7;';
+          hdr.parentNode.insertBefore(banner, hdr.nextSibling);
+        }
+      }
+      // Color code & sort cabinet items
+      var items = list.querySelectorAll ? list.querySelectorAll('[style*="border-radius:16px"][style*="padding:14px"]') : [];
+      var expiredItems = [], warningItems = [], okItems = [];
+      items.forEach(function(item) {
+        var nameEl = item.querySelector('[style*="font-weight:600"]') || item.querySelector('div > div');
+        if (!nameEl) { okItems.push(item); return; }
+        var text = item.textContent || '';
+        // Find expiry text
+        var expMatch = text.match(/(?:有效期至|过期|剩余|Expiry)[:s]*(d{4}[-/]d{2}[-/]d{2})/);
+        if (!expMatch) { okItems.push(item); return; }
+        var expDate = new Date(expMatch[1]);
+        if (isNaN(expDate.getTime())) { okItems.push(item); return; }
+        var daysLeft = Math.floor((expDate - new Date()) / 86400000);
+        if (daysLeft < 0) {
+          expiredItems.push({ el: item, days: daysLeft });
+          item.style.borderLeft = '4px solid #ff4d4f';
+          item.style.background = '#fff2f0';
+        } else if (daysLeft <= 30) {
+          warningItems.push({ el: item, days: daysLeft });
+          item.style.borderLeft = '4px solid #faad14';
+          item.style.background = '#fffbe6';
+        } else if (daysLeft <= 90) {
+          item.style.borderLeft = '4px solid #52c41a';
+          item.style.background = '';
+        } else {
+          item.style.borderLeft = '';
+          item.style.background = '';
+        }
+      });
+      // Update expiry banner
+      var banner = document.getElementById('cabinetExpiryBanner');
+      if (banner) {
+        if (expiredItems.length > 0) {
+          banner.style.display = '';
+          banner.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:18px;">⚠️</span><div><div style="font-weight:600;color:#cf1322;font-size:13px;">' + expiredItems.length + ' 个药品已过期</div><div style="font-size:11px;color:#8c8c8c;margin-top:2px;">请尽快清理，避免误服</div></div></div>';
+        } else {
+          banner.style.display = 'none';
+        }
+      }
+      // Sort: expired first, then warning, then ok
+      if (items.length > 0) {
+        var sorted = [].concat(expiredItems).concat(warningItems).concat(okItems);
+        sorted.forEach(function(info) { list.appendChild(info.el); });
+      }
+    };
+    setTimeout(_enhance, 100);
+  }
+  return r;
+};
 
-
-
-
-
-
-
+// Show interaction warning when adding drug to cabinet
+var _origAddCab = window.addCabinetDrug;
+if (_origAddCab) {
+  window.addCabinetDrug = function() {
+    var nameEl = document.getElementById('cabName');
+    if (nameEl) {
+      var name = nameEl.value.trim();
+      if (name && typeof DRUG_GUIDE !== 'undefined' && DRUG_GUIDE[name]) {
+        var entry = DRUG_GUIDE[name];
+        var warns = [];
+        if (entry.drugAvoid) warns.push('⚠️ ' + entry.drugAvoid);
+        if (entry.contraindications && entry.contraindications.length > 5) warns.push('⚠️ ' + entry.contraindications.slice(0, 80));
+        if (warns.length > 0 && !document.getElementById('cabDrugWarn')) {
+          var warnDiv = document.createElement('div');
+          warnDiv.id = 'cabDrugWarn';
+          warnDiv.style.cssText = 'margin-top:8px;padding:8px 10px;background:#fffbe6;border-radius:8px;border:1px solid #ffe58f;font-size:12px;color:#ad6800;line-height:1.6;';
+          warnDiv.textContent = warns.join(' | ');
+          if (nameEl.parentNode) nameEl.parentNode.appendChild(warnDiv);
+        }
+      }
+    }
+    return _origAddCab.apply(this, arguments);
+  };
+}
+})();
+<\/script>
+</body>
