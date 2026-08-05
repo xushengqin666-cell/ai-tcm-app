@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.7.5</title>
+<title>彩云智药 · 家庭AI药师 · v2.7.8</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -15580,7 +15580,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "复合维生素B片": {"indications":"B族维生素缺乏：口角炎、舌炎、脚气病、糙皮病、脂溢性皮炎；妊娠/哺乳期","ingredients":"主要成分：维生素B1、B2、B6、B12、烟酰胺、泛酸钙。规格：100片/瓶","dosage":"1-2片，每日3次","category":"维生素","warnings":"尿液变黄（正常无害）","time":"任意（饭后更佳）","foodAvoid":"","drugNotify":"B6拮抗左旋多巴；叶酸与甲氨蝶呤相互作用"},
   "维生素C泡腾片": {"indications":"预防和治疗维生素C缺乏：坏血病、牙龈出血；增强免疫力（辅助）；缺铁性贫血的辅助治疗","ingredients":"主要成分：维生素C（抗坏血酸）。规格：1g/片","dosage":"1片，每日1次，溶于200mL水中服用","category":"维生素","warnings":"肾结石病史者慎用；高剂量突然停药可致坏血病反跳","time":"任意（饭后减少刺激）","foodAvoid":"","drugNotify":"与阿司匹林/铁剂/雌激素/巴比妥类相互作用"},
   "善存多维元素片": {"indications":"预防维生素和矿物质缺乏：饮食不规律者、老年人、孕产妇；补充多种微量营养素","ingredients":"主要成分：13种维生素+12种矿物质。规格：30片/60片/瓶","dosage":"1片，每日1次，饭后服用","category":"复合维生素矿物质","warnings":"不与其他含维生素A/D的制剂同服；肾结石/高钙血症禁用；含铁，胃肠道反应","time":"饭后","foodAvoid":"浓茶/咖啡/红酒（影响铁吸收）","drugNotify":"四环素类/氟喹诺酮类/左甲状腺素/卡托普利（吸收干扰）"}
-  // [v2.7.5] Extended interactions for new drug additions
+  // [v2.7.8] Extended interactions for new drug additions
   set("华法林", "甲硝唑", "danger", "抑制S-华法林代谢，增强抗凝，出血风险显著增加", "Inhibits S-warfarin metabolism, significantly increases bleeding risk");
   set("华法林", "替硝唑", "danger", "抑制华法林代谢，增强抗凝效果", "Inhibits warfarin metabolism, increases anticoagulant effect");
   set("华法林", "左氧氟沙星", "caution", "抗菌作用改变肠道菌群，影响维生素K合成，增加INR", "Alters gut flora, reduces vitamin K synthesis, increases INR");
@@ -15816,6 +15816,57 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   set("盐酸乙哌立松片", "苯巴比妥", "caution", "两者均有中枢肌松和镇静作用", "Both have central muscle relaxant and sedative effects");
   set("盐酸羟甲唑啉滴鼻液", "MAO抑制剂", "danger", "MAO抑制剂禁用拟交感胺类鼻减充血剂", "MAOIs contraindicated with sympathomimetic nasal decongestants");
 
+  set('碳酸钙D3片','左氧氟沙星','danger','钙剂与喹诺酮同服形成难溶性络合物,吸收下降80%以上,需间隔2h','Calcium forms insoluble complex with fluoroquinolones, absorption reduced >80%; separate by 2h');
+  set('碳酸钙D3片','四环素','danger','钙剂与四环素形成络合物,吸收严重下降,需间隔2-3h','Calcium chelates tetracyclines; separate by 2-3h');
+  set('碳酸钙D3片','左甲状腺素','danger','钙影响左甲状腺素吸收,需间隔4h','Calcium reduces levothyroxine absorption; separate by 4h');
+  set('碳酸钙D3片','铁剂','caution','钙抑制铁吸收,同服时铁剂效果下降,建议间隔1-2h','Calcium inhibits iron absorption; separate by 1-2h');
+  set('复合维生素B片','左多巴','danger','维生素B6拮抗左旋多巴抗帕金森作用,避免同服','Vitamin B6 antagonizes levodopa; avoid combination');
+  set('复合维生素B片','左氧氟沙星','caution','B族维生素可能降低氟喹诺酮类抗菌效果,间隔2h服用','B vitamins may reduce fluoroquinolone efficacy; separate by 2h');
+  set('维生素C泡腾片','富马酸亚铁','caution','维生素C增强铁吸收,但大剂量VC+铁可能加重胃刺激,建议分服','Vitamin C enhances iron absorption; large doses may increase GI irritation');
+  set('维生素C泡腾片','华法林','caution','大剂量维生素C可能增强华法林抗凝效果,注意监测INR','High-dose vitamin C may enhance warfarin effect; monitor INR');
+  set('善存多维元素片','左氧氟沙星','danger','钙/镁/锌等矿物质与氟喹诺酮形成螯合物,吸收大幅下降,间隔2h','Multivitamins chelate fluoroquinolones; separate by 2h');
+  set('善存多维元素片','左甲状腺素','danger','矿物质降低左甲状腺素吸收,需间隔4h','Minerals reduce levothyroxine absorption; separate by 4h');
+  set('善存多维元素片','阿仑膦酸钠','danger','矿物质抑制双膦酸盐吸收,需早晨空腹服,30min后再服善存','Minerals block alendronate; take alendronate first, wait 30min');
+  set('善存多维元素片','左多巴','danger','维生素B6拮抗左旋多巴疗效,含B6的复合维生素需注意','Vitamin B6 antagonizes levodopa; avoid high-dose B6 multivitamins');
+  set('聚乙二醇4000散剂','其他口服药','caution','聚乙二醇可能影响其他药物吸收,建议服其他药后1h再用','PEG may affect absorption of other oral drugs; separate by 1h');
+  set('洛哌丁胺','抗生素','caution','洛哌丁胺用于感染性腹泻需谨慎,可能延长病程,请咨询医生','Loperamide for infectious diarrhea may prolong illness; consult physician');
+  set('洛哌丁胺','地塞米松','caution','联合使用可能增加肠道不良反应风险','Combination may increase risk of intestinal adverse effects');
+  set('溴己新','抗生素','caution','溴己新增强阿莫西林在支气管分布浓度,通常为正向作用','Bromhexine increases amoxicillin concentration in bronchi (beneficial)');
+  set('桉柠蒎肠溶胶囊','抗生素','caution','桉柠蒎促进抗生素在呼吸道分布,建议饭前30min服用,抗生素饭后服','Take 30min before meals; antibiotics after meals for synergy');
+  set('地氯雷他定','克拉霉素','caution','大环内酯类抗生素轻微抑制氯雷他定代谢,一般无需调整剂量','Macrolides mildly inhibit chlorpheniramine metabolism; usually no dose adjustment needed');
+  set('西替利嗪','酒精','danger','抗组胺药与酒精同服加重中枢抑制,导致嗜睡/反应迟钝,禁止同服','Antihistamines with alcohol cause severe CNS depression; do not combine');
+  set('左西替利嗪','酒精','danger','左西替利嗪与酒精同服加重嗜睡和眩晕,禁止同服','Levocetirizine with alcohol increases drowsiness; do not combine');
+  set('沙丁胺醇吸入剂','普萘洛尔','danger','非选择性β受体阻滞剂拮抗沙丁胺醇支气管扩张作用,禁止同服','Non-selective beta-blockers antagonize salbutamol; contraindicated');
+  set('沙丁胺醇吸入剂','地塞米松','caution','全身糖皮质激素与吸入β2激动剂合用需监测低钾血症','Systemic steroids with inhaled beta2-agonists may cause hypokalemia; monitor');
+  set('布地奈德吸入剂','利福平','caution','利福平诱导CYP3A4加速糖皮质激素代谢,可能降低吸入激素效果','Rifampicin induces CYP3A4; may reduce inhaled corticosteroid efficacy');
+  set('异丙托溴铵吸入剂','抗胆碱药','caution','与口服抗胆碱药联用可能增加口干/便秘等抗胆碱副作用','Combining with oral anticholinergics may increase anticholinergic side effects');
+  set('孟鲁司特','阿司匹林','caution','孟鲁司特对阿司匹林敏感哮喘患者有保护作用,一般不冲突','Montelukast is generally safe with aspirin; protects aspirin-sensitive asthmatics');
+  set('格列齐特缓释片','氢氯噻嗪','danger','氢氯噻嗪升高血糖,拮抗格列齐特的降糖作用,避免或调整剂量','Thiazides raise blood glucose; antagonize sulfonylureas; avoid or adjust dose');
+  set('格列美脲','氢氯噻嗪','danger','噻嗪类利尿剂与磺酰脲类降糖药合用需监测血糖,可能需加量','Thiazides + sulfonylureas require blood glucose monitoring; may need dose adjustment');
+  set('利格列汀','左氧氟沙星','caution','喹诺酮类本身可引起血糖紊乱,合用时需监测血糖变化','Fluoroquinolones may cause blood glucose disturbances; monitor closely');
+  set('利格列汀','利福平','danger','利福平诱导CYP3A4加速利格列汀代谢,降糖效果减弱','Rifampicin induces CYP3A4; reduces linagliptin efficacy');
+  set('阿莫西林克拉维酸钾','华法林','danger','广谱抗生素减少维生素K合成,增强华法林抗凝,密切监测INR','Broad-spectrum antibiotics reduce vitamin K synthesis; enhance warfarin effect; monitor INR');
+  set('头孢克肟','硫酸沙利度胺','danger','头孢与沙利度胺(反应停)联用需谨慎,均有血液系统毒性','Both drugs have hematologic toxicity; use with extreme caution');
+  set('克拉霉素','辛伐他汀','danger','克拉霉素强抑制CYP3A4,显著升高辛伐他汀血药浓度,禁止联用(横纹肌溶解风险)','Clarithromycin strongly inhibits CYP3A4; simvastatin concentration increases dramatically; contraindicated (rhabdomyolysis risk)');
+  set('左氧氟沙星','氨茶碱','danger','左氧氟沙星抑制氨茶碱代谢,血药浓度升高,需监测氨茶碱水平或减量','Levofloxacin inhibits aminophylline metabolism; monitor levels or reduce dose');
+  set('左氧氟沙星','非甾体抗炎药','danger','氟喹诺酮+NSAIDs增加中枢神经系统刺激和癫痫发作风险','Fluoroquinolones + NSAIDs increase seizure risk');
+  set('诺氟沙星','含镁/钙/铝抗酸剂','danger','抗酸剂与喹诺酮形成螯合物,吸收几乎为零,必须间隔2h','Antacids chelate fluoroquinolones; zero absorption; must separate by 2h');
+  set('甲硝唑','酒精','danger','甲硝唑抑制乙醛脱氢酶,同服出现双硫仑样反应(面部潮红/恶心/心跳加速),禁止','Metronidazole inhibits acetaldehyde dehydrogenase; disulfiram-like reaction if combined with alcohol; strictly prohibited');
+  set('替硝唑','酒精','danger','替硝唑与甲硝唑同类,服药期间及停药3天内禁止饮酒','Tinidazole similar to metronidazole; no alcohol during and 3 days after treatment');
+  set('强力枇杷露','酒精','danger','强力枇杷露含罂粟壳(阿片类成分),严禁与酒精同服,可能导致呼吸抑制','Contains opium alkaloids; never combine with alcohol (respiratory depression risk)');
+  set('急支糖浆','抗生素','caution','急支糖浆与抗生素联合使用可增强止咳/祛痰效果,注意中医辨证','Can synergize with antibiotics for cough relief; follow TCM pattern diagnosis');
+  set('复方甘草片','氢氯噻嗪','caution','甘草酸与噻嗪类利尿剂均促进钾排泄,合用增加低血钾风险','Both promote potassium excretion; combined use increases hypokalemia risk');
+  set('复方甘草片','地高辛','danger','甘草酸促进地高辛中毒,增加心律失常风险,密切监测血钾和心电图','Glycyrrhizin promotes digoxin toxicity; monitor potassium and ECG closely');
+  set('复方氨酚烷胺胶囊','酒精','danger','含对乙酰氨基酚,酒精加重肝损伤;另含金刚烷胺有中枢副作用,服药期间禁酒','Contains paracetamol; alcohol increases hepatotoxicity; also contains amantadine; no alcohol');
+  set('感冒灵颗粒','酒精','danger','含对乙酰氨基酚+咖啡因,酒精加重肝肾负担,服药期间禁酒','Contains paracetamol and caffeine; alcohol increases liver/kidney burden; avoid alcohol');
+  set('连花清瘟颗粒','抗凝药','caution','连花清瘟有一定抗血小板作用,与华法林等抗凝药联用需监测出血倾向','Has antiplatelet effects; monitor for bleeding when combined with anticoagulants');
+  set('云南白药胶囊','抗凝药','danger','云南白药(含水蛭等活血成分)与华法林/阿司匹林联用显著增加出血风险,需监测','Contains hemostatic herbs; significant bleeding risk with anticoagulants; monitor closely');
+  set('奥美拉唑','氯吡格雷','danger','奥美拉唑抑制CYP2C19,降低氯吡格雷活性代谢产物,增加心血管事件风险(可改用泮托拉唑)','Omeprazole inhibits CYP2C19; reduces clopidogrel efficacy; switch to pantoprazole if needed');
+  set('泮托拉唑','甲氨蝶呤','danger','高剂量甲氨蝶呤治疗期间,泮托拉唑可能抑制其肾脏排泄,增加毒性','Pantoprazole may inhibit methotrexate renal excretion; increased toxicity risk at high MTX doses');
+  set('多潘立酮','克拉霉素','danger','克拉霉素强抑制CYP3A4,多潘立酮血药浓度升高,QT间期延长风险增加,禁止联用','Clarithromycin inhibits CYP3A4; domperidone concentration rises; QT prolongation risk; contraindicated');
+  set('多潘立酮','氟康唑','danger','氟康唑强抑制CYP3A4,显著升高多潘立酮血药浓度,禁止联用','Fluconazole strongly inhibits CYP3A4; domperidone concentration rises dramatically; contraindicated');
+  set('西地那非','硝酸甘油','danger','西地那非增强硝酸酯类降压作用,严重低血压,绝对禁止联用','Sildenafil potentiates nitrates; severe hypotension; absolutely contraindicated');
+  set('西地那非','α受体阻滞剂','danger','两药均有降压作用,联用可能引起严重体位性低血压,需间隔4h或减量','Both lower blood pressure; orthostatic hypotension risk; separate by 4h or reduce dose');
 });
   }
 
@@ -15857,7 +15908,7 @@ document.addEventListener('click', function(e){
 <\/script>
 <\/script>
 <script>
-// === [v2.7.6] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
+// === [v2.7.8] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
 (function(){
 
 // Category shelf life defaults (days) for drugs without DRUG_GUIDE entry
@@ -16052,7 +16103,7 @@ if (document.getElementById('tab-cabinet')) {
 })();
 <\/script><\/script>
 <script>
-// === [v2.7.7] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
+// === [v2.7.8] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
 (function(){
 var _origSwitchTab = window.switchTab;
 window.switchTab = function(tab) {
