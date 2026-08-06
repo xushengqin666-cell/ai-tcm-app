@@ -853,7 +853,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <header>
   <h1 id="title">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v2.1</span>
+    <span id="version" style="font-size:10px;opacity:.7">v2.7.9</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -11999,7 +11999,7 @@ window.handleImport = function(event){
     event.target.value = '';
   }catch(e){ console.error(e); }
 
-// 搜索历史管理（v2.1 新增）
+// 搜索历史管理（v2.7.9 新增）
 window.getSearchHistory = function(key){
   try{ return JSON.parse(localStorage.getItem(key) || '[]'); }
   catch(e){ return []; }
@@ -12020,7 +12020,7 @@ window.clearSearchHistory = function(key){
     if(window.showToast) window.showToast('搜索历史已清除', 1500);
   }catch(e){ console.error(e); }
 
-// 药品收藏功能（v2.1 新增）
+// 药品收藏功能（v2.7.9 新增）
 window.toggleFavorite = function(drugName){
   try{
     var favorites = JSON.parse(localStorage.getItem('cy_favorites') || '[]');
