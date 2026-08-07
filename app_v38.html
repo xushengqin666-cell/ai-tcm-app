@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.9.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.9.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -854,7 +854,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <header>
   <h1 id="title">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v2.9.0</span>
+    <span id="version" style="font-size:10px;opacity:.7">v2.9.1</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -2087,7 +2087,7 @@ var INTERACT_DB = {};
 
 // ===== 药物用药指南数据库 =====
 
-  // ===== [v2.9.0] 自动生成相互作用(类别交叉) =====
+  // ===== [v2.9.1] 自动生成相互作用(类别交叉) =====
   set('达比加群酯胶囊','阿司匹林肠溶片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('达比加群酯胶囊','布洛芬混悬液','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('达比加群酯胶囊','对乙酰氨基酚滴剂','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
@@ -4948,7 +4948,7 @@ window.handleImport = function(event){
     event.target.value = '';
   }catch(e){ console.error(e); }
 
-// 搜索历史管理（v2.9.0 新增）
+// 搜索历史管理（v2.9.1 新增）
 window.getSearchHistory = function(key){
   try{ return JSON.parse(localStorage.getItem(key) || '[]'); }
   catch(e){ return []; }
@@ -4969,7 +4969,7 @@ window.clearSearchHistory = function(key){
     if(window.showToast) window.showToast('搜索历史已清除', 1500);
   }catch(e){ console.error(e); }
 
-// 药品收藏功能（v2.9.0 新增）
+// 药品收藏功能（v2.9.1 新增）
 window.toggleFavorite = function(drugName){
   try{
     var favorites = JSON.parse(localStorage.getItem('cy_favorites') || '[]');
@@ -8601,7 +8601,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "复合维生素B片": {"indications":"B族维生素缺乏：口角炎、舌炎、脚气病、糙皮病、脂溢性皮炎；妊娠/哺乳期","ingredients":"主要成分：维生素B1、B2、B6、B12、烟酰胺、泛酸钙。规格：100片/瓶","dosage":"1-2片，每日3次","category":"维生素","warnings":"尿液变黄（正常无害）","time":"任意（饭后更佳）","foodAvoid":"","drugNotify":"B6拮抗左旋多巴；叶酸与甲氨蝶呤相互作用"},
   "维生素C泡腾片": {"indications":"预防和治疗维生素C缺乏：坏血病、牙龈出血；增强免疫力（辅助）；缺铁性贫血的辅助治疗","ingredients":"主要成分：维生素C（抗坏血酸）。规格：1g/片","dosage":"1片，每日1次，溶于200mL水中服用","category":"维生素","warnings":"肾结石病史者慎用；高剂量突然停药可致坏血病反跳","time":"任意（饭后减少刺激）","foodAvoid":"","drugNotify":"与阿司匹林/铁剂/雌激素/巴比妥类相互作用"},
   "善存多维元素片": {"indications":"预防维生素和矿物质缺乏：饮食不规律者、老年人、孕产妇；补充多种微量营养素","ingredients":"主要成分：13种维生素+12种矿物质。规格：30片/60片/瓶","dosage":"1片，每日1次，饭后服用","category":"复合维生素矿物质","warnings":"不与其他含维生素A/D的制剂同服；肾结石/高钙血症禁用；含铁，胃肠道反应","time":"饭后","foodAvoid":"浓茶/咖啡/红酒（影响铁吸收）","drugNotify":"四环素类/氟喹诺酮类/左甲状腺素/卡托普利（吸收干扰）"}
-  // [v2.9.0] Extended interactions for new drug additions
+  // [v2.9.1] Extended interactions for new drug additions
   set("华法林", "甲硝唑", "danger", "抑制S-华法林代谢，增强抗凝，出血风险显著增加", "Inhibits S-warfarin metabolism, significantly increases bleeding risk");
   set("华法林", "替硝唑", "danger", "抑制华法林代谢，增强抗凝效果", "Inhibits warfarin metabolism, increases anticoagulant effect");
   set("华法林", "左氧氟沙星", "caution", "抗菌作用改变肠道菌群，影响维生素K合成，增加INR", "Alters gut flora, reduces vitamin K synthesis, increases INR");
@@ -8929,7 +8929,7 @@ document.addEventListener('click', function(e){
 </script>
 </script>
 <script>
-// === [v2.9.0] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
+// === [v2.9.1] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
 (function(){
 
 // Category shelf life defaults (days) for drugs without DRUG_GUIDE entry
@@ -9124,7 +9124,7 @@ if (document.getElementById('tab-cabinet')) {
 })();
 </script>
 <script>
-// === [v2.9.0] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
+// === [v2.9.1] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
 (function(){
 var _origSwitchTab = window.switchTab;
 window.switchTab = function(tab) {
@@ -9222,7 +9222,7 @@ if (_origAddCab) {
 })();
 </script>
 <script>
-// === [v2.9.0] 暗色模式切换 ===
+// === [v2.9.1] 暗色模式切换 ===
 (function(){
 var _darkOn=localStorage.getItem('cy_dark_mode')==='1';
 if(_darkOn)document.body.classList.add('dark-mode');
@@ -9246,7 +9246,7 @@ else _btn();
 </script>
 
 <script>
-// === [v2.9.0] 药箱增强：搜索 + 库存管理 ===
+// === [v2.9.1] 药箱增强：搜索 + 库存管理 ===
 (function(){
   function getCab(){ try{ return JSON.parse(localStorage.getItem('cy_cabinet')||'[]'); }catch(e){ return []; } }
   function setCab(arr){ localStorage.setItem('cy_cabinet', JSON.stringify(arr)); }
@@ -9325,7 +9325,7 @@ else _btn();
 
 
 <script>
-// === [v2.9.0] 彩云小药师 · AI 人形助手 ===
+// === [v2.9.1] 彩云小药师 · AI 人形助手 ===
 (function(){
   if(document.getElementById('cyAssistant')) return;
   // 呼吸动画 + 面板样式
@@ -9392,6 +9392,86 @@ else _btn();
   panel.querySelector('#cyClose').onclick=toggle;
   panel.querySelector('#cySend').onclick=function(){ var v=panel.querySelector('#cyInput').value; panel.querySelector('#cyInput').value=''; reply(v); };
   panel.querySelector('#cyInput').addEventListener('keydown', function(e){ if(e.key==='Enter'){ var v=e.target.value; e.target.value=''; reply(v); } });
+})();
+</script>
+
+
+<script>
+// === [v2.9.1] 药箱：删除撤销 + 整理排序 ===
+(function(){
+  var _lastDel = null;
+  var _origDel = window.deleteCabinetDrug;
+  if(_origDel && !_origDel.__undo){
+    window.deleteCabinetDrug = function(id){
+      try{
+        var cab = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+        var rec = cab.find(function(c){ return c.id===id; });
+        _origDel.apply(this, arguments);
+        if(rec){ _lastDel = rec; showUndoSnack(rec.name); }
+      }catch(e){ if(_origDel) _origDel.apply(this, arguments); }
+    };
+    window.deleteCabinetDrug.__undo = true;
+  }
+  function showUndoSnack(name){
+    var old = document.getElementById('cyUndoSnack');
+    if(old) old.remove();
+    var s = document.createElement('div');
+    s.id='cyUndoSnack';
+    s.style.cssText='position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:10000;display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+    s.innerHTML='<span>已删除「'+name+'」</span><span id="cyUndoBtn" style="color:#07C160;font-weight:700;cursor:pointer">撤销</span>';
+    document.body.appendChild(s);
+    var timer = setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); _lastDel=null; }, 5000);
+    s.querySelector('#cyUndoBtn').onclick = function(){
+      clearTimeout(timer);
+      if(_lastDel){
+        var cab = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+        cab.push(_lastDel);
+        localStorage.setItem('cy_cabinet', JSON.stringify(cab));
+        _lastDel=null;
+        if(window.renderCabinet) window.renderCabinet();
+      }
+      if(s.parentNode) s.parentNode.removeChild(s);
+    };
+  }
+
+  function applyCabSort(order){
+    if(!order) return;
+    var cab = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+    var gc = (typeof getCategory==='function') ? getCategory : function(){ return ''; };
+    if(order==='expiry'){
+      cab.sort(function(a,b){ var ea=a.expiry||'9999-99-99', eb=b.expiry||'9999-99-99'; return ea<eb?-1:ea>eb?1:0; });
+    } else if(order==='name'){
+      cab.sort(function(a,b){ return (a.name||'').localeCompare((b.name||''),'zh'); });
+    } else if(order==='cat'){
+      cab.sort(function(a,b){ return gc(a.name||'').localeCompare(gc(b.name||''),'zh'); });
+    }
+    localStorage.setItem('cy_cabinet', JSON.stringify(cab));
+    if(window.renderCabinet) window.renderCabinet();
+  }
+  window.applyCabSort = applyCabSort;
+
+  function injectSort(){
+    var box = document.getElementById('cabSearch');
+    if(!box || document.getElementById('cabSort')) return;
+    var wrap = box.parentNode;
+    if(!wrap) return;
+    var sel = document.createElement('select');
+    sel.id='cabSort';
+    sel.style.cssText='margin-top:8px;width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:10px;font-size:14px;background:#fff;box-sizing:border-box;';
+    sel.innerHTML='<option value="">整理排序：默认</option><option value="expiry">临近过期优先</option><option value="name">按药名</option><option value="cat">按分类</option>';
+    sel.onchange=function(){ applyCabSort(this.value); };
+    wrap.appendChild(sel);
+  }
+  var _r = window.renderCabinet;
+  if(_r && !_r.__sort){
+    window.renderCabinet = function(){
+      var x=_r.apply(this, arguments);
+      try{ injectSort(); }catch(e){}
+      return x;
+    };
+    window.renderCabinet.__sort=true;
+  }
+  window.addEventListener('load', function(){ setTimeout(function(){ try{ injectSort(); }catch(e){} }, 700); });
 })();
 </script>
 
