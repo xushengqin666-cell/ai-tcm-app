@@ -6064,7 +6064,7 @@ window.openFeedbackModal = function(){
     var skipBtn = document.createElement('button');
     skipBtn.style.cssText = 'position:absolute;top:18px;right:18px;background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1';
     skipBtn.innerHTML = '×';
-    skipBtn.onclick = closeOnboard;
+    skipBtn.onclick = window.closeOnboard;
     ov.appendChild(skipBtn);
     function render(){
       var s = slides[idx];
@@ -9084,7 +9084,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   setTimeout(apply, 500);
   window._patchI18n = apply;
 })();
-<script>window.showOnboarding=showOnboarding;window.closeOnboard=closeOnboard;</script>
+<script>window.showOnboarding=showOnboarding;window.closeOnboard=window.closeOnboard;</script>
 
 <script>
 // Add ripple effect to all clickable buttons on click
@@ -9106,7 +9106,7 @@ document.addEventListener('click', function(e){
   setTimeout(function(){ if(ripple.parentNode) ripple.remove(); }, 600);
 }, false);
 </script>
-</script>
+
 <script>
 // === [v2.9.5] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
 (function(){
@@ -9696,6 +9696,8 @@ else _btn();
   else { initRipple(); onScroll(); }
   window.addEventListener('load', function(){ setTimeout(initRipple, 600); });
 })();
+</script>
+
 </script>
 
 </body>
