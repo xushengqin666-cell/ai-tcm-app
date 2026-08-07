@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.9.3</title>
+<title>彩云智药 · 家庭AI药师 · v2.9.4</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -730,7 +730,7 @@ body.dark-mode .modal{background:var(--cy-surface,#1e1e1e)!important}
 body.dark-mode .modal-overlay{background:rgba(0,0,0,0.8)!important}
 </style>
 <style id="ui-bigtech-v292">
-/* === 大厂级视觉精修 v2.9.3 === */
+/* === 大厂级视觉精修 v2.9.4 === */
 :root{
   --c-bg:#F4F5F7;
   --c-card:#FFFFFF;
@@ -822,7 +822,7 @@ body.dark,.dark body{ --c-bg:#0E1114; --c-card:#1A1E22; --c-text:#E8EAED; --c-te
 
 
 <style id="ui-bigtech-v293">
-/* === 动态卡片统一 v2.9.3 === */
+/* === 动态卡片统一 v2.9.4 === */
 /* 药箱子项 / 说明书结果项 / 搜索结果项（限定作用域，不影响 modal 内 .dd-cab） */
 #cabinetList .dd-cab, #drugManualResult .dd-cab, #searchResult .dd-cab{
   background:#F8F9FB!important; border:1px solid var(--c-border)!important; border-radius:12px!important;
@@ -853,6 +853,32 @@ body.dark,.dark body{ --c-bg:#0E1114; --c-card:#1A1E22; --c-text:#E8EAED; --c-te
 #searchResult > div{ background:var(--c-card); border:1px solid var(--c-border); border-radius:12px; padding:13px 14px; margin-bottom:10px; box-shadow:var(--sh-card); }
 /* 空状态通用（兼容现有"暂无/还没有"文案父级） */
 .empty-tip, .empty-state, .cy-empty{ text-align:center; color:var(--c-text-3); font-size:13px; padding:30px 16px; line-height:1.6; }
+</style>
+
+
+<style id="ui-bigtech-v294">
+/* === 首页金刚区 + 底栏精致化 v2.9.4 === */
+/* 首页功能入口 → 金刚区（图标圆 + 文字，整格可点） */
+#manualCard [style*="grid-template-columns"]{ gap:16px 8px!important; }
+#manualCard .btn-secondary{
+  flex-direction:column!important; gap:9px!important; background:transparent!important;
+  border:none!important; border-radius:14px!important; padding:12px 8px!important;
+  color:var(--c-text-2)!important; font-size:12.5px!important; transition:transform .12s,background .2s;
+}
+#manualCard .btn-secondary:active{ transform:scale(.94); background:#F4F6F8!important; }
+#manualCard .btn-secondary svg{
+  background:var(--c-primary-l); border-radius:50%; padding:11px; width:26px!important; height:26px!important;
+  color:var(--c-primary-d)!important; flex:0 0 auto; box-sizing:content-box;
+}
+#manualCard .btn-secondary span{ font-weight:600; color:var(--c-text); }
+/* 底栏导航选中态 */
+.tab-btn{ transition:color .2s; }
+.tab-btn svg{ transition:transform .2s ease,color .2s; }
+.tab-btn.active{ color:var(--c-primary)!important; }
+.tab-btn.active svg{ color:var(--c-primary)!important; transform:translateY(-2px) scale(1.08); }
+.tab-btn.active::after{ content:""; position:absolute; bottom:4px; left:50%; transform:translateX(-50%); width:18px; height:3px; border-radius:3px; background:var(--c-primary); }
+/* hero 微调：更克制留白 */
+.hero{ margin-bottom:14px; }
 </style>
 
 </head>
@@ -981,7 +1007,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <header>
   <h1 id="title">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v2.9.3</span>
+    <span id="version" style="font-size:10px;opacity:.7">v2.9.4</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -2214,7 +2240,7 @@ var INTERACT_DB = {};
 
 // ===== 药物用药指南数据库 =====
 
-  // ===== [v2.9.3] 自动生成相互作用(类别交叉) =====
+  // ===== [v2.9.4] 自动生成相互作用(类别交叉) =====
   set('达比加群酯胶囊','阿司匹林肠溶片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('达比加群酯胶囊','布洛芬混悬液','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('达比加群酯胶囊','对乙酰氨基酚滴剂','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
@@ -5075,7 +5101,7 @@ window.handleImport = function(event){
     event.target.value = '';
   }catch(e){ console.error(e); }
 
-// 搜索历史管理（v2.9.3 新增）
+// 搜索历史管理（v2.9.4 新增）
 window.getSearchHistory = function(key){
   try{ return JSON.parse(localStorage.getItem(key) || '[]'); }
   catch(e){ return []; }
@@ -5096,7 +5122,7 @@ window.clearSearchHistory = function(key){
     if(window.showToast) window.showToast('搜索历史已清除', 1500);
   }catch(e){ console.error(e); }
 
-// 药品收藏功能（v2.9.3 新增）
+// 药品收藏功能（v2.9.4 新增）
 window.toggleFavorite = function(drugName){
   try{
     var favorites = JSON.parse(localStorage.getItem('cy_favorites') || '[]');
@@ -8728,7 +8754,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   "复合维生素B片": {"indications":"B族维生素缺乏：口角炎、舌炎、脚气病、糙皮病、脂溢性皮炎；妊娠/哺乳期","ingredients":"主要成分：维生素B1、B2、B6、B12、烟酰胺、泛酸钙。规格：100片/瓶","dosage":"1-2片，每日3次","category":"维生素","warnings":"尿液变黄（正常无害）","time":"任意（饭后更佳）","foodAvoid":"","drugNotify":"B6拮抗左旋多巴；叶酸与甲氨蝶呤相互作用"},
   "维生素C泡腾片": {"indications":"预防和治疗维生素C缺乏：坏血病、牙龈出血；增强免疫力（辅助）；缺铁性贫血的辅助治疗","ingredients":"主要成分：维生素C（抗坏血酸）。规格：1g/片","dosage":"1片，每日1次，溶于200mL水中服用","category":"维生素","warnings":"肾结石病史者慎用；高剂量突然停药可致坏血病反跳","time":"任意（饭后减少刺激）","foodAvoid":"","drugNotify":"与阿司匹林/铁剂/雌激素/巴比妥类相互作用"},
   "善存多维元素片": {"indications":"预防维生素和矿物质缺乏：饮食不规律者、老年人、孕产妇；补充多种微量营养素","ingredients":"主要成分：13种维生素+12种矿物质。规格：30片/60片/瓶","dosage":"1片，每日1次，饭后服用","category":"复合维生素矿物质","warnings":"不与其他含维生素A/D的制剂同服；肾结石/高钙血症禁用；含铁，胃肠道反应","time":"饭后","foodAvoid":"浓茶/咖啡/红酒（影响铁吸收）","drugNotify":"四环素类/氟喹诺酮类/左甲状腺素/卡托普利（吸收干扰）"}
-  // [v2.9.3] Extended interactions for new drug additions
+  // [v2.9.4] Extended interactions for new drug additions
   set("华法林", "甲硝唑", "danger", "抑制S-华法林代谢，增强抗凝，出血风险显著增加", "Inhibits S-warfarin metabolism, significantly increases bleeding risk");
   set("华法林", "替硝唑", "danger", "抑制华法林代谢，增强抗凝效果", "Inhibits warfarin metabolism, increases anticoagulant effect");
   set("华法林", "左氧氟沙星", "caution", "抗菌作用改变肠道菌群，影响维生素K合成，增加INR", "Alters gut flora, reduces vitamin K synthesis, increases INR");
@@ -9056,7 +9082,7 @@ document.addEventListener('click', function(e){
 </script>
 </script>
 <script>
-// === [v2.9.3] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
+// === [v2.9.4] 药箱增强：分类筛选 + 自动过期检测 + 分类统计 ===
 (function(){
 
 // Category shelf life defaults (days) for drugs without DRUG_GUIDE entry
@@ -9251,7 +9277,7 @@ if (document.getElementById('tab-cabinet')) {
 })();
 </script>
 <script>
-// === [v2.9.3] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
+// === [v2.9.4] 药箱：过期高亮+过期药品Tab排序+交互检测 ===
 (function(){
 var _origSwitchTab = window.switchTab;
 window.switchTab = function(tab) {
@@ -9349,7 +9375,7 @@ if (_origAddCab) {
 })();
 </script>
 <script>
-// === [v2.9.3] 暗色模式切换 ===
+// === [v2.9.4] 暗色模式切换 ===
 (function(){
 var _darkOn=localStorage.getItem('cy_dark_mode')==='1';
 if(_darkOn)document.body.classList.add('dark-mode');
@@ -9373,7 +9399,7 @@ else _btn();
 </script>
 
 <script>
-// === [v2.9.3] 药箱增强：搜索 + 库存管理 ===
+// === [v2.9.4] 药箱增强：搜索 + 库存管理 ===
 (function(){
   function getCab(){ try{ return JSON.parse(localStorage.getItem('cy_cabinet')||'[]'); }catch(e){ return []; } }
   function setCab(arr){ localStorage.setItem('cy_cabinet', JSON.stringify(arr)); }
@@ -9452,7 +9478,7 @@ else _btn();
 
 
 <script>
-// === [v2.9.3] 彩云小药师 · AI 人形助手 ===
+// === [v2.9.4] 彩云小药师 · AI 人形助手 ===
 (function(){
   if(document.getElementById('cyAssistant')) return;
   // 呼吸动画 + 面板样式
@@ -9524,7 +9550,7 @@ else _btn();
 
 
 <script>
-// === [v2.9.3] 药箱：删除撤销 + 整理排序 ===
+// === [v2.9.4] 药箱：删除撤销 + 整理排序 ===
 (function(){
   var _lastDel = null;
   var _origDel = window.deleteCabinetDrug;
@@ -9604,7 +9630,7 @@ else _btn();
 
 
 <script>
-// === [v2.9.3] 大厂级微交互：ripple + tab 淡入 + 滚动阴影 ===
+// === [v2.9.4] 大厂级微交互：ripple + tab 淡入 + 滚动阴影 ===
 (function(){
   // 水波纹
   function attachRipple(el){
