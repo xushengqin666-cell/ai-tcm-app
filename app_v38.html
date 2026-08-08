@@ -6077,7 +6077,7 @@ window.openFeedbackModal = function(){
         '</div>';
       ov.querySelector('#obBtn').onclick = function(){
         if(idx < slides.length-1){ idx++; render(); window.cyTrack&&cyTrack('onboard:'+idx); }
-        else { ov.parentNode && ov.parentNode.removeChild(ov), try{clearInterval(_obTimer);localStorage.setItem('cy_onboarded','1');}catch(e){}; }
+        else { if(ov.parentNode) ov.parentNode.removeChild(ov); try{clearInterval(_obTimer);localStorage.setItem('cy_onboarded','1');}catch(e){} }
       };
     }
     render();
