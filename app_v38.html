@@ -6066,6 +6066,8 @@ window.openFeedbackModal = function(){
     skipBtn.innerHTML = '×';
     skipBtn.onclick = window.closeOnboard;
     ov.appendChild(skipBtn);
+    window.closeOnboard = function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); try{ clearInterval(_obTimer); localStorage.setItem('cy_onboarded','1'); }catch(e){} };
+
     function render(){
       var s = slides[idx];
       var dots = slides.map(function(_,n){ return '<span style="display:inline-block;width:'+(n===idx?24:8)+'px;height:8px;border-radius:4px;background:'+(n===idx?'#fff':'rgba(255,255,255,.4)')+';transition:all .3s;cursor:pointer" onclick="window._obJump&&window._obJump('+n+')"></span>'; }).join('');
@@ -6079,12 +6081,12 @@ window.openFeedbackModal = function(){
         '</div>';
       ov.querySelector('#obBtn').onclick = function(){
         if(idx < slides.length-1){ idx++; render(); window.cyTrack&&cyTrack('onboard:'+idx); }
-        else { closeOnboard(); }
+        else { window.closeOnboard(); }
       };
     }
     render();
     window._obJump = function(n){ idx=n; render(); clearInterval(_obTimer); _obTimer=setInterval(autoNext,5000); };
-    window.closeOnboard = function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); try{ clearInterval(_obTimer); localStorage.setItem('cy_onboarded','1'); }catch(e){} };
+    
     function autoNext(){ if(idx < slides.length-1){ idx++; render(); } else{ clearInterval(_obTimer); } }
     _obTimer = setInterval(autoNext, 5000);
     document.body.appendChild(ov);
@@ -9084,8 +9086,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
   setTimeout(apply, 500);
   window._patchI18n = apply;
 })();
-
-window.showOnboarding=showOnboarding;window.closeOnboard=window.closeOnboard;
+<script>window.showOnboarding=showOnboarding;window.closeOnboard=window.closeOnboard;</script>
 
 <script>
 // Add ripple effect to all clickable buttons on click
