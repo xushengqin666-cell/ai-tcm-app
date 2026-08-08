@@ -2262,10 +2262,6 @@ var INTERACT_DB = {};
   set('环孢素','他克莫司','danger','不可联用','Should not be combined');
   set('环孢素','葡萄柚','caution','环孢素浓度升高','Elevated cyclosporine levels');
 
-})();
-
-// ===== 药物用药指南数据库 =====
-
   // ===== [v2.9.5] 自动生成相互作用(类别交叉) =====
   set('达比加群酯胶囊','阿司匹林肠溶片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('达比加群酯胶囊','布洛芬混悬液','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
@@ -3775,6 +3771,7 @@ var INTERACT_DB = {};
   set('地高辛','氢氯噻嗪片','danger','低钾诱发地高辛中毒','Hypokalemia triggers digoxin toxicity');
   set('地高辛','托拉塞米片','danger','低钾诱发地高辛中毒','Hypokalemia triggers digoxin toxicity');
   set('地高辛','吲达帕胺片','danger','低钾诱发地高辛中毒','Hypokalemia triggers digoxin toxicity');
+})();
 
 // DRUG_GUIDE 已拆分至 drug_data.js（外部文件定义全局变量）
 
@@ -6064,9 +6061,9 @@ window.openFeedbackModal = function(){
     var skipBtn = document.createElement('button');
     skipBtn.style.cssText = 'position:absolute;top:18px;right:18px;background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1';
     skipBtn.innerHTML = '×';
-    skipBtn.onclick = window.closeOnboard;
-    ov.appendChild(skipBtn);
     window.closeOnboard = function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); try{ clearInterval(_obTimer); localStorage.setItem('cy_onboarded','1'); }catch(e){} };
+    ov.appendChild(skipBtn);
+    skipBtn.onclick = window.closeOnboard;
 
     function render(){
       var s = slides[idx];
