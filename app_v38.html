@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.9.6</title>
+<title>彩云智药 · 家庭AI药师 · v2.9.7</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -4644,6 +4644,60 @@ window.showSymptomResults = showSymptomResults;
   clearTimeout(el._timer);
   el._timer = setTimeout(() => { el.style.opacity = '0'; }, duration || 2500);
 }
+
+  var cabinet = load(LS_CAB, []);
+  function renderCabinet(){
+    cabinet = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+    var box=document.getElementById('cabinetList'); if(!box) return;
+    var stats={ok:0,warn:0,bad:0};
+    var now=new Date(); now.setHours(0,0,0,0);
+    var html='';
+    if(cabinet.length===0){
+      html='<div class="empty-state"><div class="es-icon">💊</div><div class="es-text">药箱还是空的<br>点击下方，添加你家常备药</div></div>';
+    } else {
+      cabinet.forEach(function(d){
+        var exp=d.expiry?new Date(d.expiry):null;
+        var cls='',badge='',txt='';
+        if(exp){ var diff=daysBetween(exp,now); if(diff<0){cls='expired';badge='bad';txt='已过期 '+Math.abs(diff)+' 天';stats.bad++;} else if(diff<=30){cls='expire-soon';badge='warn';txt=diff+' 天后到期';stats.warn++;} else {badge='ok';txt=d.expiry;stats.ok++;} }
+        else { badge='ok'; txt='未设有效期'; stats.ok++; }
+        var qty=d.qty?(' · 余 '+esc(d.qty)):'';
+        var mem=d.memberName?(' · '+esc(d.memberName)):'';
+        var low=(parseInt(d.qty,10)<=3 && d.qty!=='' && !isNaN(parseInt(d.qty,10)))?'<span class="di-badge warn">库存偏低</span>':'';
+        // [药品详情页] 原 onclick 字符串拼接转义有误（渲染成 showCabinetDetail(''+esc(d.id)+'')），改为 data 属性 + 事件委托
+        html+='<div class="drug-item dd-clickable '+cls+'" data-drug-detail="'+esc(d.name)+'" data-cab-id="'+esc(d.id)+'" style="cursor:pointer"><div class="di-main"><div class="di-name">'+esc(d.name)+'</div><div class="di-meta">'+esc(d.spec||'')+qty+mem+'</div>'+(txt?'<span class="di-badge '+badge+'">'+esc(txt)+'</span>':'')+low+'</div><button class="di-del" type="button" data-cab-del="'+esc(d.id)+'">×</button></div>';
+      });
+    }
+    box.innerHTML=html;
+    var so=document.getElementById('cabOk'),sw=document.getElementById('cabWarn'),sb=document.getElementById('cabBad');
+    if(so)so.textContent=stats.ok; if(sw)sw.textContent=stats.warn; if(sb)sb.textContent=stats.bad;updateCabinetStats();
+    try{ if(window.renderFavorites) window.renderFavorites(); }catch(e){}  // [药品详情页] 同步刷新收藏区
+  }
+
+  function updateCabinetStats(){
+    var drugs=JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+    var now=new Date();
+    var soon=0,bad=0;
+    drugs.forEach(function(d){ if(d.expiry){ var ed=new Date(d.expiry); var days=(ed-now)/86400000; if(days<0)bad++; else if(days<30)soon++; } });
+    var t=document.getElementById('cabStatTotal'); if(t)t.textContent=drugs.length;
+    var w=document.getElementById('cabStatWarn'); if(w)w.textContent=soon;
+    var b=document.getElementById('cabStatBad'); if(b)b.textContent=bad;
+  }
+  function addCabinetDrug(){
+    var n=document.getElementById('cabName'),sp=document.getElementById('cabSpec'),q=document.getElementById('cabQty'),ex=document.getElementById('cabExpiry'),mb=document.getElementById('cabMember');
+    if(!n.value){showToast('请输入药品名称');return;}
+    var drugs=JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
+    var memberId=mb.value||'self';
+    var members=JSON.parse(localStorage.getItem('cy_members')||'[{"id":"self","name":"我"}]');
+    var memberName=(members.find(function(x){return x.id===memberId;})||{name:'我'}).name;
+    drugs.push({id:'cab_'+Date.now(),name:n.value,spec:sp.value,qty:q.value,expiry:ex.value,memberId:memberId,memberName:memberName,added:new Date().toISOString()});
+    localStorage.setItem('cy_cabinet',JSON.stringify(drugs));
+    cabinet=drugs;
+    n.value='';sp.value='';q.value='';ex.value='';updateCabinetStats();
+    renderCabinet();showToast('药品已添加');
+  }
+  function deleteCabinetDrug(id){ var cabinet=JSON.parse(localStorage.getItem('cy_cabinet')||'[]'); cabinet=cabinet.filter(function(d){return d.id!==id;}); localStorage.setItem('cy_cabinet',JSON.stringify(cabinet)); renderCabinet(); showToast('已移除'); }
+  window.addCabinetDrug=addCabinetDrug; window.deleteCabinetDrug=deleteCabinetDrug; window.renderCabinet=renderCabinet;
+
   function closeReminderModal(){ document.getElementById('reminderModal').style.display='none'; }
   function saveReminder(){
   var drug=document.getElementById('reminderDrugInput');
@@ -4780,46 +4834,28 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) c
 window.addEventListener("focus", catchupMissedReminders);
 
 function checkReminders_OLD(){ var now=new Date(); var hh=(''+now.getHours()).padStart(2,'0'), mm=(''+now.getMinutes()).padStart(2,'0'); var cur=hh+':'+mm; reminders.forEach(function(r){ if(r.enabled && r.time===cur){ var msg='💊 该吃药啦：'+(r.drug||''); if(r.memberId && r.memberId!=='self'){ var allM=JSON.parse(localStorage.getItem('cy_members')||'[]'); var mm2=allM.find(function(x){return x.id===r.memberId;}); if(mm2) msg+='（'+mm2.name+'）'; } if('Notification' in window && Notification.permission==='granted'){ try{ new Notification('彩云智药',{body:msg}); }catch(e){ showToast(msg); } } else { showToast(msg); } } }); }
-  setInterval(checkReminders, 30000);
-  window.renderReminders=renderReminders; window.openReminderModal=openReminderModal; window.closeReminderModal=closeReminderModal; window.saveReminder=saveReminder; window.toggleReminder=toggleReminder; window.deleteReminder=deleteReminder; window.checkReminders=checkReminders;
+  try{ setInterval(checkReminders, 30000); }catch(e){}
+  window.closeReminderModal=closeReminderModal; window.saveReminder=saveReminder; window.toggleReminder=toggleReminder; window.deleteReminder=deleteReminder; window.checkReminders=checkReminders;
 
   // 初始化
-  renderCabinet(); renderMembers(); renderReminders();
+  try{renderCabinet();}catch(e){} try{renderMembers();}catch(e){} try{renderReminders();}catch(e){}
 })();
+function switchTab(tabName){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-content').forEach(function(c){c.style.display='none';c.classList.remove('active');});
+  var targetBtn = document.querySelector('[data-tab="'+tabName+'"]');
+  if(targetBtn) targetBtn.classList.add('active');
+  var targetContent = document.getElementById('tab-'+tabName);
+  if(targetContent){targetContent.style.display='block';targetContent.classList.add('active');}
+  if(tabName==="cabinet"){try{renderCabinet();}catch(e){console.log(e);}try{updateCabinetMemberSelect();}catch(e){}}
+  if(tabName==="member"){try{renderMembers();}catch(e){console.log(e);}try{updateCabinetMemberSelect();}catch(e){}}
+  if(tabName==="reminder"){try{renderReminders();}catch(e){console.log(e);}}
+  if(tabName==="profile"){try{loadProfile();}catch(e){}}
+}
 
-window.openCabinet=openCabinet;
-window.openMember=openMember;
-window.openReminder=openReminder;
-window.openProfile=openProfile;
-
-window.openCabinet=openCabinet;
-window.openMember=openMember;
-window.openReminder=openReminder;
-window.openProfile=openProfile;
-window.switchTab=switchTab;
-window.renderCabinet=renderCabinet;
-window.renderMembers=renderMembers;
-window.renderReminders=renderReminders;
-window.addCabinetDrug=addCabinetDrug;
-window.saveMember=saveMember;
-window.deleteMember=deleteMember;
-window.toggleReminder=toggleReminder;
-window.deleteReminder=deleteReminder;
-window.closeMemberModal=closeMemberModal;
-window.closeReminderModal=closeReminderModal;
-window.editProfile=editProfile;
-window.openSettings=openSettings;
-window.showAbout=showAbout;
-window.logout=logout;
-window.showCabinetDetail=showCabinetDetail;
 window.saveTimezone=function(){var tz=document.getElementById('settingsTimezone').value;localStorage.setItem('cy_user_timezone',tz);showToast('时区已保存: '+tz);};
 window.updateBeijingTimeDisplay=function(){var bt=getBeijingTime();var h=bt.getHours(),m=bt.getMinutes();var el=document.getElementById('beijingTimeDisplay');if(el)el.textContent=h+':'+(m<10?'0':'')+m;};
 setInterval(updateBeijingTimeDisplay,1000);updateBeijingTimeDisplay();
-window.setReminderForDrug=setReminderForDrug;
-window.setCurrentMember=setCurrentMember;
-window.addMemberFromForm=addMemberFromForm;
-window.openMemberModal=openMemberModal;
-window.openReminderModal=openReminderModal;
 </script>
 <!-- 水墨入场（逐字书写 → 拉远 → 红印） -->
 <div id="boot">
@@ -6633,7 +6669,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
 <script>
 // ===== 拍照识别（药品识别）模块 v1.1 =====
 // 注入规范：独立 <script> 块，插在 
-</body> 前。不替换任何既有函数。
+// </body> 前。不替换任何既有函数。
 (function () {
   var CY = window.CY || (window.CY = {});
   CY.recognize = {
