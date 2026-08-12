@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.10.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.11.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1124,6 +1124,38 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
     </div>
     <div id="healthFeedContent">
       <div class="feed-item" onclick="expandFeed(this)">
+
+<!-- 饮食禁忌查询卡片 -->
+<div class="card" id="dietTabooCard" style="border-left:3px solid #FF6B6B;margin-top:12px">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm0-4V7h2v6h-2z" fill="#FF6B6B"/></svg>
+    <span style="font-weight:600;color:#333">饮食禁忌查询</span>
+  </div>
+  <div style="background:#FFF5F5;padding:12px;border-radius:8px">
+    <input type="text" id="dietDrugInput" placeholder="输入药品名称，查询用药期间忌口" style="width:100%;padding:10px 12px;border:1px solid #FFB3B3;border-radius:6px;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')queryDietTaboo()">
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn-secondary" onclick="queryDietTaboo()" style="flex:1;background:#FF6B6B;color:#fff;border:none">查询</button>
+    </div>
+  </div>
+  <div id="dietResult" style="margin-top:12px"></div>
+</div>
+
+<!-- 服药时间指导卡片 -->
+<div class="card" id="timingGuideCard" style="border-left:3px solid #3498DB;margin-top:12px">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#3498DB" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#3498DB" stroke-width="2" stroke-linecap="round"/></svg>
+    <span style="font-weight:600;color:#333">服药时间指导</span>
+  </div>
+  <div style="background:#E8F4FC;padding:12px;border-radius:8px">
+    <input type="text" id="timingDrugInput" placeholder="输入药品名称，查询最佳服药时间" style="width:100%;padding:10px 12px;border:1px solid #87CEEB;border-radius:6px;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')queryTimingGuide()">
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn-secondary" onclick="queryTimingGuide()" style="flex:1;background:#3498DB;color:#fff;border:none">查询</button>
+    </div>
+  </div>
+  <div id="timingResult" style="margin-top:12px"></div>
+</div>
+
+
         <div class="feed-title">💊 服用布洛芬前，这 5 件事必须知道</div>
         <div class="feed-snippet">布洛芬是最常用的解热镇痛药，但很多人不知道它与阿司匹林同为 NSAIDs 类药物，合用会增加胃肠道出血风险。此外，孕妇禁用，哺乳期慎用。</div>
         <div class="feed-tag" style="color:#FA5151;background:#FFF0F0">⚠️ 用药安全</div>
@@ -1182,7 +1214,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.10.0 === */
+/* === 3×3 金刚区圆底图标 v2.11.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -10240,6 +10272,228 @@ else _btn();
 })();
 </script>
 
+</script>
+
+
+<script>
+// 饮食禁忌查询
+function queryDietTaboo() {
+  var input = document.getElementById('dietDrugInput');
+  var resultDiv = document.getElementById('dietResult');
+  if (!input || !resultDiv) return;
+
+  var name = input.value.trim();
+  if (!name) {
+    resultDiv.innerHTML = '<div style="color:#999;padding:8px">请输入药品名称</div>';
+    return;
+  }
+
+  // 查询 DRUG_GUIDE
+  var entry = null;
+  if (typeof DRUG_GUIDE !== 'undefined' && DRUG_GUIDE[name]) {
+    entry = DRUG_GUIDE[name];
+  } else if (typeof DRUG_GUIDE !== 'undefined') {
+    // 模糊匹配
+    for (var k in DRUG_GUIDE) {
+      if (k.indexOf(name) >= 0 || name.indexOf(k) >= 0) {
+        entry = DRUG_GUIDE[k];
+        name = k;
+        break;
+      }
+    }
+  }
+
+  if (!entry) {
+    resultDiv.innerHTML = '<div style="color:#FF6B6B;padding:12px">未找到该药品，请确认名称</div>';
+    return;
+  }
+
+  // 提取饮食禁忌信息
+  var dietTaboos = [];
+  var avoidFoods = [];
+  var suggestFoods = [];
+
+  // 从 contraindications / adverse / precautions 提取
+  var text = (entry.contraindications || '') + ' ' + (entry.adverse || '') + ' ' + (entry.precautions || '');
+  text = text.toLowerCase();
+
+  // 常见食物-药物禁忌规则库
+  var foodDrugRules = [
+    {drug: '阿司匹林', avoid: ['酒', '酒精', '饮酒'], reason: '增加胃出血风险', suggest: ['温水', '饭后服用']},
+    {drug: '布洛芬', avoid: ['酒', '酒精', '饮酒'], reason: '增加胃刺激和肝损伤风险', suggest: ['饭后服用', '牛奶']},
+    {drug: '头孢', avoid: ['酒', '酒精', '饮酒', '藿香正气'], reason: '双硫仑样反应，严重可致死', suggest: ['停药7天后才可饮酒']},
+    {drug: '甲硝唑', avoid: ['酒', '酒精', '饮酒'], reason: '双硫仑样反应', suggest: ['停药3天后才可饮酒']},
+    {drug: '降压药', avoid: ['西柚', '葡萄柚', '柚子', '高盐食物'], reason: '影响药效或增加副作用', suggest: ['低盐饮食', '多食蔬菜']},
+    {drug: '他汀', avoid: ['西柚', '葡萄柚', '柚子', '红曲'], reason: '增加肌肉损伤风险', suggest: []},
+    {drug: '华法林', avoid: ['菠菜', '韭菜', '大蒜', '银杏', '维生素K丰富食物'], reason: '影响抗凝效果', suggest: ['保持饮食稳定']},
+    {drug: '抗生素', avoid: ['乳制品', '牛奶', '酸奶'], reason: '部分抗生素与钙离子结合影响吸收', suggest: ['间隔2小时服用', '温水']},
+    {drug: '四环素', avoid: ['乳制品', '牛奶', '抗酸药', '铁剂'], reason: '影响吸收', suggest: ['空腹服用', '间隔2小时']},
+    {drug: '铁剂', avoid: ['茶', '咖啡', '牛奶', '蛋'], reason: '影响铁吸收', suggest: ['维生素C', '橙汁', '空腹服用']},
+    {drug: '镇静催眠药', avoid: ['酒', '酒精', '咖啡', '浓茶'], reason: '增强中枢抑制，危险', suggest: ['温水']},
+    {drug: '感冒药', avoid: ['酒', '酒精', '咖啡', '辛辣'], reason: '加重肝肾负担', suggest: ['多喝温水', '清淡饮食']},
+    {drug: '降糖药', avoid: ['酒精', '高糖食物', '空腹饮酒'], reason: '血糖波动风险', suggest: ['规律饮食', '监测血糖']},
+    {drug: '甲状腺素', avoid: ['大豆', '豆制品', '高纤维食物', '钙剂'], reason: '影响吸收', suggest: ['空腹服用', '间隔4小时']},
+    {drug: '单胺氧化酶抑制剂', avoid: ['奶酪', '发酵食品', '啤酒', '红酒', '腊肉'], reason: '高血压危象风险', suggest: ['新鲜食物']},
+  ];
+
+  // 匹配规则
+  var matchedRules = [];
+  for (var i = 0; i < foodDrugRules.length; i++) {
+    var rule = foodDrugRules[i];
+    if (name.indexOf(rule.drug) >= 0 || rule.drug.indexOf(name) >= 0 ||
+        (entry.category && entry.category.indexOf(rule.drug) >= 0)) {
+      matchedRules.push(rule);
+    }
+  }
+
+  // 从药品说明书提取关键词
+  var avoidKeywords = ['禁', '忌', '避免', '不宜', '不可', '禁止'];
+  var foodKeywords = ['酒', '酒精', '饮食', '食物', '茶', '咖啡', '西柚', '葡萄柚', '柚子', '牛奶', '乳制品'];
+
+  // 渲染结果
+  var html = '<div style="background:#fff;padding:12px;border-radius:8px;border:1px solid #FFB3B3">';
+  html += '<div style="font-weight:600;color:#333;margin-bottom:10px">' + name + ' 饮食禁忌</div>';
+
+  if (matchedRules.length > 0) {
+    matchedRules.forEach(function(rule) {
+      html += '<div style="margin-bottom:12px;padding:10px;background:#FFF5F5;border-radius:6px">';
+      html += '<div style="color:#FF6B6B;font-weight:600;margin-bottom:6px">⚠️ 忌口食物</div>';
+      html += '<div style="color:#666;line-height:1.6">' + rule.avoid.join('、') + '</div>';
+      html += '<div style="color:#999;font-size:12px;margin-top:6px">原因：' + rule.reason + '</div>';
+      if (rule.suggest && rule.suggest.length > 0) {
+        html += '<div style="color:#07C160;font-size:12px;margin-top:4px">建议：' + rule.suggest.join('、') + '</div>';
+      }
+      html += '</div>';
+    });
+  }
+
+  // 从说明书补充
+  if (entry.contraindications && entry.contraindications.length > 10) {
+    html += '<div style="margin-top:10px;padding:10px;background:#F8F8F8;border-radius:6px">';
+    html += '<div style="color:#666;font-size:13px;line-height:1.6">' + entry.contraindications.slice(0, 200) + (entry.contraindications.length > 200 ? '...' : '') + '</div>';
+    html += '</div>';
+  }
+
+  if (matchedRules.length === 0 && (!entry.contraindications || entry.contraindications.length < 10)) {
+    html += '<div style="color:#999;padding:10px">暂无明确饮食禁忌记录，建议遵医嘱或咨询药师</div>';
+  }
+
+  html += '</div>';
+  resultDiv.innerHTML = html;
+}
+</script>
+
+
+<script>
+// 服药时间指导查询
+function queryTimingGuide() {
+  var input = document.getElementById('timingDrugInput');
+  var resultDiv = document.getElementById('timingResult');
+  if (!input || !resultDiv) return;
+
+  var name = input.value.trim();
+  if (!name) {
+    resultDiv.innerHTML = '<div style="color:#999;padding:8px">请输入药品名称</div>';
+    return;
+  }
+
+  // 查询 DRUG_GUIDE
+  var entry = null;
+  if (typeof DRUG_GUIDE !== 'undefined' && DRUG_GUIDE[name]) {
+    entry = DRUG_GUIDE[name];
+  } else if (typeof DRUG_GUIDE !== 'undefined') {
+    for (var k in DRUG_GUIDE) {
+      if (k.indexOf(name) >= 0 || name.indexOf(k) >= 0) {
+        entry = DRUG_GUIDE[k];
+        name = k;
+        break;
+      }
+    }
+  }
+
+  if (!entry) {
+    resultDiv.innerHTML = '<div style="color:#FF6B6B;padding:12px">未找到该药品，请确认名称</div>';
+    return;
+  }
+
+  // 服药时间规则库
+  var timingRules = [
+    {drug: '阿司匹林', timing: '饭后', reason: '减少胃刺激', times: '早餐后或晚餐后'},
+    {drug: '布洛芬', timing: '饭后', reason: '减少胃刺激', times: '餐后30分钟内'},
+    {drug: '头孢', timing: '饭后', reason: '提高吸收率', times: '餐后服用'},
+    {drug: '降压药', timing: '晨起', reason: '血压晨峰现象', times: '起床后30分钟内'},
+    {drug: '他汀类', timing: '睡前', reason: '胆固醇合成高峰在夜间', times: '睡前1小时'},
+    {drug: '甲状腺素', timing: '空腹', reason: '食物影响吸收', times: '早餐前30-60分钟'},
+    {drug: '质子泵抑制剂', timing: '餐前', reason: '抑制胃酸分泌', times: '早餐前30分钟'},
+    {drug: '降糖药', timing: '餐前', reason: '控制餐后血糖', times: '餐前15-30分钟'},
+    {drug: '二甲双胍', timing: '餐中或餐后', reason: '减少胃肠道反应', times: '随餐或餐后立即'},
+    {drug: '铁剂', timing: '空腹', reason: '吸收最佳', times: '餐前1小时或餐后2小时'},
+    {drug: '钙剂', timing: '餐后', reason: '胃酸助吸收', times: '餐后或睡前'},
+    {drug: '镇静催眠药', timing: '睡前', reason: '助眠', times: '睡前30分钟'},
+    {drug: '利尿剂', timing: '晨起', reason: '避免夜间频繁起夜', times: '早餐后'},
+    {drug: '阿仑膦酸钠', timing: '空腹', reason: '吸收要求严格', times: '早餐前30分钟，保持直立30分钟'},
+    {drug: '感冒药', timing: '饭后', reason: '减少胃刺激', times: '餐后30分钟'},
+    {drug: '抗凝药', timing: '固定时间', reason: '维持稳定血药浓度', times: '每天同一时间'},
+  ];
+
+  // 匹配规则
+  var matchedRule = null;
+  for (var i = 0; i < timingRules.length; i++) {
+    var rule = timingRules[i];
+    if (name.indexOf(rule.drug) >= 0 || rule.drug.indexOf(name) >= 0 ||
+        (entry.category && entry.category.indexOf(rule.drug) >= 0)) {
+      matchedRule = rule;
+      break;
+    }
+  }
+
+  // 从说明书提取
+  var dosageText = entry.dosage || '';
+
+  // 渲染
+  var html = '<div style="background:#fff;padding:12px;border-radius:8px;border:1px solid #87CEEB">';
+  html += '<div style="font-weight:600;color:#333;margin-bottom:10px">' + name + ' 服药时间</div>';
+
+  if (matchedRule) {
+    var timingColor = {
+      '空腹': '#FF9800',
+      '餐前': '#4CAF50',
+      '餐中': '#9C27B0',
+      '餐后': '#2196F3',
+      '晨起': '#FF5722',
+      '睡前': '#3F51B5',
+      '固定时间': '#607D8B'
+    };
+    var color = timingColor[matchedRule.timing] || '#3498DB';
+
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
+    html += '<div style="background:' + color + ';color:#fff;padding:8px 16px;border-radius:20px;font-weight:600">' + matchedRule.timing + '</div>';
+    html += '<div style="color:#666">' + matchedRule.times + '</div>';
+    html += '</div>';
+    html += '<div style="background:#E8F4FC;padding:10px;border-radius:6px;margin-bottom:10px">';
+    html += '<div style="color:#3498DB;font-size:13px">💡 ' + matchedRule.reason + '</div>';
+    html += '</div>';
+  }
+
+  // 从说明书补充
+  if (dosageText && dosageText.length > 10) {
+    html += '<div style="background:#F8F8F8;padding:10px;border-radius:6px">';
+    html += '<div style="color:#666;font-size:13px;line-height:1.6">' + dosageText.slice(0, 200) + (dosageText.length > 200 ? '...' : '') + '</div>';
+    html += '</div>';
+  }
+
+  if (!matchedRule && (!dosageText || dosageText.length < 10)) {
+    html += '<div style="color:#999;padding:10px">暂无明确服药时间记录，建议遵医嘱或咨询药师</div>';
+  }
+
+  // 时辰药理学提示
+  html += '<div style="margin-top:10px;padding:8px;background:#FFF3E0;border-radius:6px;font-size:12px;color:#F57C00">';
+  html += '⏰ 时辰药理学：药物疗效与服药时间相关，合理用药时间可提高疗效、减少副作用';
+  html += '</div>';
+
+  html += '</div>';
+  resultDiv.innerHTML = html;
+}
 </script>
 
 </body>
