@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.13.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.14.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1028,6 +1028,10 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <!-- 首页 -->
 <div id="tab-home" role="main" aria-label="首页内容" class="tab-content active" style="display:block">
   <div class="hero" id="heroCard">
+
+    <!-- 药箱预警面板 -->
+    <div id="cabinetAlertPanel" style="display:none;margin-bottom:12px"></div>
+
     <div class="hero-title" id="heroGreet">早上好</div>
     <div class="hero-sub" id="heroSub">家庭 AI 药师 · 让每一次用药更安心</div>
   </div>
@@ -1253,7 +1257,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.13.0 === */
+/* === 3×3 金刚区圆底图标 v2.14.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -5061,6 +5065,103 @@ window.showSymptomResults = showSymptomResults;
 
   var cabinet = load(LS_CAB, []);
   function renderCabinet(){
+
+// 药箱智能预警系统
+function checkCabinetAlerts() {
+  var cabinet = JSON.parse(localStorage.getItem('cy_cabinet') || '[]');
+  var alertPanel = document.getElementById('cabinetAlertPanel');
+  if (!alertPanel || cabinet.length === 0) {
+    if (alertPanel) alertPanel.style.display = 'none';
+    return;
+  }
+
+  var today = new Date();
+  var warnings = [];
+
+  cabinet.forEach(function(item) {
+    // 过期检查
+    if (item.expiry) {
+      var expiry = new Date(item.expiry);
+      var daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+      if (daysLeft < 0) {
+        warnings.push({type: 'expired', drug: item.name, days: daysLeft, msg: '已过期' + Math.abs(daysLeft) + '天', urgent: true});
+      } else if (daysLeft <= 30) {
+        warnings.push({type: 'expiring', drug: item.name, days: daysLeft, msg: '还有' + daysLeft + '天过期', urgent: daysLeft <= 7});
+      }
+    }
+
+    // 库存不足检查
+    if (item.quantity !== undefined) {
+      var qty = parseInt(item.quantity) || 0;
+      if (qty <= 0) {
+        warnings.push({type: 'empty', drug: item.name, days: 0, msg: '库存已用完', urgent: true});
+      } else if (qty <= 3) {
+        warnings.push({type: 'low', drug: item.name, days: qty, msg: '仅剩' + qty + '盒', urgent: false});
+      }
+    }
+
+    // 服用疗程提醒
+    if (item.remainDays !== undefined) {
+      var days = parseInt(item.remainDays) || 0;
+      if (days > 0 && days <= 3) {
+        warnings.push({type: 'course', drug: item.name, days: days, msg: '剩余' + days + '天疗程', urgent: false});
+      }
+    }
+  });
+
+  if (warnings.length === 0) {
+    alertPanel.style.display = 'none';
+    return;
+  }
+
+  // 排序: urgent first
+  warnings.sort(function(a, b) { return (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0); });
+
+  var urgentCount = warnings.filter(function(w) { return w.urgent; }).length;
+  var html = '<div style="background:' + (urgentCount > 0 ? '#FFF3E0' : '#E8F5FF') + ';border-radius:10px;padding:12px;border-left:3px solid ' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + '">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+  html += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 22h20L12 2zm0 4l7.5 14h-15L12 6z" fill="' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + '"/><circle cx="12" cy="18" r="1.5" fill="' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + '"/></svg>';
+  html += '<span style="font-weight:600;color:#333">' + (urgentCount > 0 ? '需要关注' : '药箱提醒') + '</span>';
+  html += '<span style="background:' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + ';color:#fff;font-size:12px;padding:1px 6px;border-radius:10px">' + warnings.length + '条</span>';
+  html += '</div>';
+
+  warnings.slice(0, 5).forEach(function(w) {
+    var icon = w.type === 'expired' ? '🔴' : w.type === 'empty' ? '🟠' : w.type === 'expiring' ? '🟡' : w.type === 'low' ? '🔵' : '🟢';
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:13px">';
+    html += '<span>' + icon + '</span>';
+    html += '<span style="color:#333;flex:1">' + w.drug + '</span>';
+    html += '<span style="color:' + (w.urgent ? '#F44336' : '#FF9800') + ';font-size:12px">' + w.msg + '</span>';
+    html += '</div>';
+  });
+
+  if (warnings.length > 5) {
+    html += '<div style="text-align:center;color:#999;font-size:12px;margin-top:4px">还有' + (warnings.length - 5) + '条...</div>';
+  }
+
+  html += '</div>';
+  alertPanel.innerHTML = html;
+  alertPanel.style.display = 'block';
+}
+
+// 每次打开药箱 Tab 时刷新预警
+var _orig_switchTab = null;
+try { _orig_switchTab = switchTab; } catch(e) {}
+
+function switchTab(tab) {
+  if (_orig_switchTab) _orig_switchTab(tab);
+  if (tab === 'cabinet' || (typeof tab === 'number' && [3, 4].indexOf(tab) >= 0)) {
+    setTimeout(checkCabinetAlerts, 100);
+  }
+}
+
+// 自动检查: 每小时一次
+setInterval(checkCabinetAlerts, 3600000);
+
+// 页面加载后检查一次
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(checkCabinetAlerts, 2000);
+});
+
     cabinet = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
     var box=document.getElementById('cabinetList'); if(!box) return;
     var stats={ok:0,warn:0,bad:0};
