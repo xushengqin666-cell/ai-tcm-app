@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.16.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.17.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1244,6 +1244,82 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
       </div>
     </div>
 
+    <!-- 慢病管理 -->
+    <div class="card" id="chronicCard" style="border-left:3px solid #9C27B0;margin-top:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#9C27B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-weight:600;color:#333">慢病管理</span>
+        <span style="font-size:12px;color:#9C27B0;background:#F3E5F5;padding:2px 8px;border-radius:10px">健康追踪</span>
+      </div>
+
+      <!-- 类型切换 -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button onclick="switchChronicTab('bp')" id="chronicTab_bp" style="padding:6px 14px;border-radius:16px;font-size:13px;font-weight:500;border:none;background:#9C27B0;color:#fff">血压</button>
+        <button onclick="switchChronicTab('bs')" id="chronicTab_bs" style="padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid #E0E0E0;background:#fff;color:#666">血糖</button>
+        <button onclick="switchChronicTab('lipid')" id="chronicTab_lipid" style="padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid #E0E0E0;background:#fff;color:#666">血脂</button>
+        <button onclick="switchChronicTab('weight')" id="chronicTab_weight" style="padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid #E0E0E0;background:#fff;color:#666">体重</button>
+      </div>
+
+      <!-- 数据输入区 -->
+      <div id="chronicInputArea">
+        <div id="chronicBPInput" style="display:block">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="chronicSYS" placeholder="收缩压" min="60" max="250" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
+            <span style="color:#999;font-size:14px">/</span>
+            <input type="number" id="chronicDIA" placeholder="舒张压" min="40" max="150" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
+            <span style="color:#999;font-size:13px">mmHg</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <input type="number" id="chronicHR" placeholder="心率(可选)" min="40" max="200" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
+            <span style="color:#999;font-size:13px">次/分</span>
+            <button onclick="saveChronicRecord('bp')" style="padding:8px 16px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录</button>
+          </div>
+        </div>
+        <div id="chronicBSInput" style="display:none">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="chronicBS" placeholder="血糖值" min="1" max="35" step="0.1" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
+            <select id="chronicBSPeriod" style="padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#fff">
+              <option value="fasting">空腹</option>
+              <option value="post">餐后2h</option>
+              <option value="random">随机</option>
+            </select>
+            <span style="color:#999;font-size:13px">mmol/L</span>
+            <button onclick="saveChronicRecord('bs')" style="padding:8px 16px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录</button>
+          </div>
+        </div>
+        <div id="chronicLipidInput" style="display:none">
+          <div style="display:flex;gap:6px;align-items:center">
+            <div style="flex:1;text-align:center">
+              <div style="font-size:11px;color:#999;margin-bottom:4px">TC总胆固醇</div>
+              <input type="number" id="chronicTC" placeholder="TC" min="1" max="15" step="0.1" style="width:100%;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#FAFAFA;text-align:center">
+            </div>
+            <div style="flex:1;text-align:center">
+              <div style="font-size:11px;color:#999;margin-bottom:4px">LDL-C</div>
+              <input type="number" id="chronicLDL" placeholder="LDL" min="0.5" max="10" step="0.1" style="width:100%;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#FAFAFA;text-align:center">
+            </div>
+            <div style="flex:1;text-align:center">
+              <div style="font-size:11px;color:#999;margin-bottom:4px">HDL-C</div>
+              <input type="number" id="chronicHDL" placeholder="HDL" min="0.5" max="5" step="0.1" style="width:100%;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#FAFAFA;text-align:center">
+            </div>
+          </div>
+          <button onclick="saveChronicRecord('lipid')" style="width:100%;margin-top:8px;padding:8px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录血脂</button>
+        </div>
+        <div id="chronicWeightInput" style="display:none">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="chronicWeight" placeholder="体重" min="20" max="300" step="0.1" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
+            <span style="color:#999;font-size:13px">kg</span>
+            <button onclick="saveChronicRecord('weight')" style="padding:8px 16px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最近记录 -->
+      <div id="chronicRecent" style="margin-top:12px"></div>
+      <!-- 趋势图区域 -->
+      <div id="chronicTrend" style="margin-top:12px;display:none"></div>
+    </div>
+
+
   <div class="card" id="healthTipCard" style="border-left:3px solid var(--c-primary);display:none">
    <div class="card-head">
      <span class="card-title" id="healthTipTitle">用药安全提示</span>
@@ -1316,7 +1392,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.16.0 === */
+/* === 3×3 金刚区圆底图标 v2.17.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -11256,6 +11332,227 @@ function lookupBarcodeByCode(barcode) {
     result.innerHTML += '</div>';
   }
 }
+</script>
+
+
+<script>
+// 慢病管理追踪系统
+var _chronicTab = 'bp';
+
+function switchChronicTab(tab) {
+  _chronicTab = tab;
+  // 切换按钮样式
+  ['bp','bs','lipid','weight'].forEach(function(t) {
+    var btn = document.getElementById('chronicTab_' + t);
+    if (btn) {
+      btn.style.background = t === tab ? '#9C27B0' : '#fff';
+      btn.style.color = t === tab ? '#fff' : '#666';
+      btn.style.border = t === tab ? 'none' : '1px solid #E0E0E0';
+    }
+  });
+  // 切换输入区
+  var inputs = ['bp','bs','lipid','weight'];
+  inputs.forEach(function(t) {
+    var el = document.getElementById('chronic' + t.charAt(0).toUpperCase() + t.slice(1) + 'Input');
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  // 刷新记录
+  renderChronicRecent();
+}
+
+function getChronicStorage(type) {
+  try { return JSON.parse(localStorage.getItem('cy_chronic_' + type) || '[]'); } catch(e) { return []; }
+}
+
+function saveChronicRecord(type) {
+  var record = { date: new Date().toISOString(), ts: Date.now() };
+
+  if (type === 'bp') {
+    var sys = parseFloat(document.getElementById('chronicSYS').value);
+    var dia = parseFloat(document.getElementById('chronicDIA').value);
+    var hr = parseFloat(document.getElementById('chronicHR').value) || null;
+    if (!sys || !dia) { alert('请输入收缩压和舒张压'); return; }
+    record.sys = sys; record.dia = dia; record.hr = hr;
+    // 分类
+    if (sys >= 180 || dia >= 110) record.level = 3;
+    else if (sys >= 160 || dia >= 100) record.level = 2;
+    else if (sys >= 140 || dia >= 90) record.level = 1;
+    else record.level = 0;
+    // 清空输入
+    document.getElementById('chronicSYS').value = '';
+    document.getElementById('chronicDIA').value = '';
+    document.getElementById('chronicHR').value = '';
+  } else if (type === 'bs') {
+    var bs = parseFloat(document.getElementById('chronicBS').value);
+    var period = document.getElementById('chronicBSPeriod').value;
+    if (!bs) { alert('请输入血糖值'); return; }
+    record.bs = bs; record.period = period;
+    document.getElementById('chronicBS').value = '';
+  } else if (type === 'lipid') {
+    var tc = parseFloat(document.getElementById('chronicTC').value);
+    var ldl = parseFloat(document.getElementById('chronicLDL').value);
+    var hdl = parseFloat(document.getElementById('chronicHDL').value);
+    if (!tc && !ldl && !hdl) { alert('请至少输入一项血脂数据'); return; }
+    record.tc = tc || null; record.ldl = ldl || null; record.hdl = hdl || null;
+    document.getElementById('chronicTC').value = '';
+    document.getElementById('chronicLDL').value = '';
+    document.getElementById('chronicHDL').value = '';
+  } else if (type === 'weight') {
+    var w = parseFloat(document.getElementById('chronicWeight').value);
+    if (!w) { alert('请输入体重'); return; }
+    record.weight = w;
+    document.getElementById('chronicWeight').value = '';
+  }
+
+  var data = getChronicStorage(type);
+  data.unshift(record);
+  // 只保留最近 180 天
+  var cutoff = Date.now() - 180 * 86400000;
+  data = data.filter(function(r) { return r.ts > cutoff; });
+  localStorage.setItem('cy_chronic_' + type, JSON.stringify(data));
+
+  renderChronicRecent();
+  // 轻量提示
+  var card = document.getElementById('chronicCard');
+  if (card) {
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#07C160;color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;z-index:9999;animation:fadeOut 2s forwards';
+    toast.textContent = '✅ 记录已保存';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 2000);
+  }
+}
+
+function renderChronicRecent() {
+  var el = document.getElementById('chronicRecent');
+  if (!el) return;
+  var data = getChronicStorage(_chronicTab);
+  var recent = data.slice(0, 5);
+
+  if (recent.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:12px;color:#999;font-size:13px">暂无记录，开始记录您的健康数据</div>';
+    return;
+  }
+
+  var html = '<div style="font-size:12px;color:#999;margin-bottom:8px;padding-top:8px;border-top:1px solid #F0F0F0">最近记录</div>';
+
+  recent.forEach(function(r) {
+    var date = new Date(r.date);
+    var dateStr = (date.getMonth()+1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + String(date.getMinutes()).padStart(2,'0');
+    html += '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #F5F5F5;gap:10px">';
+    html += '<span style="font-size:12px;color:#999;width:80px">' + dateStr + '</span>';
+
+    if (_chronicTab === 'bp') {
+      var levelColor = ['#4CAF50','#FFC107','#FF9800','#F44336'];
+      var levelText = ['正常','偏高','高','极高'];
+      var color = levelColor[r.level] || '#4CAF50';
+      html += '<span style="font-weight:600;font-size:16px;color:#333">' + r.sys + '<span style="font-size:12px;color:#999">/</span>' + r.dia + '</span>';
+      html += '<span style="font-size:12px;color:#999">mmHg</span>';
+      if (r.hr) html += '<span style="font-size:12px;color:#666;margin-left:4px">❤️' + r.hr + '</span>';
+      html += '<span style="margin-left:auto;font-size:12px;padding:2px 8px;border-radius:10px;background:' + color + ';color:#fff">' + (levelText[r.level] || '') + '</span>';
+    } else if (_chronicTab === 'bs') {
+      var periodNames = {fasting:'空腹',post:'餐后2h',random:'随机'};
+      var bsColor = r.bs > 11.1 ? '#F44336' : r.bs > 7.8 ? '#FF9800' : r.bs < 3.9 ? '#FF9800' : '#4CAF50';
+      html += '<span style="font-weight:600;font-size:16px;color:' + bsColor + '">' + r.bs + '</span>';
+      html += '<span style="font-size:12px;color:#999">mmol/L</span>';
+      html += '<span style="font-size:12px;color:#999;margin-left:4px">' + (periodNames[r.period] || '') + '</span>';
+    } else if (_chronicTab === 'weight') {
+      html += '<span style="font-weight:600;font-size:16px;color:#333">' + r.weight + '</span>';
+      html += '<span style="font-size:12px;color:#999">kg</span>';
+    } else if (_chronicTab === 'lipid') {
+      var items = [];
+      if (r.tc) items.push('TC:' + r.tc);
+      if (r.ldl) items.push('LDL:' + r.ldl);
+      if (r.hdl) items.push('HDL:' + r.hdl);
+      html += '<span style="font-size:13px;color:#333">' + items.join(' | ') + '</span>';
+      html += '<span style="font-size:12px;color:#999">mmol/L</span>';
+    }
+
+    html += '</div>';
+  });
+
+  // 趋势查看按钮
+  if (recent.length >= 3) {
+    html += '<button onclick="renderChronicTrend()" style="width:100%;margin-top:10px;padding:8px;background:#F3E5F5;color:#9C27B0;border:none;border-radius:8px;font-size:13px;font-weight:500">查看趋势图</button>';
+  }
+
+  el.innerHTML = html;
+}
+
+function renderChronicTrend() {
+  var el = document.getElementById('chronicTrend');
+  if (!el) return;
+  el.style.display = 'block';
+
+  var data = getChronicStorage(_chronicTab);
+  if (data.length < 2) { el.innerHTML = '<div style="color:#999;font-size:13px;text-align:center;padding:12px">记录超过2条后显示趋势图</div>'; return; }
+
+  // 计算极值
+  var values = data.map(function(r) {
+    if (_chronicTab === 'bp') return r.sys;
+    if (_chronicTab === 'bs') return r.bs;
+    if (_chronicTab === 'weight') return r.weight;
+    return 0;
+  }).filter(function(v) { return v; });
+
+  var min = Math.min.apply(null, values);
+  var max = Math.max.apply(null, values);
+  var range = max - min || 1;
+  var w = 300, h = 120, pad = 20;
+  var chartW = w - pad * 2, chartH = h - pad * 2;
+
+  // SVG趋势图
+  var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="border-radius:8px;background:#FAFAFA">';
+
+  // 参考线
+  if (_chronicTab === 'bp') {
+    [140, 90].forEach(function(ref) {
+      var y = pad + chartH - ((ref - min) / range * chartH);
+      if (y > pad && y < pad + chartH) {
+        svg += '<line x1="0" y1="' + y + '" x2="' + w + '" y2="' + y + '" stroke="#FF9800" stroke-width="1" stroke-dasharray="4,4" opacity="0.6"/>';
+        svg += '<text x="' + (w - 5) + '" y="' + (y - 3) + '" text-anchor="end" font-size="9" fill="#FF9800">' + ref + '</text>';
+      }
+    });
+  }
+
+  // 绘制折线
+  var pts = [];
+  data.slice().reverse().forEach(function(r, i) {
+    var v;
+    if (_chronicTab === 'bp') v = r.sys;
+    else if (_chronicTab === 'bs') v = r.bs;
+    else if (_chronicTab === 'weight') v = r.weight;
+    if (!v) return;
+    var x = pad + (i / (data.length - 1)) * chartW;
+    var y = pad + chartH - ((v - min) / range * chartH);
+    pts.push([x, y]);
+  });
+
+  // 填充区域
+  if (pts.length > 1) {
+    svg += '<path d="M' + pts[0][0] + ',' + (pad + chartH) + ' L' + pts.map(function(p) { return p[0] + ',' + p[1]; }).join(' L') + ' L' + pts[pts.length-1][0] + ',' + (pad + chartH) + ' Z" fill="#9C27B0" opacity="0.1"/>';
+    svg += '<polyline points="' + pts.map(function(p) { return p.join(','); }).join(' ') + '" fill="none" stroke="#9C27B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    pts.forEach(function(p, i) {
+      var color = '#9C27B0';
+      if (_chronicTab === 'bp' && data[data.length-1-i]) {
+        var lvl = data[data.length-1-i].level;
+        color = ['#4CAF50','#FFC107','#FF9800','#F44336'][lvl] || '#9C27B0';
+      }
+      svg += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3" fill="' + color + '" stroke="#fff" stroke-width="1"/>';
+    });
+  }
+
+  svg += '</svg>';
+  el.innerHTML = '<div style="font-size:12px;color:#9C27B0;font-weight:500;margin-bottom:6px">近' + data.length + '条趋势</div>' + svg;
+}
+
+// 页面加载后初始化
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    switchChronicTab('bp');
+    renderChronicRecent();
+  }, 2000);
+});
 </script>
 
 <script>
