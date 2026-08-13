@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.12.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.13.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1155,6 +1155,45 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   <div id="timingResult" style="margin-top:12px"></div>
 </div>
 
+<!-- 扫码识药 -->
+<div class="card" id="scanDrugCard" style="border-left:3px solid #10AEFF;margin-top:12px">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#10AEFF" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#10AEFF" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#10AEFF" stroke-width="2"/><path d="M14 17.5h7M17.5 14v7" stroke="#10AEFF" stroke-width="2" stroke-linecap="round"/></svg>
+    <span style="font-weight:600;color:#333">扫码识药</span>
+    <span style="font-size:12px;color:#10AEFF;background:#E8F5FF;padding:2px 8px;border-radius:10px">一拍即查</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div onclick="openBarcodeScanner()" style="background:linear-gradient(135deg,#10AEFF,#007AFF);padding:16px;border-radius:10px;color:#fff;text-align:center;cursor:pointer">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#fff" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#fff" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#fff" stroke-width="1.5"/><path d="M14 17.5h7M17.5 14v7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div style="font-weight:600;font-size:14px">扫描条形码</div>
+      <div style="font-size:11px;opacity:0.8">药盒/说明书条形码</div>
+    </div>
+    <div onclick="openDrugCamera()" style="background:linear-gradient(135deg,#07C160,#04B87A);padding:16px;border-radius:10px;color:#fff;text-align:center;cursor:pointer">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><path d="M9 2H15L17 4H21C22.1 4 23 4.9 23 6V18C23 19.1 22.1 20 21 20H3C1.9 20 1 19.1 1 18V6C1 4.9 1.9 4 3 4H7L9 2Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="#fff" stroke-width="1.5"/></svg>
+      <div style="font-weight:600;font-size:14px">拍照识别</div>
+      <div style="font-size:11px;opacity:0.8">药盒外观/说明书</div>
+    </div>
+  </div>
+  <div id="scanResult" style="margin-top:12px"></div>
+</div>
+
+<!-- 条形码扫描弹层 -->
+<div id="barcodeScannerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+  <div style="background:#1a1a1a;border-radius:16px;padding:20px;width:min(360px,90vw);text-align:center">
+    <div style="color:#fff;font-size:16px;font-weight:600;margin-bottom:16px">扫描条形码/追溯码</div>
+    <video id="barcodeVideo" autoplay playsinline style="width:100%;border-radius:12px;background:#000"></video>
+    <canvas id="barcodeCanvas" style="display:none"></canvas>
+    <div style="color:#aaa;font-size:13px;margin:12px 0">将条形码对准扫描框</div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button onclick="closeBarcodeScanner()" style="flex:1;padding:12px;border-radius:8px;border:1px solid #444;color:#fff;background:transparent;font-size:14px">取消</button>
+      <button onclick="switchToCamera()" style="flex:1;padding:12px;border-radius:8px;border:none;background:#10AEFF;color:#fff;font-size:14px">切换镜头</button>
+    </div>
+    <input type="text" id="manualBarcodeInput" placeholder="或手动输入条形码" style="width:100%;margin-top:10px;padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#fff;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')lookupBarcode()">
+    <button onclick="lookupBarcode()" style="width:100%;margin-top:8px;padding:12px;border-radius:8px;border:none;background:#07C160;color:#fff;font-size:14px;font-weight:600">查询药品</button>
+  </div>
+</div>
+
+
 
         <div class="feed-title">💊 服用布洛芬前，这 5 件事必须知道</div>
         <div class="feed-snippet">布洛芬是最常用的解热镇痛药，但很多人不知道它与阿司匹林同为 NSAIDs 类药物，合用会增加胃肠道出血风险。此外，孕妇禁用，哺乳期慎用。</div>
@@ -1214,7 +1253,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.12.0 === */
+/* === 3×3 金刚区圆底图标 v2.13.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -10509,6 +10548,181 @@ function enhanceSpecialPopWarnings(drugName, container) {
 
   html += '</div>';
   return html;
+}
+</script>
+
+
+<script>
+// 条形码扫描功能
+var barcodeStream = null;
+var barcodeFacing = 'environment';
+
+function openBarcodeScanner() {
+  var modal = document.getElementById('barcodeScannerModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  startBarcodeCamera();
+}
+
+function closeBarcodeScanner() {
+  var modal = document.getElementById('barcodeScannerModal');
+  if (modal) modal.style.display = 'none';
+  stopBarcodeCamera();
+  document.getElementById('scanResult').innerHTML = '';
+}
+
+function stopBarcodeCamera() {
+  if (barcodeStream) {
+    barcodeStream.getTracks().forEach(function(t) { t.stop(); });
+    barcodeStream = null;
+  }
+}
+
+function switchToCamera() {
+  barcodeFacing = barcodeFacing === 'environment' ? 'user' : 'environment';
+  stopBarcodeCamera();
+  startBarcodeCamera();
+}
+
+function startBarcodeCamera() {
+  var video = document.getElementById('barcodeVideo');
+  if (!video) return;
+
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: barcodeFacing, width: { ideal: 720 }, height: { ideal: 720 } }
+  }).then(function(stream) {
+    barcodeStream = stream;
+    video.srcObject = stream;
+
+    // 持续检测条码
+    scanBarcodeLoop();
+  }).catch(function(err) {
+    console.log('Camera error:', err);
+    // fallback: 提示手动输入
+    var result = document.getElementById('scanResult');
+    if (result) result.innerHTML = '<div style="color:#FF9800;padding:12px">摄像头不可用，请手动输入条形码</div>';
+  });
+}
+
+function scanBarcodeLoop() {
+  var video = document.getElementById('barcodeVideo');
+  var canvas = document.getElementById('barcodeCanvas');
+  if (!video || !canvas || !barcodeStream) return;
+
+  canvas.width = video.videoWidth || 360;
+  canvas.height = video.videoHeight || 360;
+
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // 尝试用 BarcodeDetector API (Chrome 83+)
+  if ('BarcodeDetector' in window) {
+    BarcodeDetector.getSupportedFormats().then(function(formats) {
+      var detector = new BarcodeDetector({ formats: formats });
+      detector.detect(canvas).then(function(barcodes) {
+        if (barcodes.length > 0) {
+          var code = barcodes[0].rawValue;
+          console.log('Barcode detected:', code);
+          closeBarcodeScanner();
+          lookupBarcodeByCode(code);
+        }
+      }).catch(function() {});
+    }).catch(function() {});
+  } else {
+    // 没有 BarcodeDetector，尝试 ZXing 库
+    tryZXing(canvas);
+  }
+
+  // 继续扫描
+  if (barcodeStream) {
+    setTimeout(scanBarcodeLoop, 500);
+  }
+}
+
+function tryZXing(canvas) {
+  // 动态加载 ZXing
+  if (window._zxingLoading) return;
+  if (document.getElementById('zxing-script')) {
+    decodeWithZXing(canvas);
+    return;
+  }
+  window._zxingLoading = true;
+  var script = document.createElement('script');
+  script.id = 'zxing-script';
+  script.src = 'https://cdn.jsdelivr.net/npm/@aspect-build/aspect-build-browser@1.0.0';
+  // 改用更轻量的 jsQR
+  script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+  script.onload = function() { decodeWithZXing(canvas); };
+  script.onerror = function() { window._zxingLoading = false; };
+  document.head.appendChild(script);
+}
+
+function decodeWithZXing(canvas) {
+  try {
+    var ctx = canvas.getContext('2d');
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var code = jsQR(imageData.data, canvas.width, canvas.height);
+    if (code) {
+      console.log('QR/Barcode:', code.data);
+      closeBarcodeScanner();
+      lookupBarcodeByCode(code.data);
+    }
+  } catch(e) {}
+}
+
+function lookupBarcode() {
+  var input = document.getElementById('manualBarcodeInput');
+  if (!input || !input.value.trim()) {
+    var result = document.getElementById('scanResult');
+    if (result) result.innerHTML = '<div style="color:#FF9800;padding:12px">请输入条形码</div>';
+    return;
+  }
+  closeBarcodeScanner();
+  lookupBarcodeByCode(input.value.trim());
+}
+
+function lookupBarcodeByCode(barcode) {
+  var result = document.getElementById('scanResult');
+  if (!result) return;
+
+  // 国家药监局 API: https://www.nmpa.gov.cn/WS04/CL2042/
+  // 药品追溯码查询 API (模拟，实际需要对接药监局接口)
+  var drugMapping = {
+    // 常见药品追溯码前缀映射（示例）
+    "869": { name: "布洛芬缓释胶囊", manufacturer: "中美天津史克制药" },
+    "8690": { name: "阿莫西林胶囊", manufacturer: "华北制药" },
+    "691": { name: "阿司匹林肠溶片", manufacturer: "拜耳医药保健" },
+  };
+
+  // 查找前缀匹配
+  var matchedDrug = null;
+  for (var prefix in drugMapping) {
+    if (barcode.indexOf(prefix) === 0) {
+      matchedDrug = drugMapping[prefix];
+      break;
+    }
+  }
+
+  if (matchedDrug) {
+    // 找到药品，直接显示
+    var html = '<div style="background:#E8F5FF;padding:12px;border-radius:8px;border:1px solid #10AEFF">';
+    html += '<div style="font-weight:600;color:#007AFF;margin-bottom:6px">扫码结果</div>';
+    html += '<div style="color:#333">药品: ' + matchedDrug.name + '</div>';
+    html += '<div style="color:#666;font-size:13px">厂家: ' + matchedDrug.manufacturer + '</div>';
+    html += '<div style="color:#999;font-size:12px;margin-top:4px">追溯码: ' + barcode + '</div>';
+    html += '<button onclick="doManualSearch('' + matchedDrug.name + '')" style="margin-top:10px;padding:8px 16px;background:#10AEFF;color:#fff;border:none;border-radius:6px;font-size:13px">查看说明书</button>';
+    html += '</div>';
+    result.innerHTML = html;
+  } else {
+    // 未匹配，提示在 DRUG_GUIDE 中搜索
+    result.innerHTML = '<div style="padding:12px;text-align:center">';
+    result.innerHTML += '<div style="color:#FF9800;font-size:14px">未在本地数据库找到该药品</div>';
+    result.innerHTML += '<div style="color:#999;font-size:12px;margin-top:4px">追溯码: ' + barcode + '</div>';
+    result.innerHTML += '<div style="margin-top:10px">';
+    result.innerHTML += '<button onclick="doManualSearch('' + barcode + '')" style="padding:8px 16px;background:#10AEFF;color:#fff;border:none;border-radius:6px;font-size:13px">模糊搜索</button>';
+    result.innerHTML += '</div>';
+    result.innerHTML += '</div>';
+  }
 }
 </script>
 
