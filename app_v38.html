@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.11.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.12.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1214,7 +1214,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.11.0 === */
+/* === 3×3 金刚区圆底图标 v2.12.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -10384,6 +10384,134 @@ function queryDietTaboo() {
 </script>
 
 
+
+<script>
+// FDA 妊娠分级查询
+function getFDAPregnancyGrade(drugName) {
+  var db = {
+    "阿司匹林": {grade: "D", risk: "妊娠晚期使用可能导致胎儿动脉导管早闭", advice: "妊娠期禁用"},
+    "布洛芬": {grade: "D", risk: "妊娠晚期使用可能导致胎儿动脉导管早闭、羊水过少", advice: "妊娠期禁用"},
+    "对乙酰氨基酚": {grade: "B", risk: "相对安全", advice: "必要时可短期使用"},
+    "头孢克洛": {grade: "B", risk: "动物实验未见危害", advice: "妊娠期慎用"},
+    "阿莫西林": {grade: "B", risk: "相对安全", advice: "妊娠期可用"},
+    "甲硝唑": {grade: "B", risk: "早孕期避免", advice: "妊娠3个月内禁用"},
+    "华法林": {grade: "X", risk: "明确致畸", advice: "妊娠期绝对禁用"},
+    "他汀": {grade: "X", risk: "影响胎儿发育", advice: "妊娠期绝对禁用"},
+    "降压药": {grade: "D", risk: "胎儿肾脏发育异常", advice: "妊娠期禁用"},
+  };
+
+  // 模糊匹配
+  for (var k in db) {
+    if (drugName.indexOf(k) >= 0 || k.indexOf(drugName) >= 0) {
+      return db[k];
+    }
+  }
+  return null;
+}
+
+// 儿童用药剂量计算
+function getPediatricDose(drugName, weight) {
+  var db = {
+    "布洛芬": {mgPerKg: "5-10mg", maxPerDose: 400, maxPerDay: 40, interval: "6-8小时", ageLimit: "6月+"},
+    "对乙酰氨基酚": {mgPerKg: "10-15mg", maxPerDose: 15, maxPerDay: 60, interval: "4-6小时", ageLimit: "3月+"},
+    "阿莫西林": {mgPerKg: "20-40mg/日", maxPerDose: null, maxPerDay: 2000, interval: "分2-3次", ageLimit: "无限制"},
+    "头孢": {mgPerKg: "20-40mg/日", maxPerDose: null, maxPerDay: 1000, interval: "分2-3次", ageLimit: "1月+"},
+    "阿奇霉素": {mgPerKg: "10mg(第1天)", maxPerDose: 500, maxPerDay: 500, interval: "每日1次", ageLimit: "6月+"},
+  };
+
+  for (var k in db) {
+    if (drugName.indexOf(k) >= 0 || k.indexOf(drugName) >= 0) {
+      var rule = db[k];
+      if (weight && rule.mgPerKg) {
+        var dose = weight * parseFloat(rule.mgPerKg.split('-')[0] || rule.mgPerKg.split('/')[0]);
+        return {
+          formula: rule.mgPerKg,
+          calculated: Math.round(dose) + "mg",
+          maxPerDose: rule.maxPerDose ? rule.maxPerDose + "mg" : "-",
+          interval: rule.interval,
+          ageLimit: rule.ageLimit
+        };
+      }
+      return rule;
+    }
+  }
+  return null;
+}
+
+// 老年人用药调整
+function getGeriatricAdjustment(drugName) {
+  var db = {
+    "降压药": {adjust: "起始剂量减半", risk: "体位性低血压", monitor: "血压"},
+    "地高辛": {adjust: "减少25-50%", risk: "蓄积中毒", monitor: "血药浓度"},
+    "华法林": {adjust: "起始剂量降低", risk: "出血风险增加", monitor: "INR"},
+    "镇静催眠": {adjust: "避免或减量", risk: "跌倒风险", monitor: "镇静程度"},
+    "NSAID": {adjust: "短期最低剂量", risk: "消化道出血", monitor: "肾功能"},
+    "布洛芬": {adjust: "短期最低剂量", risk: "消化道出血、肾损害", monitor: "肾功能"},
+  };
+
+  for (var k in db) {
+    if (drugName.indexOf(k) >= 0 || k.indexOf(drugName) >= 0) {
+      return db[k];
+    }
+  }
+  return null;
+}
+
+// 增强特殊人群警示显示
+function enhanceSpecialPopWarnings(drugName, container) {
+  var html = '<div style="margin-top:12px;padding:12px;background:#FFF9E6;border-radius:8px;border-left:3px solid #FF9800">';
+  html += '<div style="font-weight:600;color:#333;margin-bottom:8px">特殊人群用药指导</div>';
+
+  // 妊娠分级
+  var preg = getFDAPregnancyGrade(drugName);
+  if (preg) {
+    var gradeColor = {A: "#4CAF50", B: "#8BC34A", C: "#FFC107", D: "#FF5722", X: "#F44336"};
+    html += '<div style="margin-bottom:10px;padding:8px;background:#fff;border-radius:6px">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+    html += '<span style="font-weight:600">妊娠期用药</span>';
+    html += '<span style="background:' + (gradeColor[preg.grade] || '#999') + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:12px">FDA ' + preg.grade + '</span>';
+    html += '</div>';
+    html += '<div style="color:#666;font-size:13px">' + preg.risk + '</div>';
+    html += '<div style="color:#FF9800;font-size:12px;margin-top:4px">建议：' + preg.advice + '</div>';
+    html += '</div>';
+  }
+
+  // 儿童用药
+  var peds = getPediatricDose(drugName);
+  if (peds) {
+    html += '<div style="margin-bottom:10px;padding:8px;background:#fff;border-radius:6px">';
+    html += '<div style="font-weight:600;margin-bottom:4px">儿童用药</div>';
+    html += '<div style="color:#666;font-size:13px">';
+    if (peds.calculated) {
+      html += '剂量计算：' + peds.calculated + '（' + peds.formula + '）';
+    } else {
+      html += '参考剂量：' + peds.mgPerKg || peds.formula;
+    }
+    if (peds.ageLimit) html += '<br>适用年龄：' + peds.ageLimit;
+    html += '</div></div>';
+  }
+
+  // 老年人用药
+  var ger = getGeriatricAdjustment(drugName);
+  if (ger) {
+    html += '<div style="margin-bottom:10px;padding:8px;background:#fff;border-radius:6px">';
+    html += '<div style="font-weight:600;margin-bottom:4px">老年人用药</div>';
+    html += '<div style="color:#666;font-size:13px">';
+    html += '剂量调整：' + ger.adjust + '<br>';
+    html += '<span style="color:#FF9800">风险：' + ger.risk + '</span><br>';
+    html += '监测：' + ger.monitor;
+    html += '</div></div>';
+  }
+
+  if (!preg && !peds && !ger) {
+    html += '<div style="color:#999;font-size:13px">暂无特殊人群用药数据，建议咨询医生或药师</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+</script>
+
 <script>
 // 服药时间指导查询
 function queryTimingGuide() {
@@ -10492,6 +10620,12 @@ function queryTimingGuide() {
   html += '</div>';
 
   html += '</div>';
+
+  // 特殊人群用药指导
+  if (typeof enhanceSpecialPopWarnings === 'function') {
+    html += enhanceSpecialPopWarnings(name);
+  }
+
   resultDiv.innerHTML = html;
 }
 </script>
