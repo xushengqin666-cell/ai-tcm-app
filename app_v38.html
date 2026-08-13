@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.15.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.16.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1225,6 +1225,25 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
       </div>
     </div>
   </div>
+
+    <!-- 服药时间轴 -->
+    <div class="card" id="pillTimelineCard" style="border-left:3px solid #07C160;margin-top:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#07C160" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#07C160" stroke-width="2" stroke-linecap="round"/></svg>
+        <span style="font-weight:600;color:#333">今日服药</span>
+        <span id="timelineDate" style="font-size:12px;color:#999"></span>
+        <span id="timelineBadge" style="margin-left:auto;background:#07C160;color:#fff;font-size:12px;padding:2px 8px;border-radius:10px"></span>
+      </div>
+      <div id="pillTimelineContent">
+        <div id="timelineEmpty" style="text-align:center;padding:20px;color:#999">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px;opacity:0.4"><path d="M9.5 3L8 8H4l1.5 8L12 21l6.5-5L20 8h-4L14.5 3H9.5z" stroke="#999" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <div style="font-size:13px">今日暂无服药计划</div>
+          <div style="font-size:12px;margin-top:4px">在药箱中添加药品并设置提醒</div>
+        </div>
+        <div id="timelineList" style="display:none"></div>
+      </div>
+    </div>
+
   <div class="card" id="healthTipCard" style="border-left:3px solid var(--c-primary);display:none">
    <div class="card-head">
      <span class="card-title" id="healthTipTitle">用药安全提示</span>
@@ -1297,7 +1316,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.15.0 === */
+/* === 3×3 金刚区圆底图标 v2.16.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -5286,6 +5305,198 @@ function showSymptomResults(symptom) {
 
   container.innerHTML += html;
 }
+
+
+<script>
+// 服药时间轴系统
+function getTodayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function getTimeSlots() {
+  return [
+    { name: "早餐前", icon: "🌅", time: "07:00", slot: "morning_before" },
+    { name: "早餐后", icon: "🍳", time: "08:00", slot: "morning_after" },
+    { name: "午餐前", icon: "☀️", time: "12:00", slot: "noon_before" },
+    { name: "午餐后", icon: "🍜", time: "13:00", slot: "noon_after" },
+    { name: "晚餐前", icon: "🌇", time: "18:00", slot: "evening_before" },
+    { name: "晚餐后", icon: "🍽️", time: "19:00", slot: "evening_after" },
+    { name: "睡前", icon: "🌙", time: "22:00", slot: "night" },
+  ];
+}
+
+function renderPillTimeline() {
+  var timelineCard = document.getElementById('pillTimelineCard');
+  if (!timelineCard) return;
+
+  var dateEl = document.getElementById('timelineDate');
+  var badge = document.getElementById('timelineBadge');
+  var emptyEl = document.getElementById('timelineEmpty');
+  var listEl = document.getElementById('timelineList');
+  if (!emptyEl || !listEl) return;
+
+  // 显示日期
+  var today = new Date();
+  var dayNames = ['周日','周一','周二','周三','周四','周五','周六'];
+  if (dateEl) dateEl.textContent = today.getMonth()+1 + '月' + today.getDate() + '日 ' + dayNames[today.getDay()];
+
+  // 获取药箱数据
+  var cabinet = [];
+  try { cabinet = JSON.parse(localStorage.getItem('cy_cabinet') || '[]'); } catch(e) {}
+
+  // 获取服药记录
+  var records = {};
+  try { records = JSON.parse(localStorage.getItem('cy_med_records') || '{}'); } catch(e) {}
+
+  var today = getTodayStr();
+  var todayRecords = records[today] || {};
+  var slots = getTimeSlots();
+  var now = new Date();
+  var currentTime = now.getHours()*60 + now.getMinutes();
+
+  // 按时段分组显示
+  var morning = [], noon = [], evening = [], night = [];
+
+  cabinet.forEach(function(item) {
+    if (!item.reminders) return;
+    item.reminders.forEach(function(r) {
+      if (!r.enabled) return;
+      var slot = r.slot || 'morning_after';
+      var drug = { name: item.name, dose: item.dose || '1片', taken: todayRecords[item.name + '_' + slot] || false, slot: slot };
+      if (slot.indexOf('night') >= 0 || slot === 'night') night.push(drug);
+      else if (slot.indexOf('morning') >= 0) morning.push(drug);
+      else if (slot.indexOf('noon') >= 0 || slot.indexOf('afternoon') >= 0) noon.push(drug);
+      else evening.push(drug);
+    });
+  });
+
+  var hasSchedule = morning.length + noon.length + evening.length + night.length > 0;
+
+  if (!hasSchedule) {
+    emptyEl.style.display = 'block';
+    listEl.style.display = 'none';
+    if (badge) badge.textContent = '';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  listEl.style.display = 'block';
+
+  var takenCount = 0, totalCount = 0;
+  var html = '';
+
+  function renderSlot(label, icon, drugs) {
+    if (drugs.length === 0) return '';
+    var slotHtml = '<div style="margin-bottom:16px">';
+    slotHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;color:#666;font-weight:500">';
+    slotHtml += '<span>' + icon + '</span><span>' + label + '</span></div>';
+
+    drugs.forEach(function(drug) {
+      totalCount++;
+      var done = drug.taken;
+      if (done) takenCount++;
+      var bg = done ? '#E8F5E9' : '#FAFAFA';
+      var border = done ? '#07C160' : '#E0E0E0';
+      var checkIcon = done ? '✅' : '⭕';
+
+      slotHtml += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:' + bg + ';border-radius:8px;margin-bottom:6px;border-left:3px solid ' + border + '">';
+      slotHtml += '<span style="font-size:18px;cursor:pointer" onclick="togglePillTaken(\u0027' + drug.name + '\u0027,\u0027' + drug.slot + '\u0027)">' + checkIcon + '</span>';
+      slotHtml += '<div style="flex:1">';
+      slotHtml += '<div style="font-weight:600;color:#333;font-size:14px">' + drug.name + '</div>';
+      slotHtml += '<div style="color:#999;font-size:12px">' + drug.dose + '</div>';
+      slotHtml += '</div>';
+      if (done) slotHtml += '<span style="color:#07C160;font-size:12px">已服用</span>';
+      slotHtml += '</div>';
+    });
+    slotHtml += '</div>';
+    return slotHtml;
+  }
+
+  html += renderSlot('🌅 早间', '早间', morning);
+  html += renderSlot('☀️ 午间', '午间', noon);
+  html += renderSlot('🌇 晚间', '晚间', evening);
+  html += renderSlot('🌙 睡前', '睡前', night);
+
+  // 总体进度
+  var pct = totalCount > 0 ? Math.round(takenCount / totalCount * 100) : 0;
+  html += '<div style="margin-top:12px;padding:12px;background:#F5F5F5;border-radius:8px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+  html += '<span style="font-size:13px;color:#666">今日服药进度</span>';
+  html += '<span style="font-weight:600;color:#07C160">' + takenCount + '/' + totalCount + '</span>';
+  html += '</div>';
+  html += '<div style="height:6px;background:#E0E0E0;border-radius:3px;overflow:hidden">';
+  html += '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#07C160,#04B87A);border-radius:3px;transition:width 0.5s"></div>';
+  html += '</div>';
+  html += '</div>';
+
+  // 服药记录按钮
+  html += '<div style="margin-top:10px;text-align:center">';
+  html += '<button onclick="openMedRecord()" style="padding:8px 16px;background:transparent;color:#07C160;border:1px solid #07C160;border-radius:6px;font-size:13px">查看服药记录</button>';
+  html += '</div>';
+
+  listEl.innerHTML = html;
+  if (badge) badge.textContent = takenCount + '/' + totalCount + ' 已服';
+}
+
+function togglePillTaken(drugName, slot) {
+  var today = getTodayStr();
+  var key = drugName + '_' + slot;
+  var records = {};
+  try { records = JSON.parse(localStorage.getItem('cy_med_records') || '{}'); } catch(e) {}
+  if (!records[today]) records[today] = {};
+  records[today][key] = !records[today][key];
+  localStorage.setItem('cy_med_records', JSON.stringify(records));
+  renderPillTimeline();
+}
+
+function openMedRecord() {
+  var records = {};
+  try { records = JSON.parse(localStorage.getItem('cy_med_records') || '{}'); } catch(e) {}
+  var days = Object.keys(records).sort().reverse().slice(0, 7);
+  var html = '<div style="padding:16px;background:#fff;border-radius:12px;max-height:70vh;overflow-y:auto">';
+  html += '<div style="font-weight:600;font-size:16px;margin-bottom:16px;text-align:center">服药记录（近7天）</div>';
+  if (days.length === 0) {
+    html += '<div style="text-align:center;color:#999;padding:20px">暂无记录</div>';
+  } else {
+    days.forEach(function(day) {
+      var dayRecords = records[day] || {};
+      var taken = Object.values(dayRecords).filter(function(v) { return v; }).length;
+      var total = Object.keys(dayRecords).length;
+      var pct = total > 0 ? Math.round(taken/total*100) : 0;
+      html += '<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #F0F0F0;gap:10px">';
+      html += '<div style="width:60px;text-align:center">';
+      html += '<div style="font-size:12px;color:#999">' + day.slice(5) + '</div>';
+      html += '</div>';
+      html += '<div style="flex:1">';
+      html += '<div style="height:4px;background:#E0E0E0;border-radius:2px;overflow:hidden">';
+      html += '<div style="height:100%;width:' + pct + '%;background:#07C160;border-radius:2px"></div>';
+      html += '</div>';
+      html += '</div>';
+      html += '<div style="font-size:12px;color:#07C160;font-weight:500">' + taken + '/' + total + '</div>';
+      html += '</div>';
+    });
+  }
+  html += '<button onclick="this.closest(\u0027div[style*=\"border-radius:12px\"]\u0027).remove()" style="width:100%;margin-top:16px;padding:10px;background:#07C160;color:#fff;border:none;border-radius:8px;font-size:14px">关闭</button>';
+  html += '</div>';
+
+  // 显示弹层
+  var overlay = document.createElement('div');
+  overlay.id = 'medRecordOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = html;
+  overlay.onclick = function(e) { if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+// 每次打开首页/药箱 Tab 时刷新时间轴
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(renderPillTimeline, 1500);
+});
+
+// 暴露给全局（Tab 切换时调用）
+window.renderPillTimeline = renderPillTimeline;
+</script>
 
 function checkCabinetAlerts() {
   var cabinet = JSON.parse(localStorage.getItem('cy_cabinet') || '[]');
