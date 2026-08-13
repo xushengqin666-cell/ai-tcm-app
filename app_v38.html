@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.14.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.15.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1238,6 +1238,46 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
      <div id="healthAlertContent" style="margin-top:10px"></div><div id="specialPopAlerts" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div><div id="specialPopAlerts" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div>
    </div>
  </div>
+
+    <!-- 症状选药输入区 -->
+    <div style="margin-bottom:12px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#07C160" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span style="font-weight:600;color:#333;font-size:14px">对症找药</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="symptomInput" placeholder="输入症状，如：头痛、发烧、咳嗽、胃痛..." 
+               style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA" 
+               onkeydown="if(event.key==='Enter')doSymptomSearch()">
+        <button onclick="doSymptomSearch()" style="padding:10px 16px;background:#07C160;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;white-space:nowrap">搜索</button>
+      </div>
+      <div id="symptomResultsContainer" style="margin-top:8px"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <span style="font-size:12px;color:#999">快捷:</span>
+        <button onclick="doSymptomSearch('头痛')" style="padding:4px 10px;background:#E8F5FF;color:#007AFF;border:none;border-radius:12px;font-size:12px">头痛</button>
+        <button onclick="doSymptomSearch('发烧')" style="padding:4px 10px;background:#FFF3E0;color:#FF9800;border:none;border-radius:12px;font-size:12px">发烧</button>
+        <button onclick="doSymptomSearch('咳嗽')" style="padding:4px 10px;background:#E8F5E0;color:#8BC34A;border:none;border-radius:12px;font-size:12px">咳嗽</button>
+        <button onclick="doSymptomSearch('感冒')" style="padding:4px 10px;background:#FCE4EC;color:#E91E63;border:none;border-radius:12px;font-size:12px">感冒</button>
+        <button onclick="doSymptomSearch('胃痛')" style="padding:4px 10px;background:#E3F2FD;color:#2196F3;border:none;border-radius:12px;font-size:12px">胃痛</button>
+        <button onclick="doSymptomSearch('过敏')" style="padding:4px 10px;background:#F3E5F5;color:#9C27B0;border:none;border-radius:12px;font-size:12px">过敏</button>
+        <button onclick="doSymptomSearch('腹泻')" style="padding:4px 10px;background:#E8F5E0;color:#4CAF50;border:none;border-radius:12px;font-size:12px">腹泻</button>
+        <button onclick="doSymptomSearch('失眠')" style="padding:4px 10px;background:#EDE7F6;color:#673AB7;border:none;border-radius:12px;font-size:12px">失眠</button>
+      </div>
+    </div>
+    <script>
+      function doSymptomSearch(symptom) {
+        if (!symptom) {
+          var inp = document.getElementById('symptomInput');
+          symptom = inp ? inp.value.trim() : '';
+        }
+        if (!symptom) return;
+        var container = document.getElementById('symptomResultsContainer');
+        if (container) container.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:13px">正在搜索...</div>';
+        var results = searchBySymptom(symptom);
+        if (container) showSymptomResults(symptom);
+      }
+    </script>
+
 </div>
   <!-- 药品说明书查询 -->
   <div class="card" id="drugManualCard">
@@ -1257,7 +1297,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.14.0 === */
+/* === 3×3 金刚区圆底图标 v2.15.0 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -5067,6 +5107,186 @@ window.showSymptomResults = showSymptomResults;
   function renderCabinet(){
 
 // 药箱智能预警系统
+
+// 症状选药推荐系统
+function searchBySymptom(symptom) {
+  var results = [];
+  var keyword = symptom.trim().toLowerCase();
+
+  if (!keyword) return results;
+
+  // 症状→药品映射表
+  var symptomMap = {
+    "头痛|头疼|headache": [
+      {name: "布洛芬缓释胶囊", reason: "解热镇痛，缓解头痛首选", category: "解热镇痛"},
+      {name: "对乙酰氨基酚片", reason: "温和止痛，适合轻中度头痛", category: "解热镇痛"},
+      {name: "复方氨酚烷胺片", reason: "含对乙酰氨基酚，缓解头痛+感冒症状", category: "感冒用药"}
+    ],
+    "发烧|发热|体温高": [
+      {name: "对乙酰氨基酚片", reason: "退热首选，安全性高", category: "解热镇痛"},
+      {name: "布洛芬混悬液", reason: "儿童/成人退热，起效快", category: "解热镇痛"},
+      {name: "布洛芬缓释胶囊", reason: "退热+镇痛，双效合一", category: "解热镇痛"}
+    ],
+    "咳嗽": [
+      {name: "盐酸氨溴索口服溶液", reason: "化痰排痰，促进呼吸通畅", category: "祛痰药"},
+      {name: "右美沙芬愈创甘油醚糖浆", reason: "干咳首选，镇咳效果好", category: "镇咳药"},
+      {name: "川贝清肺糖浆", reason: "润肺止咳，中药制剂温和", category: "中成药"}
+    ],
+    "感冒": [
+      {name: "复方氨酚烷胺片", reason: "缓解感冒常见症状", category: "感冒用药"},
+      {name: "感冒灵颗粒", reason: "中西结合，快速缓解感冒症状", category: "感冒用药"},
+      {name: "连花清瘟胶囊", reason: "适用于风热感冒，抗病毒", category: "中成药"}
+    ],
+    "胃痛|胃疼|腹痛": [
+      {name: "奥美拉唑肠溶胶囊", reason: "抑制胃酸，缓解胃痛/胃酸过多", category: "胃肠道"},
+      {name: "铝碳酸镁片", reason: "快速中和胃酸，保护胃黏膜", category: "胃肠道"},
+      {name: "多潘立酮片", reason: "促进胃动力，缓解消化不良", category: "胃肠道"}
+    ],
+    "腹泻|拉肚子": [
+      {name: "蒙脱石散", reason: "物理止泻，儿童/成人均适用", category: "止泻药"},
+      {name: "口服补液盐III", reason: "预防/治疗脱水，必备", category: "止泻药"},
+      {name: "盐酸小檗碱片", reason: "细菌性腹泻适用", category: "止泻药"}
+    ],
+    "过敏|荨麻疹|皮肤瘙痒": [
+      {name: "氯雷他定片", reason: "第二代抗组胺，长效无嗜睡", category: "抗过敏"},
+      {name: "盐酸西替利嗪片", reason: "快速缓解过敏症状", category: "抗过敏"},
+      {name: "地氯雷他定片", reason: "强效抗过敏，一天一片", category: "抗过敏"}
+    ],
+    "失眠|睡不着|睡眠障碍": [
+      {name: "佐匹克隆片", reason: "快速入睡，代谢快，不影响第二天", category: "镇静催眠"},
+      {name: "艾司唑仑片", reason: "改善失眠，处方药需医生指导", category: "镇静催眠"},
+      {name: "褪黑素片", reason: "调节睡眠周期，天然温和", category: "助眠保健"}
+    ],
+    "高血压": [
+      {name: "苯磺酸氨氯地平片", reason: "长效降压，一天一次，血压平稳", category: "降压药"},
+      {name: "厄贝沙坦片", reason: "ARB类降压药，保护心肾", category: "降压药"},
+      {name: "硝苯地平控释片", reason: "平稳降压，减少血压波动", category: "降压药"}
+    ],
+    "高血糖|糖尿病": [
+      {name: "二甲双胍片", reason: "2型糖尿病首选，安全性高", category: "降糖药"},
+      {name: "阿卡波糖片", reason: "餐后血糖控制", category: "降糖药"},
+      {name: "格列齐特缓释片", reason: "促进胰岛素分泌", category: "降糖药"}
+    ],
+    "口腔溃疡|口腔": [
+      {name: "口腔溃疡散", reason: "外用，促进愈合", category: "口腔用药"},
+      {name: "复方氯己定含漱液", reason: "消炎漱口水", category: "口腔用药"},
+      {name: "维生素B2片", reason: "补充B族维生素，促进愈合", category: "维生素"}
+    ],
+    "跌打损伤|扭伤|腰痛|腰疼": [
+      {name: "布洛芬缓释胶囊", reason: "消炎止痛，缓解软组织损伤", category: "解热镇痛"},
+      {name: "双氯芬酸二乙胺乳胶剂", reason: "外用镇痛，直接作用于患处", category: "外用药"},
+      {name: "云南白药气雾剂", reason: "活血散瘀，消肿止痛", category: "外用药"}
+    ],
+    "鼻炎|鼻塞|流鼻涕": [
+      {name: "盐酸羟甲唑啉喷雾剂", reason: "快速缓解鼻塞", category: "鼻科用药"},
+      {name: "布地奈德鼻喷雾剂", reason: "鼻用糖皮质激素，长期使用安全", category: "鼻科用药"},
+      {name: "氯雷他定片", reason: "缓解过敏性鼻炎症状", category: "抗过敏"}
+    ],
+    "咽痛|喉咙痛": [
+      {name: "蒲地蓝消炎口服液", reason: "清热解毒，消肿利咽", category: "中成药"},
+      {name: "金嗓子喉片", reason: "含服，缓解咽部不适", category: "咽喉用药"},
+      {name: "银黄含化片", reason: "清热解毒，消炎", category: "咽喉用药"}
+    ],
+    "妇科|月经不调|痛经": [
+      {name: "元胡止痛片", reason: "理气活血，用于痛经", category: "妇科用药"},
+      {name: "布洛芬缓释胶囊", reason: "缓解原发性痛经首选", category: "解热镇痛"},
+      {name: "益母草颗粒", reason: "活血调经", category: "妇科用药"}
+    ],
+    "维生素缺乏": [
+      {name: "维生素C片", reason: "增强免疫力，美白抗氧化", category: "维生素"},
+      {name: "复合维生素B片", reason: "补充B族维生素", category: "维生素"},
+      {name: "维生素D滴剂", reason: "促进钙吸收", category: "维生素"}
+    ],
+    "血脂|高血脂": [
+      {name: "阿托伐他汀钙片", reason: "强效降脂，心血管保护", category: "调脂药"},
+      {name: "瑞舒伐他汀钙片", reason: "长效降脂，一天一片", category: "调脂药"}
+    ],
+    "焦虑|抑郁|情绪": [
+      {name: "舍曲林片", reason: "SSRI类抗抑郁药，处方", category: "精神用药"},
+      {name: "盐酸帕罗西汀片", reason: "抗焦虑首选", category: "精神用药"}
+    ],
+    "眩晕|头晕": [
+      {name: "盐酸倍他司汀片", reason: "改善椎-基底动脉供血", category: "脑血管药"},
+      {name: "盐酸氟桂利嗪胶囊", reason: "预防和治疗眩晕", category: "脑血管药"},
+      {name: "甲磺酸倍他司汀片", reason: "梅尼埃病首选", category: "脑血管药"}
+    ]
+  };
+
+  // 模糊匹配症状
+  var matched = [];
+  for (var pattern in symptomMap) {
+    var regex;
+    try { regex = new RegExp(pattern, "i"); } catch(e) { continue; }
+    if (regex.test(keyword)) {
+      symptomMap[pattern].forEach(function(drug) {
+        drug.score = pattern.length; // 匹配越精确分数越高
+        matched.push(drug);
+      });
+    }
+  }
+
+  // 同时在 DRUG_GUIDE 中搜索症状关键词
+  if (typeof DRUG_GUIDE !== "undefined" && DRUG_GUIDE) {
+    DRUG_GUIDE.forEach(function(item) {
+      var indications = (item.indications || item.适应症 || "") + (item.category || "") + (item.tags || "");
+      if (indications.toLowerCase().indexOf(keyword) >= 0) {
+        matched.push({
+          name: item.name || item.药品名称 || "",
+          reason: item.indications || item.适应症 || "适用于相关症状",
+          category: item.category || "药品",
+          score: 1
+        });
+      }
+    });
+  }
+
+  // 去重（按药名）
+  var seen = {};
+  results = matched.filter(function(item) {
+    if (!item.name || seen[item.name]) return false;
+    seen[item.name] = true;
+    return true;
+  });
+
+  // 按分数排序
+  results.sort(function(a, b) { return (b.score || 0) - (a.score || 0); });
+
+  return results.slice(0, 10); // 最多返回10个
+}
+
+function showSymptomResults(symptom) {
+  var results = searchBySymptom(symptom);
+  var container = document.getElementById('symptomResultsContainer') || document.getElementById('manualCard');
+  if (!container) return;
+
+  if (results.length === 0) {
+    container.innerHTML += '<div style="text-align:center;padding:20px;color:#999">未找到相关药品，请尝试其他症状描述</div>';
+    return;
+  }
+
+  var html = '<div style="background:#F5F5F5;border-radius:10px;padding:12px;margin-top:12px">';
+  html += '<div style="font-weight:600;color:#333;margin-bottom:10px">为您推荐「' + escHtml(symptom) + '」相关药品</div>';
+
+  results.forEach(function(item, i) {
+    var colors = { "解热镇痛": "#FF6B6B", "感冒用药": "#4ECDC4", "胃肠道": "#45B7D1", "祛痰药": "#96CEB4", "镇咳药": "#FFEAA7", "抗过敏": "#DDA0DD", "镇静催眠": "#98D8C8", "降压药": "#F7DC6F", "降糖药": "#BB8FCE", "调脂药": "#85C1E9", "中成药": "#82E0AA", "外用药": "#F0B27A", "妇科用药": "#F1948A", "咽喉用药": "#AED6F1", "维生素": "#F9E79F", "口腔用药": "#A9DFBF", "鼻科用药": "#AED6F1", "止泻药": "#82E0AA", "精神用药": "#D7BDE2", "脑血管药": "#85C1E9", "助眠保健": "#D5F5E3", "default": "#BDC3C7" };
+    var color = colors[item.category] || colors["default"];
+
+    html += '<div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer" onclick="doManualSearch(\u0027' + item.name + '\u0027)">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+    html += '<span style="background:' + color + ';color:#fff;font-size:11px;padding:2px 6px;border-radius:8px">' + (item.category || "药品") + '</span>';
+    html += '<span style="font-weight:600;color:#333;font-size:14px">' + item.name + '</span>';
+    html += '<span style="margin-left:auto;color:#10AEFF;font-size:12px">查看详情 →</span>';
+    html += '</div>';
+    html += '<div style="color:#666;font-size:12px">' + item.reason + '</div>';
+    html += '</div>';
+  });
+
+  html += '<div style="text-align:center;color:#999;font-size:12px;margin-top:8px">* 仅供参考，具体用药请咨询医生或药师</div>';
+  html += '</div>';
+
+  container.innerHTML += html;
+}
+
 function checkCabinetAlerts() {
   var cabinet = JSON.parse(localStorage.getItem('cy_cabinet') || '[]');
   var alertPanel = document.getElementById('cabinetAlertPanel');
