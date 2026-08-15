@@ -14,12 +14,12 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.18.0</title>
+<title>彩云智药 · 家庭AI药师 · v2.9.8</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6f5;color:#222;min-height:100vh;min-height:100dvh}
-header{background:linear-gradient(135deg,#0f766e,#10b981);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 1px 10px rgba(15,118,110,.18)}
+header{background:linear-gradient(135deg,#0C8B6C,#109E71);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 1px 10px rgba(15,118,110,.18)}
 header h1{font-size:18px;font-weight:700}
 .lang-switch{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 10px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600}
 .lang-switch:hover{background:rgba(255,255,255,.4);box-shadow:0 2px 8px rgba(0,0,0,.1)}
@@ -327,24 +327,33 @@ async function callGroqAPI(question) {
 <style id="premium-css">
 /* ===== 彩云智药 · 大厂质感设计系统 ===== */
 :root{
-  --c-primary:#07C160;
-  --c-primary-d:#06A050;
-  --c-primary-l:#E8F8EF;
-  --c-accent:#FF9F0A;
-  --c-danger:#FA5151;
-  --c-bg:#F2F3F5;
-  --c-card:#FFFFFF;
-  --c-text:#1A1A1A;
-  --c-text-2:#6B6F76;
-  --c-text-3:#9CA0A8;
-  --c-border:#ECECEC;
-  --sh-1:0 1px 2px rgba(16,24,40,.05),0 4px 12px rgba(16,24,40,.06);
-  --sh-2:0 8px 24px rgba(16,24,40,.10);
-  --sh-primary:0 2px 10px rgba(7,193,96,.30);
-  --r-s:8px;--r-m:12px;--r-l:18px;--r-xl:24px;
+  --c-primary:#0C8B6C;
+  --c-primary-d:#0A7059;
+  --c-primary-l:#E6F4F1;
+  --c-primary-ll:#F0F9F7;
+  --c-accent:#F5A623;
+  --c-danger:#D32F2F;
+  --c-danger-l:#FFEBEE;
+  --c-warning:#F57C00;
+  --c-warning-l:#FFF3E0;
+  --c-success:#2E7D32;
+  --c-success-l:#E8F5E9;
+  --c-bg:#F5F7FA;
+  --c-bg-card:#FFFFFF;
+  --c-text:#1F2329;
+  --c-text-2:#646A73;
+  --c-text-3:#8F959E;
+  --c-border:#E4E7ED;
+  --c-divider:#EBEEF5;
+  --sh-1:0 1px 3px rgba(31,35,41,.04),0 4px 12px rgba(31,35,41,.06);
+  --sh-2:0 6px 16px rgba(31,35,41,.08),0 12px 32px rgba(31,35,41,.10);
+  --sh-card:0 2px 8px rgba(31,35,41,.04),0 4px 16px rgba(31,35,41,.06);
+  --sh-float:0 8px 24px rgba(31,35,41,.12);
+  --r-xs:4px;--r-s:8px;--r-m:12px;--r-l:16px;--r-xl:20px;--r-2xl:24px;
   --safe-t:env(safe-area-inset-top,0px);
   --safe-b:env(safe-area-inset-bottom,0px);
-  --nav-h:54px;
+  --nav-h:56px;
+  --spacing-xs:4px;--spacing-s:8px;--spacing-m:12px;--spacing-l:16px;--spacing-xl:24px;
 }
 *{ -webkit-tap-highlight-color:transparent; }
 html,body{ background:var(--c-bg); }
@@ -501,6 +510,182 @@ header>div{display:flex;align-items:center;gap:10px}
 .dark #interactNet{background:#15181F}
 .dark .chat-messages{background:#15181F}
 .dark .skeleton{background:linear-gradient(90deg,#232730 25%,#2A2E37 50%,#232730 75%);background-size:200% auto}
+
+/* ===== 医疗级组件 v2.19.0 ===== */
+/* 卡片：更柔和阴影 + 精细圆角 */
+.card{
+  background:var(--c-bg-card);
+  border-radius:var(--r-xl);
+  padding:var(--spacing-l);
+  margin-bottom:var(--spacing-l);
+  box-shadow:var(--sh-card);
+  border:1px solid rgba(0,0,0,.02);
+  transition:box-shadow .2s ease,transform .2s ease
+}
+.card:hover{box-shadow:var(--sh-2);transform:translateY(-2px)}
+.card-title{font-size:16px;font-weight:600;color:var(--c-text);margin-bottom:var(--spacing-m)}
+
+/* 按钮：医疗绿主色 + 清晰交互 */
+.btn-primary{
+  background:var(--c-primary);
+  color:#fff;
+  border:none;
+  padding:10px 20px;
+  border-radius:var(--r-m);
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(12,139,108,.25);
+  transition:all .15s ease
+}
+.btn-primary:hover{background:var(--c-primary-d);box-shadow:0 4px 12px rgba(12,139,108,.35)}
+.btn-primary:active{transform:scale(.97);box-shadow:0 1px 4px rgba(12,139,108,.2)}
+.btn-primary:disabled{background:#B2DFDB;box-shadow:none;cursor:not-allowed}
+
+.btn-secondary{
+  background:var(--c-primary-l);
+  color:var(--c-primary);
+  border:1.5px solid var(--c-primary);
+  padding:9px 18px;
+  border-radius:var(--r-m);
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s ease
+}
+.btn-secondary:hover{background:var(--c-primary-ll);border-color:var(--c-primary-d)}
+
+/* 输入框：清晰聚焦态 */
+.field input,.field select{
+  width:100%;
+  padding:12px 14px;
+  border:1.5px solid var(--c-border);
+  border-radius:var(--r-m);
+  font-size:14px;
+  background:var(--c-bg-card);
+  outline:none;
+  transition:all .2s ease
+}
+.field input:focus,.field select:focus{
+  border-color:var(--c-primary);
+  box-shadow:0 0 0 3px rgba(12,139,108,.12)
+}
+.field input::placeholder{color:var(--c-text-3)}
+
+/* Tab 栏：精致分隔线 */
+.tab-bar{
+  border-bottom:1px solid var(--c-divider);
+  background:var(--c-bg-card);
+  box-shadow:0 1px 0 rgba(0,0,0,.02)
+}
+.tab-btn{
+  color:var(--c-text-2);
+  font-size:14px;
+  font-weight:500;
+  border-bottom:2px solid transparent;
+  transition:all .2s ease
+}
+.tab-btn.active{
+  color:var(--c-primary);
+  border-bottom-color:var(--c-primary);
+  font-weight:600
+}
+
+/* 搜索框：聚焦高亮 */
+.search-box input{
+  border:1.5px solid var(--c-border);
+  border-radius:var(--r-xl);
+  transition:all .2s ease
+}
+.search-box input:focus{
+  border-color:var(--c-primary);
+  box-shadow:0 0 0 3px rgba(12,139,108,.12),var(--sh-1)
+}
+
+/* 状态标签 */
+.tag-primary{background:var(--c-primary-l);color:var(--c-primary);padding:4px 10px;border-radius:var(--r-s);font-size:12px;font-weight:600}
+.tag-danger{background:var(--c-danger-l);color:var(--c-danger);padding:4px 10px;border-radius:var(--r-s);font-size:12px;font-weight:600}
+.tag-warning{background:var(--c-warning-l);color:var(--c-warning);padding:4px 10px;border-radius:var(--r-s);font-size:12px;font-weight:600}
+
+/* ===== 首页医疗级优化 v2.19.0 ===== */
+/* Hero 区域：增大标题 + 精细间距 */
+.hero{
+  padding:var(--spacing-xl) var(--spacing-l);
+  background:linear-gradient(135deg,var(--c-primary),#109E71);
+  border-radius:var(--r-2xl);
+  margin-bottom:var(--spacing-l);
+  box-shadow:var(--sh-card)
+}
+.hero-title{
+  font-size:24px;
+  font-weight:700;
+  color:#fff;
+  margin-bottom:var(--spacing-s);
+  line-height:1.3
+}
+.hero-sub{
+  font-size:14px;
+  color:rgba(255,255,255,.85);
+  line-height:1.5;
+  font-weight:400
+}
+
+/* 首页卡片：突出核心功能 */
+#homeTab .card{
+  background:var(--c-bg-card);
+  border-radius:var(--r-xl);
+  box-shadow:var(--sh-card);
+  border:none
+}
+#homeTab .card-title{
+  font-size:15px;
+  font-weight:600;
+  color:var(--c-text);
+  margin-bottom:var(--spacing-m)
+}
+
+/* 搜索框：更宽敞 */
+#homeTab .search-box input{
+  padding:12px 16px;
+  font-size:15px;
+  border-radius:var(--r-xl)
+}
+
+/* 功能网格：圆底图标 + 精细对齐 */
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:var(--spacing-l);
+  padding:var(--spacing-s) 0
+}
+.feature-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:var(--spacing-m) var(--spacing-s);
+  border-radius:var(--r-xl);
+  transition:all .2s ease;
+  cursor:pointer;
+  border:none;
+  background:transparent
+}
+.feature-btn:hover{background:var(--c-primary-ll)}
+.feature-btn svg{width:32px;height:32px;margin-bottom:var(--spacing-s)}
+.feature-btn span{font-size:12px;color:var(--c-text-2);font-weight:500}
+
+/* 信任条：专业背书 */
+.trust-bar{
+  display:flex;
+  align-items:center;
+  gap:var(--spacing-s);
+  padding:var(--spacing-s) var(--spacing-m);
+  background:var(--c-primary-ll);
+  border-radius:var(--r-m);
+  margin-top:var(--spacing-m);
+  font-size:12px;
+  color:var(--c-text-2)
+}
+.trust-bar svg{width:16px;height:16px;fill:var(--c-primary)}
 </style>
 <style id="feature-css">
 /* ===== 药箱 / 家庭 / 提醒 功能样式 ===== */
@@ -650,7 +835,7 @@ to{opacity:1;transform:translateY(0);letter-spacing:4px}}
 @keyframes bootTag{from{opacity:0}to{opacity:1}}
 @keyframes bootRing{from{transform:scale(.5);opacity:.7}to{transform:scale(1.35);opacity:0}}
 
-.hero{position:relative;overflow:hidden;border-radius:16px;padding:22px 20px;margin-bottom:14px;background:linear-gradient(135deg,#0f766e,#10b981);color:#fff;box-shadow:0 8px 24px rgba(15,118,110,.22)}
+.hero{position:relative;overflow:hidden;border-radius:16px;padding:22px 20px;margin-bottom:14px;background:linear-gradient(135deg,#0C8B6C,#109E71);color:#fff;box-shadow:0 8px 24px rgba(15,118,110,.22)}
 .hero::after{content:'';position:absolute;right:-44px;top:-44px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.07)}
 .hero::before{content:'';position:absolute;left:-30px;bottom:-60px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)}
 .hero-title{font-size:21px;font-weight:700;letter-spacing:.5px;position:relative;z-index:1}
@@ -1028,39 +1213,8 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <!-- 首页 -->
 <div id="tab-home" role="main" aria-label="首页内容" class="tab-content active" style="display:block">
   <div class="hero" id="heroCard">
-
-    <!-- 药箱预警面板 -->
-    <div id="cabinetAlertPanel" style="display:none;margin-bottom:12px"></div>
-
     <div class="hero-title" id="heroGreet">早上好</div>
     <div class="hero-sub" id="heroSub">家庭 AI 药师 · 让每一次用药更安心</div>
-  </div>
-  <!-- 药品识别横幅（对标丁香医生「条码一扫」家庭用药第一入口） -->
-  <div class="card" onclick="try{openDrugCamera()}catch(e){switchTab('chat')}" style="cursor:pointer;background:linear-gradient(135deg,#07C160,#0E9F57);color:#fff;border:none;box-shadow:0 4px 16px rgba(7,193,96,0.25)">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      </div>
-      <div style="flex:1">
-        <div style="font-size:16px;font-weight:700">拍照 / 扫码识别药品</div>
-        <div style="font-size:12.5px;opacity:0.92;margin-top:2px">对准药盒或说明书，自动解析成分、用法与禁忌</div>
-      </div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
-    </div>
-  </div>
-  <!-- 对症找药（对标丁香医生「对症找药」核心能力） -->
-  <div class="card">
-    <div class="card-head"><span class="card-title">对症找药</span></div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px">
-      <button onclick="quickSymptom('头痛')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">头痛</button>
-      <button onclick="quickSymptom('发烧')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">发烧</button>
-      <button onclick="quickSymptom('咳嗽')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">咳嗽</button>
-      <button onclick="quickSymptom('感冒')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">感冒</button>
-      <button onclick="quickSymptom('胃痛')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">胃痛</button>
-      <button onclick="quickSymptom('过敏')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">过敏</button>
-      <button onclick="quickSymptom('失眠')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">失眠</button>
-      <button onclick="quickSymptom('腹泻')" style="padding:7px 14px;border:1px solid #d9ece2;background:#fff;color:#07C160;border-radius:18px;font-size:13px;cursor:pointer">腹泻</button>
-    </div>
   </div>
   <div class="card">
     <div class="card-title" id="searchTitle">智能搜索</div>
@@ -1080,247 +1234,19 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   <div class="card" id="manualCard">
     <div class="card-title" id="featureTitle">功能入口</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px 8px;padding:4px 2px">
-      <button class="feat-icon-btn" onclick="switchTab('chat')" aria-label="AI问药">
-        <div class="feat-icon-wrap" style="background:#E8F5E9"><svg viewBox="0 0 24 24" fill="none" stroke="#07C160" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
-        <span class="feat-icon-label">AI 问药</span>
-      </button>
-      <button class="feat-icon-btn" onclick="openCabinet()" aria-label="家庭药箱">
-        <div class="feat-icon-wrap" style="background:#FFF3E0"><svg viewBox="0 0 24 24" fill="none" stroke="#FF9800" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><path d="M4.5 14.5l9-9a3.5 3.5 0 0 1 5 5l-9 9a3.5 3.5 0 0 1-5-5z"/><path d="M9 9l6 6"/></svg></div>
-        <span class="feat-icon-label">家庭药箱</span>
-      </button>
-      <button class="feat-icon-btn" onclick="switchTab('member')" aria-label="家庭成员">
-        <div class="feat-icon-wrap" style="background:#E3F2FD"><svg viewBox="0 0 24 24" fill="none" stroke="#2196F3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6a3 3 0 0 1 0 6"/><path d="M16.5 14a5.5 5.5 0 0 1 4.5 6"/></svg></div>
-        <span class="feat-icon-label">家庭成员</span>
-      </button>
-      <button class="feat-icon-btn" onclick="switchTab('reminder')" aria-label="用药提醒">
-        <div class="feat-icon-wrap" style="background:#FCE4EC"><svg viewBox="0 0 24 24" fill="none" stroke="#E91E63" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
-        <span class="feat-icon-label">用药提醒</span>
-      </button>
-      <button class="feat-icon-btn" onclick="switchTab('interact')" aria-label="相互作用">
-        <div class="feat-icon-wrap" style="background:#FFF8E1"><svg viewBox="0 0 24 24" fill="none" stroke="#F57C00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <span class="feat-icon-label">相互作用</span>
-      </button>
-      <button class="feat-icon-btn" onclick="switchTab('report')" aria-label="辨证报告">
-        <div class="feat-icon-wrap" style="background:#F3E5F5"><svg viewBox="0 0 24 24" fill="none" stroke="#9C27B0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5"/><path d="M9 12h6M9 16h6"/></svg></div>
-        <span class="feat-icon-label">辨证报告</span>
-      </button>
-      <button class="feat-icon-btn" onclick="scrollToManual()" aria-label="用药指南">
-        <div class="feat-icon-wrap" style="background:#E0F2F1"><svg viewBox="0 0 24 24" fill="none" stroke="#00796B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-        <span class="feat-icon-label">用药指南</span>
-      </button>
-      <button class="feat-icon-btn" onclick="cyAccount()" aria-label="设置">
-        <div class="feat-icon-wrap" style="background:#ECEFF1"><svg viewBox="0 0 24 24" fill="none" stroke="#546E7A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2l-1.8 1.8M7 17l-1.8 1.8"/></svg></div>
-        <span class="feat-icon-label">设置</span>
-      </button>
-      <button class="feat-icon-btn" onclick="try{openDrugCamera()}catch(e){switchTab('chat')}" aria-label="拍照识别">
-        <div class="feat-icon-wrap" style="background:#F1F8E9"><svg viewBox="0 0 24 24" fill="none" stroke="#558B2F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
-        <span class="feat-icon-label">拍照识别</span>
-      </button>
-    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn-secondary" onclick="switchTab('chat')" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span id="featChat">AI 问药</span></button>
+      <button class="btn-secondary" onclick="openCabinet()" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><path d="M4.5 14.5l9-9a3.5 3.5 0 0 1 5 5l-9 9a3.5 3.5 0 0 1-5-5z"/><path d="M9 9l6 6"/></svg><span id="featCabinet">家庭药箱</span></button>
+      <button class="btn-secondary" onclick="switchTab('member')" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6a3 3 0 0 1 0 6"/><path d="M16.5 14a5.5 5.5 0 0 1 4.5 6"/></svg><span id="featMember">家庭成员</span></button>
+      <button class="btn-secondary" onclick="switchTab('reminder')" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span id="featReminder">用药提醒</span></button>
+      <button class="btn-secondary" onclick="switchTab('interact')" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><path d="M12 3.5l9 16H3z"/><path d="M12 10v4"/><path d="M12 17v.5"/></svg><span id="featInteract">相互作用</span></button>
+      <button class="btn-secondary" onclick="cyAccount()" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2l-1.8 1.8M7 17l-1.8 1.8"/></svg><span id="featSettings">设置</span></button>
+      <button class="btn-secondary" onclick="switchTab('report')" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><path d="M6 2h9l4 4v16H6z"/><path d="M14 2v5h5"/><path d="M9 12h6M9 16h6"/></svg><span id="featReport">辨证报告</span></button>
+      <button class="btn-secondary" onclick="scrollToManual()" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;vertical-align:middle"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span id="featManual">用药指南</span></button>
     </div>
   
 
- <div class="card" id="healthFeedCard" style="border-left:3px solid #07C160">
-    <div class="card-head">
-      <span class="card-title" id="healthFeedTitle">健康科普</span>
-      <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#E8F5E9;color:#07C160;font-weight:600">每日更新</span>
-    </div>
-    <div id="healthFeedContent">
-      <div class="feed-item" onclick="expandFeed(this)">
-
-<!-- 饮食禁忌查询卡片 -->
-<div class="card" id="dietTabooCard" style="border-left:3px solid #FF6B6B;margin-top:12px">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm0-4V7h2v6h-2z" fill="#FF6B6B"/></svg>
-    <span style="font-weight:600;color:#333">饮食禁忌查询</span>
-  </div>
-  <div style="background:#FFF5F5;padding:12px;border-radius:8px">
-    <input type="text" id="dietDrugInput" placeholder="输入药品名称，查询用药期间忌口" style="width:100%;padding:10px 12px;border:1px solid #FFB3B3;border-radius:6px;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')queryDietTaboo()">
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn-secondary" onclick="queryDietTaboo()" style="flex:1;background:#FF6B6B;color:#fff;border:none">查询</button>
-    </div>
-  </div>
-  <div id="dietResult" style="margin-top:12px"></div>
-</div>
-
-<!-- 服药时间指导卡片 -->
-<div class="card" id="timingGuideCard" style="border-left:3px solid #3498DB;margin-top:12px">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#3498DB" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#3498DB" stroke-width="2" stroke-linecap="round"/></svg>
-    <span style="font-weight:600;color:#333">服药时间指导</span>
-  </div>
-  <div style="background:#E8F4FC;padding:12px;border-radius:8px">
-    <input type="text" id="timingDrugInput" placeholder="输入药品名称，查询最佳服药时间" style="width:100%;padding:10px 12px;border:1px solid #87CEEB;border-radius:6px;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')queryTimingGuide()">
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn-secondary" onclick="queryTimingGuide()" style="flex:1;background:#3498DB;color:#fff;border:none">查询</button>
-    </div>
-  </div>
-  <div id="timingResult" style="margin-top:12px"></div>
-</div>
-
-<!-- 扫码识药 -->
-<div class="card" id="scanDrugCard" style="border-left:3px solid #10AEFF;margin-top:12px">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#10AEFF" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#10AEFF" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#10AEFF" stroke-width="2"/><path d="M14 17.5h7M17.5 14v7" stroke="#10AEFF" stroke-width="2" stroke-linecap="round"/></svg>
-    <span style="font-weight:600;color:#333">扫码识药</span>
-    <span style="font-size:12px;color:#10AEFF;background:#E8F5FF;padding:2px 8px;border-radius:10px">一拍即查</span>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <div onclick="openBarcodeScanner()" style="background:linear-gradient(135deg,#10AEFF,#007AFF);padding:16px;border-radius:10px;color:#fff;text-align:center;cursor:pointer">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#fff" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#fff" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#fff" stroke-width="1.5"/><path d="M14 17.5h7M17.5 14v7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <div style="font-weight:600;font-size:14px">扫描条形码</div>
-      <div style="font-size:11px;opacity:0.8">药盒/说明书条形码</div>
-    </div>
-    <div onclick="openDrugCamera()" style="background:linear-gradient(135deg,#07C160,#04B87A);padding:16px;border-radius:10px;color:#fff;text-align:center;cursor:pointer">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px"><path d="M9 2H15L17 4H21C22.1 4 23 4.9 23 6V18C23 19.1 22.1 20 21 20H3C1.9 20 1 19.1 1 18V6C1 4.9 1.9 4 3 4H7L9 2Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="#fff" stroke-width="1.5"/></svg>
-      <div style="font-weight:600;font-size:14px">拍照识别</div>
-      <div style="font-size:11px;opacity:0.8">药盒外观/说明书</div>
-    </div>
-  </div>
-  <div id="scanResult" style="margin-top:12px"></div>
-</div>
-
-<!-- 条形码扫描弹层 -->
-<div id="barcodeScannerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
-  <div style="background:#1a1a1a;border-radius:16px;padding:20px;width:min(360px,90vw);text-align:center">
-    <div style="color:#fff;font-size:16px;font-weight:600;margin-bottom:16px">扫描条形码/追溯码</div>
-    <video id="barcodeVideo" autoplay playsinline style="width:100%;border-radius:12px;background:#000"></video>
-    <canvas id="barcodeCanvas" style="display:none"></canvas>
-    <div style="color:#aaa;font-size:13px;margin:12px 0">将条形码对准扫描框</div>
-    <div style="display:flex;gap:10px;margin-top:12px">
-      <button onclick="closeBarcodeScanner()" style="flex:1;padding:12px;border-radius:8px;border:1px solid #444;color:#fff;background:transparent;font-size:14px">取消</button>
-      <button onclick="switchToCamera()" style="flex:1;padding:12px;border-radius:8px;border:none;background:#10AEFF;color:#fff;font-size:14px">切换镜头</button>
-    </div>
-    <input type="text" id="manualBarcodeInput" placeholder="或手动输入条形码" style="width:100%;margin-top:10px;padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#fff;font-size:14px;box-sizing:border-box" onkeydown="if(event.key==='Enter')lookupBarcode()">
-    <button onclick="lookupBarcode()" style="width:100%;margin-top:8px;padding:12px;border-radius:8px;border:none;background:#07C160;color:#fff;font-size:14px;font-weight:600">查询药品</button>
-  </div>
-</div>
-
-
-
-        <div class="feed-title">💊 服用布洛芬前，这 5 件事必须知道</div>
-        <div class="feed-snippet">布洛芬是最常用的解热镇痛药，但很多人不知道它与阿司匹林同为 NSAIDs 类药物，合用会增加胃肠道出血风险。此外，孕妇禁用，哺乳期慎用。</div>
-        <div class="feed-tag" style="color:#FA5151;background:#FFF0F0">⚠️ 用药安全</div>
-      </div>
-      <div class="feed-item" onclick="expandFeed(this)">
-        <div class="feed-title">🌡️ 体温超过多少度需要吃退烧药？</div>
-        <div class="feed-snippet">一般成人腋温 ≥ 37.5°C（口腔 ≥ 38°C，肛温 ≥ 38°C）视为发热。38.5°C 以下可先物理降温；超过 38.5°C 或持续高热，建议服用退烧药。</div>
-        <div class="feed-tag" style="color:#FF9800;background:#FFF3E0">💡 退烧指南</div>
-      </div>
-      <div class="feed-item" onclick="expandFeed(this)">
-        <div class="feed-title">🧓 老年人用药，这几点最容易被忽视</div>
-        <div class="feed-snippet">老年人肝肾代谢能力下降，药物半衰期延长，剂量通常为成人 2/3～3/4。多药联用时需警惕药物相互作用，每年至少一次完整用药盘点。</div>
-        <div class="feed-tag" style="color:#2196F3;background:#E3F2FD">👵 老年用药</div>
-      </div>
-      <div class="feed-item" onclick="expandFeed(this)">
-        <div class="feed-title">🤰 孕期用药分级：哪些药安全，哪些绝对禁用？</div>
-        <div class="feed-snippet">FDA 妊娠用药分级已被淘汰，现采用循证数据。已知致畸药物（维A酸、沙利度胺等）孕期绝对禁用；叶酸、铁剂等为孕期推荐用药。</div>
-        <div class="feed-tag" style="color:#9C27B0;background:#F3E5F5">🤰 孕期安全</div>
-      </div>
-      <div class="feed-item" onclick="expandFeed(this)">
-        <div class="feed-title">💊 抗生素 ≠ 消炎药，别再混为一谈</div>
-        <div class="feed-snippet">抗生素针对细菌感染，消炎药（布洛芬等）针对炎症反应。感冒大多数是病毒感染，抗生素无效且增加耐药风险。遵医嘱使用是关键。</div>
-        <div class="feed-tag" style="color:#07C160;background:#E8F5E9">🧬 科普</div>
-      </div>
-    </div>
-  </div>
-
-    <!-- 服药时间轴 -->
-    <div class="card" id="pillTimelineCard" style="border-left:3px solid #07C160;margin-top:12px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#07C160" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#07C160" stroke-width="2" stroke-linecap="round"/></svg>
-        <span style="font-weight:600;color:#333">今日服药</span>
-        <span id="timelineDate" style="font-size:12px;color:#999"></span>
-        <span id="timelineBadge" style="margin-left:auto;background:#07C160;color:#fff;font-size:12px;padding:2px 8px;border-radius:10px"></span>
-      </div>
-      <div id="pillTimelineContent">
-        <div id="timelineEmpty" style="text-align:center;padding:20px;color:#999">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="margin:0 auto 8px;opacity:0.4"><path d="M9.5 3L8 8H4l1.5 8L12 21l6.5-5L20 8h-4L14.5 3H9.5z" stroke="#999" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          <div style="font-size:13px">今日暂无服药计划</div>
-          <div style="font-size:12px;margin-top:4px">在药箱中添加药品并设置提醒</div>
-        </div>
-        <div id="timelineList" style="display:none"></div>
-      </div>
-    </div>
-
-    <!-- 慢病管理 -->
-    <div class="card" id="chronicCard" style="border-left:3px solid #9C27B0;margin-top:12px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#9C27B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span style="font-weight:600;color:#333">慢病管理</span>
-        <span style="font-size:12px;color:#9C27B0;background:#F3E5F5;padding:2px 8px;border-radius:10px">健康追踪</span>
-      </div>
-
-      <!-- 类型切换 -->
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-        <button onclick="switchChronicTab('bp')" id="chronicTab_bp" style="padding:6px 14px;border-radius:16px;font-size:13px;font-weight:500;border:none;background:#9C27B0;color:#fff">血压</button>
-        <button onclick="switchChronicTab('bs')" id="chronicTab_bs" style="padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid #E0E0E0;background:#fff;color:#666">血糖</button>
-        <button onclick="switchChronicTab('lipid')" id="chronicTab_lipid" style="padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid #E0E0E0;background:#fff;color:#666">血脂</button>
-        <button onclick="switchChronicTab('weight')" id="chronicTab_weight" style="padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid #E0E0E0;background:#fff;color:#666">体重</button>
-      </div>
-
-      <!-- 数据输入区 -->
-      <div id="chronicInputArea">
-        <div id="chronicBPInput" style="display:block">
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="number" id="chronicSYS" placeholder="收缩压" min="60" max="250" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
-            <span style="color:#999;font-size:14px">/</span>
-            <input type="number" id="chronicDIA" placeholder="舒张压" min="40" max="150" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
-            <span style="color:#999;font-size:13px">mmHg</span>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-            <input type="number" id="chronicHR" placeholder="心率(可选)" min="40" max="200" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
-            <span style="color:#999;font-size:13px">次/分</span>
-            <button onclick="saveChronicRecord('bp')" style="padding:8px 16px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录</button>
-          </div>
-        </div>
-        <div id="chronicBSInput" style="display:none">
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="number" id="chronicBS" placeholder="血糖值" min="1" max="35" step="0.1" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
-            <select id="chronicBSPeriod" style="padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#fff">
-              <option value="fasting">空腹</option>
-              <option value="post">餐后2h</option>
-              <option value="random">随机</option>
-            </select>
-            <span style="color:#999;font-size:13px">mmol/L</span>
-            <button onclick="saveChronicRecord('bs')" style="padding:8px 16px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录</button>
-          </div>
-        </div>
-        <div id="chronicLipidInput" style="display:none">
-          <div style="display:flex;gap:6px;align-items:center">
-            <div style="flex:1;text-align:center">
-              <div style="font-size:11px;color:#999;margin-bottom:4px">TC总胆固醇</div>
-              <input type="number" id="chronicTC" placeholder="TC" min="1" max="15" step="0.1" style="width:100%;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#FAFAFA;text-align:center">
-            </div>
-            <div style="flex:1;text-align:center">
-              <div style="font-size:11px;color:#999;margin-bottom:4px">LDL-C</div>
-              <input type="number" id="chronicLDL" placeholder="LDL" min="0.5" max="10" step="0.1" style="width:100%;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#FAFAFA;text-align:center">
-            </div>
-            <div style="flex:1;text-align:center">
-              <div style="font-size:11px;color:#999;margin-bottom:4px">HDL-C</div>
-              <input type="number" id="chronicHDL" placeholder="HDL" min="0.5" max="5" step="0.1" style="width:100%;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:13px;background:#FAFAFA;text-align:center">
-            </div>
-          </div>
-          <button onclick="saveChronicRecord('lipid')" style="width:100%;margin-top:8px;padding:8px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录血脂</button>
-        </div>
-        <div id="chronicWeightInput" style="display:none">
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="number" id="chronicWeight" placeholder="体重" min="20" max="300" step="0.1" style="flex:1;padding:8px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA;text-align:center">
-            <span style="color:#999;font-size:13px">kg</span>
-            <button onclick="saveChronicRecord('weight')" style="padding:8px 16px;background:#9C27B0;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500">记录</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 最近记录 -->
-      <div id="chronicRecent" style="margin-top:12px"></div>
-      <!-- 趋势图区域 -->
-      <div id="chronicTrend" style="margin-top:12px;display:none"></div>
-    </div>
-
-
-  <div class="card" id="healthTipCard" style="border-left:3px solid var(--c-primary);display:none">
+ <div class="card" id="healthTipCard" style="border-left:3px solid var(--c-primary)">
    <div class="card-head">
      <span class="card-title" id="healthTipTitle">用药安全提示</span>
      <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:var(--c-primary-l);color:var(--c-primary-d);font-weight:600">通用</span>
@@ -1330,319 +1256,19 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
        <svg viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
        <span id="healthTipText">遵医嘱用药，不擅自调整剂量；仔细阅读说明书，注意禁忌和注意事项。</span>
      </div>
-     <div id="healthAlertContent" style="margin-top:10px"></div><div id="specialPopAlerts" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div><div id="specialPopAlerts" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div>
+     <div id="healthAlertContent" style="margin-top:10px"></div>
    </div>
  </div>
-
-    <!-- 症状选药输入区 -->
-    <div style="margin-bottom:12px">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#07C160" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <span style="font-weight:600;color:#333;font-size:14px">对症找药</span>
-      </div>
-      <div style="display:flex;gap:8px">
-        <input type="text" id="symptomInput" placeholder="输入症状，如：头痛、发烧、咳嗽、胃痛..." 
-               style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid #E0E0E0;font-size:14px;background:#FAFAFA" 
-               onkeydown="if(event.key==='Enter')doSymptomSearch()">
-        <button onclick="doSymptomSearch()" style="padding:10px 16px;background:#07C160;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;white-space:nowrap">搜索</button>
-      </div>
-      <div id="symptomResultsContainer" style="margin-top:8px"></div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
-        <span style="font-size:12px;color:#999">快捷:</span>
-        <button onclick="doSymptomSearch('头痛')" style="padding:4px 10px;background:#E8F5FF;color:#007AFF;border:none;border-radius:12px;font-size:12px">头痛</button>
-        <button onclick="doSymptomSearch('发烧')" style="padding:4px 10px;background:#FFF3E0;color:#FF9800;border:none;border-radius:12px;font-size:12px">发烧</button>
-        <button onclick="doSymptomSearch('咳嗽')" style="padding:4px 10px;background:#E8F5E0;color:#8BC34A;border:none;border-radius:12px;font-size:12px">咳嗽</button>
-        <button onclick="doSymptomSearch('感冒')" style="padding:4px 10px;background:#FCE4EC;color:#E91E63;border:none;border-radius:12px;font-size:12px">感冒</button>
-        <button onclick="doSymptomSearch('胃痛')" style="padding:4px 10px;background:#E3F2FD;color:#2196F3;border:none;border-radius:12px;font-size:12px">胃痛</button>
-        <button onclick="doSymptomSearch('过敏')" style="padding:4px 10px;background:#F3E5F5;color:#9C27B0;border:none;border-radius:12px;font-size:12px">过敏</button>
-        <button onclick="doSymptomSearch('腹泻')" style="padding:4px 10px;background:#E8F5E0;color:#4CAF50;border:none;border-radius:12px;font-size:12px">腹泻</button>
-        <button onclick="doSymptomSearch('失眠')" style="padding:4px 10px;background:#EDE7F6;color:#673AB7;border:none;border-radius:12px;font-size:12px">失眠</button>
-      </div>
-    </div>
-    <script>
-      function doSymptomSearch(symptom) {
-        if (!symptom) {
-          var inp = document.getElementById('symptomInput');
-          symptom = inp ? inp.value.trim() : '';
-        }
-        if (!symptom) return;
-        var container = document.getElementById('symptomResultsContainer');
-        if (container) container.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:13px">正在搜索...</div>';
-        var results = searchBySymptom(symptom);
-        if (container) showSymptomResults(symptom);
-      }
-    </script>
-
 </div>
   <!-- 药品说明书查询 -->
   <div class="card" id="drugManualCard">
     <div class="card-title" id="manualTitle">药品说明书查询</div>
     <div class="search-box" style="margin-bottom:8px">
-      <input id="drugManualInput" aria-label="输入药品名称查询说明书" placeholder="输入药品名称，如：布洛芬、阿莫西林、二甲双胍..." style="flex:1" onkeydown="if(event.key==='Enter')doManualSearch()">
-      <button class="btn-primary" id="manualBtn" onclick="doManualSearch()">查询</button>
+      <input id="drugManualInput" aria-label="输入药品名称查询说明书" placeholder="输入药品名称，如：布洛芬、阿莫西林、二甲双胍..." style="flex:1">
+      <button class="btn-primary" id="manualBtn">查询</button>
     </div>
     <div id="drugManualResult"></div>
   </div>
-  <!-- 信任背书（对标丁香医生：权威数据源 + 专业药师合规背书） -->
-  <div class="card" style="background:#f8faf9;border:1px solid #e8f2ec">
-    <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#5a6b62;line-height:1.6">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#07C160" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex-shrink:0"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-      <span>数据基于药品说明书与药物相互作用库整理，仅供用药参考；用药请遵医嘱，紧急情况请及时就医。</span>
-    </div>
-  </div>
-  
-<style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.18.0 === */
-.feat-icon-btn{
-  display:flex; flex-direction:column; align-items:center; gap:6px;
-  background:transparent!important; border:none!important; padding:6px 4px!important;
-  cursor:pointer; border-radius:12px; transition:transform .1s,background .15s;
-}
-.feat-icon-btn:active{ transform:scale(.92); background:#F4F6F8!important; }
-.feat-icon-wrap{
-  width:44px; height:44px; border-radius:14px;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-.feat-icon-label{
-  font-size:11.5px; font-weight:600; color:var(--c-text-2,#555);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:72px;
-}
-/* 科普卡片 */
-.feed-item{
-  padding:12px 0; border-bottom:1px solid #f0f0f0; cursor:pointer;
-  transition:background .15s;
-}
-.feed-item:last-child{ border-bottom:none; }
-.feed-item:active{ background:#f8f8f8; border-radius:8px; padding:12px 6px; }
-.feed-title{ font-size:14px; font-weight:600; color:#222; margin-bottom:5px; line-height:1.5; }
-.feed-snippet{ font-size:12.5px; color:#666; line-height:1.65; margin-bottom:7px;
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.feed-item.expanded .feed-snippet{ display:block; -webkit-line-clamp:unset; }
-.feed-tag{ display:inline-block; font-size:11px; padding:2px 8px; border-radius:10px; font-weight:600; }
-</style>
-
-<script>
-function doManualSearch(drugName){
-  var name = drugName || (document.getElementById('drugManualInput')||{}).value || '';
-  if(!name.trim()){ if(window.showToast) showToast('请输入药品名称'); return; }
-  var result = document.getElementById('drugManualResult');
-  if(!result) return;
-  var allDrugs = typeof DRUG_GUIDE !== 'undefined' ? DRUG_GUIDE : {};
-  var entry = allDrugs[name] || null;
-  if(!entry){
-    var nl = name.toLowerCase();
-    for(var k in allDrugs){ if(k.toLowerCase().indexOf(nl)>=0){ entry=allDrugs[k]; break; } }
-  }
-  if(!entry){
-    var related=[]; var nl=name.toLowerCase();
-    for(var k in allDrugs){ if(k.toLowerCase().indexOf(nl)>=0||(allDrugs[k].indications&&allDrugs[k].indications.toLowerCase().indexOf(nl)>=0)) related.push(k); }
-    if(related.length>0){
-      var rh='<div style="font-size:13px;color:#555;margin-bottom:8px">未找到「'+escAttr(name)+'」，相关药品：</div>';
-      related.slice(0,6).forEach(function(dn){ rh+='<div class="dd-cab" style="margin-bottom:6px;cursor:pointer" onclick="doManualSearch(\''+escAttr(dn)+'\')">'+escAttr(dn)+'</div>'; });
-      result.innerHTML=rh; return;
-    }
-    result.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px">未找到「'+escAttr(name)+'」的说明书信息</div>'; return;
-  }
-  var h='<div style="background:#fff;border:1px solid #e8f2ec;border-radius:14px;overflow:hidden">';
-  h+='<div style="padding:14px 16px;background:linear-gradient(135deg,#07C160,#0E9F57);color:#fff">';
-  h+='<div style="font-size:17px;font-weight:700;margin-bottom:4px">'+escAttr(name)+'</div>';
-  h+='<div style="font-size:12px;opacity:0.88">'+escAttr((entry.indications||'').slice(0,60))+'</div></div>';
-  if(entry.ingredients){
-    h+='<div style="padding:12px 16px;border-bottom:1px solid #f0f0f0"><div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">主要成分</div><div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.ingredients)+'</div></div>';
-  }
-  if(entry.dosage){
-    h+='<div style="padding:12px 16px;border-bottom:1px solid #f0f0f0"><div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">用法用量</div><div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.dosage)+'</div></div>';
-  }
-  var sp=getSpecialPopWarnings(entry,name);
-  if(sp&&sp.length){
-    h+='<div style="padding:12px 16px;background:#FFF7E6;border-bottom:1px solid #FFE4B5"><div style="font-size:12px;color:#E67E00;font-weight:600;margin-bottom:6px">特殊人群用药警示</div>';
-    sp.forEach(function(item){ h+='<div style="font-size:13px;color:#C0392B;line-height:1.7;margin-bottom:4px"><b>'+escAttr(item.pop)+'</b>：'+escAttr(item.warn)+'</div>'; });
-    h+='</div>';
-  }
-  if(entry.adverse){
-    h+='<div style="padding:12px 16px;border-bottom:1px solid #f0f0f0"><div style="font-size:12px;color:#999;font-weight:600;margin-bottom:4px">不良反应</div><div style="font-size:13px;color:#555;line-height:1.6">'+escAttr(entry.adverse)+'</div></div>';
-  }
-  var ca=entry.contraindication||entry.contra||entry.avoid;
-  if(ca){
-    h+='<div style="padding:12px 16px;background:#FFF0F0;border-bottom:1px solid #FFCDD2"><div style="font-size:12px;color:#FA5151;font-weight:600;margin-bottom:4px">禁忌 / 注意事项</div><div style="font-size:13px;color:#C62828;line-height:1.6">'+escAttr(ca)+'</div></div>';
-  }
-  var ia=getInteractionAlert(name);
-  if(ia) h+=ia;
-  h+='<div style="padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap">';
-  h+='<button class="btn-primary" style="font-size:13px;padding:8px 16px" onclick="openManualForDrug(\''+escAttr(name)+'\')">添加到药箱</button>';
-  h+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="switchTab(\'interact\')">查相互作用</button>';
-  h+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="switchTab(\'chat\');setTimeout(function(){var i=document.getElementById(\'chatInput\');if(i)i.value=\''+escAttr(name)+' 怎么吃\';},300)">问药</button>';
-  h+='</div></div>';
-  result.innerHTML=h;
-  if(result.scrollIntoView) result.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-function getSpecialPopWarnings(entry,name){
-  var results=[];
-  var txt=(JSON.stringify(entry)||'').toLowerCase();
-  var preg=['孕妇','婆婚','怀孕','婚期','哭乳'];
-  var child=['儿童','小儿','婴幼儿','孩子','宝宝','未成年'];
-  var elder=['老年人','老人','高龄','65岁'];
-  var isPreg=preg.some(function(p){return txt.indexOf(p)>=0;});
-  var isChild=child.some(function(p){return txt.indexOf(p)>=0;});
-  var isElder=elder.some(function(p){return txt.indexOf(p)>=0;});
-  if(isPreg) results.push({pop:'孕妇/婆婚',warn:'婦婚期用药需严格遵匸匸，秆自用药可能影响胎儿发育，具体请咨询匸生。'});
-  if(isChild) results.push({pop:'儿童/婴幼儿',warn:'儿童用药剋量需按体重计算，切勿按成人剋量给药，务必遵匸匸。'});
-  if(isElder) results.push({pop:'老年人',warn:'老年人肝肾功能减退，药物代诚能力下降，用药需减量并监测不良反应。'});
-  return results;
-}
-function getInteractionAlert(name){
-  if(typeof INTERACT_DB==='undefined') return '';
-  var ia=[];
-  INTERACT_DB.forEach(function(r){ if(r.name1===name||r.name2===name) ia.push(r); });
-  if(!ia.length) return '';
-  var h='<div style="padding:12px 16px;background:#F0FFF4"><div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:6px">药物相互作用提示</div>';
-  ia.slice(0,5).forEach(function(r){
-    var cls=r.level||'';
-    var color='#FA5151'; var badge='需注意';
-    if(cls.indexOf('green')>=0||cls.indexOf('可')>=0){color='#07C160';badge='可联用';}
-    else if(cls.indexOf('blue')>=0||cls.indexOf('中')>=0){color='#07A9D8';badge='中性';}
-    var other=r.name1===name?r.name2:r.name1;
-    h+='<div style="font-size:13px;margin-bottom:6px">与 <b>'+escAttr(other)+'</b> <span style="color:'+color+';font-weight:600">'+badge+'</span>：'+escAttr(r.desc||'')+'</div>';
-  });
-  return h+'</div>';
-}
-</script>
-<style id="ui-v2100">
-.feat-icon-btn{display:flex;flex-direction:column;align-items:center;gap:5px;background:transparent!important;border:none!important;padding:6px 4px!important;cursor:pointer;border-radius:12px;transition:transform .1s}
-.feat-icon-btn:active{transform:scale(.92);background:#F4F6F8!important}
-.feat-icon-wrap{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.feat-icon-label{font-size:11.5px;font-weight:600;color:var(--c-text-2,#555);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px}
-.feed-item{padding:12px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
-.feed-item:last-child{border-bottom:none}
-.feed-title{font-size:14px;font-weight:600;color:#222;margin-bottom:5px;line-height:1.5}
-.feed-snippet{font-size:12.5px;color:#666;line-height:1.65;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.feed-item.expanded .feed-snippet{display:block;-webkit-line-clamp:unset}
-.feed-tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
-</style>
-function expandFeed(el){ el.classList.toggle('expanded'); }
-
-<script>function quickSymptom(s){var i=document.getElementById('homeSymptomInput');if(i){i.value=s;try{searchBySymptom();}catch(e){}}}</script>
-
-<script>
-function doManualSearch(drugName){
-  var name = drugName || (document.getElementById('drugManualInput')||{}).value||'';
-  if(!name.trim()){ if(window.showToast) showToast('请输入药品名称'); return; }
-  var result = document.getElementById('drugManualResult');
-  if(!result) return;
-  // 优先从 DRUG_GUIDE 查找
-  var entry = null;
-  var allDrugs = typeof DRUG_GUIDE !== 'undefined' ? DRUG_GUIDE : {};
-  // 精确匹配
-  if(allDrugs[name]) entry = allDrugs[name];
-  // 模糊匹配
-  if(!entry){ var nl=name.toLowerCase(); for(var k in allDrugs){ if(k.toLowerCase().indexOf(nl)>=0||nl.indexOf(k.toLowerCase())>=0){ entry=allDrugs[k]; break; } } }
-  if(!entry){
-    // 搜索相关药
-    var related=[]; var nl=name.toLowerCase();
-    for(var k in allDrugs){ if(k.toLowerCase().indexOf(nl)>=0||(allDrugs[k].indications&&allDrugs[k].indications.toLowerCase().indexOf(nl)>=0)) related.push(k); }
-    if(related.length>0){
-      var html='<div style="font-size:13px;color:#555;margin-bottom:8px">未找到「'+escAttr(name)+'」，相关药品：</div>';
-      related.slice(0,6).forEach(function(dn){
-        html+='<div class="dd-cab" style="margin-bottom:6px;cursor:pointer" onclick="doManualSearch(\''+escAttr(dn)+'\')">'+escAttr(dn)+'</div>';
-      });
-      result.innerHTML=html; return;
-    }
-    result.innerHTML='<div style="text-align:center;color:#999;font-size:13px;padding:20px">未找到「'+escAttr(name)+'」的说明书信息</div>'; return;
-  }
-  // 渲染说明书
-  var html='<div style="background:#fff;border:1px solid #e8f2ec;border-radius:14px;overflow:hidden">';
-  // 药品名标题
-  html+='<div style="padding:14px 16px;background:linear-gradient(135deg,#07C160,#0E9F57);color:#fff">';
-  html+='<div style="font-size:17px;font-weight:700;margin-bottom:4px">'+escAttr(name)+'</div>';
-  html+='<div style="font-size:12px;opacity:0.88">'+escAttr(entry.indications||'').slice(0,60)+'</div></div>';
-  // 成分
-  if(entry.ingredients){
-    html+='<div style="padding:12px 16px;border-bottom:1px solid #f0f0f0">';
-    html+='<div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">主要成分</div>';
-    html+='<div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.ingredients)+'</div></div>';
-  }
-  // 用法用量
-  if(entry.dosage){
-    html+='<div style="padding:12px 16px;border-bottom:1px solid #f0f0f0">';
-    html+='<div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">用法用量</div>';
-    html+='<div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.dosage)+'</div></div>';
-  }
-  // 特殊人群警示
-  var sp = getSpecialPopWarnings(entry, name);
-  if(sp){
-    html+='<div style="padding:12px 16px;background:#FFF7E6;border-bottom:1px solid #FFE4B5">';
-    html+='<div style="font-size:12px;color:#E67E00;font-weight:600;margin-bottom:6px">⚠️ 特殊人群用药警示</div>';
-    sp.forEach(function(item){
-      html+='<div style="font-size:13px;color:#C0392B;line-height:1.7;margin-bottom:4px"><b>'+escAttr(item.pop)+'</b>：'+escAttr(item.warn)+'</div>';
-    });
-    html+='</div>';
-  }
-  // 不良反应
-  if(entry.adverse){
-    html+='<div style="padding:12px 16px;border-bottom:1px solid #f0f0f0">';
-    html+='<div style="font-size:12px;color:#999;font-weight:600;margin-bottom:4px">不良反应</div>';
-    html+='<div style="font-size:13px;color:#555;line-height:1.6">'+escAttr(entry.adverse)+'</div></div>';
-  }
-  // 禁忌
-  if(entry.contraindication || entry.contra || entry.avoid){
-    var ca = entry.contraindication || entry.contra || entry.avoid;
-    html+='<div style="padding:12px 16px;background:#FFF0F0;border-bottom:1px solid #FFCDD2">';
-    html+='<div style="font-size:12px;color:#FA5151;font-weight:600;margin-bottom:4px">禁忌 / 注意事项</div>';
-    html+='<div style="font-size:13px;color:#C62828;line-height:1.6">'+escAttr(ca)+'</div></div>';
-  }
-  // 相互作用
-  var ia = getInteractionAlert(name);
-  if(ia) html+=ia;
-  // 底部操作
-  html+='<div style="padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap">';
-  html+='<button class="btn-primary" style="font-size:13px;padding:8px 16px" onclick="openManualForDrug(\''+escAttr(name)+'\')">添加到药箱</button>';
-  html+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="switchTab(\'interact\')">查相互作用</button>';
-  html+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="switchTab(\'chat\');setTimeout(function(){var i=document.getElementById(\'chatInput\');if(i)i.value=\''+escAttr(name)+' 怎么吃\';},300)">问药</button>';
-  html+='</div></div>';
-  result.innerHTML=html;
-  // 滚动到结果
-  result.scrollIntoView&&result.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function getSpecialPopWarnings(entry, name){
-  var results=[];
-  var txt=(JSON.stringify(entry)||'').toLowerCase();
-  var pregNames=['孕妇','妊娠','怀孕','孕期','哺乳','b妊娠','b喂奶'];
-  var childNames=['儿童','小儿','婴幼儿','孩子','宝宝','未成年'];
-  var elderNames=['老年人','老人','高龄','65岁以上'];
-  var isPreg=pregNames.some(function(p){return txt.indexOf(p)>=0;});
-  var isChild=childNames.some(function(p){return txt.indexOf(p)>=0;});
-  var isElder=elderNames.some(function(p){return txt.indexOf(p)>=0;});
-  if(isPreg) results.push({pop:'孕妇 / 妊娠',warn:'妊娠期用药需严格遵医嘱，擅自用药可能影响胎儿发育，具体请咨询医生。'});
-  if(isChild) results.push({pop:'儿童 / 婴幼儿',warn:'儿童用药剂量需按体重计算，切勿按成人剂量给药，务必遵医嘱。'});
-  if(isElder) results.push({pop:'老年人',warn:'老年人肝肾功能减退，药物代谢能力下降，用药需减量并监测不良反应。'});
-  return results;
-}
-
-function getInteractionAlert(name){
-  if(typeof INTERACT_DB==='undefined') return '';
-  var ia=[];
-  INTERACT_DB.forEach(function(r){
-    if(r.name1===name||r.name2===name) ia.push(r);
-  });
-  if(ia.length===0) return '';
-  var html='<div style="padding:12px 16px;background:#F0FFF4">';
-  html+='<div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:6px">💊 药物相互作用提示</div>';
-  ia.slice(0,5).forEach(function(r){
-    var cls=r.level||'';
-    var color='#FA5151';
-    var badge='需注意';
-    if(cls.indexOf('green')>=0||cls.indexOf('可')>=0){color='#07C160';badge='可联用';}
-    else if(cls.indexOf('blue')>=0||cls.indexOf('中')>=0){color='#07A9D8';badge='中性';}
-    var other=r.name1===name?r.name2:r.name1;
-    html+='<div style="font-size:13px;margin-bottom:6px">与 <b>'+escAttr(other)+'</b> <span style="color:'+color+';font-weight:600">'+badge+'</span>：'+escAttr(r.desc||'')+'</div>';
-  });
-  html+='</div>';
-  return html;
-}
-</script>
-
 </div>
 
 <!-- 相互作用 -->
@@ -1736,7 +1362,7 @@ function getInteractionAlert(name){
             <select id="tongueSelect" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px"><option value="">-- 选择舌象 --</option><option value="红舌">红舌</option><option value="淡红">淡红舌</option><option value="淡白">淡白舌</option><option value="暗红">暗红舌</option><option value="绛红">绛红舌</option><option value="青紫">青紫舌</option></select>
             <select id="pulseSelect" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;width:100%;"><option value="">-- 如不了解脉象可留空 --</option><option value="数脉">数脉（快）</option><option value="缓脉">缓脉（慢）</option><option value="弦脉">弦脉</option><option value="滑脉">滑脉</option><option value="细脉">细脉</option><option value="沉脉">沉脉</option><option value="浮脉">浮脉</option><option value="弱脉">弱脉</option></select><div style="font-size:12px;color:#999;margin-top:4px;">提示：不确定脉象可不选，系统仍会结合症状分析</div>
           </div>
-          <button id="reportGenerateBtn" style="padding:10px 24px;background:linear-gradient(135deg,#0f766e,#10b981);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;width:100%;margin-top:4px">生成辨证报告</button>
+          <button id="reportGenerateBtn" style="padding:10px 24px;background:linear-gradient(135deg,#0C8B6C,#109E71);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;width:100%;margin-top:4px">生成辨证报告</button>
           <div id="reportResult" style="margin-top:16px"></div>
         </div>
       </div>
@@ -5200,489 +4826,13 @@ window.showSymptomResults = showSymptomResults;
 
   var cabinet = load(LS_CAB, []);
   function renderCabinet(){
-
-// 药箱智能预警系统
-
-// 症状选药推荐系统
-function searchBySymptom(symptom) {
-  var results = [];
-  var keyword = symptom.trim().toLowerCase();
-
-  if (!keyword) return results;
-
-  // 症状→药品映射表
-  var symptomMap = {
-    "头痛|头疼|headache": [
-      {name: "布洛芬缓释胶囊", reason: "解热镇痛，缓解头痛首选", category: "解热镇痛"},
-      {name: "对乙酰氨基酚片", reason: "温和止痛，适合轻中度头痛", category: "解热镇痛"},
-      {name: "复方氨酚烷胺片", reason: "含对乙酰氨基酚，缓解头痛+感冒症状", category: "感冒用药"}
-    ],
-    "发烧|发热|体温高": [
-      {name: "对乙酰氨基酚片", reason: "退热首选，安全性高", category: "解热镇痛"},
-      {name: "布洛芬混悬液", reason: "儿童/成人退热，起效快", category: "解热镇痛"},
-      {name: "布洛芬缓释胶囊", reason: "退热+镇痛，双效合一", category: "解热镇痛"}
-    ],
-    "咳嗽": [
-      {name: "盐酸氨溴索口服溶液", reason: "化痰排痰，促进呼吸通畅", category: "祛痰药"},
-      {name: "右美沙芬愈创甘油醚糖浆", reason: "干咳首选，镇咳效果好", category: "镇咳药"},
-      {name: "川贝清肺糖浆", reason: "润肺止咳，中药制剂温和", category: "中成药"}
-    ],
-    "感冒": [
-      {name: "复方氨酚烷胺片", reason: "缓解感冒常见症状", category: "感冒用药"},
-      {name: "感冒灵颗粒", reason: "中西结合，快速缓解感冒症状", category: "感冒用药"},
-      {name: "连花清瘟胶囊", reason: "适用于风热感冒，抗病毒", category: "中成药"}
-    ],
-    "胃痛|胃疼|腹痛": [
-      {name: "奥美拉唑肠溶胶囊", reason: "抑制胃酸，缓解胃痛/胃酸过多", category: "胃肠道"},
-      {name: "铝碳酸镁片", reason: "快速中和胃酸，保护胃黏膜", category: "胃肠道"},
-      {name: "多潘立酮片", reason: "促进胃动力，缓解消化不良", category: "胃肠道"}
-    ],
-    "腹泻|拉肚子": [
-      {name: "蒙脱石散", reason: "物理止泻，儿童/成人均适用", category: "止泻药"},
-      {name: "口服补液盐III", reason: "预防/治疗脱水，必备", category: "止泻药"},
-      {name: "盐酸小檗碱片", reason: "细菌性腹泻适用", category: "止泻药"}
-    ],
-    "过敏|荨麻疹|皮肤瘙痒": [
-      {name: "氯雷他定片", reason: "第二代抗组胺，长效无嗜睡", category: "抗过敏"},
-      {name: "盐酸西替利嗪片", reason: "快速缓解过敏症状", category: "抗过敏"},
-      {name: "地氯雷他定片", reason: "强效抗过敏，一天一片", category: "抗过敏"}
-    ],
-    "失眠|睡不着|睡眠障碍": [
-      {name: "佐匹克隆片", reason: "快速入睡，代谢快，不影响第二天", category: "镇静催眠"},
-      {name: "艾司唑仑片", reason: "改善失眠，处方药需医生指导", category: "镇静催眠"},
-      {name: "褪黑素片", reason: "调节睡眠周期，天然温和", category: "助眠保健"}
-    ],
-    "高血压": [
-      {name: "苯磺酸氨氯地平片", reason: "长效降压，一天一次，血压平稳", category: "降压药"},
-      {name: "厄贝沙坦片", reason: "ARB类降压药，保护心肾", category: "降压药"},
-      {name: "硝苯地平控释片", reason: "平稳降压，减少血压波动", category: "降压药"}
-    ],
-    "高血糖|糖尿病": [
-      {name: "二甲双胍片", reason: "2型糖尿病首选，安全性高", category: "降糖药"},
-      {name: "阿卡波糖片", reason: "餐后血糖控制", category: "降糖药"},
-      {name: "格列齐特缓释片", reason: "促进胰岛素分泌", category: "降糖药"}
-    ],
-    "口腔溃疡|口腔": [
-      {name: "口腔溃疡散", reason: "外用，促进愈合", category: "口腔用药"},
-      {name: "复方氯己定含漱液", reason: "消炎漱口水", category: "口腔用药"},
-      {name: "维生素B2片", reason: "补充B族维生素，促进愈合", category: "维生素"}
-    ],
-    "跌打损伤|扭伤|腰痛|腰疼": [
-      {name: "布洛芬缓释胶囊", reason: "消炎止痛，缓解软组织损伤", category: "解热镇痛"},
-      {name: "双氯芬酸二乙胺乳胶剂", reason: "外用镇痛，直接作用于患处", category: "外用药"},
-      {name: "云南白药气雾剂", reason: "活血散瘀，消肿止痛", category: "外用药"}
-    ],
-    "鼻炎|鼻塞|流鼻涕": [
-      {name: "盐酸羟甲唑啉喷雾剂", reason: "快速缓解鼻塞", category: "鼻科用药"},
-      {name: "布地奈德鼻喷雾剂", reason: "鼻用糖皮质激素，长期使用安全", category: "鼻科用药"},
-      {name: "氯雷他定片", reason: "缓解过敏性鼻炎症状", category: "抗过敏"}
-    ],
-    "咽痛|喉咙痛": [
-      {name: "蒲地蓝消炎口服液", reason: "清热解毒，消肿利咽", category: "中成药"},
-      {name: "金嗓子喉片", reason: "含服，缓解咽部不适", category: "咽喉用药"},
-      {name: "银黄含化片", reason: "清热解毒，消炎", category: "咽喉用药"}
-    ],
-    "妇科|月经不调|痛经": [
-      {name: "元胡止痛片", reason: "理气活血，用于痛经", category: "妇科用药"},
-      {name: "布洛芬缓释胶囊", reason: "缓解原发性痛经首选", category: "解热镇痛"},
-      {name: "益母草颗粒", reason: "活血调经", category: "妇科用药"}
-    ],
-    "维生素缺乏": [
-      {name: "维生素C片", reason: "增强免疫力，美白抗氧化", category: "维生素"},
-      {name: "复合维生素B片", reason: "补充B族维生素", category: "维生素"},
-      {name: "维生素D滴剂", reason: "促进钙吸收", category: "维生素"}
-    ],
-    "血脂|高血脂": [
-      {name: "阿托伐他汀钙片", reason: "强效降脂，心血管保护", category: "调脂药"},
-      {name: "瑞舒伐他汀钙片", reason: "长效降脂，一天一片", category: "调脂药"}
-    ],
-    "焦虑|抑郁|情绪": [
-      {name: "舍曲林片", reason: "SSRI类抗抑郁药，处方", category: "精神用药"},
-      {name: "盐酸帕罗西汀片", reason: "抗焦虑首选", category: "精神用药"}
-    ],
-    "眩晕|头晕": [
-      {name: "盐酸倍他司汀片", reason: "改善椎-基底动脉供血", category: "脑血管药"},
-      {name: "盐酸氟桂利嗪胶囊", reason: "预防和治疗眩晕", category: "脑血管药"},
-      {name: "甲磺酸倍他司汀片", reason: "梅尼埃病首选", category: "脑血管药"}
-    ]
-  };
-
-  // 模糊匹配症状
-  var matched = [];
-  for (var pattern in symptomMap) {
-    var regex;
-    try { regex = new RegExp(pattern, "i"); } catch(e) { continue; }
-    if (regex.test(keyword)) {
-      symptomMap[pattern].forEach(function(drug) {
-        drug.score = pattern.length; // 匹配越精确分数越高
-        matched.push(drug);
-      });
-    }
-  }
-
-  // 同时在 DRUG_GUIDE 中搜索症状关键词
-  if (typeof DRUG_GUIDE !== "undefined" && DRUG_GUIDE) {
-    DRUG_GUIDE.forEach(function(item) {
-      var indications = (item.indications || item.适应症 || "") + (item.category || "") + (item.tags || "");
-      if (indications.toLowerCase().indexOf(keyword) >= 0) {
-        matched.push({
-          name: item.name || item.药品名称 || "",
-          reason: item.indications || item.适应症 || "适用于相关症状",
-          category: item.category || "药品",
-          score: 1
-        });
-      }
-    });
-  }
-
-  // 去重（按药名）
-  var seen = {};
-  results = matched.filter(function(item) {
-    if (!item.name || seen[item.name]) return false;
-    seen[item.name] = true;
-    return true;
-  });
-
-  // 按分数排序
-  results.sort(function(a, b) { return (b.score || 0) - (a.score || 0); });
-
-  return results.slice(0, 10); // 最多返回10个
-}
-
-function showSymptomResults(symptom) {
-  var results = searchBySymptom(symptom);
-  var container = document.getElementById('symptomResultsContainer') || document.getElementById('manualCard');
-  if (!container) return;
-
-  if (results.length === 0) {
-    container.innerHTML += '<div style="text-align:center;padding:20px;color:#999">未找到相关药品，请尝试其他症状描述</div>';
-    return;
-  }
-
-  var html = '<div style="background:#F5F5F5;border-radius:10px;padding:12px;margin-top:12px">';
-  html += '<div style="font-weight:600;color:#333;margin-bottom:10px">为您推荐「' + escHtml(symptom) + '」相关药品</div>';
-
-  results.forEach(function(item, i) {
-    var colors = { "解热镇痛": "#FF6B6B", "感冒用药": "#4ECDC4", "胃肠道": "#45B7D1", "祛痰药": "#96CEB4", "镇咳药": "#FFEAA7", "抗过敏": "#DDA0DD", "镇静催眠": "#98D8C8", "降压药": "#F7DC6F", "降糖药": "#BB8FCE", "调脂药": "#85C1E9", "中成药": "#82E0AA", "外用药": "#F0B27A", "妇科用药": "#F1948A", "咽喉用药": "#AED6F1", "维生素": "#F9E79F", "口腔用药": "#A9DFBF", "鼻科用药": "#AED6F1", "止泻药": "#82E0AA", "精神用药": "#D7BDE2", "脑血管药": "#85C1E9", "助眠保健": "#D5F5E3", "default": "#BDC3C7" };
-    var color = colors[item.category] || colors["default"];
-
-    html += '<div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer" onclick="doManualSearch(\u0027' + item.name + '\u0027)">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
-    html += '<span style="background:' + color + ';color:#fff;font-size:11px;padding:2px 6px;border-radius:8px">' + (item.category || "药品") + '</span>';
-    html += '<span style="font-weight:600;color:#333;font-size:14px">' + item.name + '</span>';
-    html += '<span style="margin-left:auto;color:#10AEFF;font-size:12px">查看详情 →</span>';
-    html += '</div>';
-    html += '<div style="color:#666;font-size:12px">' + item.reason + '</div>';
-    html += '</div>';
-  });
-
-  html += '<div style="text-align:center;color:#999;font-size:12px;margin-top:8px">* 仅供参考，具体用药请咨询医生或药师</div>';
-  html += '</div>';
-
-  container.innerHTML += html;
-}
-
-
-<script>
-// 服药时间轴系统
-function getTodayStr() {
-  var d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
-function getTimeSlots() {
-  return [
-    { name: "早餐前", icon: "🌅", time: "07:00", slot: "morning_before" },
-    { name: "早餐后", icon: "🍳", time: "08:00", slot: "morning_after" },
-    { name: "午餐前", icon: "☀️", time: "12:00", slot: "noon_before" },
-    { name: "午餐后", icon: "🍜", time: "13:00", slot: "noon_after" },
-    { name: "晚餐前", icon: "🌇", time: "18:00", slot: "evening_before" },
-    { name: "晚餐后", icon: "🍽️", time: "19:00", slot: "evening_after" },
-    { name: "睡前", icon: "🌙", time: "22:00", slot: "night" },
-  ];
-}
-
-function renderPillTimeline() {
-  var timelineCard = document.getElementById('pillTimelineCard');
-  if (!timelineCard) return;
-
-  var dateEl = document.getElementById('timelineDate');
-  var badge = document.getElementById('timelineBadge');
-  var emptyEl = document.getElementById('timelineEmpty');
-  var listEl = document.getElementById('timelineList');
-  if (!emptyEl || !listEl) return;
-
-  // 显示日期
-  var today = new Date();
-  var dayNames = ['周日','周一','周二','周三','周四','周五','周六'];
-  if (dateEl) dateEl.textContent = today.getMonth()+1 + '月' + today.getDate() + '日 ' + dayNames[today.getDay()];
-
-  // 获取药箱数据
-  var cabinet = [];
-  try { cabinet = JSON.parse(localStorage.getItem('cy_cabinet') || '[]'); } catch(e) {}
-
-  // 获取服药记录
-  var records = {};
-  try { records = JSON.parse(localStorage.getItem('cy_med_records') || '{}'); } catch(e) {}
-
-  var today = getTodayStr();
-  var todayRecords = records[today] || {};
-  var slots = getTimeSlots();
-  var now = new Date();
-  var currentTime = now.getHours()*60 + now.getMinutes();
-
-  // 按时段分组显示
-  var morning = [], noon = [], evening = [], night = [];
-
-  cabinet.forEach(function(item) {
-    if (!item.reminders) return;
-    item.reminders.forEach(function(r) {
-      if (!r.enabled) return;
-      var slot = r.slot || 'morning_after';
-      var drug = { name: item.name, dose: item.dose || '1片', taken: todayRecords[item.name + '_' + slot] || false, slot: slot };
-      if (slot.indexOf('night') >= 0 || slot === 'night') night.push(drug);
-      else if (slot.indexOf('morning') >= 0) morning.push(drug);
-      else if (slot.indexOf('noon') >= 0 || slot.indexOf('afternoon') >= 0) noon.push(drug);
-      else evening.push(drug);
-    });
-  });
-
-  var hasSchedule = morning.length + noon.length + evening.length + night.length > 0;
-
-  if (!hasSchedule) {
-    emptyEl.style.display = 'block';
-    listEl.style.display = 'none';
-    if (badge) badge.textContent = '';
-    return;
-  }
-
-  emptyEl.style.display = 'none';
-  listEl.style.display = 'block';
-
-  var takenCount = 0, totalCount = 0;
-  var html = '';
-
-  function renderSlot(label, icon, drugs) {
-    if (drugs.length === 0) return '';
-    var slotHtml = '<div style="margin-bottom:16px">';
-    slotHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;color:#666;font-weight:500">';
-    slotHtml += '<span>' + icon + '</span><span>' + label + '</span></div>';
-
-    drugs.forEach(function(drug) {
-      totalCount++;
-      var done = drug.taken;
-      if (done) takenCount++;
-      var bg = done ? '#E8F5E9' : '#FAFAFA';
-      var border = done ? '#07C160' : '#E0E0E0';
-      var checkIcon = done ? '✅' : '⭕';
-
-      slotHtml += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:' + bg + ';border-radius:8px;margin-bottom:6px;border-left:3px solid ' + border + '">';
-      slotHtml += '<span style="font-size:18px;cursor:pointer" onclick="togglePillTaken(\u0027' + drug.name + '\u0027,\u0027' + drug.slot + '\u0027)">' + checkIcon + '</span>';
-      slotHtml += '<div style="flex:1">';
-      slotHtml += '<div style="font-weight:600;color:#333;font-size:14px">' + drug.name + '</div>';
-      slotHtml += '<div style="color:#999;font-size:12px">' + drug.dose + '</div>';
-      slotHtml += '</div>';
-      if (done) slotHtml += '<span style="color:#07C160;font-size:12px">已服用</span>';
-      slotHtml += '</div>';
-    });
-    slotHtml += '</div>';
-    return slotHtml;
-  }
-
-  html += renderSlot('🌅 早间', '早间', morning);
-  html += renderSlot('☀️ 午间', '午间', noon);
-  html += renderSlot('🌇 晚间', '晚间', evening);
-  html += renderSlot('🌙 睡前', '睡前', night);
-
-  // 总体进度
-  var pct = totalCount > 0 ? Math.round(takenCount / totalCount * 100) : 0;
-  html += '<div style="margin-top:12px;padding:12px;background:#F5F5F5;border-radius:8px">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-  html += '<span style="font-size:13px;color:#666">今日服药进度</span>';
-  html += '<span style="font-weight:600;color:#07C160">' + takenCount + '/' + totalCount + '</span>';
-  html += '</div>';
-  html += '<div style="height:6px;background:#E0E0E0;border-radius:3px;overflow:hidden">';
-  html += '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#07C160,#04B87A);border-radius:3px;transition:width 0.5s"></div>';
-  html += '</div>';
-  html += '</div>';
-
-  // 服药记录按钮
-  html += '<div style="margin-top:10px;text-align:center">';
-  html += '<button onclick="openMedRecord()" style="padding:8px 16px;background:transparent;color:#07C160;border:1px solid #07C160;border-radius:6px;font-size:13px">查看服药记录</button>';
-  html += '</div>';
-
-  listEl.innerHTML = html;
-  if (badge) badge.textContent = takenCount + '/' + totalCount + ' 已服';
-}
-
-function togglePillTaken(drugName, slot) {
-  var today = getTodayStr();
-  var key = drugName + '_' + slot;
-  var records = {};
-  try { records = JSON.parse(localStorage.getItem('cy_med_records') || '{}'); } catch(e) {}
-  if (!records[today]) records[today] = {};
-  records[today][key] = !records[today][key];
-  localStorage.setItem('cy_med_records', JSON.stringify(records));
-  renderPillTimeline();
-}
-
-function openMedRecord() {
-  var records = {};
-  try { records = JSON.parse(localStorage.getItem('cy_med_records') || '{}'); } catch(e) {}
-  var days = Object.keys(records).sort().reverse().slice(0, 7);
-  var html = '<div style="padding:16px;background:#fff;border-radius:12px;max-height:70vh;overflow-y:auto">';
-  html += '<div style="font-weight:600;font-size:16px;margin-bottom:16px;text-align:center">服药记录（近7天）</div>';
-  if (days.length === 0) {
-    html += '<div style="text-align:center;color:#999;padding:20px">暂无记录</div>';
-  } else {
-    days.forEach(function(day) {
-      var dayRecords = records[day] || {};
-      var taken = Object.values(dayRecords).filter(function(v) { return v; }).length;
-      var total = Object.keys(dayRecords).length;
-      var pct = total > 0 ? Math.round(taken/total*100) : 0;
-      html += '<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #F0F0F0;gap:10px">';
-      html += '<div style="width:60px;text-align:center">';
-      html += '<div style="font-size:12px;color:#999">' + day.slice(5) + '</div>';
-      html += '</div>';
-      html += '<div style="flex:1">';
-      html += '<div style="height:4px;background:#E0E0E0;border-radius:2px;overflow:hidden">';
-      html += '<div style="height:100%;width:' + pct + '%;background:#07C160;border-radius:2px"></div>';
-      html += '</div>';
-      html += '</div>';
-      html += '<div style="font-size:12px;color:#07C160;font-weight:500">' + taken + '/' + total + '</div>';
-      html += '</div>';
-    });
-  }
-  html += '<button onclick="this.closest(\u0027div[style*=\"border-radius:12px\"]\u0027).remove()" style="width:100%;margin-top:16px;padding:10px;background:#07C160;color:#fff;border:none;border-radius:8px;font-size:14px">关闭</button>';
-  html += '</div>';
-
-  // 显示弹层
-  var overlay = document.createElement('div');
-  overlay.id = 'medRecordOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  overlay.innerHTML = html;
-  overlay.onclick = function(e) { if(e.target===overlay) overlay.remove(); };
-  document.body.appendChild(overlay);
-}
-
-// 每次打开首页/药箱 Tab 时刷新时间轴
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(renderPillTimeline, 1500);
-});
-
-// 暴露给全局（Tab 切换时调用）
-window.renderPillTimeline = renderPillTimeline;
-</script>
-
-function checkCabinetAlerts() {
-  var cabinet = JSON.parse(localStorage.getItem('cy_cabinet') || '[]');
-  var alertPanel = document.getElementById('cabinetAlertPanel');
-  if (!alertPanel || cabinet.length === 0) {
-    if (alertPanel) alertPanel.style.display = 'none';
-    return;
-  }
-
-  var today = new Date();
-  var warnings = [];
-
-  cabinet.forEach(function(item) {
-    // 过期检查
-    if (item.expiry) {
-      var expiry = new Date(item.expiry);
-      var daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-      if (daysLeft < 0) {
-        warnings.push({type: 'expired', drug: item.name, days: daysLeft, msg: '已过期' + Math.abs(daysLeft) + '天', urgent: true});
-      } else if (daysLeft <= 30) {
-        warnings.push({type: 'expiring', drug: item.name, days: daysLeft, msg: '还有' + daysLeft + '天过期', urgent: daysLeft <= 7});
-      }
-    }
-
-    // 库存不足检查
-    if (item.quantity !== undefined) {
-      var qty = parseInt(item.quantity) || 0;
-      if (qty <= 0) {
-        warnings.push({type: 'empty', drug: item.name, days: 0, msg: '库存已用完', urgent: true});
-      } else if (qty <= 3) {
-        warnings.push({type: 'low', drug: item.name, days: qty, msg: '仅剩' + qty + '盒', urgent: false});
-      }
-    }
-
-    // 服用疗程提醒
-    if (item.remainDays !== undefined) {
-      var days = parseInt(item.remainDays) || 0;
-      if (days > 0 && days <= 3) {
-        warnings.push({type: 'course', drug: item.name, days: days, msg: '剩余' + days + '天疗程', urgent: false});
-      }
-    }
-  });
-
-  if (warnings.length === 0) {
-    alertPanel.style.display = 'none';
-    return;
-  }
-
-  // 排序: urgent first
-  warnings.sort(function(a, b) { return (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0); });
-
-  var urgentCount = warnings.filter(function(w) { return w.urgent; }).length;
-  var html = '<div style="background:' + (urgentCount > 0 ? '#FFF3E0' : '#E8F5FF') + ';border-radius:10px;padding:12px;border-left:3px solid ' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + '">';
-  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
-  html += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 22h20L12 2zm0 4l7.5 14h-15L12 6z" fill="' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + '"/><circle cx="12" cy="18" r="1.5" fill="' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + '"/></svg>';
-  html += '<span style="font-weight:600;color:#333">' + (urgentCount > 0 ? '需要关注' : '药箱提醒') + '</span>';
-  html += '<span style="background:' + (urgentCount > 0 ? '#FF9800' : '#10AEFF') + ';color:#fff;font-size:12px;padding:1px 6px;border-radius:10px">' + warnings.length + '条</span>';
-  html += '</div>';
-
-  warnings.slice(0, 5).forEach(function(w) {
-    var icon = w.type === 'expired' ? '🔴' : w.type === 'empty' ? '🟠' : w.type === 'expiring' ? '🟡' : w.type === 'low' ? '🔵' : '🟢';
-    html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:13px">';
-    html += '<span>' + icon + '</span>';
-    html += '<span style="color:#333;flex:1">' + w.drug + '</span>';
-    html += '<span style="color:' + (w.urgent ? '#F44336' : '#FF9800') + ';font-size:12px">' + w.msg + '</span>';
-    html += '</div>';
-  });
-
-  if (warnings.length > 5) {
-    html += '<div style="text-align:center;color:#999;font-size:12px;margin-top:4px">还有' + (warnings.length - 5) + '条...</div>';
-  }
-
-  html += '</div>';
-  alertPanel.innerHTML = html;
-  alertPanel.style.display = 'block';
-}
-
-// 每次打开药箱 Tab 时刷新预警
-var _orig_switchTab = null;
-try { _orig_switchTab = switchTab; } catch(e) {}
-
-function switchTab(tab) {
-  if (_orig_switchTab) _orig_switchTab(tab);
-  if (tab === 'cabinet' || (typeof tab === 'number' && [3, 4].indexOf(tab) >= 0)) {
-    setTimeout(checkCabinetAlerts, 100);
-  }
-}
-
-// 自动检查: 每小时一次
-setInterval(checkCabinetAlerts, 3600000);
-
-// 页面加载后检查一次
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(checkCabinetAlerts, 2000);
-});
-
     cabinet = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
     var box=document.getElementById('cabinetList'); if(!box) return;
     var stats={ok:0,warn:0,bad:0};
     var now=new Date(); now.setHours(0,0,0,0);
     var html='';
     if(cabinet.length===0){
-      html='<div class="empty-state">
-    <div style="font-size:56px;margin-bottom:12px">💊</div>
-    <div style="font-size:16px;font-weight:600;color:#333;margin-bottom:6px">药箱空空如也</div>
-    <div style="font-size:13px;color:#888;line-height:1.6;margin-bottom:16px">添加你家中的常备药<br>过期提醒、库存预警，用药更安心</div>
-    <button onclick="switchTab('chat');setTimeout(function(){var i=document.getElementById('chatInput');if(i)i.value='帮我找布洛芬和感冒药添加到药箱';},300)" style="background:linear-gradient(135deg,#07C160,#0E9F57);color:#fff;border:none;padding:10px 24px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer">
-      🤖 让 AI 帮我添加
-    </button>
-  </div>';
+      html='<div class="empty-state"><div class="es-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#07C160" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px"><path d="M9 2H15a1 1 0 0 1 1 1v19a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M12 11h.01"/><path d="M7 6h10"/><path d="M7 9h10"/></svg></div><div class="es-text">药箱还是空的<br>点击下方，添加你家常备药</div></div>';
     } else {
       cabinet.forEach(function(d){
         var exp=d.expiry?new Date(d.expiry):null;
@@ -5699,15 +4849,7 @@ document.addEventListener('DOMContentLoaded', function() {
     box.innerHTML=html;
     var so=document.getElementById('cabOk'),sw=document.getElementById('cabWarn'),sb=document.getElementById('cabBad');
     if(so)so.textContent=stats.ok; if(sw)sw.textContent=stats.warn; if(sb)sb.textContent=stats.bad;updateCabinetStats();
-    try{ if(window.renderFavorites) window.renderFavorites(); }catch(e){}
-    var box=document.getElementById('cabinetList'); if(box){ box.addEventListener('click',function(e){ var el=e.target.closest('[data-drug-detail]'); if(el){var dn=el.getAttribute('data-drug-detail');var cid=el.getAttribute('data-cab-id');if(dn&&window.showCabinetDetail) window.showCabinetDetail(dn,cid);} var del=e.target.closest('[data-cab-del]'); if(del){var did=del.getAttribute('data-cab-del');if(did&&confirm('确认移除？')){if(window.deleteCabinetDrug)window.deleteCabinetDrug(did);}} }); }
-    // 药品详情事件委托
-    box.addEventListener('click',function(e){
-      var el=e.target.closest('[data-drug-detail]');
-      if(el){ var dn=el.getAttribute('data-drug-detail'); var cid=el.getAttribute('data-cab-id'); if(dn) window.showCabinetDetail&&window.showCabinetDetail(dn,cid); }
-      var del=e.target.closest('[data-cab-del]');
-      if(del){ var did=del.getAttribute('data-cab-del'); if(did&&confirm('确认移除？')) window.deleteCabinetDrug&&window.deleteCabinetDrug(did); }
-    });  // [药品详情页] 同步刷新收藏区
+    try{ if(window.renderFavorites) window.renderFavorites(); }catch(e){}  // [药品详情页] 同步刷新收藏区
   }
 
   function updateCabinetStats(){
@@ -5734,153 +4876,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   function deleteCabinetDrug(id){ var cabinet=JSON.parse(localStorage.getItem('cy_cabinet')||'[]'); cabinet=cabinet.filter(function(d){return d.id!==id;}); localStorage.setItem('cy_cabinet',JSON.stringify(cabinet)); renderCabinet(); showToast('已移除'); }
   window.addCabinetDrug=addCabinetDrug; window.deleteCabinetDrug=deleteCabinetDrug; window.renderCabinet=renderCabinet;
-<script>
-function showCabinetDetail(drugName,cabId){
-  var cabinet=JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
-  var drug=cabinet.find(function(d){return d.name===drugName||d.id===cabId;});
-  var allDrugs=typeof DRUG_GUIDE!=='undefined'?DRUG_GUIDE:{};
-  var entry=allDrugs[drugName]||null;
-  var overlay=document.createElement('div');
-  overlay.id='cabinetDetailOverlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;padding:0';
-  var now=new Date();
-  var expInfo='',qtyInfo='',memberInfo='';
-  if(drug){
-    if(drug.expiry){
-      var exp=new Date(drug.expiry);var diff=Math.round((exp-now)/86400000);
-      var expCls='#FA5151';var expBadge='已过期';
-      if(diff>=0){expCls=Math.abs(diff)<=30?'#E67E00':'#07C160';expBadge=diff>=0?diff+'天后到期':'已过期';}
-      expInfo='<span style="color:'+expCls+';font-weight:600">'+expBadge+'</span>';
-    }
-    if(drug.qty) qtyInfo='<span style="color:#666">库存：'+escAttr(drug.qty)+'</span>';
-    if(drug.memberName) memberInfo='<span style="color:#666">成员：'+escAttr(drug.memberName)+'</span>';
-  }
-  var h='<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:88vh;overflow-y:auto;padding:20px;box-sizing:border-box">';
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">';
-  h+='<div style="font-size:17px;font-weight:700">'+escAttr(drugName)+'</div>';
-  h+='<button onclick="closeCabinetDetail()" style="border:none;background:#f5f5f5;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1">x</button></div>';
-  if(expInfo||qtyInfo||memberInfo){
-    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">';
-    if(expInfo) h+='<span style="background:#FFF0F0;color:#FA5151;font-size:12px;padding:3px 10px;border-radius:12px">'+expInfo+'</span>';
-    if(qtyInfo) h+='<span style="background:#f0f9ff;color:#07A9D8;font-size:12px;padding:3px 10px;border-radius:12px">'+qtyInfo+'</span>';
-    if(memberInfo) h+='<span style="background:#f0fff4;color:#07C160;font-size:12px;padding:3px 10px;border-radius:12px">'+memberInfo+'</span>';
-    h+='</div>';
-  }
-  if(entry){
-    if(entry.indications) h+='<div style="margin-bottom:12px"><div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">适应症</div><div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.indications)+'</div></div>';
-    if(entry.dosage) h+='<div style="margin-bottom:12px"><div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">用法用量</div><div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.dosage)+'</div></div>';
-    var sp=getSpecialPopWarnings(entry,drugName);
-    if(sp&&sp.length){
-      h+='<div style="background:#FFF7E6;border-radius:10px;padding:10px 14px;margin-bottom:12px"><div style="font-size:12px;color:#E67E00;font-weight:600;margin-bottom:6px">特殊人群</div>';
-      sp.forEach(function(item){ h+='<div style="font-size:13px;color:#C0392B;line-height:1.6;margin-bottom:2px"><b>'+escAttr(item.pop)+'</b>：'+escAttr(item.warn)+'</div>'; });
-      h+='</div>';
-    }
-    if(entry.adverse) h+='<div style="margin-bottom:12px"><div style="font-size:12px;color:#999;font-weight:600;margin-bottom:4px">不良反应</div><div style="font-size:13px;color:#555;line-height:1.6">'+escAttr(entry.adverse)+'</div></div>';
-    var ca=entry.contraindication||entry.contra||entry.avoid;
-    if(ca) h+='<div style="background:#FFF0F0;border-radius:10px;padding:10px 14px;margin-bottom:12px"><div style="font-size:12px;color:#FA5151;font-weight:600;margin-bottom:4px">禁忌/注意事项</div><div style="font-size:13px;color:#C62828;line-height:1.6">'+escAttr(ca)+'</div></div>';
-  } else {
-    h+='<div style="text-align:center;color:#999;font-size:13px;padding:20px">暂无详细说明书信息<br><span style="font-size:12px">试试在搜索框查询完整说明书</span></div>';
-  }
-  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
-  if(entry) h+='<button class="btn-primary" style="font-size:13px;padding:8px 16px" onclick="openManualForDrug(\''+escAttr(drugName)+'\')">查看完整说明书</button>';
-  h+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="switchTab(\'interact\')">查相互作用</button>';
-  h+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="closeCabinetDetail();switchTab(\'chat\');setTimeout(function(){var i=document.getElementById(\'chatInput\');if(i)i.value=\''+escAttr(drugName)+' 怎么吃\';},300)">问药</button>';
-  if(cabId) h+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px;color:#FA5151" onclick="if(confirm('\u786E认移除「'+escAttr(drugName)+'」?\')){deleteCabinetDrug(\''+escAttr(cabId)+'\');closeCabinetDetail();}">移除药品</button>';
-  h+='</div></div>';
-  overlay.innerHTML=h;
-  overlay.addEventListener('click',function(e){if(e.target===overlay) closeCabinetDetail();});
-  document.body.appendChild(overlay);
-  overlay.style.opacity='0';
-  overlay.style.transition='opacity .2s';
-  requestAnimationFrame(function(){overlay.style.opacity='1';});
-}
-window.showCabinetDetail=showCabinetDetail;
-function closeCabinetDetail(){var o=document.getElementById('cabinetDetailOverlay');if(o){o.style.opacity='0';setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o);},200);}}
-window.closeCabinetDetail=closeCabinetDetail;
-</script>
-// === 药品详情页 ===
-function showCabinetDetail(drugName, cabId){
-  var cabinet = JSON.parse(localStorage.getItem('cy_cabinet')||'[]');
-  var drug = cabinet.find(function(d){ return d.name===drugName || d.id===cabId; });
-  var allDrugs = typeof DRUG_GUIDE !== 'undefined' ? DRUG_GUIDE : {};
-  var entry = allDrugs[drugName] || null;
-  // 构建弹窗
-  var overlay = document.createElement('div');
-  overlay.id = 'cabinetDetailOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;padding:0';
-  var now = new Date();
-  var expInfo = '', qtyInfo = '', memberInfo = '';
-  if(drug){
-    if(drug.expiry){
-      var exp=new Date(drug.expiry); var diff=Math.round((exp-now)/86400000);
-      var expCls='#FA5151'; var expBadge='已过期';
-      if(diff>=0){expCls='#E67E00';expBadge=diff+'天后到期';if(diff>90)expCls='#07C160';}
-      expInfo='<span style="color:'+expCls+';font-weight:600">'+expBadge+'</span>';
-    }
-    if(drug.qty) qtyInfo='<span style="color:#666">库存：'+escAttr(drug.qty)+'</span>';
-    if(drug.memberName) memberInfo='<span style="color:#666">成员：'+escAttr(drug.memberName)+'</span>';
-  }
-  var html='<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:88vh;overflow-y:auto;padding:20px;box-sizing:border-box">';
-  html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">';
-  html+='<div style="font-size:17px;font-weight:700">'+escAttr(drugName)+'</div>';
-  html+='<button onclick="closeCabinetDetail()" style="border:none;background:#f5f5f5;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1">×</button></div>';
-  if(expInfo||qtyInfo||memberInfo){
-    html+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">';
-    if(expInfo) html+='<span style="background:#FFF0F0;color:#FA5151;font-size:12px;padding:3px 10px;border-radius:12px">'+expInfo+'</span>';
-    if(qtyInfo) html+='<span style="background:#f0f9ff;color:#07A9D8;font-size:12px;padding:3px 10px;border-radius:12px">'+qtyInfo+'</span>';
-    if(memberInfo) html+='<span style="background:#f0fff4;color:#07C160;font-size:12px;padding:3px 10px;border-radius:12px">'+memberInfo+'</span>';
-    html+='</div>';
-  }
-  // 说明书信息
-  if(entry){
-    if(entry.indications){
-      html+='<div style="margin-bottom:12px">';
-      html+='<div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">适应症</div>';
-      html+='<div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.indications)+'</div></div>';
-    }
-    if(entry.dosage){
-      html+='<div style="margin-bottom:12px">';
-      html+='<div style="font-size:12px;color:#07C160;font-weight:600;margin-bottom:4px">用法用量</div>';
-      html+='<div style="font-size:13px;color:#444;line-height:1.6">'+escAttr(entry.dosage)+'</div></div>';
-    }
-    // 特殊人群
-    var sp=getSpecialPopWarnings(entry,drugName);
-    if(sp&&sp.length>0){
-      html+='<div style="background:#FFF7E6;border-radius:10px;padding:10px 14px;margin-bottom:12px">';
-      html+='<div style="font-size:12px;color:#E67E00;font-weight:600;margin-bottom:6px">⚠️ 特殊人群</div>';
-      sp.forEach(function(item){ html+='<div style="font-size:13px;color:#C0392B;line-height:1.6;margin-bottom:2px"><b>'+escAttr(item.pop)+'</b>：'+escAttr(item.warn)+'</div>'; });
-      html+='</div>';
-    }
-    if(entry.adverse){
-      html+='<div style="margin-bottom:12px">';
-      html+='<div style="font-size:12px;color:#999;font-weight:600;margin-bottom:4px">不良反应</div>';
-      html+='<div style="font-size:13px;color:#555;line-height:1.6">'+escAttr(entry.adverse)+'</div></div>';
-    }
-    if(entry.contraindication||entry.contra||entry.avoid){
-      html+='<div style="background:#FFF0F0;border-radius:10px;padding:10px 14px;margin-bottom:12px">';
-      html+='<div style="font-size:12px;color:#FA5151;font-weight:600;margin-bottom:4px">禁忌 / 注意事项</div>';
-      html+='<div style="font-size:13px;color:#C62828;line-height:1.6">'+escAttr(entry.contraindication||entry.contra||entry.avoid)+'</div></div>';
-    }
-  } else {
-    html+='<div style="text-align:center;color:#999;font-size:13px;padding:20px">暂无详细说明书信息<br><span style="font-size:12px">试试在搜索框查询完整说明书</span></div>';
-  }
-  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
-  if(entry) html+='<button class="btn-primary" style="font-size:13px;padding:8px 16px" onclick="openManualForDrug(\''+escAttr(drugName)+'\')">查看完整说明书</button>';
-  html+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="switchTab(\'interact\')">查相互作用</button>';
-  html+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px" onclick="closeCabinetDetail();switchTab(\'chat\');setTimeout(function(){var i=document.getElementById(\'chatInput\');if(i)i.value=\''+escAttr(drugName)+' 怎么吃\';},300)">问药</button>';
-  if(cabId) html+='<button class="btn-secondary" style="font-size:13px;padding:8px 16px;color:#FA5151" onclick="if(confirm(\'确认移除「'+escAttr(drugName)+'」?')){deleteCabinetDrug(\''+escAttr(cabId)+'\');closeCabinetDetail();}">移除药品</button>';
-  html+='</div></div>';
-  overlay.innerHTML=html;
-  overlay.addEventListener('click',function(e){ if(e.target===overlay) closeCabinetDetail(); });
-  document.body.appendChild(overlay);
-  overlay.style.opacity='0';
-  overlay.style.transition='opacity .2s';
-  requestAnimationFrame(function(){ overlay.style.opacity='1'; });
-}
-window.showCabinetDetail=showCabinetDetail;
-function closeCabinetDetail(){ var o=document.getElementById('cabinetDetailOverlay'); if(o){ o.style.opacity='0'; setTimeout(function(){ if(o.parentNode) o.parentNode.removeChild(o); },200); } }
-window.closeCabinetDetail=closeCabinetDetail;
-
 
   function closeReminderModal(){ document.getElementById('reminderModal').style.display='none'; }
   function saveReminder(){
@@ -6180,12 +5175,8 @@ window.getUserNowMinutes = function(){
   function afterSplash(){
     var user = getCurrentUser();
     if(user){ updateAccountBtn(); startApp(); }
-    else {
-      var g=document.getElementById('authGate');
-      if(g){g.classList.remove('show');g.style.display='none';}
-      startApp();
-    }
-  };
+    else { var g = document.getElementById('authGate'); if(g) { g.classList.add('show'); applyLang(currentLang); } }
+  }
     function runSplash(){
     var splash = document.getElementById('boot');
     if(!splash){ afterSplash(); return; }
@@ -7386,6 +6377,8 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .skeleton-list{padding:8px}
 .empty-sub{font-size:13px;opacity:0.6;margin-top:6px}
+</style>
+
 
 
 <div id="drugDetailModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drugDetailName">
@@ -10919,758 +9912,6 @@ else _btn();
 })();
 </script>
 
-</script>
-
-
-<script>
-// 饮食禁忌查询
-function queryDietTaboo() {
-  var input = document.getElementById('dietDrugInput');
-  var resultDiv = document.getElementById('dietResult');
-  if (!input || !resultDiv) return;
-
-  var name = input.value.trim();
-  if (!name) {
-    resultDiv.innerHTML = '<div style="color:#999;padding:8px">请输入药品名称</div>';
-    return;
-  }
-
-  // 查询 DRUG_GUIDE
-  var entry = null;
-  if (typeof DRUG_GUIDE !== 'undefined' && DRUG_GUIDE[name]) {
-    entry = DRUG_GUIDE[name];
-  } else if (typeof DRUG_GUIDE !== 'undefined') {
-    // 模糊匹配
-    for (var k in DRUG_GUIDE) {
-      if (k.indexOf(name) >= 0 || name.indexOf(k) >= 0) {
-        entry = DRUG_GUIDE[k];
-        name = k;
-        break;
-      }
-    }
-  }
-
-  if (!entry) {
-    resultDiv.innerHTML = '<div style="color:#FF6B6B;padding:12px">未找到该药品，请确认名称</div>';
-    return;
-  }
-
-  // 提取饮食禁忌信息
-  var dietTaboos = [];
-  var avoidFoods = [];
-  var suggestFoods = [];
-
-  // 从 contraindications / adverse / precautions 提取
-  var text = (entry.contraindications || '') + ' ' + (entry.adverse || '') + ' ' + (entry.precautions || '');
-  text = text.toLowerCase();
-
-  // 常见食物-药物禁忌规则库
-  var foodDrugRules = [
-    {drug: '阿司匹林', avoid: ['酒', '酒精', '饮酒'], reason: '增加胃出血风险', suggest: ['温水', '饭后服用']},
-    {drug: '布洛芬', avoid: ['酒', '酒精', '饮酒'], reason: '增加胃刺激和肝损伤风险', suggest: ['饭后服用', '牛奶']},
-    {drug: '头孢', avoid: ['酒', '酒精', '饮酒', '藿香正气'], reason: '双硫仑样反应，严重可致死', suggest: ['停药7天后才可饮酒']},
-    {drug: '甲硝唑', avoid: ['酒', '酒精', '饮酒'], reason: '双硫仑样反应', suggest: ['停药3天后才可饮酒']},
-    {drug: '降压药', avoid: ['西柚', '葡萄柚', '柚子', '高盐食物'], reason: '影响药效或增加副作用', suggest: ['低盐饮食', '多食蔬菜']},
-    {drug: '他汀', avoid: ['西柚', '葡萄柚', '柚子', '红曲'], reason: '增加肌肉损伤风险', suggest: []},
-    {drug: '华法林', avoid: ['菠菜', '韭菜', '大蒜', '银杏', '维生素K丰富食物'], reason: '影响抗凝效果', suggest: ['保持饮食稳定']},
-    {drug: '抗生素', avoid: ['乳制品', '牛奶', '酸奶'], reason: '部分抗生素与钙离子结合影响吸收', suggest: ['间隔2小时服用', '温水']},
-    {drug: '四环素', avoid: ['乳制品', '牛奶', '抗酸药', '铁剂'], reason: '影响吸收', suggest: ['空腹服用', '间隔2小时']},
-    {drug: '铁剂', avoid: ['茶', '咖啡', '牛奶', '蛋'], reason: '影响铁吸收', suggest: ['维生素C', '橙汁', '空腹服用']},
-    {drug: '镇静催眠药', avoid: ['酒', '酒精', '咖啡', '浓茶'], reason: '增强中枢抑制，危险', suggest: ['温水']},
-    {drug: '感冒药', avoid: ['酒', '酒精', '咖啡', '辛辣'], reason: '加重肝肾负担', suggest: ['多喝温水', '清淡饮食']},
-    {drug: '降糖药', avoid: ['酒精', '高糖食物', '空腹饮酒'], reason: '血糖波动风险', suggest: ['规律饮食', '监测血糖']},
-    {drug: '甲状腺素', avoid: ['大豆', '豆制品', '高纤维食物', '钙剂'], reason: '影响吸收', suggest: ['空腹服用', '间隔4小时']},
-    {drug: '单胺氧化酶抑制剂', avoid: ['奶酪', '发酵食品', '啤酒', '红酒', '腊肉'], reason: '高血压危象风险', suggest: ['新鲜食物']},
-  ];
-
-  // 匹配规则
-  var matchedRules = [];
-  for (var i = 0; i < foodDrugRules.length; i++) {
-    var rule = foodDrugRules[i];
-    if (name.indexOf(rule.drug) >= 0 || rule.drug.indexOf(name) >= 0 ||
-        (entry.category && entry.category.indexOf(rule.drug) >= 0)) {
-      matchedRules.push(rule);
-    }
-  }
-
-  // 从药品说明书提取关键词
-  var avoidKeywords = ['禁', '忌', '避免', '不宜', '不可', '禁止'];
-  var foodKeywords = ['酒', '酒精', '饮食', '食物', '茶', '咖啡', '西柚', '葡萄柚', '柚子', '牛奶', '乳制品'];
-
-  // 渲染结果
-  var html = '<div style="background:#fff;padding:12px;border-radius:8px;border:1px solid #FFB3B3">';
-  html += '<div style="font-weight:600;color:#333;margin-bottom:10px">' + name + ' 饮食禁忌</div>';
-
-  if (matchedRules.length > 0) {
-    matchedRules.forEach(function(rule) {
-      html += '<div style="margin-bottom:12px;padding:10px;background:#FFF5F5;border-radius:6px">';
-      html += '<div style="color:#FF6B6B;font-weight:600;margin-bottom:6px">⚠️ 忌口食物</div>';
-      html += '<div style="color:#666;line-height:1.6">' + rule.avoid.join('、') + '</div>';
-      html += '<div style="color:#999;font-size:12px;margin-top:6px">原因：' + rule.reason + '</div>';
-      if (rule.suggest && rule.suggest.length > 0) {
-        html += '<div style="color:#07C160;font-size:12px;margin-top:4px">建议：' + rule.suggest.join('、') + '</div>';
-      }
-      html += '</div>';
-    });
-  }
-
-  // 从说明书补充
-  if (entry.contraindications && entry.contraindications.length > 10) {
-    html += '<div style="margin-top:10px;padding:10px;background:#F8F8F8;border-radius:6px">';
-    html += '<div style="color:#666;font-size:13px;line-height:1.6">' + entry.contraindications.slice(0, 200) + (entry.contraindications.length > 200 ? '...' : '') + '</div>';
-    html += '</div>';
-  }
-
-  if (matchedRules.length === 0 && (!entry.contraindications || entry.contraindications.length < 10)) {
-    html += '<div style="color:#999;padding:10px">暂无明确饮食禁忌记录，建议遵医嘱或咨询药师</div>';
-  }
-
-  html += '</div>';
-  resultDiv.innerHTML = html;
-}
-</script>
-
-
-
-<script>
-// FDA 妊娠分级查询
-function getFDAPregnancyGrade(drugName) {
-  var db = {
-    "阿司匹林": {grade: "D", risk: "妊娠晚期使用可能导致胎儿动脉导管早闭", advice: "妊娠期禁用"},
-    "布洛芬": {grade: "D", risk: "妊娠晚期使用可能导致胎儿动脉导管早闭、羊水过少", advice: "妊娠期禁用"},
-    "对乙酰氨基酚": {grade: "B", risk: "相对安全", advice: "必要时可短期使用"},
-    "头孢克洛": {grade: "B", risk: "动物实验未见危害", advice: "妊娠期慎用"},
-    "阿莫西林": {grade: "B", risk: "相对安全", advice: "妊娠期可用"},
-    "甲硝唑": {grade: "B", risk: "早孕期避免", advice: "妊娠3个月内禁用"},
-    "华法林": {grade: "X", risk: "明确致畸", advice: "妊娠期绝对禁用"},
-    "他汀": {grade: "X", risk: "影响胎儿发育", advice: "妊娠期绝对禁用"},
-    "降压药": {grade: "D", risk: "胎儿肾脏发育异常", advice: "妊娠期禁用"},
-  };
-
-  // 模糊匹配
-  for (var k in db) {
-    if (drugName.indexOf(k) >= 0 || k.indexOf(drugName) >= 0) {
-      return db[k];
-    }
-  }
-  return null;
-}
-
-// 儿童用药剂量计算
-function getPediatricDose(drugName, weight) {
-  var db = {
-    "布洛芬": {mgPerKg: "5-10mg", maxPerDose: 400, maxPerDay: 40, interval: "6-8小时", ageLimit: "6月+"},
-    "对乙酰氨基酚": {mgPerKg: "10-15mg", maxPerDose: 15, maxPerDay: 60, interval: "4-6小时", ageLimit: "3月+"},
-    "阿莫西林": {mgPerKg: "20-40mg/日", maxPerDose: null, maxPerDay: 2000, interval: "分2-3次", ageLimit: "无限制"},
-    "头孢": {mgPerKg: "20-40mg/日", maxPerDose: null, maxPerDay: 1000, interval: "分2-3次", ageLimit: "1月+"},
-    "阿奇霉素": {mgPerKg: "10mg(第1天)", maxPerDose: 500, maxPerDay: 500, interval: "每日1次", ageLimit: "6月+"},
-  };
-
-  for (var k in db) {
-    if (drugName.indexOf(k) >= 0 || k.indexOf(drugName) >= 0) {
-      var rule = db[k];
-      if (weight && rule.mgPerKg) {
-        var dose = weight * parseFloat(rule.mgPerKg.split('-')[0] || rule.mgPerKg.split('/')[0]);
-        return {
-          formula: rule.mgPerKg,
-          calculated: Math.round(dose) + "mg",
-          maxPerDose: rule.maxPerDose ? rule.maxPerDose + "mg" : "-",
-          interval: rule.interval,
-          ageLimit: rule.ageLimit
-        };
-      }
-      return rule;
-    }
-  }
-  return null;
-}
-
-// 老年人用药调整
-function getGeriatricAdjustment(drugName) {
-  var db = {
-    "降压药": {adjust: "起始剂量减半", risk: "体位性低血压", monitor: "血压"},
-    "地高辛": {adjust: "减少25-50%", risk: "蓄积中毒", monitor: "血药浓度"},
-    "华法林": {adjust: "起始剂量降低", risk: "出血风险增加", monitor: "INR"},
-    "镇静催眠": {adjust: "避免或减量", risk: "跌倒风险", monitor: "镇静程度"},
-    "NSAID": {adjust: "短期最低剂量", risk: "消化道出血", monitor: "肾功能"},
-    "布洛芬": {adjust: "短期最低剂量", risk: "消化道出血、肾损害", monitor: "肾功能"},
-  };
-
-  for (var k in db) {
-    if (drugName.indexOf(k) >= 0 || k.indexOf(drugName) >= 0) {
-      return db[k];
-    }
-  }
-  return null;
-}
-
-// 增强特殊人群警示显示
-function enhanceSpecialPopWarnings(drugName, container) {
-  var html = '<div style="margin-top:12px;padding:12px;background:#FFF9E6;border-radius:8px;border-left:3px solid #FF9800">';
-  html += '<div style="font-weight:600;color:#333;margin-bottom:8px">特殊人群用药指导</div>';
-
-  // 妊娠分级
-  var preg = getFDAPregnancyGrade(drugName);
-  if (preg) {
-    var gradeColor = {A: "#4CAF50", B: "#8BC34A", C: "#FFC107", D: "#FF5722", X: "#F44336"};
-    html += '<div style="margin-bottom:10px;padding:8px;background:#fff;border-radius:6px">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
-    html += '<span style="font-weight:600">妊娠期用药</span>';
-    html += '<span style="background:' + (gradeColor[preg.grade] || '#999') + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:12px">FDA ' + preg.grade + '</span>';
-    html += '</div>';
-    html += '<div style="color:#666;font-size:13px">' + preg.risk + '</div>';
-    html += '<div style="color:#FF9800;font-size:12px;margin-top:4px">建议：' + preg.advice + '</div>';
-    html += '</div>';
-  }
-
-  // 儿童用药
-  var peds = getPediatricDose(drugName);
-  if (peds) {
-    html += '<div style="margin-bottom:10px;padding:8px;background:#fff;border-radius:6px">';
-    html += '<div style="font-weight:600;margin-bottom:4px">儿童用药</div>';
-    html += '<div style="color:#666;font-size:13px">';
-    if (peds.calculated) {
-      html += '剂量计算：' + peds.calculated + '（' + peds.formula + '）';
-    } else {
-      html += '参考剂量：' + peds.mgPerKg || peds.formula;
-    }
-    if (peds.ageLimit) html += '<br>适用年龄：' + peds.ageLimit;
-    html += '</div></div>';
-  }
-
-  // 老年人用药
-  var ger = getGeriatricAdjustment(drugName);
-  if (ger) {
-    html += '<div style="margin-bottom:10px;padding:8px;background:#fff;border-radius:6px">';
-    html += '<div style="font-weight:600;margin-bottom:4px">老年人用药</div>';
-    html += '<div style="color:#666;font-size:13px">';
-    html += '剂量调整：' + ger.adjust + '<br>';
-    html += '<span style="color:#FF9800">风险：' + ger.risk + '</span><br>';
-    html += '监测：' + ger.monitor;
-    html += '</div></div>';
-  }
-
-  if (!preg && !peds && !ger) {
-    html += '<div style="color:#999;font-size:13px">暂无特殊人群用药数据，建议咨询医生或药师</div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-</script>
-
-
-<script>
-// 条形码扫描功能
-var barcodeStream = null;
-var barcodeFacing = 'environment';
-
-function openBarcodeScanner() {
-  var modal = document.getElementById('barcodeScannerModal');
-  if (!modal) return;
-  modal.style.display = 'flex';
-  startBarcodeCamera();
-}
-
-function closeBarcodeScanner() {
-  var modal = document.getElementById('barcodeScannerModal');
-  if (modal) modal.style.display = 'none';
-  stopBarcodeCamera();
-  document.getElementById('scanResult').innerHTML = '';
-}
-
-function stopBarcodeCamera() {
-  if (barcodeStream) {
-    barcodeStream.getTracks().forEach(function(t) { t.stop(); });
-    barcodeStream = null;
-  }
-}
-
-function switchToCamera() {
-  barcodeFacing = barcodeFacing === 'environment' ? 'user' : 'environment';
-  stopBarcodeCamera();
-  startBarcodeCamera();
-}
-
-function startBarcodeCamera() {
-  var video = document.getElementById('barcodeVideo');
-  if (!video) return;
-
-  navigator.mediaDevices.getUserMedia({
-    video: { facingMode: barcodeFacing, width: { ideal: 720 }, height: { ideal: 720 } }
-  }).then(function(stream) {
-    barcodeStream = stream;
-    video.srcObject = stream;
-
-    // 持续检测条码
-    scanBarcodeLoop();
-  }).catch(function(err) {
-    console.log('Camera error:', err);
-    // fallback: 提示手动输入
-    var result = document.getElementById('scanResult');
-    if (result) result.innerHTML = '<div style="color:#FF9800;padding:12px">摄像头不可用，请手动输入条形码</div>';
-  });
-}
-
-function scanBarcodeLoop() {
-  var video = document.getElementById('barcodeVideo');
-  var canvas = document.getElementById('barcodeCanvas');
-  if (!video || !canvas || !barcodeStream) return;
-
-  canvas.width = video.videoWidth || 360;
-  canvas.height = video.videoHeight || 360;
-
-  var ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // 尝试用 BarcodeDetector API (Chrome 83+)
-  if ('BarcodeDetector' in window) {
-    BarcodeDetector.getSupportedFormats().then(function(formats) {
-      var detector = new BarcodeDetector({ formats: formats });
-      detector.detect(canvas).then(function(barcodes) {
-        if (barcodes.length > 0) {
-          var code = barcodes[0].rawValue;
-          console.log('Barcode detected:', code);
-          closeBarcodeScanner();
-          lookupBarcodeByCode(code);
-        }
-      }).catch(function() {});
-    }).catch(function() {});
-  } else {
-    // 没有 BarcodeDetector，尝试 ZXing 库
-    tryZXing(canvas);
-  }
-
-  // 继续扫描
-  if (barcodeStream) {
-    setTimeout(scanBarcodeLoop, 500);
-  }
-}
-
-function tryZXing(canvas) {
-  // 动态加载 ZXing
-  if (window._zxingLoading) return;
-  if (document.getElementById('zxing-script')) {
-    decodeWithZXing(canvas);
-    return;
-  }
-  window._zxingLoading = true;
-  var script = document.createElement('script');
-  script.id = 'zxing-script';
-  script.src = 'https://cdn.jsdelivr.net/npm/@aspect-build/aspect-build-browser@1.0.0';
-  // 改用更轻量的 jsQR
-  script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
-  script.onload = function() { decodeWithZXing(canvas); };
-  script.onerror = function() { window._zxingLoading = false; };
-  document.head.appendChild(script);
-}
-
-function decodeWithZXing(canvas) {
-  try {
-    var ctx = canvas.getContext('2d');
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    var code = jsQR(imageData.data, canvas.width, canvas.height);
-    if (code) {
-      console.log('QR/Barcode:', code.data);
-      closeBarcodeScanner();
-      lookupBarcodeByCode(code.data);
-    }
-  } catch(e) {}
-}
-
-function lookupBarcode() {
-  var input = document.getElementById('manualBarcodeInput');
-  if (!input || !input.value.trim()) {
-    var result = document.getElementById('scanResult');
-    if (result) result.innerHTML = '<div style="color:#FF9800;padding:12px">请输入条形码</div>';
-    return;
-  }
-  closeBarcodeScanner();
-  lookupBarcodeByCode(input.value.trim());
-}
-
-function lookupBarcodeByCode(barcode) {
-  var result = document.getElementById('scanResult');
-  if (!result) return;
-
-  // 国家药监局 API: https://www.nmpa.gov.cn/WS04/CL2042/
-  // 药品追溯码查询 API (模拟，实际需要对接药监局接口)
-  var drugMapping = {
-    // 常见药品追溯码前缀映射（示例）
-    "869": { name: "布洛芬缓释胶囊", manufacturer: "中美天津史克制药" },
-    "8690": { name: "阿莫西林胶囊", manufacturer: "华北制药" },
-    "691": { name: "阿司匹林肠溶片", manufacturer: "拜耳医药保健" },
-  };
-
-  // 查找前缀匹配
-  var matchedDrug = null;
-  for (var prefix in drugMapping) {
-    if (barcode.indexOf(prefix) === 0) {
-      matchedDrug = drugMapping[prefix];
-      break;
-    }
-  }
-
-  if (matchedDrug) {
-    // 找到药品，直接显示
-    var html = '<div style="background:#E8F5FF;padding:12px;border-radius:8px;border:1px solid #10AEFF">';
-    html += '<div style="font-weight:600;color:#007AFF;margin-bottom:6px">扫码结果</div>';
-    html += '<div style="color:#333">药品: ' + matchedDrug.name + '</div>';
-    html += '<div style="color:#666;font-size:13px">厂家: ' + matchedDrug.manufacturer + '</div>';
-    html += '<div style="color:#999;font-size:12px;margin-top:4px">追溯码: ' + barcode + '</div>';
-    html += '<button onclick="doManualSearch('' + matchedDrug.name + '')" style="margin-top:10px;padding:8px 16px;background:#10AEFF;color:#fff;border:none;border-radius:6px;font-size:13px">查看说明书</button>';
-    html += '</div>';
-    result.innerHTML = html;
-  } else {
-    // 未匹配，提示在 DRUG_GUIDE 中搜索
-    result.innerHTML = '<div style="padding:12px;text-align:center">';
-    result.innerHTML += '<div style="color:#FF9800;font-size:14px">未在本地数据库找到该药品</div>';
-    result.innerHTML += '<div style="color:#999;font-size:12px;margin-top:4px">追溯码: ' + barcode + '</div>';
-    result.innerHTML += '<div style="margin-top:10px">';
-    result.innerHTML += '<button onclick="doManualSearch('' + barcode + '')" style="padding:8px 16px;background:#10AEFF;color:#fff;border:none;border-radius:6px;font-size:13px">模糊搜索</button>';
-    result.innerHTML += '</div>';
-    result.innerHTML += '</div>';
-  }
-}
-</script>
-
-
-<script>
-// 慢病管理追踪系统
-var _chronicTab = 'bp';
-
-function switchChronicTab(tab) {
-  _chronicTab = tab;
-  // 切换按钮样式
-  ['bp','bs','lipid','weight'].forEach(function(t) {
-    var btn = document.getElementById('chronicTab_' + t);
-    if (btn) {
-      btn.style.background = t === tab ? '#9C27B0' : '#fff';
-      btn.style.color = t === tab ? '#fff' : '#666';
-      btn.style.border = t === tab ? 'none' : '1px solid #E0E0E0';
-    }
-  });
-  // 切换输入区
-  var inputs = ['bp','bs','lipid','weight'];
-  inputs.forEach(function(t) {
-    var el = document.getElementById('chronic' + t.charAt(0).toUpperCase() + t.slice(1) + 'Input');
-    if (el) el.style.display = t === tab ? 'block' : 'none';
-  });
-  // 刷新记录
-  renderChronicRecent();
-}
-
-function getChronicStorage(type) {
-  try { return JSON.parse(localStorage.getItem('cy_chronic_' + type) || '[]'); } catch(e) { return []; }
-}
-
-function saveChronicRecord(type) {
-  var record = { date: new Date().toISOString(), ts: Date.now() };
-
-  if (type === 'bp') {
-    var sys = parseFloat(document.getElementById('chronicSYS').value);
-    var dia = parseFloat(document.getElementById('chronicDIA').value);
-    var hr = parseFloat(document.getElementById('chronicHR').value) || null;
-    if (!sys || !dia) { alert('请输入收缩压和舒张压'); return; }
-    record.sys = sys; record.dia = dia; record.hr = hr;
-    // 分类
-    if (sys >= 180 || dia >= 110) record.level = 3;
-    else if (sys >= 160 || dia >= 100) record.level = 2;
-    else if (sys >= 140 || dia >= 90) record.level = 1;
-    else record.level = 0;
-    // 清空输入
-    document.getElementById('chronicSYS').value = '';
-    document.getElementById('chronicDIA').value = '';
-    document.getElementById('chronicHR').value = '';
-  } else if (type === 'bs') {
-    var bs = parseFloat(document.getElementById('chronicBS').value);
-    var period = document.getElementById('chronicBSPeriod').value;
-    if (!bs) { alert('请输入血糖值'); return; }
-    record.bs = bs; record.period = period;
-    document.getElementById('chronicBS').value = '';
-  } else if (type === 'lipid') {
-    var tc = parseFloat(document.getElementById('chronicTC').value);
-    var ldl = parseFloat(document.getElementById('chronicLDL').value);
-    var hdl = parseFloat(document.getElementById('chronicHDL').value);
-    if (!tc && !ldl && !hdl) { alert('请至少输入一项血脂数据'); return; }
-    record.tc = tc || null; record.ldl = ldl || null; record.hdl = hdl || null;
-    document.getElementById('chronicTC').value = '';
-    document.getElementById('chronicLDL').value = '';
-    document.getElementById('chronicHDL').value = '';
-  } else if (type === 'weight') {
-    var w = parseFloat(document.getElementById('chronicWeight').value);
-    if (!w) { alert('请输入体重'); return; }
-    record.weight = w;
-    document.getElementById('chronicWeight').value = '';
-  }
-
-  var data = getChronicStorage(type);
-  data.unshift(record);
-  // 只保留最近 180 天
-  var cutoff = Date.now() - 180 * 86400000;
-  data = data.filter(function(r) { return r.ts > cutoff; });
-  localStorage.setItem('cy_chronic_' + type, JSON.stringify(data));
-
-  renderChronicRecent();
-  // 轻量提示
-  var card = document.getElementById('chronicCard');
-  if (card) {
-    var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#07C160;color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;z-index:9999;animation:fadeOut 2s forwards';
-    toast.textContent = '✅ 记录已保存';
-    document.body.appendChild(toast);
-    setTimeout(function() { toast.remove(); }, 2000);
-  }
-}
-
-function renderChronicRecent() {
-  var el = document.getElementById('chronicRecent');
-  if (!el) return;
-  var data = getChronicStorage(_chronicTab);
-  var recent = data.slice(0, 5);
-
-  if (recent.length === 0) {
-    el.innerHTML = '<div style="text-align:center;padding:12px;color:#999;font-size:13px">暂无记录，开始记录您的健康数据</div>';
-    return;
-  }
-
-  var html = '<div style="font-size:12px;color:#999;margin-bottom:8px;padding-top:8px;border-top:1px solid #F0F0F0">最近记录</div>';
-
-  recent.forEach(function(r) {
-    var date = new Date(r.date);
-    var dateStr = (date.getMonth()+1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + String(date.getMinutes()).padStart(2,'0');
-    html += '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #F5F5F5;gap:10px">';
-    html += '<span style="font-size:12px;color:#999;width:80px">' + dateStr + '</span>';
-
-    if (_chronicTab === 'bp') {
-      var levelColor = ['#4CAF50','#FFC107','#FF9800','#F44336'];
-      var levelText = ['正常','偏高','高','极高'];
-      var color = levelColor[r.level] || '#4CAF50';
-      html += '<span style="font-weight:600;font-size:16px;color:#333">' + r.sys + '<span style="font-size:12px;color:#999">/</span>' + r.dia + '</span>';
-      html += '<span style="font-size:12px;color:#999">mmHg</span>';
-      if (r.hr) html += '<span style="font-size:12px;color:#666;margin-left:4px">❤️' + r.hr + '</span>';
-      html += '<span style="margin-left:auto;font-size:12px;padding:2px 8px;border-radius:10px;background:' + color + ';color:#fff">' + (levelText[r.level] || '') + '</span>';
-    } else if (_chronicTab === 'bs') {
-      var periodNames = {fasting:'空腹',post:'餐后2h',random:'随机'};
-      var bsColor = r.bs > 11.1 ? '#F44336' : r.bs > 7.8 ? '#FF9800' : r.bs < 3.9 ? '#FF9800' : '#4CAF50';
-      html += '<span style="font-weight:600;font-size:16px;color:' + bsColor + '">' + r.bs + '</span>';
-      html += '<span style="font-size:12px;color:#999">mmol/L</span>';
-      html += '<span style="font-size:12px;color:#999;margin-left:4px">' + (periodNames[r.period] || '') + '</span>';
-    } else if (_chronicTab === 'weight') {
-      html += '<span style="font-weight:600;font-size:16px;color:#333">' + r.weight + '</span>';
-      html += '<span style="font-size:12px;color:#999">kg</span>';
-    } else if (_chronicTab === 'lipid') {
-      var items = [];
-      if (r.tc) items.push('TC:' + r.tc);
-      if (r.ldl) items.push('LDL:' + r.ldl);
-      if (r.hdl) items.push('HDL:' + r.hdl);
-      html += '<span style="font-size:13px;color:#333">' + items.join(' | ') + '</span>';
-      html += '<span style="font-size:12px;color:#999">mmol/L</span>';
-    }
-
-    html += '</div>';
-  });
-
-  // 趋势查看按钮
-  if (recent.length >= 3) {
-    html += '<button onclick="renderChronicTrend()" style="width:100%;margin-top:10px;padding:8px;background:#F3E5F5;color:#9C27B0;border:none;border-radius:8px;font-size:13px;font-weight:500">查看趋势图</button>';
-  }
-
-  el.innerHTML = html;
-}
-
-function renderChronicTrend() {
-  var el = document.getElementById('chronicTrend');
-  if (!el) return;
-  el.style.display = 'block';
-
-  var data = getChronicStorage(_chronicTab);
-  if (data.length < 2) { el.innerHTML = '<div style="color:#999;font-size:13px;text-align:center;padding:12px">记录超过2条后显示趋势图</div>'; return; }
-
-  // 计算极值
-  var values = data.map(function(r) {
-    if (_chronicTab === 'bp') return r.sys;
-    if (_chronicTab === 'bs') return r.bs;
-    if (_chronicTab === 'weight') return r.weight;
-    return 0;
-  }).filter(function(v) { return v; });
-
-  var min = Math.min.apply(null, values);
-  var max = Math.max.apply(null, values);
-  var range = max - min || 1;
-  var w = 300, h = 120, pad = 20;
-  var chartW = w - pad * 2, chartH = h - pad * 2;
-
-  // SVG趋势图
-  var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="border-radius:8px;background:#FAFAFA">';
-
-  // 参考线
-  if (_chronicTab === 'bp') {
-    [140, 90].forEach(function(ref) {
-      var y = pad + chartH - ((ref - min) / range * chartH);
-      if (y > pad && y < pad + chartH) {
-        svg += '<line x1="0" y1="' + y + '" x2="' + w + '" y2="' + y + '" stroke="#FF9800" stroke-width="1" stroke-dasharray="4,4" opacity="0.6"/>';
-        svg += '<text x="' + (w - 5) + '" y="' + (y - 3) + '" text-anchor="end" font-size="9" fill="#FF9800">' + ref + '</text>';
-      }
-    });
-  }
-
-  // 绘制折线
-  var pts = [];
-  data.slice().reverse().forEach(function(r, i) {
-    var v;
-    if (_chronicTab === 'bp') v = r.sys;
-    else if (_chronicTab === 'bs') v = r.bs;
-    else if (_chronicTab === 'weight') v = r.weight;
-    if (!v) return;
-    var x = pad + (i / (data.length - 1)) * chartW;
-    var y = pad + chartH - ((v - min) / range * chartH);
-    pts.push([x, y]);
-  });
-
-  // 填充区域
-  if (pts.length > 1) {
-    svg += '<path d="M' + pts[0][0] + ',' + (pad + chartH) + ' L' + pts.map(function(p) { return p[0] + ',' + p[1]; }).join(' L') + ' L' + pts[pts.length-1][0] + ',' + (pad + chartH) + ' Z" fill="#9C27B0" opacity="0.1"/>';
-    svg += '<polyline points="' + pts.map(function(p) { return p.join(','); }).join(' ') + '" fill="none" stroke="#9C27B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-    pts.forEach(function(p, i) {
-      var color = '#9C27B0';
-      if (_chronicTab === 'bp' && data[data.length-1-i]) {
-        var lvl = data[data.length-1-i].level;
-        color = ['#4CAF50','#FFC107','#FF9800','#F44336'][lvl] || '#9C27B0';
-      }
-      svg += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3" fill="' + color + '" stroke="#fff" stroke-width="1"/>';
-    });
-  }
-
-  svg += '</svg>';
-  el.innerHTML = '<div style="font-size:12px;color:#9C27B0;font-weight:500;margin-bottom:6px">近' + data.length + '条趋势</div>' + svg;
-}
-
-// 页面加载后初始化
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
-    switchChronicTab('bp');
-    renderChronicRecent();
-  }, 2000);
-});
-</script>
-
-<script>
-// 服药时间指导查询
-function queryTimingGuide() {
-  var input = document.getElementById('timingDrugInput');
-  var resultDiv = document.getElementById('timingResult');
-  if (!input || !resultDiv) return;
-
-  var name = input.value.trim();
-  if (!name) {
-    resultDiv.innerHTML = '<div style="color:#999;padding:8px">请输入药品名称</div>';
-    return;
-  }
-
-  // 查询 DRUG_GUIDE
-  var entry = null;
-  if (typeof DRUG_GUIDE !== 'undefined' && DRUG_GUIDE[name]) {
-    entry = DRUG_GUIDE[name];
-  } else if (typeof DRUG_GUIDE !== 'undefined') {
-    for (var k in DRUG_GUIDE) {
-      if (k.indexOf(name) >= 0 || name.indexOf(k) >= 0) {
-        entry = DRUG_GUIDE[k];
-        name = k;
-        break;
-      }
-    }
-  }
-
-  if (!entry) {
-    resultDiv.innerHTML = '<div style="color:#FF6B6B;padding:12px">未找到该药品，请确认名称</div>';
-    return;
-  }
-
-  // 服药时间规则库
-  var timingRules = [
-    {drug: '阿司匹林', timing: '饭后', reason: '减少胃刺激', times: '早餐后或晚餐后'},
-    {drug: '布洛芬', timing: '饭后', reason: '减少胃刺激', times: '餐后30分钟内'},
-    {drug: '头孢', timing: '饭后', reason: '提高吸收率', times: '餐后服用'},
-    {drug: '降压药', timing: '晨起', reason: '血压晨峰现象', times: '起床后30分钟内'},
-    {drug: '他汀类', timing: '睡前', reason: '胆固醇合成高峰在夜间', times: '睡前1小时'},
-    {drug: '甲状腺素', timing: '空腹', reason: '食物影响吸收', times: '早餐前30-60分钟'},
-    {drug: '质子泵抑制剂', timing: '餐前', reason: '抑制胃酸分泌', times: '早餐前30分钟'},
-    {drug: '降糖药', timing: '餐前', reason: '控制餐后血糖', times: '餐前15-30分钟'},
-    {drug: '二甲双胍', timing: '餐中或餐后', reason: '减少胃肠道反应', times: '随餐或餐后立即'},
-    {drug: '铁剂', timing: '空腹', reason: '吸收最佳', times: '餐前1小时或餐后2小时'},
-    {drug: '钙剂', timing: '餐后', reason: '胃酸助吸收', times: '餐后或睡前'},
-    {drug: '镇静催眠药', timing: '睡前', reason: '助眠', times: '睡前30分钟'},
-    {drug: '利尿剂', timing: '晨起', reason: '避免夜间频繁起夜', times: '早餐后'},
-    {drug: '阿仑膦酸钠', timing: '空腹', reason: '吸收要求严格', times: '早餐前30分钟，保持直立30分钟'},
-    {drug: '感冒药', timing: '饭后', reason: '减少胃刺激', times: '餐后30分钟'},
-    {drug: '抗凝药', timing: '固定时间', reason: '维持稳定血药浓度', times: '每天同一时间'},
-  ];
-
-  // 匹配规则
-  var matchedRule = null;
-  for (var i = 0; i < timingRules.length; i++) {
-    var rule = timingRules[i];
-    if (name.indexOf(rule.drug) >= 0 || rule.drug.indexOf(name) >= 0 ||
-        (entry.category && entry.category.indexOf(rule.drug) >= 0)) {
-      matchedRule = rule;
-      break;
-    }
-  }
-
-  // 从说明书提取
-  var dosageText = entry.dosage || '';
-
-  // 渲染
-  var html = '<div style="background:#fff;padding:12px;border-radius:8px;border:1px solid #87CEEB">';
-  html += '<div style="font-weight:600;color:#333;margin-bottom:10px">' + name + ' 服药时间</div>';
-
-  if (matchedRule) {
-    var timingColor = {
-      '空腹': '#FF9800',
-      '餐前': '#4CAF50',
-      '餐中': '#9C27B0',
-      '餐后': '#2196F3',
-      '晨起': '#FF5722',
-      '睡前': '#3F51B5',
-      '固定时间': '#607D8B'
-    };
-    var color = timingColor[matchedRule.timing] || '#3498DB';
-
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-    html += '<div style="background:' + color + ';color:#fff;padding:8px 16px;border-radius:20px;font-weight:600">' + matchedRule.timing + '</div>';
-    html += '<div style="color:#666">' + matchedRule.times + '</div>';
-    html += '</div>';
-    html += '<div style="background:#E8F4FC;padding:10px;border-radius:6px;margin-bottom:10px">';
-    html += '<div style="color:#3498DB;font-size:13px">💡 ' + matchedRule.reason + '</div>';
-    html += '</div>';
-  }
-
-  // 从说明书补充
-  if (dosageText && dosageText.length > 10) {
-    html += '<div style="background:#F8F8F8;padding:10px;border-radius:6px">';
-    html += '<div style="color:#666;font-size:13px;line-height:1.6">' + dosageText.slice(0, 200) + (dosageText.length > 200 ? '...' : '') + '</div>';
-    html += '</div>';
-  }
-
-  if (!matchedRule && (!dosageText || dosageText.length < 10)) {
-    html += '<div style="color:#999;padding:10px">暂无明确服药时间记录，建议遵医嘱或咨询药师</div>';
-  }
-
-  // 时辰药理学提示
-  html += '<div style="margin-top:10px;padding:8px;background:#FFF3E0;border-radius:6px;font-size:12px;color:#F57C00">';
-  html += '⏰ 时辰药理学：药物疗效与服药时间相关，合理用药时间可提高疗效、减少副作用';
-  html += '</div>';
-
-  html += '</div>';
-
-  // 特殊人群用药指导
-  if (typeof enhanceSpecialPopWarnings === 'function') {
-    html += enhanceSpecialPopWarnings(name);
-  }
-
-  resultDiv.innerHTML = html;
-}
 </script>
 
 </body>
