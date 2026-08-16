@@ -1,4 +1,29 @@
-<!DOCTYPE html>
+<!DOCTYP
+<script>
+/* Chat 输入增强 v2.19.5 */
+(function(){
+  var inp = document.getElementById('chatInput');
+  if(inp) {
+    inp.addEventListener('keyup', function(e){
+      if(e.key === 'Enter' || e.keyCode === 13) {
+        var btn = document.getElementById('chatSendBtn');
+        if(btn) btn.click();
+      }
+    });
+  }
+  // 搜索框 Enter 键
+  var si = document.getElementById('manualInput');
+  if(si) {
+    si.addEventListener('keyup', function(e){
+      if(e.key === 'Enter' || e.keyCode === 13) {
+        var btn = document.getElementById('manualBtn');
+        if(btn) btn.click();
+      }
+    });
+  }
+})();
+</script>
+E html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +39,7 @@
 <link rel="preconnect" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="dns-prefetch" href="https://ai-pharmacy.xushengqin666.workers.dev">
 <link rel="preconnect" href="https://raw.githubusercontent.com">
-<title>彩云智药 · 家庭AI药师 · v2.19.3</title>
+<title>彩云智药 · 家庭AI药师 · v2.19.5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%230f766e%27/><path d=%27M44 22h12v22h22v12H56v22H44V56H22V44h22z%27 fill=%27%23fff%27/></svg>">>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -511,7 +536,7 @@ header>div{display:flex;align-items:center;gap:10px}
 .dark .chat-messages{background:#15181F}
 .dark .skeleton{background:linear-gradient(90deg,#232730 25%,#2A2E37 50%,#232730 75%);background-size:200% auto}
 
-/* ===== 医疗级组件 v2.19.3 ===== */
+/* ===== 医疗级组件 v2.19.5 ===== */
 /* 卡片：更柔和阴影 + 精细圆角 */
 .card{
   background:var(--c-bg-card);
@@ -607,7 +632,7 @@ header>div{display:flex;align-items:center;gap:10px}
 .tag-danger{background:var(--c-danger-l);color:var(--c-danger);padding:4px 10px;border-radius:var(--r-s);font-size:12px;font-weight:600}
 .tag-warning{background:var(--c-warning-l);color:var(--c-warning);padding:4px 10px;border-radius:var(--r-s);font-size:12px;font-weight:600}
 
-/* ===== 首页医疗级优化 v2.19.3 ===== */
+/* ===== 首页医疗级优化 v2.19.5 ===== */
 /* Hero 区域：增大标题 + 精细间距 */
 .hero{
   padding:var(--spacing-xl) var(--spacing-l);
@@ -875,7 +900,7 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
   <meta name="mobile-web-app-capable" content="yes">
 
 <style id="ripple-css">
-/* 密码可见切换+登录信任条 v2.19.3 */
+/* 密码可见切换+登录信任条 v2.19.5 */
 .pwd-field{position:relative}
 .pwd-field .pwd-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px;cursor:pointer;opacity:.45;display:flex;align-items:center;justify-content:center;transition:opacity .15s}
 .pwd-field .pwd-eye:hover{opacity:.8}
@@ -1588,7 +1613,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
   </div>
   
 <style id="ui-v2100">
-/* === 3×3 金刚区圆底图标 v2.19.3 === */
+/* === 3×3 金刚区圆底图标 v2.19.5 === */
 .feat-icon-btn{
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:transparent!important; border:none!important; padding:6px 4px!important;
@@ -2211,7 +2236,7 @@ function applyLang(lang){
   if(el=document.getElementById('legendBlue')) el.textContent = t.legendBlue;
   if(el=document.getElementById('chatTitle')) el.textContent = t.chatTitle;
   if(el=document.getElementById('chatInput')) el.placeholder = t.chatPlaceholder;
-  if(el=document.getElementById('chatSendBtn')) el.textContent = t.sendBtn;
+  /* SVG btn: no textContent */
   if(el=document.getElementById('chatWelcome')) el.textContent = t.chatWelcome;
   
   if(el=document.getElementById('langBtn')) el.textContent = t.langBtn;
@@ -7592,7 +7617,7 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
 .empty-sub{font-size:13px;opacity:0.6;margin-top:6px}
 </style>
 <script>
-/* 时段问候 v2.19.3 */
+/* 时段问候 v2.19.5 */
 window.getGreeting = function(){
   var h = new Date().getHours();
   if(h<6) return '夜深了';
