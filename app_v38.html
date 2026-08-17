@@ -1257,7 +1257,8 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
     <div class="hero-sub" id="heroSub">家庭 AI 药师 · 让每一次用药更安心</div>
   </div>
   <!-- 药品识别横幅（对标丁香医生「条码一扫」家庭用药第一入口） -->
-  <div class="card" onclick="try{openDrugCamera()}catch(e){switchTab('chat')}" style="cursor:pointer;background:linear-gradient(135deg,#0C8B6C,#109E71);color:#fff;border:none;box-shadow:0 4px 16px rgba(12,139,108,0.25)">
+  <div class="card" <div id="specialPopHost" style="margin-top:12px"></div>
+  onclick="try{openDrugCamera()}catch(e){switchTab('chat')}" style="cursor:pointer;background:linear-gradient(135deg,#0C8B6C,#109E71);color:#fff;border:none;box-shadow:0 4px 16px rgba(12,139,108,0.25)">
     <div style="display:flex;align-items:center;gap:14px">
       <div style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -11926,7 +11927,7 @@ function queryTimingGuide() {
   resultDiv.innerHTML = html;
 }
 
-// ===== chat 消息功能 (v2.19.6) =====
+// ===== chat 消息功能 (v2.19.7) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
   if (!inp) return;
@@ -12204,7 +12205,7 @@ chatStyle.textContent = '@keyframes chatDot { 0%,80%,100%{opacity:0.3;transform:
 document.head.appendChild(chatStyle);
 
 // ===== 版本标记 =====
-window.CY_VER = 'v2.19.6';
+window.CY_VER = 'v2.19.7';
 
 
 
