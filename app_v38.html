@@ -11925,6 +11925,288 @@ function queryTimingGuide() {
 
   resultDiv.innerHTML = html;
 }
-</script>
 
+// ===== chat 消息功能 (v2.19.6) =====
+function handleChatSend() {
+  var inp = document.getElementById('chatInput');
+  if (!inp) return;
+  var q = inp.value.trim();
+  if (!q) { if (window.showToast) showToast('请输入用药问题'); return; }
+  inp.value = '';
+  addUserMessage(q);
+  showLoadingIndicator();
+  setLoadingStatus('正在思考...');
+  callChatAI(q).then(function(ans) {
+    hideLoadingIndicator();
+    addAIMessage(ans);
+  }).catch(function(err) {
+    hideLoadingIndicator();
+    addAIMessage('抱歉，AI 服务暂时不可用，请稍后重试。');
+    console.error('chatAI error:', err);
+  });
+}
+
+function addUserMessage(text) {
+  var el = document.getElementById('chatMessages');
+  if (!el) return;
+  var div = document.createElement('div');
+  div.className = 'msg msg-user';
+  div.innerHTML = '<span class="bubble">' + escHtml(text) + '</span>';
+  el.appendChild(div);
+  scrollChatToBottom();
+}
+
+function addAIMessage(text) {
+  var el = document.getElementById('chatMessages');
+  if (!el) return;
+  var div = document.createElement('div');
+  div.className = 'msg msg-ai';
+  div.innerHTML = '<span class="bubble">' + formatAIResponse(text) + '</span>';
+  el.appendChild(div);
+  scrollChatToBottom();
+}
+
+function scrollChatToBottom() {
+  var el = document.getElementById('chatMessages');
+  if (el) el.scrollTop = el.scrollHeight;
+}
+
+function showLoadingIndicator() {
+  var el = document.getElementById('chatMessages');
+  if (!el) return;
+  var existing = document.getElementById('chatLoadingBubble');
+  if (existing) return;
+  var div = document.createElement('div');
+  div.id = 'chatLoadingBubble';
+  div.className = 'msg msg-ai';
+  div.innerHTML = '<span class="bubble" style="background:#F2F3F5;border:1px solid #E5E6EB;padding:12px 16px;border-radius:16px 16px 16px 4px;display:inline-block">' +
+    '<span style="display:inline-flex;align-items:center;gap:3px">' +
+    '<span style="width:6px;height:6px;border-radius:50%;background:#999;animation:chatDot 1.2s infinite 0s">.</span>' +
+    '<span style="width:6px;height:6px;border-radius:50%;background:#999;animation:chatDot 1.2s infinite 0.2s">.</span>' +
+    '<span style="width:6px;height:6px;border-radius:50%;background:#999;animation:chatDot 1.2s infinite 0.4s">.</span>' +
+    '</span>' +
+    '</span>';
+  el.appendChild(div);
+  scrollChatToBottom();
+}
+
+function hideLoadingIndicator() {
+  var el = document.getElementById('chatLoadingBubble');
+  if (el) el.parentNode.removeChild(el);
+}
+
+function setLoadingStatus(text) {
+  var el = document.getElementById('aiStatus');
+  if (el) el.textContent = text || '';
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function formatAIResponse(text) {
+  if (!text) return '';
+  // 自动加换行<br>，处理 markdown 列表
+  text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  text = text.replace(/^\s*[-*]\s+/gm, '<br>• ');
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
+// ===== AI 调用链 =====
+async function callChatAI(question) {
+  // 优先本地规则引擎
+  var local = getLocalDrugAnswer(question);
+  if (local) return local;
+
+  // DashScope API（硬编码 Key）
+  try {
+    var resp = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      },
+      body: JSON.stringify({
+        model: 'qwen-turbo',
+        messages: [{ role: 'user', content: question }],
+        max_tokens: 600
+      })
+    });
+    if (resp.ok) {
+      var json = await resp.json();
+      return json.choices[0].message.content;
+    }
+  } catch(e) { console.warn('dashscope failed:', e); }
+
+  // Groq API
+  try {
+    var resp2 = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + (typeof GROQ_KEY !== 'undefined' ? GROQ_KEY : '')
+      },
+      body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: question }], max_tokens: 500 })
+    });
+    if (resp2.ok) {
+      var j2 = await resp2.json();
+      return j2.choices[0].message.content;
+    }
+  } catch(e) { console.warn('groq failed:', e); }
+
+  return '抱歉，当前无法连接 AI 服务，请检查网络后重试。';
+}
+
+function getLocalDrugAnswer(question) {
+  if (typeof DRUG_GUIDE === 'undefined') return null;
+  var q = question.toLowerCase();
+
+  // 相互作用查询
+  var m = q.match(/([^，,、\s]+?)\s*(?:和|与|跟|和|＋)\s*([^，,、\s]+?)\s*(?:一起|合用|联用|配|吃)/);
+  if (!m) m = q.match(/([^\s]+)\s*(?:能否|能不能|可以|能)/);
+  if (m) {
+    var d1 = findDrugByName(m[1]);
+    var d2 = m[2] ? findDrugByName(m[2]) : null;
+    if (d1 && d2) {
+      var inter = checkDrugInteraction(d1, d2);
+      if (inter.level === 'danger') return '【联用警示】' + d1 + ' 与 ' + d2 + ' ' + inter.desc + '，不建议联合使用！';
+      if (inter.level === 'caution') return '【注意】' + d1 + ' 与 ' + d2 + ' ' + inter.desc + '，建议间隔服用并咨询药师。';
+      return d1 + ' 与 ' + d2 + ' ' + inter.desc + '。';
+    }
+  }
+
+  // 单药说明
+  var dm = q.match(/(?:说说|介绍|告诉|关于|查一下)([^，。,\s]+)/);
+  if (!dm) dm = q.match(/([^，。,\s]+)(?:是什么|怎么吃|适应症|主治)/);
+  if (dm) {
+    var drug = findDrugByName(dm[1]);
+    if (drug) {
+      var entry = DRUG_GUIDE[drug];
+      if (entry) {
+        var info = drug + '：';
+        if (entry.indications) info += '适应症：' + entry.indications + '。';
+        if (entry.dosage) info += '用法：' + entry.dosage + '。';
+        if (entry.adverse) info += '注意事项：' + entry.adverse + '。';
+        return info;
+      }
+    }
+  }
+
+  return null;
+}
+
+function findDrugByName(name) {
+  if (typeof DRUG_GUIDE === 'undefined') return null;
+  name = name.trim();
+  if (DRUG_GUIDE[name]) return name;
+  for (var k in DRUG_GUIDE) {
+    if (k.indexOf(name) >= 0 || name.indexOf(k) >= 0) return k;
+  }
+  return null;
+}
+
+function checkDrugInteraction(d1, d2) {
+  if (typeof INTERACT_DB !== 'undefined' && INTERACT_DB[d1] && INTERACT_DB[d1][d2]) {
+    var info = INTERACT_DB[d1][d2];
+    return { level: info.level || 'neutral', desc: info.desc || '' };
+  }
+  if (typeof INTERACT_DB !== 'undefined' && INTERACT_DB[d2] && INTERACT_DB[d2][d1]) {
+    var info2 = INTERACT_DB[d2][d1];
+    return { level: info2.level || 'neutral', desc: info2.desc || '' };
+  }
+  return { level: 'safe', desc: '目前数据库中暂无记录，一般可以联合使用，但建议遵医嘱' };
+}
+
+// ===== 相机 / 手动输入 =====
+function openDrugCamera() {
+  var el = document.getElementById('ocrLoading');
+  if (el) { el.style.display = 'block'; var t = document.getElementById('ocrLoadingText'); if (t) t.textContent = '请使用下方拍照按钮识别药品'; }
+  var btn = document.getElementById('drugCameraBtn');
+  if (btn) btn.onclick = function() {
+    var inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
+    inp.onchange = function(e) { var f = e.target.files[0]; if (f) handleCameraFile(f); };
+    inp.click();
+  };
+  if (btn) btn.click();
+}
+
+function openManualInput() {
+  var inp = document.getElementById('drugManualInput');
+  if (inp) { inp.focus(); }
+  if (window.showToast) showToast('请在下方用药指南中搜索药品');
+  switchTab('manual');
+}
+
+function handleCameraFile(file) {
+  var el = document.getElementById('ocrLoading');
+  if (el) { el.style.display = 'block'; var t = document.getElementById('ocrLoadingText'); if (t) t.textContent = '正在识别药品...'; }
+  if (typeof Tesseract !== 'undefined') {
+    Tesseract.recognize(file, 'eng+chi', { logger: function(){} }).then(function(result) {
+      var text = (result.data.text || '').replace(/\s+/g, '').substring(0, 200);
+      var el2 = document.getElementById('ocrLoading');
+      if (el2) el2.style.display = 'none';
+      var res = document.getElementById('ocrResult');
+      if (res) { res.style.display = 'block'; var c = document.getElementById('ocrResultContent'); if (c) c.textContent = text || '未识别到文字'; }
+      // 尝试匹配药品
+      if (text) {
+        var drug = findDrugByName(text);
+        if (drug) {
+          var match = document.getElementById('ocrMatchedDrug');
+          if (match) { match.innerHTML = '<div style="margin-top:6px"><button class="btn-primary" onclick="goToDrug(\'' + escHtml(drug) + '\')" style="padding:6px 14px;font-size:13px">查看 ' + escHtml(drug) + ' 详情 →</button></div>'; }
+        }
+      }
+    }).catch(function(err) {
+      if (el) el.style.display = 'none';
+      if (window.showToast) showToast('识别失败，请重试');
+    });
+  } else {
+    if (el) el.style.display = 'none';
+    if (window.showToast) showToast('OCR 暂不可用，请手动输入');
+  }
+}
+
+function goToDrug(name) {
+  switchTab('manual');
+  setTimeout(function() {
+    var inp = document.getElementById('drugManualInput');
+    if (inp) { inp.value = name; if (typeof doManualSearch === 'function') doManualSearch(name); }
+  }, 200);
+}
+
+// ===== chatSendBtn 事件绑定 =====
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('chatSendBtn');
+  if (btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      handleChatSend();
+    });
+  }
+  var inp = document.getElementById('chatInput');
+  if (inp) {
+    inp.addEventListener('keyup', function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        handleChatSend();
+      }
+    });
+  }
+});
+
+// ===== chatDot animation CSS =====
+var chatStyle = document.createElement('style');
+chatStyle.textContent = '@keyframes chatDot { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }';
+document.head.appendChild(chatStyle);
+
+// ===== 版本标记 =====
+window.CY_VER = 'v2.19.6';
+
+
+
+</script>
 </body>
