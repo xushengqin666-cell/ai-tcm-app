@@ -99,6 +99,12 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 .net-detail-card .dc-close:hover{color:#222}.net-svg-path{transition:opacity .3s}
 #interactLegend span{display:inline-flex;align-items:center;gap:4px}
 #interactLegend span::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* interactNet 质感升级 v2.19.8 */
+#interactNet{border-radius:16px;box-shadow:0 2px 12px rgba(12,139,108,.08);border:1px solid #E8F4F0;}
+.net-detail-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #EAEAEA;padding:20px;min-width:220px;}
+.net-drug-node{transition:all .2s;}
+.net-drug-node:hover{transform:scale(1.06);filter:drop-shadow(0 2px 6px rgba(0,0,0,.15));}
+
 #legendDanger::before{background:#FA5151}
 #legendCaution::before{background:#FF9F0A}
 #legendGreen::before{background:#0C8B6C}
@@ -924,6 +930,14 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
 .btn-primary,.drug-btn,.action-btn,.search-btn,[class*="btn"]{
   position:relative;overflow:hidden;
 }
+
+/* AI skeleton v2.19.8 */
+.ai-skeleton{border-radius:16px 16px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.sk-line{height:11px;background:linear-gradient(90deg,#F0F2F5 25%,#E8EBF0 50%,#F0F2F5 75%);background-size:200% 100%;animation:skShimmer 1.4s ease-in-out infinite;border-radius:5px;}
+.sk-line.short{width:55%}
+.sk-line.medium{width:78%}
+@keyframes skShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes skFade{0%,100%{opacity:.3}50%{opacity:1}}
 </style>
 
 
@@ -2532,7 +2546,7 @@ var INTERACT_DB = {};
 
   // 他汀类
   set('阿托伐他汀','克拉霉素','danger','强CYP3A4抑制剂,显著增加他汀肌病风险','Strong CYP3A4 inhibitor, significantly increases statin myopathy risk');
-  set('阿托伐他汀','红霉素','danger','增加阿托伐他汀血药浓度','Increases atorvastatin plasma level');
+  set('阿托伐他汀','红霉素','danger','增加阿托伐他汀血药��度','Increases atorvastatin plasma level');
   set('阿托伐他汀','胺碘酮','caution','增加他汀肌病风险','Increases statin myopathy risk');
   set('阿托伐他汀','西柚汁','danger','强CYP3A4抑制,显著增加肌病风险','Strong CYP3A4 inhibition, significantly increases myopathy risk');
   set('阿托伐他汀','华法林','caution','阿托伐他汀可增强华法林抗凝效果','Atorvastatin may enhance warfarin anticoagulant effect');
@@ -3045,7 +3059,7 @@ var INTERACT_DB = {};
   set('达比加群酯胶囊','萘普生钠片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('利伐沙班片','阿司匹林肠溶片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('利伐沙班片','布洛芬混悬液','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
-  set('利伐沙班片','对乙酰氨基酚滴剂','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
+  set('利��沙班片','对乙酰氨基酚滴剂','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('利伐沙班片','萘普生肠溶胶囊','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('利伐沙班片','萘普生钠片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
   set('华法林钠片','阿司匹林肠溶片','danger','增加出血风险，尤其是胃肠道出血','Increased bleeding risk, esp. GI bleeding');
@@ -3160,7 +3174,7 @@ var INTERACT_DB = {};
   set('替格瑞洛片','萘普生肠溶胶囊','danger','增加胃肠道出血风险','Increased GI bleeding risk');
   set('替格瑞洛片','萘普生钠片','danger','增加胃肠道出血风险','Increased GI bleeding risk');
   set('硫酸氢氯吡格雷片','阿司匹林肠溶片','danger','增加胃肠道出血风险','Increased GI bleeding risk');
-  set('硫酸氢氯吡格雷片','布洛芬混悬液','danger','增加胃肠道出血风险','Increased GI bleeding risk');
+  set('硫酸氢氯吡格雷片','布洛芬混悬液','danger','增加胃肠���出血风险','Increased GI bleeding risk');
   set('硫酸氢氯吡格雷片','对乙酰氨基酚滴剂','danger','增加胃肠道出血风险','Increased GI bleeding risk');
   set('硫酸氢氯吡格雷片','萘普生肠溶胶囊','danger','增加胃肠道出血风险','Increased GI bleeding risk');
   set('硫酸氢氯吡格雷片','萘普生钠片','danger','增加胃肠道出血风险','Increased GI bleeding risk');
@@ -3279,7 +3293,7 @@ var INTERACT_DB = {};
   set('富马酸比索洛尔片','对乙酰氨基酚滴剂','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
   set('富马酸比索洛尔片','萘普生肠溶胶囊','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
   set('富马酸比索洛尔片','萘普生钠片','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
-  set('盐酸普萘洛尔片','阿司匹林肠溶片','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
+  set('盐��普萘洛尔片','阿司匹林肠溶片','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
   set('盐酸普萘洛尔片','布洛芬混悬液','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
   set('盐酸普萘洛尔片','对乙酰氨基酚滴剂','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
   set('盐酸普萘洛尔片','萘普生肠溶胶囊','caution','NSAIDs减弱降压效果','NSAIDs reduce antihypertensive effect');
@@ -3499,7 +3513,7 @@ var INTERACT_DB = {};
   set('瑞格列奈片','厄贝沙坦氢氯噻嗪片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
   set('瑞格列奈片','坎地沙坦酯片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
   set('瑞格列奈片','富马酸比索洛尔片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
-  set('瑞格列奈片','盐酸普萘洛尔片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
+  set('瑞格列���片','盐酸普萘洛尔片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
   set('瑞格列奈片','卡维地洛片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
   set('瑞格列奈片','盐酸特拉唑嗪片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
   set('利拉鲁肽注射液','比索洛尔片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
@@ -3608,7 +3622,7 @@ var INTERACT_DB = {};
   set('罗格列酮片','盐酸特拉唑嗪片','caution','可能增强降糖或致低血糖','May enhance glucose lowering or cause hypoglycemia');
   set('格列齐特缓释片','呋塞米片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
   set('格列齐特缓释片','氢氯噻嗪片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
-  set('格列齐特缓释片','托拉塞米片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
+  set('格列齐特缓���片','托拉塞米片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
   set('格列齐特缓释片','吲达帕胺片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
   set('西格列汀片','呋塞米片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
   set('西格列汀片','氢氯噻嗪片','caution','利尿剂可能影响血糖','Diuretics may affect blood glucose');
@@ -3994,7 +4008,7 @@ var INTERACT_DB = {};
   set('草酸艾司西酞普兰片','丙戊酸钠缓释片','caution','中枢副作用叠加','Additive CNS side effects');
   set('盐酸文拉法辛缓释胶囊','加巴喷丁胶囊','caution','中枢副作用叠加','Additive CNS side effects');
   set('盐酸文拉法辛缓释胶囊','普瑞巴林胶囊','caution','中枢副作用叠加','Additive CNS side effects');
-  set('盐酸文拉法辛缓释胶囊','苯妥英钠片','caution','中枢副作用叠加','Additive CNS side effects');
+  set('盐酸文拉法辛缓释胶囊','���妥英钠片','caution','中枢副作用叠加','Additive CNS side effects');
   set('盐酸文拉法辛缓释胶囊','卡马西平片','caution','中枢副作用叠加','Additive CNS side effects');
   set('盐酸文拉法辛缓释胶囊','丙戊酸钠缓释片','caution','中枢副作用叠加','Additive CNS side effects');
   set('米氮平片','加巴喷丁胶囊','caution','中枢副作用叠加','Additive CNS side effects');
@@ -4248,7 +4262,7 @@ var INTERACT_DB = {};
   set('氯雷他定口腔崩解片','地西泮片','caution','嗜睡加重','Increased drowsiness');
   set('氯雷他定口腔崩解片','艾司唑仑片','caution','嗜睡加重','Increased drowsiness');
   set('氯雷他定口腔崩解片','氯硝西泮片','caution','嗜睡加重','Increased drowsiness');
-  set('氯雷他定口腔崩解片','阿普唑仑片','caution','嗜睡加重','Increased drowsiness');
+  set('氯雷他��口腔崩解片','阿普唑仑片','caution','嗜睡加重','Increased drowsiness');
   set('富马酸酮替芬片','佐匹克隆片','caution','嗜睡加重','Increased drowsiness');
   set('富马酸酮替芬片','右佐匹克隆片','caution','嗜睡加重','Increased drowsiness');
   set('富马酸酮替芬片','劳拉西泮片','caution','嗜睡加重','Increased drowsiness');
@@ -7503,7 +7517,7 @@ window.openFeedbackModal = function(){
   // ---- 新手引导 ----
   function showOnboarding(){
     var slides = [
-      {t:'家庭 AI 药师', d:'拍照识药、查说明书、管药箱，用药安全一手掌握', i:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M9 2H15a1 1 0 0 1 1 1v19a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M12 11h.01"/><path d="M7 6h10"/><path d="M7 9h10"/></svg>'},
+      {t:'家庭 AI 药师', d:'过期提醒，库存一目了然', i:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M9 2H15a1 1 0 0 1 1 1v19a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M12 11h.01"/><path d="M7 6h10"/><path d="M7 9h10"/></svg>'},
       {t:'智能提醒', d:'按时服药不遗漏，过期/库存预警主动提醒', i:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'},
       {t:'相互作用查询', d:'药品混用风险一键排查，守护全家用药安全', i:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'},
       {t:'随身药师', d:'症状搜药、辨证报告、问药问答，随时为你解答', i:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'}
@@ -7616,7 +7630,10 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .skeleton-list{padding:8px}
 .empty-sub{font-size:13px;opacity:0.6;margin-top:6px}
-</style>
+
+.onboard-dots{text-align:center;margin-top:18px}
+.onboard-dot{width:7px;height:7px;border-radius:50%;background:#C8DDD8;display:inline-block;margin:0 3px;transition:all .3s}
+.onboard-dot.active{background:#0C8B6C;width:20px;border-radius:4px}</style>
 <script>
 /* 时段问候 v2.19.5 */
 window.getGreeting = function(){
@@ -10137,7 +10154,7 @@ if(document.readyState === 'loading'){
   "急支糖浆": {"indications":"外感风热引起的咳嗽：急性支气管炎、感冒咳嗽、咽喉炎","ingredients":"主要成分：鱼腥草、金荞麦、四季青、麻黄等。规格：100mL/瓶","dosage":"20-30mL，每日3-4次；儿童酌减","category":"止咳中成药","warnings":"糖尿病患者（含糖）；寒咳（清稀痰）不宜；妊娠慎用","time":"任意","foodAvoid":"辛辣刺激、生冷","drugAvoid":""},
   "复方氨酚烷胺胶囊": {"indications":"感冒引起的头痛、发热、鼻塞、喷嚏、流涕、咽痛、四肢酸痛","ingredients":"主要成分：对乙酰氨基酚+金刚烷胺+咖啡因+氯苯那敏+人工牛黄。规格：胶囊","dosage":"成人：1粒，每日2次；儿童禁用或遵医嘱","category":"复方感冒药","warnings":"嗜睡（氯苯那敏）；肝毒性（对乙酰氨基酚过量）；驾驶员禁用；妊娠/哺乳禁用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他含对乙酰氨基酚制剂"},
   "感冒灵颗粒": {"indications":"感冒引起的头痛、发热、鼻塞、流涕、咽痛","ingredients":"主要成分：三叉苦、金盏银盘、野菊花、岗梅、咖啡因、对乙酰氨基酚、氯苯那敏。规格：10g/袋","dosage":"10g（1袋），每日3次","category":"复方感冒药","warnings":"嗜睡（氯苯那敏）；驾驶员/高空作业禁用；肝肾功能不全慎用","time":"任意","foodAvoid":"酒精","drugAvoid":"酒精、其他��对乙酰氨基酚制剂"},
-  "板蓝根颗粒": {"indications":"风热感冒：咽喉肿痛、口咽干燥；急性扁桃体炎、腮腺炎；病毒性感染","ingredients":"主要成分：板蓝根。规格：5g/袋（无糖型）或10g/袋（含糖）","dosage":"5-10g，每日3-4次","category":"清热解毒中成药","warnings":"风寒感冒（清涕/恶寒）禁用；脾胃虚寒者慎用","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
+  "板蓝根颗粒": {"indications":"风热感冒：咽喉肿痛、口咽干燥；急性扁桃体炎、腮腺炎���病毒性感染","ingredients":"主要成分：板蓝根。规格：5g/袋（无糖型）或10g/袋（含糖）","dosage":"5-10g，每日3-4次","category":"清热解毒中成药","warnings":"风寒感冒（清涕/恶寒）禁用；脾胃虚寒者慎用","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
   "连花清瘟颗粒": {"indications":"流行性感冒属热毒袭肺证：发热/高热、恶寒、肌肉酸痛、鼻塞流涕、咽干咽痛","ingredients":"主要成分：连翘、金银花、炙麻黄、炒苦杏仁、石膏、板蓝根、绵马贯众、鱼腥草、广藿香等。规格：6g/袋","dosage":"6g，每日3次","category":"清热解毒中成药","warnings":"风寒感冒禁用；脾胃虚寒者慎用（腹泻）；妊娠禁用","time":"任意","foodAvoid":"辛辣油腻生冷","drugAvoid":""},
   "双黄连口服液": {"indications":"风热感冒：发热、咳嗽、咽痛；上呼吸道感染、急性支气管炎","ingredients":"主要成分：金银花、黄芩、连翘。规格：10mL/支","dosage":"20mL（2支），每日3次；儿童酌减","category":"清热解毒中成药","warnings":"风寒感冒禁用；脾胃虚寒（腹泻）慎用；糖尿病患者（含糖）","time":"任意","foodAvoid":"辛辣油腻","drugAvoid":""},
   "藿香正气水": {"indications":"外感风寒内伤湿滞（暑湿感冒）：头痛昏重、胸膈痞闷、脘腹胀痛、呕吐泄泻；胃肠型感冒","ingredients":"主要成分：广藿香油、紫苏叶油、生半夏、厚朴、苍术等。含乙醇40-50%。规格：10mL/支","dosage":"5-10mL，每日2次；儿童酌减","category":"祛暑化湿中成药","warnings":"含乙醇（酒精），驾驶员禁用；头孢类抗生素（双硫仑样反应）；妊娠可用（咨询医生）","time":"任意","foodAvoid":"酒精、生冷","drugNotify":"头孢类、硝基咪唑类、甲苯磺丁脲（双硫仑样反应）"},
@@ -10200,7 +10217,7 @@ if(document.readyState === 'loading'){
   "美托洛尔": {"indications":"高血压、心绞痛、心肌梗死后二级预防；心律失常；慢性心力衰竭","ingredients":"主要成分：酒石酸美托洛尔/琥珀酸美托洛尔。规格：25mg/50mg/100mg片剂；缓释片47.5mg","dosage":"普通片：25-100mg，每日2次；缓释片：47.5-190mg，每日1次","category":"降压药/β受体阻滞剂","warnings":"心动过缓；支气管痉挛（COPD/哮喘慎用）；突然停药可致反跳","time":"任意","foodAvoid":"","drugNotify":"与非二氢吡啶类钙拮抗剂联用需谨慎"},
   "比索洛尔": {"indications":"高血压、冠心病、心绞痛；慢性心力衰竭（NYHA II-IV级）","ingredients":"主要成分：富马酸比索洛尔。规格：2.5mg/5mg/10mg片剂","dosage":"起始2.5-5mg，每日1次；心衰：1.25mg起始，逐渐滴定至10mg/d","category":"β受体阻滞剂","warnings":"心动过缓；支气管痉挛；外周血管疾病加重；突然停药危险","time":"任意","foodAvoid":"","drugAvoid":"非二氢吡啶类CCB（维拉帕米、地尔硫卓）"},
   "坎地沙坦": {"indications":"高血压；心力衰竭（NYHA II-IV级）；左室功能减低或心梗后心衰","ingredients":"主要成分：坎地沙坦酯。规格：4mg/8mg/16mg片剂","dosage":"8-16mg，每日1次；最大32mg/d；心衰起始4mg","category":"降压药/ARB","warnings":"致畸；高钾血症；妊娠禁用","time":"任意","foodAvoid":"高钾食物","drugNotify":"保钾利尿剂、钾剂、锂剂、NSAIDs"},
-  "螺内酯": {"indications":"原发性醛固酮增多症；心力衰竭（NYHA II-IV级）；难治性高血压；低钾血症","ingredients":"主要成分：螺内酯（保钾利尿剂）。规格：20mg片剂","dosage":"心衰：起始20mg，每日1次，维持20-40mg/d；高血压：40-80mg/d，分2次","category":"利尿剂/保钾利尿剂","warnings":"高钾血症；男性乳房发育；月经紊乱；严重肾功能不全禁用","time":"任意","foodAvoid":"高钾食物、低钠盐","drugNotify":"ACE抑制剂/ARB/钾剂/NSAIDs可致严重高血钾"},
+  "螺内酯": {"indications":"原发性醛固酮增多症；心力衰竭（NYHA II-IV级）；难治性高血压；低钾血症","ingredients":"主要成分：螺内酯（保钾利尿剂）。规格：20mg片剂","dosage":"心衰：起始20mg，每日1次，维持20-40mg/d；高血压：40-80mg/d，分2次","category":"利尿剂/保钾利尿剂","warnings":"高钾血症��男性乳房发育；月经紊乱；严重肾功能不全禁用","time":"任意","foodAvoid":"高钾食物、低钠盐","drugNotify":"ACE抑制剂/ARB/钾剂/NSAIDs可致严重高血钾"},
   "呋塞米": {"indications":"水肿（心源性/肾源性/肝源性）；高血压危象；急性肺水肿；高钙血症","ingredients":"主要成分：呋塞米（袢利尿剂）。规格：20mg/40mg片剂；注射剂","dosage":"水肿：20-80mg/d，最大600mg/d；高血压：40-80mg/d","category":"利尿剂/袢利尿剂","warnings":"低钾血症/低钠血症/低镁血症；低血压；高尿酸血症；耳毒性","time":"任意（避免睡前）","foodAvoid":"","drugNotify":"氨基糖苷类、万古霉素、地高辛毒性风险增加"},
   "氢氯噻嗪": {"indications":"高血压（单用或联合）；水肿（心源性/肾源性）；尿崩症","ingredients":"主要成分：氢氯噻嗪（噻嗪类利尿剂）。规格：12.5mg/25mg/50mg片剂","dosage":"降压：12.5-25mg/d；水肿：25-100mg/d","category":"利尿剂/噻嗪类","warnings":"低钾血症；高血糖；高尿酸血症；低钠血症；光敏感","time":"早晨服用（避免夜尿）","foodAvoid":"甘草","drugNotify":"洋地黄类（低钾增加地高辛毒性）；胰岛素（高血糖）"},
   "二甲双胍": {"indications":"2型糖尿病（尤其是肥胖患者）；糖尿病前期；多囊卵巢综合征","ingredients":"主要成分：盐酸二甲双胍。规格：0.25g/0.5g/0.85g片剂；肠溶片；缓释片","dosage":"起始0.5g，每日2次或0.85g每日1次；最大2g/d","category":"降糖药","warnings":"乳酸酸中毒（肾/肝功能不全禁用）；维生素B12缺乏；造影剂使用前后48h停用","time":"随餐","foodAvoid":"酒精","drugNotify":"造影剂（前后48h停用）；避免与酒精同服"},
@@ -10281,7 +10298,7 @@ if(document.readyState === 'loading'){
   set("华法林", "帕罗西汀", "caution", "SSRIs抑制血小板聚集，增加出血风险", "SSRIs inhibit platelet aggregation, increase bleeding risk");
   set("华法林", "氟哌噻吨美利曲辛", "caution", "抗抑郁药可能增强抗凝效果", "Antidepressants may enhance anticoagulant effect");
   set("华法林", "艾司唑仑", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
-  set("华法林", "佐匹克隆", "caution", "两者均影响CNS���协同镇静", "Both affect CNS, synergistic sedation");
+  set("华法林", "佐匹克��", "caution", "两者均影响CNS���协同镇静", "Both affect CNS, synergistic sedation");
   set("华法林", "劳拉西泮", "caution", "两者均影响CNS，协同镇静", "Both affect CNS, synergistic sedation");
   set("华法林", "复方丹参滴丸", "danger", "丹参抑制血小板聚集，显著增加出血风险", "Danshen inhibits platelet aggregation, significantly increases bleeding risk");
   set("华法林", "银杏叶片", "danger", "银杏抑制血小板聚集，显著增加出血风险", "Ginkgo inhibits platelet aggregation, significantly increases bleeding risk");
@@ -11928,7 +11945,7 @@ function queryTimingGuide() {
 }
 
 
-// ===== 体验优化 (v2.19.7)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
+// ===== 体验优化 (v2.19.8)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
 function initChatWelcome() {
   var el = document.getElementById('chatMessages');
   if (!el || el.childElementCount > 0) return;
@@ -12020,7 +12037,7 @@ function renderSpecialPopAlerts() {
   }
 })();
 
-// ===== chat 消息功能 (v2.19.7) =====
+// ===== chat 消息功能 (v2.19.8) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
   if (!inp) return;
@@ -12073,17 +12090,13 @@ function showLoadingIndicator() {
   var div = document.createElement('div');
   div.id = 'chatLoadingBubble';
   div.className = 'msg msg-ai';
-  div.innerHTML = '<span class="bubble" style="background:#F2F3F5;border:1px solid #E5E6EB;padding:12px 16px;border-radius:16px 16px 16px 4px;display:inline-block">' +
-    '<span style="display:inline-flex;align-items:center;gap:3px">' +
-    '<span style="width:6px;height:6px;border-radius:50%;background:#999;animation:chatDot 1.2s infinite 0s">.</span>' +
-    '<span style="width:6px;height:6px;border-radius:50%;background:#999;animation:chatDot 1.2s infinite 0.2s">.</span>' +
-    '<span style="width:6px;height:6px;border-radius:50%;background:#999;animation:chatDot 1.2s infinite 0.4s">.</span>' +
-    '</span>' +
-    '</span>';
+  div.innerHTML = '<div class="ai-skeleton" style="display:inline-block;padding:14px 18px;border-radius:16px 16px 16px 4px;background:#F8F9FA;border:1px solid #EBEEF0;min-width:180px;">' +
+    '<div class="sk-line short" style="margin-bottom:8px"></div>' +
+    '<div class="sk-line" style="margin-bottom:8px"></div>' +
+    '<div class="sk-line medium"></div></div>';
   el.appendChild(div);
   scrollChatToBottom();
 }
-
 function hideLoadingIndicator() {
   var el = document.getElementById('chatLoadingBubble');
   if (el) el.parentNode.removeChild(el);
@@ -12091,7 +12104,14 @@ function hideLoadingIndicator() {
 
 function setLoadingStatus(text) {
   var el = document.getElementById('aiStatus');
-  if (el) el.textContent = text || '';
+  if (el) {
+    var label = text || "Thinking...";
+    el.innerHTML = '<span class="thinking-badge" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#0C8B6C;font-weight:500;">' +
+      '<span style="width:6px;height:6px;border-radius:50%;background:#0C8B6C;animation:skFade 1.2s ease-in-out infinite;display:inline-block;"></span>' +
+      '<span style="width:6px;height:6px;border-radius:50%;background:#0C8B6C;animation:skFade 1.2s ease-in-out .2s infinite;display:inline-block;"></span>' +
+      '<span style="width:6px;height:6px;border-radius:50%;background:#0C8B6C;animation:skFade 1.2s ease-in-out .4s infinite;display:inline-block;"></span>' +
+      label + '</span>';
+  }
 }
 
 function escHtml(s) {
@@ -12298,7 +12318,7 @@ chatStyle.textContent = '@keyframes chatDot { 0%,80%,100%{opacity:0.3;transform:
 document.head.appendChild(chatStyle);
 
 // ===== 版本标记 =====
-window.CY_VER = 'v2.19.7';
+window.CY_VER = 'v2.19.8';
 
 
 
