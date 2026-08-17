@@ -11927,6 +11927,99 @@ function queryTimingGuide() {
   resultDiv.innerHTML = html;
 }
 
+
+// ===== 体验优化 (v2.19.7)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
+function initChatWelcome() {
+  var el = document.getElementById('chatMessages');
+  if (!el || el.childElementCount > 0) return;
+  var ai = document.createElement('div');
+  ai.className = 'msg msg-ai';
+  ai.innerHTML = '<span class="bubble">你好，我是你的家庭AI药师。\n\n你可以这样问我：\n• 药品相互作用：布洛芬和感冒药能一起吃吗\n• 用法用量：阿莫西林一天吃几次\n• 症状用药：发烧、咳嗽该吃什么药\n• 特殊人群：孕妇、儿童、老人用药注意事项</span>';
+  el.appendChild(ai);
+  var chips = ['布洛芬和感冒药能一起吃吗','发烧吃什么药','降压药什么时间吃最好','儿童感冒药有哪些注意事项'];
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;padding:2px 0 10px;';
+  chips.forEach(function(q) {
+    var c = document.createElement('span');
+    c.textContent = q;
+    c.style.cssText = 'background:#F0F7F5;border:1px solid #CFE5DF;color:#0C8B6C;border-radius:16px;padding:6px 12px;font-size:13px;cursor:pointer;transition:all .2s;';
+    c.onmouseover = function() { c.style.background = '#E0F0EB'; };
+    c.onmouseout = function() { c.style.background = '#F0F7F5'; };
+    c.onclick = function() {
+      var inp = document.getElementById('chatInput');
+      if (inp) inp.value = q;
+      if (typeof handleChatSend === 'function') handleChatSend();
+    };
+    row.appendChild(c);
+  });
+  el.appendChild(row);
+}
+
+function initOfflineBanner() {
+  if (document.getElementById('cyOfflineBar')) return;
+  var bar = document.createElement('div');
+  bar.id = 'cyOfflineBar';
+  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#FFF7E6;color:#9A5B00;font-size:13px;text-align:center;padding:7px 12px;display:none;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.08);';
+  bar.textContent = '网络已断开，AI 问药等功能暂不可用，请检查网络连接';
+  document.body.appendChild(bar);
+  function update() {
+    var online = navigator.onLine !== false;
+    bar.style.display = online ? 'none' : 'block';
+  }
+  window.addEventListener('online', update);
+  window.addEventListener('offline', update);
+  update();
+}
+
+function getSpecialPopMembers() {
+  var members = [];
+  try { members = JSON.parse(localStorage.getItem('cy_members') || '[]'); } catch(e) { members = []; }
+  return members.filter(function(m) {
+    var n = (m && m.name) ? m.name : '';
+    return /孕|怀|妊娠|宝宝|幼儿|儿童|小孩|老人|老年|爷爷|奶奶|外公|外婆/.test(n);
+  });
+}
+
+function renderSpecialPopAlerts() {
+  var host = document.getElementById('specialPopHost');
+  if (!host) return;
+  var existing = document.getElementById('specialPopAlertBar');
+  if (existing) existing.remove();
+  var specials = getSpecialPopMembers();
+  if (!specials.length) return;
+  var tags = specials.map(function(m) {
+    var n = m.name || '';
+    var t = /孕|怀|妊娠/.test(n) ? '孕妇' : (/宝宝|幼儿|儿童|小孩/.test(n) ? '儿童' : '老人');
+    return '<span style="background:#FEF0F0;color:#FA5151;border-radius:4px;padding:1px 6px;font-size:12px;margin:0 4px 4px 0;display:inline-block;">' + t + '：' + n + '</span>';
+  }).join('');
+  var bar = document.createElement('div');
+  bar.id = 'specialPopAlertBar';
+  bar.innerHTML = '<div style="font-size:13px;color:#1A1A1A;font-weight:500;margin-bottom:4px;">家庭成员特殊人群用药提醒</div><div>' + tags + '</div><div style="font-size:12px;color:#999;margin-top:4px;">为以上成员选药时请留意禁忌与剂量调整，可咨询 AI 药师</div>';
+  bar.style.cssText = 'background:#FFFBF5;border:1px solid #F5E3C3;border-radius:10px;padding:10px 12px;margin:10px 0;';
+  host.appendChild(bar);
+}
+
+(function() {
+  function boot() {
+    initChatWelcome();
+    initOfflineBanner();
+    setTimeout(renderSpecialPopAlerts, 300);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+  var _sm = window.saveMember;
+  if (typeof _sm === 'function') {
+    window.saveMember = function() { var r = _sm.apply(this, arguments); setTimeout(renderSpecialPopAlerts, 200); return r; };
+  }
+  var _dm = window.deleteMember;
+  if (typeof _dm === 'function') {
+    window.deleteMember = function() { var r = _dm.apply(this, arguments); setTimeout(renderSpecialPopAlerts, 200); return r; };
+  }
+})();
+
 // ===== chat 消息功能 (v2.19.7) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
