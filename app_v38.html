@@ -51,7 +51,7 @@ header h1{font-size:18px;font-weight:700}
 .tab-bar{display:flex;border-bottom:2px solid #e0e0e0;background:#fff;position:sticky;top:0;z-index:10}
 .tab-btn{padding:11px 16px;cursor:pointer;border:none;background:none;font-size:14px;color:#666;border-bottom:3px solid transparent;flex:1;text-align:center}
 .tab-btn.active{color:#0C8B6C;border-bottom-color:#0C8B6C;font-weight:600}
-.tab-content{display:none;padding:14px;max-width:720px;margin:0 auto}
+.tab-content{display:none;padding:14px;max-width:720px;margin:0 auto;-webkit-overflow-scrolling:touch}
 .tab-content.active{display:block;animation:cyFade .22s ease}
 .card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);transition:box-shadow .2s,transform .2s}
 .card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);transform:translateY(-1px)}
@@ -99,7 +99,7 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 .net-detail-card .dc-close:hover{color:#222}.net-svg-path{transition:opacity .3s}
 #interactLegend span{display:inline-flex;align-items:center;gap:4px}
 #interactLegend span::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* interactNet 质感升级 v2.19.8 */
+/* interactNet 质感升级 v2.19.9 */
 #interactNet{border-radius:16px;box-shadow:0 2px 12px rgba(12,139,108,.08);border:1px solid #E8F4F0;}
 .net-detail-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #EAEAEA;padding:20px;min-width:220px;}
 .net-drug-node{transition:all .2s;}
@@ -115,7 +115,7 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 .bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 7px;font-size:10.5px;color:#98a1ab;text-decoration:none;transition:color .2s ease}
 .bottom-nav a svg{width:22px;height:22px;transition:transform .2s ease}
 .bottom-nav a span{line-height:1.2}
-.bottom-nav a.active{color:#0C8B6C;font-weight:700}
+.bottom-nav a.active{color:var(--c-primary,#0C8B6C)!important;font-weight:600;transform:translateY(-1px)}.bottom-nav a.active::after{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--c-primary,#0C8B6C);border-radius:2px}
 .bottom-nav a.active svg{transform:translateY(-2px) scale(1.1);transition:transform .2s ease}
 /* 联合用药审查 */
 .union-check-section{margin-top:14px}
@@ -931,7 +931,7 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
   position:relative;overflow:hidden;
 }
 
-/* AI skeleton v2.19.8 */
+/* AI skeleton v2.19.9 */
 .ai-skeleton{border-radius:16px 16px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .sk-line{height:11px;background:linear-gradient(90deg,#F0F2F5 25%,#E8EBF0 50%,#F0F2F5 75%);background-size:200% 100%;animation:skShimmer 1.4s ease-in-out infinite;border-radius:5px;}
 .sk-line.short{width:55%}
@@ -942,18 +942,37 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
 
 
 <style id="cy-dark-mode">
-:root {
-  --cy-bg:#0f0f0f;--cy-bg2:#1a1a1a;--cy-bg3:#242424;--cy-surface:#1e1e1e;
-  --cy-text:#e8e8e8;--cy-text2:#a0a0a0;--cy-border:#333;
+:root[data-theme="dark"] {
+  --c-bg:#121212;--c-bg-card:#1A1A1A;--c-bg2:#1E1E1E;--c-bg3:#252525;
+  --c-text:#E8E8E8;--c-text-2:#9E9E9E;--c-text-3:#666;
+  --c-border:#2E2E2E;--c-divider:#252525;
+  --c-primary:#10B981;--c-primary-d:#0D9669;--c-primary-l:#1A2E28;
+  --c-surface:#1A1A1A;--c-surface-2:#212121;
+  --sh-1:0 1px 3px rgba(0,0,0,.4);--sh-2:0 6px 16px rgba(0,0,0,.5);
 }
-body.dark-mode,body.dark-mode *{background-color:var(--cy-bg,#0f0f0f)!important;color:var(--cy-text,#e8e8e8)!important;border-color:var(--cy-border,#333)!important}
-body.dark-mode .tab-content,body.dark-mode .bottom-nav{background:var(--cy-bg,#0f0f0f)!important}
-body.dark-mode .card,body.dark-mode [style*="border-radius:16px"]{background:var(--cy-surface,#1e1e1e)!important;box-shadow:0 1px 4px rgba(0,0,0,0.4)!important}
-body.dark-mode .bottom-nav a{color:#666!important}
-body.dark-mode .bottom-nav a.active{color:#0C8B6C!important}
-body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:var(--cy-bg3,#242424)!important;color:var(--cy-text,#e8e8e8)!important;border-color:var(--cy-border,#333)!important}
-body.dark-mode .modal{background:var(--cy-surface,#1e1e1e)!important}
-body.dark-mode .modal-overlay{background:rgba(0,0,0,0.8)!important}
+:root[data-theme="dark"] body{background:var(--c-bg)!important;color:var(--c-text)!important}
+:root[data-theme="dark"] header{background:#111!important;border-color:var(--c-border)!important}
+:root[data-theme="dark"] .tab-content{background:var(--c-bg)!important}
+:root[data-theme="dark"] .bottom-nav{background:#111!important;border-color:var(--c-border)!important}
+:root[data-theme="dark"] .bottom-nav a{color:#888!important}
+:root[data-theme="dark"] .bottom-nav a.active{color:var(--c-primary,#10B981)!important}
+:root[data-theme="dark"] .card,.root[data-theme="dark"] [style*="border-radius:16px"]{background:var(--c-bg-card)!important;border-color:var(--c-border)!important}
+:root[data-theme="dark"] .cy-card,.root[data-theme="dark"] .feature-card,.root[data-theme="dark"] .hero-card{background:var(--c-bg-card)!important;border-color:var(--c-border)!important;box-shadow:0 2px 8px rgba(0,0,0,.4)!important}
+:root[data-theme="dark"] input,:root[data-theme="dark"] select,:root[data-theme="dark"] textarea{background:var(--c-bg3)!important;color:var(--c-text)!important;border-color:var(--c-border)!important}
+:root[data-theme="dark"] .cy-btn-primary,.root[data-theme="dark"] .cy-primary{background:var(--c-primary)!important;color:#fff!important;border-color:var(--c-primary)!important}
+:root[data-theme="dark"] .modal{background:var(--c-bg-card)!important}
+:root[data-theme="dark"] .modal-overlay{background:rgba(0,0,0,.85)!important}
+:root[data-theme="dark"] .chat-bubble-ai{background:#1E1E1E!important;color:#E0E0E0!important;border-color:var(--c-border)!important}.chat-bubble-user{background:linear-gradient(135deg,#0C8B6C,#0D7A5F);color:#fff;border-radius:20px 20px 4px 20px;padding:14px 18px;max-width:85%;margin-bottom:12px;font-size:14px;line-height:1.65;box-shadow:0 4px 14px rgba(12,139,108,.3);align-self:flex-end;text-align:left;border:1px solid rgba(255,255,255,.1)}
+
+:root[data-theme="dark"] .cy-input,.root[data-theme="dark"] .search-input{background:#1E1E1E!important;border-color:var(--c-border)!important;color:var(--c-text)!important}
+:root[data-theme="dark"] .cyOfflineBar{background:#1A1500!important;color:#FFD54F!important}
+:root[data-theme="dark"] .cy-dot,.root[data-theme="dark"] .badge-dot{background:var(--c-primary)!important}
+:root[data-theme="dark"] .interact-card{background:#1A1A1A!important;border-color:var(--c-border)!important}
+:root[data-theme="dark"] .drug-card{background:var(--c-bg-card)!important;border-color:var(--c-border)!important}
+:root[data-theme="dark"] .cy-divider,:root[data-theme="dark"] hr{border-color:var(--c-border)!important}
+:root[data-theme="dark"] .cy-tab.active,:root[data-theme="dark"] .tab-btn.active{background:var(--c-primary-l,rgba(16,185,129,.15))!important;color:var(--c-primary)!important}
+:root[data-theme="dark"] .cy-modal-view{background:#111!important}
+:root[data-theme="dark"] .cy-modal-header{background:#1A1A1A!important;border-color:var(--c-border)!important}
 </style>
 <style id="ui-bigtech-v292">
 /* === 大厂级视觉精修 v2.9.5 === */
@@ -1242,9 +1261,9 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 </script>
 
 <header>
-  <h1 id="title">彩云智药</h1>
+  <h1 id="title" style="background:linear-gradient(90deg,#0C8B6C,#10B981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v2.9.5</span>
+    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.19.9</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -7633,7 +7652,15 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
 
 .onboard-dots{text-align:center;margin-top:18px}
 .onboard-dot{width:7px;height:7px;border-radius:50%;background:#C8DDD8;display:inline-block;margin:0 3px;transition:all .3s}
-.onboard-dot.active{background:#0C8B6C;width:20px;border-radius:4px}</style>
+.onboard-dot.active{background:#0C8B6C;width:20px;border-radius:4px}
+@keyframes modalFadeIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes modalFadeOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.95)}}
+
+.cy-btn-primary:active{transform:scale(.97);transition:transform .1s}.cy-btn-primary{transition:all .2s}
+
+.synonym-match{background:rgba(12,139,108,.12);color:#0C8B6C;padding:1px 5px;border-radius:4px;font-size:.9em;font-weight:600}
+#title{background:linear-gradient(90deg,#fff 0%,#e0f7ef 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+</style>
 <script>
 /* 时段问候 v2.19.5 */
 window.getGreeting = function(){
@@ -10900,8 +10927,14 @@ var _darkOn=localStorage.getItem('cy_dark_mode')==='1';
 if(_darkOn)document.body.classList.add('dark-mode');
 window.toggleDarkMode=function(){
   _darkOn=!_darkOn;
-  if(_darkOn){document.body.classList.add('dark-mode');localStorage.setItem('cy_dark_mode','1');}
-  else{document.body.classList.remove('dark-mode');localStorage.setItem('cy_dark_mode','0');}
+  if(_darkOn){
+    document.documentElement.setAttribute('data-theme','dark');
+    try{localStorage.setItem('cy_dark','1');}catch(e){}
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    try{localStorage.setItem('cy_dark','0');}catch(e){}
+  }
+}
 };
 function _btn(){
   if(document.getElementById('cy-dark-btn'))return;
@@ -11945,7 +11978,7 @@ function queryTimingGuide() {
 }
 
 
-// ===== 体验优化 (v2.19.8)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
+// ===== 体验优化 (v2.19.9)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
 function initChatWelcome() {
   var el = document.getElementById('chatMessages');
   if (!el || el.childElementCount > 0) return;
@@ -11977,7 +12010,7 @@ function initOfflineBanner() {
   var bar = document.createElement('div');
   bar.id = 'cyOfflineBar';
   bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#FFF7E6;color:#9A5B00;font-size:13px;text-align:center;padding:7px 12px;display:none;font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.08);';
-  bar.textContent = '网络已断开，AI 问药等功能暂不可用，请检查网络连接';
+  bar.innerHTML='<span style="display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H13V8h-2v8zm0-10h2v6h-2V6z" transform="rotate(180 12 12)"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>网络已断开，请检查网络连接</span>';
   document.body.appendChild(bar);
   function update() {
     var online = navigator.onLine !== false;
@@ -12037,7 +12070,7 @@ function renderSpecialPopAlerts() {
   }
 })();
 
-// ===== chat 消息功能 (v2.19.8) =====
+// ===== chat 消息功能 (v2.19.9) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
   if (!inp) return;
@@ -12314,11 +12347,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== chatDot animation CSS =====
 var chatStyle = document.createElement('style');
-chatStyle.textContent = '@keyframes chatDot { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }';
+chatStyle.textContent = '@keyframes chatDot { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} } @keyframes aiPulse { 0%,100%{box-shadow:0 4px 16px rgba(12,139,108,.35)} 50%{box-shadow:0 4px 28px rgba(12,139,108,.6)} } @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }';
 document.head.appendChild(chatStyle);
 
 // ===== 版本标记 =====
-window.CY_VER = 'v2.19.8';
+
+// ===== dark mode init from storage =====
+(function(){
+  try{
+    if(localStorage.getItem('cy_dark')==='1'){
+      document.documentElement.setAttribute('data-theme','dark');
+      window._darkOn=true;
+    }
+  }catch(e){}
+})();
+window.CY_VER = 'v2.19.9';
 
 
 
