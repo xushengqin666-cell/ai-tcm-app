@@ -99,7 +99,7 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 .net-detail-card .dc-close:hover{color:#222}.net-svg-path{transition:opacity .3s}
 #interactLegend span{display:inline-flex;align-items:center;gap:4px}
 #interactLegend span::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* interactNet 质感升级 v2.19.9 */
+/* interactNet 质感升级 v2.20.0 */
 #interactNet{border-radius:16px;box-shadow:0 2px 12px rgba(12,139,108,.08);border:1px solid #E8F4F0;}
 .net-detail-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #EAEAEA;padding:20px;min-width:220px;}
 .net-drug-node{transition:all .2s;}
@@ -931,7 +931,7 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
   position:relative;overflow:hidden;
 }
 
-/* AI skeleton v2.19.9 */
+/* AI skeleton v2.20.0 */
 .ai-skeleton{border-radius:16px 16px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .sk-line{height:11px;background:linear-gradient(90deg,#F0F2F5 25%,#E8EBF0 50%,#F0F2F5 75%);background-size:200% 100%;animation:skShimmer 1.4s ease-in-out infinite;border-radius:5px;}
 .sk-line.short{width:55%}
@@ -1263,7 +1263,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <header>
   <h1 id="title" style="background:linear-gradient(90deg,#0C8B6C,#10B981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.19.9</span>
+    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.20.0</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -7660,7 +7660,10 @@ html.dark #drugDetailModal .dd-tip{border-top-color:#2a2c2f}
 
 .synonym-match{background:rgba(12,139,108,.12);color:#0C8B6C;padding:1px 5px;border-radius:4px;font-size:.9em;font-weight:600}
 #title{background:linear-gradient(90deg,#fff 0%,#e0f7ef 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
-</style>
+.sev-danger{color:#DC2626!important;font-weight:700}.sev-caution{color:#D97706!important;font-weight:600}.sev-safe{color:#059669!important;font-weight:600}
+.dd-category{display:inline-block;padding:2px 8px;border-radius:10px;background:rgba(12,139,108,.1);color:#0C8B6C;font-size:11px;font-weight:600;margin-bottom:4px}.match-reason{font-size:12px;color:#666;padding:4px 8px;background:#f5f5f5;border-radius:6px;margin-top:6px;line-height:1.5}
+/* Pull to refresh hint */
+.pull-hint{font-size:11px;color:#aaa;text-align:center;padding:8px;opacity:.7}.drug-category-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}.drug-category-dot.otc{background:#059669}.drug-category-dot.rx{background:#DC2626}.drug-category-dot.sup{background:#7C3AED}</style>
 <script>
 /* 时段问候 v2.19.5 */
 window.getGreeting = function(){
@@ -11978,7 +11981,7 @@ function queryTimingGuide() {
 }
 
 
-// ===== 体验优化 (v2.19.9)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
+// ===== 体验优化 (v2.20.0)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
 function initChatWelcome() {
   var el = document.getElementById('chatMessages');
   if (!el || el.childElementCount > 0) return;
@@ -12070,7 +12073,7 @@ function renderSpecialPopAlerts() {
   }
 })();
 
-// ===== chat 消息功能 (v2.19.9) =====
+// ===== chat 消息功能 (v2.20.0) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
   if (!inp) return;
@@ -12361,7 +12364,7 @@ document.head.appendChild(chatStyle);
     }
   }catch(e){}
 })();
-window.CY_VER = 'v2.19.9';
+window.CY_VER = 'v2.20.0';
 
 
 
