@@ -99,7 +99,7 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 .net-detail-card .dc-close:hover{color:#222}.net-svg-path{transition:opacity .3s}
 #interactLegend span{display:inline-flex;align-items:center;gap:4px}
 #interactLegend span::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* interactNet 质感升级 v2.20.2 */
+/* interactNet 质感升级 v2.21.0 */
 #interactNet{border-radius:16px;box-shadow:0 2px 12px rgba(12,139,108,.08);border:1px solid #E8F4F0;}
 .net-detail-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #EAEAEA;padding:20px;min-width:220px;}
 .net-drug-node{transition:all .2s;}
@@ -220,7 +220,7 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 <script>
 // DEBUG
 window.addEventListener("error",function(e){console.error("JSERROR:"+e.message+" at "+e.filename+":"+e.lineno);document.title="[ERR]"+e.message;});
-console.log("switchTab="+(typeof switchTab)+" renderCabinet="+(typeof renderCabinet)+" saveMember="+(typeof saveMember)+" showCabinetDetail="+(typeof showCabinetDetail)+" editProfile="+(typeof editProfile)+" showAbout="+(typeof showAbout));
++" renderCabinet="+(typeof renderCabinet)+" saveMember="+(typeof saveMember)+" showCabinetDetail="+(typeof showCabinetDetail)+" editProfile="+(typeof editProfile)+" showAbout="+(typeof showAbout));
 
 // ===== 本地账号系统 =====
 const AUTH_VERSION = 'v1';
@@ -931,7 +931,7 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
   position:relative;overflow:hidden;
 }
 
-/* AI skeleton v2.20.2 */
+/* AI skeleton v2.21.0 */
 .ai-skeleton{border-radius:16px 16px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .sk-line{height:11px;background:linear-gradient(90deg,#F0F2F5 25%,#E8EBF0 50%,#F0F2F5 75%);background-size:200% 100%;animation:skShimmer 1.4s ease-in-out infinite;border-radius:5px;}
 .sk-line.short{width:55%}
@@ -1137,6 +1137,29 @@ body.dark,.dark body{ --c-bg:#0E1114; --c-card:#1A1E22; --c-text:#E8EAED; --c-te
 #healthAlertContent .alert-item.warn{ background:#FFFBEB; border-color:#FDE68A; color:#92400E; }
 #healthAlertContent .alert-item svg{ width:16px;height:16px;flex-shrink:0; }
 </style>
+
+  <!-- PWA & App Store Compliance (v2.21.0) -->
+  <link rel="manifest" href="/ai-tcm-app/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/ai-tcm-app/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="/ai-tcm-app/icons/apple-touch-icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="彩云智药">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-TileColor" content="#0C8B6C">
+  <meta name="msapplication-tap-highlight" content="no">
+  
+  <script>
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/ai-tcm-app/sw.js')
+        .then(function(reg) {  })
+        .catch(function(err) {  });
+    });
+  }
+  </script>
 </head>
 <body>
 <script>
@@ -1194,7 +1217,7 @@ window.catchupMissedReminders = function(){
       var exist = document.getElementById("__cy_catchup_box");
       if(exist) exist.remove();
     }
-  }catch(e){ try{ console.log("catchup", e); }catch(_){} }
+  }catch(e){ try{  }catch(_){} }
 };
 window.snoozeReminder = function(rid){
   try{
@@ -1263,7 +1286,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <header>
   <h1 id="title" style="background:linear-gradient(90deg,#0C8B6C,#10B981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.20.2</span>
+    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.21.0</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -2302,7 +2325,7 @@ function applyLang(lang){
   if(thinkToggleLabel) thinkToggleLabel.textContent = t.deepThinkLabel;
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   // 重新渲染关系网（药名需要翻译）
-  if(typeof _centerDrug !== 'undefined' && _centerDrug){ console.log('applyLang: re-rendering network for', _centerDrug, 'lang=', currentLang); showNetwork(_centerDrug); }
+  if(typeof _centerDrug !== 'undefined' && _centerDrug){  showNetwork(_centerDrug); }
   // 重新渲染联合用药审查placeholder
   for(var i=0; i<10; i++){
     var inp = document.getElementById('unionDrug'+i);
@@ -2348,7 +2371,7 @@ function applyLang(lang){
   if(el=document.getElementById('authPwd2Ph')) el.placeholder = t.authPwd2Ph;
   if(el=document.getElementById('authSubmitBtn')) el.textContent = t.authSubmitBtn;
   if(el=document.getElementById('authSkipBtn')) el.textContent = t.authSkipBtn;
-console.log('applyLang: DONE lang=', lang);
+
 
   // 症状搜药
   if(el=document.getElementById('homeSymptomTitle')) el.textContent = t.homeSymptomTitle;
@@ -4751,7 +4774,7 @@ window.unionPick = function(idx, name){
     if (dd) { dd.style.display = 'none'; dd.innerHTML = ''; }
   } catch(e){}
 };
-// ===== 联合用药审查核心函数 (v2.20.2) =====
+// ===== 联合用药审查核心函数 (v2.21.0) =====
 window.addUnionDrug = function(){
   try {
     var container = document.getElementById('unionDrugInputs');
@@ -5480,7 +5503,7 @@ function matchDrugsBySymptom(query) {
 
 function searchBySymptom() {
   var input = document.getElementById('homeSymptomInput') || document.getElementById('symptomInput');
-  if (!input) { console.log('No symptom input found'); return; }
+  if (!input) {  return; }
   var query = input.value.trim();
   if (!query) { showToast('请输入症状'); return; }
   showToast('正在匹配药品...');
@@ -6382,7 +6405,7 @@ window.closeCabinetDetail=closeCabinetDetail;
       var exist = document.getElementById("__cy_catchup_box");
       if(exist) exist.remove();
     }
-  }catch(e){ console.log("catchup", e); }
+  }catch(e){  }
 }
 window.catchupMissedReminders = catchupMissedReminders;
 window.__cyNetWatch = function(){
@@ -6399,7 +6422,7 @@ function __cyDetectTz(){
     localStorage.setItem("cy_user_timezone", tz);
     if(window.showToast) window.showToast("时区已设为：" + tz, 2500);
     catchupMissedReminders();
-  }catch(e){ console.log("detectTz", e); if(window.showToast) window.showToast("检测失败：" + (e.message||e)); }
+  }catch(e){  if(window.showToast) window.showToast("检测失败：" + (e.message||e)); }
 }
 window.__cyDetectTz = __cyDetectTz;
 function __cyUpdateTzLabel(){
@@ -6446,9 +6469,9 @@ function switchTab(tabName){
   if(targetBtn) targetBtn.classList.add('active');
   var targetContent = document.getElementById('tab-'+tabName);
   if(targetContent){targetContent.style.display='block';targetContent.classList.add('active');}
-  if(tabName==="cabinet"){try{renderCabinet();}catch(e){console.log(e);}try{updateCabinetMemberSelect();}catch(e){}}
-  if(tabName==="member"){try{renderMembers();}catch(e){console.log(e);}try{updateCabinetMemberSelect();}catch(e){}}
-  if(tabName==="reminder"){try{renderReminders();}catch(e){console.log(e);}}
+  if(tabName==="cabinet"){try{renderCabinet();}catch(e){}try{updateCabinetMemberSelect();}catch(e){}}
+  if(tabName==="member"){try{renderMembers();}catch(e){}try{updateCabinetMemberSelect();}catch(e){}}
+  if(tabName==="reminder"){try{renderReminders();}catch(e){}}
   if(tabName==="profile"){try{loadProfile();}catch(e){}}
 }
 
@@ -7417,7 +7440,7 @@ window.quickAction = {
     measure: function(name, fn){
       this.start(name);
       var r = fn();
-      console.log('[perf]', name, this.end(name) + 'ms');
+       + 'ms');
       return r;
     }
   };
@@ -11182,7 +11205,7 @@ else _btn();
   if(origRender && !origRender.__v290){
     window.renderCabinet = function(){
       var r = origRender.apply(this, arguments);
-      try{ enhanceCabinetStock(); }catch(e){ console.log(e); }
+      try{ enhanceCabinetStock(); }catch(e){  }
       return r;
     };
     window.renderCabinet.__v290 = true;
@@ -11674,7 +11697,7 @@ function startBarcodeCamera() {
     // 持续检测条码
     scanBarcodeLoop();
   }).catch(function(err) {
-    console.log('Camera error:', err);
+    
     // fallback: 提示手动输入
     var result = document.getElementById('scanResult');
     if (result) result.innerHTML = '<div style="color:#FF9800;padding:12px">摄像头不可用，请手动输入条形码</div>';
@@ -11699,7 +11722,7 @@ function scanBarcodeLoop() {
       detector.detect(canvas).then(function(barcodes) {
         if (barcodes.length > 0) {
           var code = barcodes[0].rawValue;
-          console.log('Barcode detected:', code);
+          
           closeBarcodeScanner();
           lookupBarcodeByCode(code);
         }
@@ -11740,7 +11763,7 @@ function decodeWithZXing(canvas) {
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var code = jsQR(imageData.data, canvas.width, canvas.height);
     if (code) {
-      console.log('QR/Barcode:', code.data);
+      
       closeBarcodeScanner();
       lookupBarcodeByCode(code.data);
     }
@@ -12142,7 +12165,7 @@ function queryTimingGuide() {
 }
 
 
-// ===== 体验优化 (v2.20.2)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
+// ===== 体验优化 (v2.21.0)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
 function initChatWelcome() {
   var el = document.getElementById('chatMessages');
   if (!el || el.childElementCount > 0) return;
@@ -12234,7 +12257,7 @@ function renderSpecialPopAlerts() {
   }
 })();
 
-// ===== chat 消息功能 (v2.20.2) =====
+// ===== chat 消息功能 (v2.21.0) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
   if (!inp) return;
@@ -12525,7 +12548,7 @@ document.head.appendChild(chatStyle);
     }
   }catch(e){}
 })();
-window.CY_VER = 'v2.20.2';
+window.CY_VER = 'v2.21.0';
 
 
 
