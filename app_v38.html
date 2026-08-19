@@ -99,7 +99,7 @@ input:valid:not(:placeholder-shown){border-color:#0C8B6C}
 .net-detail-card .dc-close:hover{color:#222}.net-svg-path{transition:opacity .3s}
 #interactLegend span{display:inline-flex;align-items:center;gap:4px}
 #interactLegend span::before{content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* interactNet 质感升级 v2.20.1 */
+/* interactNet 质感升级 v2.20.2 */
 #interactNet{border-radius:16px;box-shadow:0 2px 12px rgba(12,139,108,.08);border:1px solid #E8F4F0;}
 .net-detail-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);border:1px solid #EAEAEA;padding:20px;min-width:220px;}
 .net-drug-node{transition:all .2s;}
@@ -931,7 +931,7 @@ display:flex;align-items:center;justify-content:center;transition:transform .3s 
   position:relative;overflow:hidden;
 }
 
-/* AI skeleton v2.20.1 */
+/* AI skeleton v2.20.2 */
 .ai-skeleton{border-radius:16px 16px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .sk-line{height:11px;background:linear-gradient(90deg,#F0F2F5 25%,#E8EBF0 50%,#F0F2F5 75%);background-size:200% 100%;animation:skShimmer 1.4s ease-in-out infinite;border-radius:5px;}
 .sk-line.short{width:55%}
@@ -1263,7 +1263,7 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 <header>
   <h1 id="title" style="background:linear-gradient(90deg,#0C8B6C,#10B981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700">彩云智药</h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.20.1</span>
+    <span id="version" style="font-size:10px;padding:2px 6px;border-radius:10px;background:rgba(12,139,108,.12);color:#0C8B6C;font-weight:600;opacity:.9">v2.20.2</span>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()" aria-label="切换语言">EN</button>
     <button class="lang-switch" id="accountBtn" onclick="cyAccount()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:-2px"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c0-3.6 3.4-5.8 7.5-5.8s7.5 2.2 7.5 5.8"/></svg></button>
   </div>
@@ -4751,6 +4751,102 @@ window.unionPick = function(idx, name){
     if (dd) { dd.style.display = 'none'; dd.innerHTML = ''; }
   } catch(e){}
 };
+// ===== 联合用药审查核心函数 (v2.20.2) =====
+window.addUnionDrug = function(){
+  try {
+    var container = document.getElementById('unionDrugInputs');
+    if (!container) return;
+    var rows = container.querySelectorAll('.union-drug-row');
+    var idx = rows.length;
+    if (idx >= 10) { if(window.showToast) showToast('最多添加10种药物'); return; }
+    var div = document.createElement('div');
+    div.className = 'union-drug-row';
+    div.id = 'unionRow' + idx;
+    div.innerHTML = '<div class="union-autocomplete" style="flex:1"><input type="text" placeholder="药物' + (idx+1) + '" id="unionDrug' + idx + '" oninput="window.unionAutocomplete(this,' + idx + ')" onfocus="window.unionAutocomplete(this,' + idx + ')"><div class="union-autocomplete-dropdown" id="unionDropdown' + idx + '"></div></div><button class="remove-drug" onclick="window.removeUnionDrug(' + idx + ')">×</button>';
+    container.appendChild(div);
+    // hide previous remove buttons, show all
+    rows.forEach(function(r, i){ var btn = r.querySelector('.remove-drug'); if(btn) btn.style.visibility = 'visible'; });
+    var lastBtn = div.querySelector('.remove-drug'); if(lastBtn) lastBtn.style.visibility = 'visible';
+  } catch(e){}
+};
+
+window.removeUnionDrug = function(idx){
+  try {
+    var row = document.getElementById('unionRow' + idx);
+    if (row) row.parentNode.removeChild(row);
+    // reindex remaining rows
+    var container = document.getElementById('unionDrugInputs');
+    if (!container) return;
+    var rows = container.querySelectorAll('.union-drug-row');
+    rows.forEach(function(r, i){
+      r.id = 'unionRow' + i;
+      var inp = r.querySelector('input');
+      if (inp) { inp.id = 'unionDrug' + i; inp.setAttribute('oninput', 'window.unionAutocomplete(this,' + i + ')'); inp.setAttribute('onfocus', 'window.unionAutocomplete(this,' + i + ')'); inp.placeholder = '药物' + (i+1); }
+      var dd = r.querySelector('.union-autocomplete-dropdown');
+      if (dd) dd.id = 'unionDropdown' + i;
+      var btn = r.querySelector('.remove-drug');
+      if (btn) btn.setAttribute('onclick', 'window.removeUnionDrug(' + i + ')');
+    });
+  } catch(e){}
+};
+
+window.checkUnionDrugs = function(){
+  try {
+    var container = document.getElementById('unionDrugInputs');
+    if (!container) return;
+    var inputs = container.querySelectorAll('input[type="text"]');
+    var drugs = [];
+    inputs.forEach(function(inp){ var v = (inp.value || '').trim(); if (v) drugs.push(v); });
+    if (drugs.length < 2) { if(window.showToast) showToast('请至少输入2种药物'); return; }
+
+    var summary = document.getElementById('unionResultSummary');
+    var matrix = document.getElementById('unionResultMatrix');
+    if (!summary || !matrix) return;
+
+    var db = window.INTERACT_DB || [];
+    var danger = 0, caution = 0, safe = 0;
+
+    var results = [];
+    for (var i = 0; i < drugs.length; i++) {
+      for (var j = i + 1; j < drugs.length; j++) {
+        var d1 = drugs[i], d2 = drugs[j];
+        var found = null;
+        db.forEach(function(r){
+          if ((r.name1 === d1 && r.name2 === d2) || (r.name1 === d2 && r.name2 === d1)) found = r;
+        });
+        var level = found ? found.level : '';
+        var sev = 'neutral';
+        if (level.indexOf('danger') >= 0 || level.indexOf('危险') >= 0 || level.indexOf('禁忌') >= 0) { sev = 'danger'; danger++; }
+        else if (level.indexOf('caution') >= 0 || level.indexOf('注意') >= 0 || level.indexOf('慎') >= 0) { sev = 'caution'; caution++; }
+        else if (level.indexOf('green') >= 0 || level.indexOf('可') >= 0 || level.indexOf('safe') >= 0) { sev = 'safe'; safe++; }
+        results.push({ d1: d1, d2: d2, level: level, sev: sev, desc: found ? (found.desc || '') : '暂无数据' });
+      }
+    }
+
+    var total = results.length;
+    var T = window.T || {};
+    var h = '<div style="font-size:13px;color:#555;margin-bottom:10px">' + (T.unionResultSummary || '发现') + ' ' + total + (T.unionResultFound || ' 对相互作用');
+    if (danger > 0) h += '，<span style="color:#DC2626;font-weight:700">' + danger + (T.unionDangerCount || ' 对禁忌') + '</span>';
+    if (caution > 0) h += '，<span style="color:#D97706;font-weight:600">' + caution + (T.unionCautionCount || ' 对注意') + '</span>';
+    h += '</div>';
+    summary.innerHTML = h;
+
+    var mh = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+    results.forEach(function(r){
+      var color = '#999';
+      var badge = T.unionNeutral || '无数据';
+      if (r.sev === 'danger') { color = '#DC2626'; badge = T.unionContraindicated || '禁忌'; }
+      else if (r.sev === 'caution') { color = '#D97706'; badge = T.unionCaution || '注意'; }
+      else if (r.sev === 'safe') { color = '#059669'; badge = T.unionSafe || '可联用'; }
+      mh += '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 4px">' + r.d1 + ' + ' + r.d2 + '</td><td style="padding:8px 4px"><span style="color:' + color + ';font-weight:600">' + badge + '</span></td><td style="padding:8px 4px;color:#666">' + r.desc + '</td></tr>';
+    });
+    mh += '</table>';
+    matrix.innerHTML = mh;
+    if(window.showToast) showToast('审查完成');
+  } catch(e){}
+};
+// ===== end 联合用药审查 =====
+
 
 
 function matchDrugsBySymptom(query) {
@@ -12046,7 +12142,7 @@ function queryTimingGuide() {
 }
 
 
-// ===== 体验优化 (v2.20.1)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
+// ===== 体验优化 (v2.20.2)：欢迎引导 / 离线提示 / 特殊人群提醒 =====
 function initChatWelcome() {
   var el = document.getElementById('chatMessages');
   if (!el || el.childElementCount > 0) return;
@@ -12138,7 +12234,7 @@ function renderSpecialPopAlerts() {
   }
 })();
 
-// ===== chat 消息功能 (v2.20.1) =====
+// ===== chat 消息功能 (v2.20.2) =====
 function handleChatSend() {
   var inp = document.getElementById('chatInput');
   if (!inp) return;
@@ -12429,7 +12525,7 @@ document.head.appendChild(chatStyle);
     }
   }catch(e){}
 })();
-window.CY_VER = 'v2.20.1';
+window.CY_VER = 'v2.20.2';
 
 
 
