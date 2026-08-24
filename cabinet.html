@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2e7d32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>家庭药箱 - 家庭药师</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f6f7;color:#222;min-height:100vh}
+header{background:linear-gradient(135deg,#1a5c3a,#2e7d32);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:18px;font-weight:700}
+header a{color:#fff;text-decoration:none;font-size:13px;opacity:.9}
+.main{padding:14px;max-width:720px;margin:0 auto}
+.stat-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.stat-card .num{font-size:28px;font-weight:700;color:#2e7d32}
+.stat-card .label{font-size:12px;color:#888;margin-top:2px}
+.stat-card .num.warn{color:#ff9800}
+.stat-card .num.danger{color:#e53935}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card-title{font-size:15px;font-weight:600;color:#333}
+.badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-ok{background:#e8f5e9;color:#2e7d32}
+.badge-warn{background:#fff3e0;color:#e65100}
+.badge-danger{background:#ffebee;color:#c62828}
+.drug-item{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;gap:10px}
+.drug-item:last-child{border-bottom:none}
+.drug-icon{width:40px;height:40px;border-radius:10px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.drug-info{flex:1;min-width:0}
+.drug-name{font-size:14px;font-weight:600;color:#333}
+.drug-meta{font-size:12px;color:#888;margin-top:2px}
+.expiry-bar{flex-shrink:0;text-align:right}
+.drug-actions{flex-shrink:0;display:flex;gap:6px}
+.btn-xs{background:#f5f5f5;border:none;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;color:#666}
+.btn-xs:hover{background:#e0e0e0}
+.btn-xs.del{color:#e53935}
+.btn-add{background:#2e7d32;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;width:100%}
+.btn-add:hover{background:#1b5e20}
+/* Add/Edit Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:17px;margin-bottom:16px;color:#333}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:13px;color:#666;margin-bottom:4px;font-weight:600}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#2e7d32}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-btns{display:flex;gap:10px;margin-top:16px}
+.modal-btns button{flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none}
+.modal-btns .btn-cancel{background:#f5f5f5;color:#666}
+.modal-btns .btn-save{background:#2e7d32;color:#fff}
+/* Member section */
+.member-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.member-chip{background:#e3f2fd;border:2px solid #bbdefb;border-radius:20px;padding:6px 14px;font-size:13px;color:#1565c0;cursor:pointer;user-select:none}
+.member-chip.active{background:#1565c0;color:#fff;border-color:#1565c0}
+/* Empty state */
+.empty{text-align:center;padding:40px 20px;color:#aaa}
+.empty-icon{font-size:48px;margin-bottom:10px}
+.empty p{font-size:14px}
+/* Alert banner */
+.alert-banner{display:none;background:#fff3e0;border:1px solid #ffcc80;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#e65100}
+.alert-banner.show{display:block}
+.alert-banner.danger{background:#ffebee;border-color:#ef9a9a;color:#c62828}
+/* Expiry colors */
+.expiry-ok{color:#2e7d32}
+.expiry-soon{color:#ff9800}
+.expiry-expired{color:#e53935}
+</style>
+</head>
+<body>
+<header>
+  <h1>家庭药箱</h1>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button id="cabSyncBtn" onclick="cabSyncNow()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:12px">同步</button>
+    <a href="index.html">← 返回</a>
+  </div>
+</header>
+
+<div class="main">
+  <!-- Stats -->
+  <div class="stat-bar">
+    <div class="stat-card">
+      <div class="num" id="statTotal">0</div>
+      <div class="label" id="statTotalLabel">药品总数</div>
+    </div>
+    <div class="stat-card">
+      <div class="num warn" id="statSoon">0</div>
+      <div class="label" id="statSoonLabel">近期过期</div>
+    </div>
+    <div class="stat-card">
+      <div class="num danger" id="statExpired">0</div>
+      <div class="label" id="statExpiredLabel">已过期</div>
+    </div>
+  </div>
+
+  <!-- v5.5 云端同步状态 -->
+  <div id="cabSyncStatus" style="display:none;background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#666;line-height:1.6;box-shadow:0 1px 3px rgba(0,0,0,.08)"></div>
+
+  <!-- Alert -->
+  <div class="alert-banner" id="alertBanner"></div>
+
+  <!-- Members -->
+  <div class="card" id="memberCard">
+    <div class="card-head">
+      <div class="card-title">家庭成员</div>
+    </div>
+    <div class="member-list" id="memberList"></div>
+    <button class="btn-add" onclick="openMemberModal()" style="margin-top:8px;font-size:13px;padding:8px">+ 添加成员</button>
+  </div>
+
+  <!-- Drug List -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title" id="drugListTitle">我的药箱</div>
+      <span class="badge badge-ok" id="filterBadge" style="display:none"></span>
+    </div>
+    <div id="drugList"></div>
+    <button class="btn-add" onclick="openAddModal()">+ 添加药品</button>
+  </div>
+
+  <!-- Low Stock -->
+  <div class="card" id="lowStockCard" style="display:none">
+    <div class="card-head">
+      <div class="card-title">库存不足提醒</div>
+    </div>
+    <div id="lowStockList"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Drug Modal -->
+<div class="modal-overlay" id="drugModal">
+  <div class="modal">
+    <h2 id="drugModalTitle">添加药品</h2>
+    <div class="form-group">
+      <label>药品名称 *</label>
+      <input id="drugName" placeholder="如：布洛芬、阿莫西林">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>规格/剂型</label>
+        <input id="drugSpec" placeholder="如：0.2g片剂">
+      </div>
+      <div class="form-group">
+        <label>数量</label>
+        <input id="drugQty" type="number" min="1" placeholder="如：30">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>有效期</label>
+        <input id="drugExpiry" type="date" placeholder="YYYY-MM-DD">
+      </div>
+      <div class="form-group">
+        <label>服用剂量</label>
+        <input id="drugDose" placeholder="如：每次1片">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>所属成员</label>
+      <select id="drugMember"><option value="">通用/共享</option></select>
+    </div>
+    <div class="form-group">
+      <label>分类</label>
+      <select id="drugCat">
+        <option value="解热镇痛">解热镇痛</option>
+        <option value="抗生素">抗生素</option>
+        <option value="感冒药">感冒药</option>
+        <option value="胃肠道">胃肠道</option>
+        <option value="心血管">心血管</option>
+        <option value="降糖药">降糖药</option>
+        <option value="外用药">外用药</option>
+        <option value="维生素/补剂">维生素/补剂</option>
+        <option value="中药/中成药">中药/中成药</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>备注</label>
+      <textarea id="drugNote" placeholder="服用时间、医嘱等..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeDrugModal()">取消</button>
+      <button class="btn-save" id="drugSaveBtn" onclick="saveDrug()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <h2>添加家庭成员</h2>
+    <div class="form-group">
+      <label>姓名/昵称 *</label>
+      <input id="memberName" placeholder="如：爸爸、妈妈、宝宝">
+    </div>
+    <div class="form-group">
+      <label>性别</label>
+      <select id="memberGender">
+        <option value="">未知</option>
+        <option value="男">男</option>
+        <option value="女">女</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>年龄/出生年月</label>
+      <input id="memberAge" placeholder="如：45岁 或 1980-05">
+    </div>
+    <div class="form-group">
+      <label>慢性病史（可选）</label>
+      <input id="memberCondition" placeholder="如：高血压、糖尿病">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeMemberModal()">取消</button>
+      <button class="btn-save" onclick="saveMember()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="syncengine.js"></script>
+<script>
+// ===== Data =====
+var CABINET_KEY = 'family_pharmacist_cabinet';
+var MEMBERS_KEY = 'family_pharmacist_members';
+var CURRENT_MEMBER = '';
+var EDIT_ID = null;
+
+function getCabinet(){ return JSON.parse(localStorage.getItem(CABINET_KEY)||'[]'); }
+function saveCabinet(arr){ localStorage.setItem(CABINET_KEY, JSON.stringify(arr)); syncNote('cabinet', arr); }
+function getMembers(){ return JSON.parse(localStorage.getItem(MEMBERS_KEY)||'[]'); }
+function saveMembers(arr){ localStorage.setItem(MEMBERS_KEY, JSON.stringify(arr)); syncNote('members', arr); }
+
+// ===== v5.5 云端同步 =====
+function syncNote(type, arr){
+  try { if (window.PharmacySync) window.PharmacySync.noteLocalChange(type, JSON.stringify(arr)); } catch(e) {}
+}
+function cabSyncStatus(msg){
+  var el = document.getElementById('cabSyncStatus');
+  if(el){ el.style.display = msg ? 'block' : 'none'; el.textContent = msg; }
+}
+function cabSyncNow(){
+  var sync = window.PharmacySync;
+  if(!sync){ cabSyncStatus('同步引擎未加载'); return; }
+  var fid = sync.getFamilyId();
+  if(!fid){ cabSyncStatus('尚未创建/加入家庭。请到首页 → 「家庭」页 → 多设备云端同步 中创建或加入。'); return; }
+  if(!sync.getWorkerUrl()){ cabSyncStatus('未配置服务端代理地址。请到首页右上角「设置」中填写后同步。'); return; }
+  cabSyncStatus('同步中...');
+  sync.syncAll().then(function(st){
+    if(st && st.status === 'ok'){
+      cabSyncStatus('同步完成（下载 ' + st.pulled + ' 项 / 上传 ' + st.pushed + ' 项）');
+    } else {
+      cabSyncStatus('' + (st && st.status === 'unconfigured' ? '未配置家庭 ID' : '未配置代理地址'));
+    }
+    renderStats(); renderMembers(); renderDrugs();
+  }).catch(function(e){
+    cabSyncStatus('同步失败：' + (e && e.message || '网络错误'));
+  });
+}
+
+// ===== Expiry logic =====
+function daysToExpiry(expiry){
+  if(!expiry) return 999;
+  var parts = expiry.split('-');
+  if(parts.length !== 3) return 999;
+  var exp = new Date(parts[0], parts[1]-1, parts[2]);
+  var now = new Date();
+  now.setHours(0,0,0,0);
+  exp.setHours(0,0,0,0);
+  return Math.ceil((exp - now) / 86400000);
+}
+function expiryLabel(expiry){
+  var d = daysToExpiry(expiry);
+  if(d < 0) return '<span class="expiry-expired">已过期 '+Math.abs(d)+' 天</span>';
+  if(d === 0) return '<span class="expiry-soon">今日到期!</span>';
+  if(d <= 30) return '<span class="expiry-soon">'+d+'天后到期</span>';
+  return '<span class="expiry-ok">'+expiry+'</span>';
+}
+function expiryClass(expiry){
+  var d = daysToExpiry(expiry);
+  if(d < 0) return 'badge-danger';
+  if(d <= 30) return 'badge-warn';
+  return 'badge-ok';
+}
+
+// ===== Render Stats =====
+function renderStats(){
+  var drugs = getCabinet();
+  var total = drugs.length;
+  var soon = 0, expired = 0;
+  drugs.forEach(function(d){
+    var d2e = daysToExpiry(d.expiry);
+    if(d2e < 0) expired++;
+    else if(d2e <= 30) soon++;
+  });
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statSoon').textContent = soon;
+  document.getElementById('statExpired').textContent = expired;
+  var banner = document.getElementById('alertBanner');
+  if(expired > 0){
+    banner.className = 'alert-banner danger show';
+    banner.innerHTML = '有 <b>'+expired+'</b> 种药品已过期，请及时处理！';
+  } else if(soon > 0){
+    banner.className = 'alert-banner show';
+    banner.innerHTML = '有 <b>'+soon+'</b> 种药品即将到期（30天内），请注意使用。';
+  } else {
+    banner.className = 'alert-banner';
+  }
+}
+
+// ===== Render Members =====
+function renderMembers(){
+  var members = getMembers();
+  var el = document.getElementById('memberList');
+  if(members.length === 0){
+    el.innerHTML = '<span style="font-size:13px;color:#aaa">暂无成员，点击添加</span>';
+    return;
+  }
+  var html = '<div class="member-chip'+(CURRENT_MEMBER===''?' active':'')+'" onclick="filterMember(\'\')">全部</div>';
+  members.forEach(function(m){
+    html += '<div class="member-chip'+(CURRENT_MEMBER===m.id?' active':'')+'" onclick="filterMember(\''+m.id+'\')">'+escHtml(m.name)+'</div>';
+  });
+  el.innerHTML = html;
+}
+
+function filterMember(id){
+  CURRENT_MEMBER = id;
+  renderMembers();
+  renderDrugs();
+  var badge = document.getElementById('filterBadge');
+  if(id){
+    var members = getMembers();
+    var m = members.find(function(x){ return x.id === id; });
+    badge.style.display = 'inline-block';
+    badge.textContent = m ? m.name : id;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ===== Render Drugs =====
+function renderDrugs(){
+  var all = getCabinet();
+  var drugs = CURRENT_MEMBER ? all.filter(function(d){ return d.member === CURRENT_MEMBER; }) : all;
+  var el = document.getElementById('drugList');
+  var titleEl = document.getElementById('drugListTitle');
+  if(CURRENT_MEMBER){
+    var members = getMembers();
+    var m = members.find(function(x){ return x.id === CURRENT_MEMBER; });
+    titleEl.textContent = ''+(m?m.name+'的药箱':'药箱');
+  } else {
+    titleEl.textContent = '我的药箱';
+  }
+  if(drugs.length === 0){
+    el.innerHTML = '<div class="empty"><div class="empty-icon"></div><p>药箱空空如也<br><small style="color:#bbb">点击下方按钮添加第一盒药</small></p></div>';
+    return;
+  }
+  // Sort: expired first, then by expiry
+  drugs.sort(function(a,b){
+    return daysToExpiry(a.expiry) - daysToExpiry(b.expiry);
+  });
+  var html = '';
+  drugs.forEach(function(d){
+    var icon = drugCatIcon(d.category);
+    var expClass = expiryClass(d.expiry);
+    var expLabel = expiryLabel(d.expiry);
+    var memberLabel = d.member ? '<span style="font-size:11px;color:#888">· '+d.memberName+'</span>' : '';
+    html += '<div class="drug-item">'+
+      '<div class="drug-icon">'+icon+'</div>'+
+      '<div class="drug-info">'+
+        '<div class="drug-name">'+escHtml(d.name)+'</div>'+
+        '<div class="drug-meta">'+(d.spec?'规格: '+escHtml(d.spec)+' · ':'')+'数量: '+d.qty+(d.dose?' · '+escHtml(d.dose):'')+memberLabel+'</div>'+
+        '<div class="drug-meta" style="margin-top:2px">分类: '+escHtml(d.category||'其他')+' · 到期: '+expLabel+'</div>'+
+      '</div>'+
+      '<div class="drug-actions">'+
+        '<button class="btn-xs" onclick="editDrug(\''+d.id+'\')">编辑</button>'+
+        '<button class="btn-xs del" onclick="deleteDrug(\''+d.id+'\')">删除</button>'+
+      '</div>'+
+    '</div>';
+  });
+  el.innerHTML = html;
+
+  // Low stock
+  var lowStock = drugs.filter(function(d){ return d.qty <= 3 && daysToExpiry(d.expiry) > 0; });
+  var lsCard = document.getElementById('lowStockCard');
+  var lsEl = document.getElementById('lowStockList');
+  if(lowStock.length > 0){
+    lsCard.style.display = 'block';
+    var lsHtml = '';
+    lowStock.forEach(function(d){
+      lsHtml += '<div class="drug-item">'+
+        '<div class="drug-icon">'+drugCatIcon(d.category)+'</div>'+
+        '<div class="drug-info"><div class="drug-name">'+escHtml(d.name)+'</div><div class="drug-meta">剩余 '+d.qty+' 单位</div></div>'+
+        '<button class="btn-xs" onclick="editDrug(\''+d.id+'\')" style="background:#fff3e0;color:#e65100;border:1px solid #ffcc80">补充</button>'+
+      '</div>';
+    });
+    lsEl.innerHTML = lsHtml;
+  } else {
+    lsCard.style.display = 'none';
+  }
+}
+
+function drugCatIcon(cat){
+  var icons = {
+    '解热镇痛':'','抗生素':'','感冒药':'','胃肠道':'','心血管':'',
+    '降糖药':'','外用药':'','维生素/补剂':'','中药/中成药':'','其他':''
+  };
+  return icons[cat] || '';
+}
+
+// ===== Drug CRUD =====
+function openAddModal(memberId){
+  EDIT_ID = null;
+  document.getElementById('drugModalTitle').textContent = '添加药品';
+  document.getElementById('drugSaveBtn').textContent = '保存';
+  document.getElementById('drugName').value = '';
+  document.getElementById('drugSpec').value = '';
+  document.getElementById('drugQty').value = '';
+  document.getElementById('drugExpiry').value = '';
+  document.getElementById('drugDose').value = '';
+  document.getElementById('drugCat').value = '解热镇痛';
+  document.getElementById('drugNote').value = '';
+  // Populate member dropdown
+  var sel = document.getElementById('drugMember');
+  sel.innerHTML = '<option value="">通用/共享</option>';
+  var members = getMembers();
+  members.forEach(function(m){
+    var opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.name;
+    sel.appendChild(opt);
+  });
+  if(memberId) sel.value = memberId;
+  document.getElementById('drugModal').classList.add('show');
+}
+
+function editDrug(id){
+  var drugs = getCabinet();
+  var d = drugs.find(function(x){ return x.id === id; });
+  if(!d) return;
+  EDIT_ID = id;
+  document.getElementById('drugModalTitle').textContent = '编辑药品';
+  document.getElementById('drugSaveBtn').textContent = '更新';
+  document.getElementById('drugName').value = d.name;
+  document.getElementById('drugSpec').value = d.spec || '';
+  document.getElementById('drugQty').value = d.qty;
+  document.getElementById('drugExpiry').value = d.expiry || '';
+  document.getElementById('drugDose').value = d.dose || '';
+  document.getElementById('drugCat').value = d.category || '其他';
+  document.getElementById('drugNote').value = d.note || '';
+  var sel = document.getElementById('drugMember');
+  sel.innerHTML = '<option value="">通用/共享</option>';
+  var members = getMembers();
+  members.forEach(function(m){
+    var opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.name;
+    sel.appendChild(opt);
+  });
+  sel.value = d.member || '';
+  document.getElementById('drugModal').classList.add('show');
+}
+
+function saveDrug(){
+  var name = document.getElementById('drugName').value.trim();
+  if(!name){ alert('请输入药品名称'); return; }
+  var qty = parseInt(document.getElementById('drugQty').value) || 1;
+  var expiry = document.getElementById('drugExpiry').value;
+  var member = document.getElementById('drugMember').value;
+  var members = getMembers();
+  var memberName = member ? (members.find(function(m){ return m.id === member; })||{}).name || '' : '';
+  var drugs = getCabinet();
+  if(EDIT_ID){
+    drugs = drugs.map(function(d){
+      if(d.id === EDIT_ID){
+        return Object.assign({}, d, {
+          name: name, spec: document.getElementById('drugSpec').value.trim(),
+          qty: qty, expiry: expiry, dose: document.getElementById('drugDose').value.trim(),
+          category: document.getElementById('drugCat').value, note: document.getElementById('drugNote').value.trim(),
+          member: member, memberName: memberName, updated: new Date().toISOString()
+        });
+      }
+      return d;
+    });
+  } else {
+    drugs.push({
+      id: Date.now()+'',
+      name: name, spec: document.getElementById('drugSpec').value.trim(),
+      qty: qty, expiry: expiry, dose: document.getElementById('drugDose').value.trim(),
+      category: document.getElementById('drugCat').value, note: document.getElementById('drugNote').value.trim(),
+      member: member, memberName: memberName,
+      created: new Date().toISOString()
+    });
+  }
+  saveCabinet(drugs);
+  closeDrugModal();
+  renderStats();
+  renderDrugs();
+}
+
+function deleteDrug(id){
+  if(!confirm('确认删除该药品？')) return;
+  var drugs = getCabinet().filter(function(d){ return d.id !== id; });
+  saveCabinet(drugs);
+  renderStats();
+  renderDrugs();
+}
+
+function closeDrugModal(){
+  document.getElementById('drugModal').classList.remove('show');
+  EDIT_ID = null;
+}
+
+// ===== Member CRUD =====
+function openMemberModal(){
+  document.getElementById('memberName').value = '';
+  document.getElementById('memberGender').value = '';
+  document.getElementById('memberAge').value = '';
+  document.getElementById('memberCondition').value = '';
+  document.getElementById('memberModal').classList.add('show');
+}
+
+function saveMember(){
+  var name = document.getElementById('memberName').value.trim();
+  if(!name){ alert('请输入成员姓名'); return; }
+  var members = getMembers();
+  members.push({
+    id: Date.now()+'',
+    name: name,
+    gender: document.getElementById('memberGender').value,
+    age: document.getElementById('memberAge').value.trim(),
+    condition: document.getElementById('memberCondition').value.trim()
+  });
+  saveMembers(members);
+  closeMemberModal();
+  renderMembers();
+}
+
+function closeMemberModal(){
+  document.getElementById('memberModal').classList.remove('show');
+}
+
+// ===== Utils =====
+function escHtml(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== Init =====
+function init(){
+  renderStats();
+  renderMembers();
+  renderDrugs();
+  // v5.5 自动同步（已配对时静默同步并刷新视图）
+  try {
+    var s = window.PharmacySync;
+    if (s && s.hasConfig()) {
+      s.syncAll().then(function(st){
+        if (st && st.status === 'ok' && (st.pulled > 0 || st.pushed > 0)) {
+          renderStats(); renderMembers(); renderDrugs();
+        }
+      });
+    }
+  } catch(e) {}
+}
+init();
+</script>
+</body>
+</html>

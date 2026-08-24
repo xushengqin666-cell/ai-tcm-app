@@ -1,0 +1,22 @@
+# 家庭药师 · Cloudflare Worker 部署配置
+# 部署：在 worker/ 目录执行 npx wrangler deploy
+name = "ai-pharmacy"
+main = "ai-worker.js"
+compatibility_date = "2026-08-21"
+
+# 环境变量在 Cloudflare 控制台（或 wrangler secret）设置：
+#   SILICONFLOW_KEY（可选）、DASHSCOPE_KEY（可选）、AUTH_TOKEN（可选）
+# 也可在下方取消注释直接写入（不推荐，密钥会进入配置文件）：
+# [vars]
+# AUTH_TOKEN = "请改成随机字符串"
+
+# KV 命名空间：wrangler kv namespace create PHARMACY_KV 后把 id 填到下面
+[[kv_namespaces]]
+binding = "PHARMACY_KV"
+id = "cb07f8e9df7a46e394b6142b1c571d45"
+
+# D1 数据库（账号体系 / 用药记录 / 健康档案 / 公告）
+[[d1_databases]]
+binding = "pharmacy_db"
+database_name = "pharmacy_db"
+database_id = "344db213-3308-4000-a946-6e3f7409af35"

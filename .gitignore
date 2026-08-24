@@ -1,17 +1,2 @@
-node_modules/
-android/
-.fleet/
-.pnp
-.pnp.js
-*.pyc
-__pycache__/
-.env
-.env.local
-*.log
-dist/
-build/
-*.apk
-*.aab
-*.keystore
-deploy.env
-_temp_scripts/
+# Local Netlify folder
+.netlify

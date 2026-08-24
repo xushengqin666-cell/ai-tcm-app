@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1a5c3a">
+<title>家庭药师 · 管理后台</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>管</text></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,sans-serif;background:#f5f6f7;color:#222;min-height:100vh}
+header{background:linear-gradient(135deg,#1a5c3a,#2e7d32);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+header h1{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px}
+header .op{display:flex;gap:8px;align-items:center}
+header button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 14px;border-radius:16px;cursor:pointer;font-size:12px}
+.container{max-width:960px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card h2{font-size:15px;color:#333;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:#f8faf8;border:1px solid #e8efe8;border-radius:10px;padding:14px;text-align:center}
+.stat .num{font-size:26px;font-weight:700;color:#2e7d32}
+.stat .label{font-size:12px;color:#888;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{border:1px solid #e8e8e8;padding:7px 9px;text-align:left}
+th{background:#f5f5f5;font-weight:600}
+input,textarea,select{width:100%;padding:9px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box;font-family:inherit}
+input:focus,textarea:focus{border-color:#2e7d32}
+button.primary{background:#2e7d32;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%}
+button.primary:disabled{background:#a5d6a7;cursor:not-allowed}
+button.ghost{background:#fff;color:#2e7d32;border:2px solid #2e7d32;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
+.msg{font-size:12px;color:#e53935;background:#fce8e8;border-radius:8px;padding:8px 10px;margin-bottom:10px;display:none}
+.msg.ok{color:#2e7d32;background:#e8f5e9}
+.hint{font-size:12px;color:#999;margin-top:8px;line-height:1.6}
+.ann-item{display:flex;gap:10px;padding:10px 12px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;align-items:flex-start}
+.ann-item .t{font-weight:600;font-size:13px}
+.ann-item .b{font-size:12.5px;color:#555;margin-top:3px;line-height:1.6}
+.ann-item .d{font-size:11px;color:#999;margin-top:4px}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge.admin{background:#fff3e0;color:#e65100}
+.badge.on{background:#e8f5e9;color:#2e7d32}
+.badge.off{background:#f5f5f5;color:#999}
+#loginView{max-width:380px;margin:60px auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>家庭药师 · 管理后台</h1>
+  <div class="op" id="headerOp" style="display:none">
+    <span id="adminEmail" style="font-size:12px;opacity:.85"></span>
+    <button onclick="logout()">退出登录</button>
+  </div>
+</header>
+
+<div id="loginView" class="container">
+  <div class="card" style="max-width:380px;margin:40px auto">
+    <h2>管理员登录</h2>
+    <div class="msg" id="loginMsg"></div>
+    <input type="email" id="loginEmail" placeholder="管理员邮箱">
+    <input type="password" id="loginPassword" placeholder="密码" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="primary" id="loginBtn" onclick="doLogin()">登 录</button>
+    <div class="hint">仅管理员账号可登录后台。接口地址与前台一致。</div>
+  </div>
+</div>
+
+<div id="mainView" class="container" style="display:none">
+  <div class="card">
+    <h2>数据总览</h2>
+    <div class="stats">
+      <div class="stat"><div class="num" id="stUsers">-</div><div class="label">注册用户</div></div>
+      <div class="stat"><div class="num" id="stLogs">-</div><div class="label">用药记录</div></div>
+      <div class="stat"><div class="num" id="stHealth">-</div><div class="label">健康档案</div></div>
+      <div class="stat"><div class="num" id="stSyncs">-</div><div class="label">同步数据</div></div>
+    </div>
+    <div class="hint" id="statsTime"></div>
+  </div>
+
+  <div class="card">
+    <h2>发布公告</h2>
+    <div class="msg" id="annMsg"></div>
+    <input id="annTitle" placeholder="公告标题" maxlength="100">
+    <textarea id="annBody" rows="3" placeholder="公告内容（将显示在用户首页顶部）"></textarea>
+    <button class="primary" id="annBtn" onclick="publishAnnouncement()">发布公告</button>
+  </div>
+
+  <div class="card">
+    <h2>用户列表（最近 100 位）</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>邮箱</th><th>昵称</th><th>角色</th><th>状态</th><th>注册时间</th></tr></thead>
+        <tbody id="userRows"><tr><td colspan="5" style="color:#999">加载中...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>AI 系统管理（自主更新中枢）</h2>
+    <div class="msg" id="opsMsg"></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="ghost" onclick="loadOpsOverview()">刷新系统概览</button>
+      <button class="ghost" onclick="loadAiReport()">生成 AI 运营报告</button>
+    </div>
+    <div id="opsStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px">
+      <div class="stat"><div class="num" id="opFb">-</div><div class="label">近7天反馈</div></div>
+      <div class="stat"><div class="num" id="opMiss">-</div><div class="label">未命中搜索</div></div>
+      <div class="stat"><div class="num" id="opRate">-</div><div class="label">AI好评/差评</div></div>
+      <div class="stat"><div class="num" id="opAi">-</div><div class="label">AI更新条目</div></div>
+    </div>
+    <div id="aiReport" style="font-size:13px;color:#333;background:#f8faf8;border:1px solid #e0e8e0;border-radius:8px;padding:12px;line-height:1.8;display:none;white-space:pre-wrap"></div>
+
+    <h2 style="margin-top:14px;border-top:1px solid #eee;padding-top:12px">高频未命中药品（用户搜不到 → AI 起草 → 审核上线）</h2>
+    <div style="overflow-x:auto;margin-bottom:12px">
+      <table>
+        <thead><tr><th>药品名</th><th>未命中次数</th><th>操作</th></tr></thead>
+        <tbody id="missRows"><tr><td colspan="3" style="color:#999">点击「刷新系统概览」加载</td></tr></tbody>
+      </table>
+    </div>
+
+    <h2>AI 起草待审核</h2>
+    <div style="overflow-x:auto;margin-bottom:12px">
+      <table>
+        <thead><tr><th>药品名</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody id="draftRows"><tr><td colspan="3" style="color:#999">点击「刷新系统概览」加载</td></tr></tbody>
+      </table>
+    </div>
+
+    <h2>最新用户反馈</h2>
+    <div id="fbList" style="font-size:12.5px;color:#555;line-height:1.7"></div>
+  </div>
+</div>
+
+<script>
+var API = '';
+function getToken(){ try { return localStorage.getItem('family_admin_token') || ''; } catch(e){ return ''; } }
+function setToken(t){ try { localStorage.setItem('family_admin_token', t || ''); } catch(e){} }
+function api(method, path, body){
+  return fetch(API + path, {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r){
+    return r.json().then(function(d){
+      if(!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+      return d;
+    });
+  });
+}
+function showMsg(el, text, ok){
+  el.textContent = text;
+  el.className = 'msg' + (ok ? ' ok' : '');
+  el.style.display = text ? 'block' : 'none';
+}
+function fmtTime(ms){
+  if(!ms) return '-';
+  var d = new Date(ms);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function doLogin(){
+  var email = document.getElementById('loginEmail').value.trim();
+  var password = document.getElementById('loginPassword').value;
+  var btn = document.getElementById('loginBtn');
+  var msg = document.getElementById('loginMsg');
+  if(!email || !password){ showMsg(msg, '请输入邮箱和密码'); return; }
+  btn.disabled = true; showMsg(msg, '登录中...', true);
+  api('POST', '/auth/login', { email: email, password: password }).then(function(d){
+    setToken(d.token);
+    if(!d.user.isAdmin) throw new Error('该账号不是管理员');
+    showAdmin(email);
+  }).catch(function(e){
+    setToken('');
+    showMsg(msg, e.message || '登录失败');
+  }).then(function(){ btn.disabled = false; });
+}
+function logout(){
+  api('POST', '/auth/logout').catch(function(){});
+  setToken('');
+  location.reload();
+}
+function showAdmin(email){
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('mainView').style.display = 'block';
+  document.getElementById('headerOp').style.display = 'flex';
+  document.getElementById('adminEmail').textContent = email;
+  loadStats(); loadUsers();
+}
+function loadStats(){
+  api('GET', '/admin/stats').then(function(d){
+    document.getElementById('stUsers').textContent = d.stats.users;
+    document.getElementById('stLogs').textContent = d.stats.logs;
+    document.getElementById('stHealth').textContent = d.stats.health;
+    document.getElementById('stSyncs').textContent = d.stats.syncs;
+    document.getElementById('statsTime').textContent = '统计时间：' + new Date().toLocaleString();
+  }).catch(function(e){ showMsg(document.getElementById('loginMsg'), e.message); });
+}
+function loadUsers(){
+  api('GET', '/admin/users').then(function(d){
+    var rows = (d.users || []).map(function(u){
+      return '<tr><td>' + u.email + '</td><td>' + (u.name || '-') + '</td><td>' +
+        (u.is_admin ? '<span class="badge admin">管理员</span>' : '<span class="badge on">用户</span>') + '</td><td>' +
+        (u.status === 1 ? '<span class="badge on">正常</span>' : '<span class="badge off">停用</span>') + '</td><td>' + fmtTime(u.created_at) + '</td></tr>';
+    }).join('');
+    document.getElementById('userRows').innerHTML = rows || '<tr><td colspan="5" style="color:#999">暂无用户</td></tr>';
+  }).catch(function(e){ document.getElementById('userRows').innerHTML = '<tr><td colspan="5" style="color:#e53935">加载失败：' + e.message + '</td></tr>'; });
+}
+function publishAnnouncement(){
+  var title = document.getElementById('annTitle').value.trim();
+  var body = document.getElementById('annBody').value.trim();
+  var msg = document.getElementById('annMsg');
+  var btn = document.getElementById('annBtn');
+  if(!title){ showMsg(msg, '请输入公告标题'); return; }
+  btn.disabled = true; showMsg(msg, '发布中...', true);
+  api('POST', '/admin/announcement', { title: title, body: body }).then(function(){
+    showMsg(msg, '公告已发布', true);
+    document.getElementById('annTitle').value = '';
+    document.getElementById('annBody').value = '';
+  }).catch(function(e){ showMsg(msg, e.message || '发布失败'); }).then(function(){ btn.disabled = false; });
+}
+// 初始化：读取配置并检查会话
+try {
+  var saved = localStorage.getItem('family_pharmacist_worker_url');
+  API = (saved || '').trim().replace(/\/+$/, '') || 'https://ai-pharmacy.xushengqin666.workers.dev';
+} catch(e){ API = 'https://ai-pharmacy.xushengqin666.workers.dev'; }
+if(getToken()){
+  api('GET', '/auth/me').then(function(d){
+    if(d.user && d.user.isAdmin){ showAdmin(d.user.email); loadOpsOverview(); }
+  }).catch(function(){ setToken(''); });
+}
+
+// ===== v6.4 AI 系统管理 =====
+function opsMsg(text, ok){
+  var el = document.getElementById('opsMsg');
+  el.textContent = text;
+  el.className = 'msg' + (ok ? ' ok' : '');
+  el.style.display = text ? 'block' : 'none';
+}
+function loadOpsOverview(){
+  opsMsg('加载系统概览中...', true);
+  api('GET', '/ops/overview').then(function(d){
+    opsMsg('');
+    document.getElementById('opFb').textContent = d.feedbackCount;
+    document.getElementById('opMiss').textContent = d.missTotal;
+    document.getElementById('opRate').textContent = d.ratings.positive + '/' + d.ratings.negative;
+    document.getElementById('opAi').textContent = d.approvedCount;
+    // 未命中药品
+    var miss = (d.topMissed || []).map(function(m){
+      return '<tr><td>' + m.query + '</td><td>' + m.c + '</td><td><button class="ghost" style="padding:4px 10px;font-size:12px" onclick="aiDraftDrug(\'' + m.query.replace(/'/g, '') + '\')">让 AI 起草</button></td></tr>';
+    }).join('');
+    document.getElementById('missRows').innerHTML = miss || '<tr><td colspan="3" style="color:#999">暂无未命中记录（用户搜的药品都能找到）</td></tr>';
+    // 起草列表
+    var drafts = (d.drafts || []).map(function(x){
+      var st = x.status === 1 ? '<span class="badge on">已上线</span>' : (x.status === 2 ? '<span class="badge off">已拒绝</span>' : '<span class="badge admin">待审核</span>');
+      var ops = x.status === 0 ? '<button class="ghost" style="padding:4px 10px;font-size:12px;margin-right:4px" onclick="reviewDraft(\'' + x.id + '\',1)">通过上线</button><button class="ghost" style="padding:4px 10px;font-size:12px;color:#e53935;border-color:#e53935" onclick="reviewDraft(\'' + x.id + '\',2)">拒绝</button>' : '';
+      return '<tr><td>' + x.name + '</td><td>' + st + '</td><td>' + ops + '</td></tr>';
+    }).join('');
+    document.getElementById('draftRows').innerHTML = drafts || '<tr><td colspan="3" style="color:#999">暂无 AI 起草</td></tr>';
+    // 反馈列表
+    var fb = (d.feedback || []).slice(0, 12).map(function(f){
+      var typeMap = { bug:'问题', suggestion:'建议', drug:'药品数据', other:'其它' };
+      var d2 = new Date(f.createdAt);
+      return '<div style="border-bottom:1px solid #f0f0f0;padding:6px 0">[' + (typeMap[f.type] || f.type) + '] ' + f.content + ' <span style="color:#999">(' + (d2.getMonth()+1) + '/' + d2.getDate() + ')</span></div>';
+    }).join('');
+    document.getElementById('fbList').innerHTML = fb || '<div style="color:#999">暂无用户反馈</div>';
+  }).catch(function(e){ opsMsg(e.message || '加载失败'); });
+}
+function aiDraftDrug(name){
+  opsMsg('AI 正在起草「' + name + '」的药品数据（约需10-30秒）...', true);
+  api('POST', '/ops/ai-draft', { name: name }).then(function(d){
+    opsMsg('AI 已起草「' + name + '」，请在下方审核', true);
+    loadOpsOverview();
+  }).catch(function(e){ opsMsg(e.message || '起草失败'); });
+}
+function reviewDraft(id, status){
+  api('POST', '/ops/ai-draft-review', { id: id, status: status }).then(function(){
+    opsMsg(status === 1 ? '已通过并上线（用户端即时生效）' : '已拒绝', true);
+    loadOpsOverview();
+  }).catch(function(e){ opsMsg(e.message || '操作失败'); });
+}
+function loadAiReport(){
+  opsMsg('AI 正在生成运营报告（约需10-30秒）...', true);
+  api('POST', '/ops/ai-report', {}).then(function(d){
+    opsMsg('');
+    var el = document.getElementById('aiReport');
+    el.style.display = 'block';
+    el.textContent = d.report;
+  }).catch(function(e){ opsMsg(e.message || '报告生成失败'); });
+}
+</script>
+</body>
+</html>
