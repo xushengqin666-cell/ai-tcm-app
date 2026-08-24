@@ -86,8 +86,8 @@ button.ghost{background:#fff;color:#2e7d32;border:2px solid #2e7d32;padding:8px 
     <h2>用户列表（最近 100 位）</h2>
     <div style="overflow-x:auto">
       <table>
-        <thead><tr><th>邮箱</th><th>昵称</th><th>角色</th><th>状态</th><th>注册时间</th></tr></thead>
-        <tbody id="userRows"><tr><td colspan="5" style="color:#999">加载中...</td></tr></tbody>
+        <thead><tr><th>邮箱</th><th>昵称</th><th>角色</th><th>状态</th><th>注册时间</th><th>操作</th></tr></thead>
+        <tbody id="userRows"><tr><td colspan="6" style="color:#999">加载中...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -194,12 +194,22 @@ function loadStats(){
 function loadUsers(){
   api('GET', '/admin/users').then(function(d){
     var rows = (d.users || []).map(function(u){
+      var op = u.is_admin ? '<span style="color:#bbb">-</span>' :
+        '<button onclick="deleteUser(\'' + u.id + '\', \'' + u.email.replace(/'/g, '') + '\')" style="border:1px solid #c62828;background:#fff;color:#c62828;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">删除</button>';
       return '<tr><td>' + u.email + '</td><td>' + (u.name || '-') + '</td><td>' +
         (u.is_admin ? '<span class="badge admin">管理员</span>' : '<span class="badge on">用户</span>') + '</td><td>' +
-        (u.status === 1 ? '<span class="badge on">正常</span>' : '<span class="badge off">停用</span>') + '</td><td>' + fmtTime(u.created_at) + '</td></tr>';
+        (u.status === 1 ? '<span class="badge on">正常</span>' : '<span class="badge off">停用</span>') + '</td><td>' + fmtTime(u.created_at) + '</td><td>' + op + '</td></tr>';
     }).join('');
-    document.getElementById('userRows').innerHTML = rows || '<tr><td colspan="5" style="color:#999">暂无用户</td></tr>';
-  }).catch(function(e){ document.getElementById('userRows').innerHTML = '<tr><td colspan="5" style="color:#e53935">加载失败：' + e.message + '</td></tr>'; });
+    document.getElementById('userRows').innerHTML = rows || '<tr><td colspan="6" style="color:#999">暂无用户</td></tr>';
+  }).catch(function(e){ document.getElementById('userRows').innerHTML = '<tr><td colspan="6" style="color:#e53935">加载失败：' + e.message + '</td></tr>'; });
+}
+// v6.6 管理员删除用户（注销其账号并删除全部云端数据）
+function deleteUser(id, email){
+  if(!confirm('确定删除用户 ' + email + ' 吗？\n该用户的账号与云端全部数据将被永久删除，无法恢复。')) return;
+  api('POST', '/admin/user-delete', { id: id }).then(function(){
+    alert('已删除用户 ' + email);
+    loadUsers(); loadStats();
+  }).catch(function(e){ alert('删除失败：' + (e.message || '未知错误')); });
 }
 function publishAnnouncement(){
   var title = document.getElementById('annTitle').value.trim();

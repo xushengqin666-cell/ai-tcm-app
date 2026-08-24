@@ -148,6 +148,18 @@
   function accountResetPassword(email, answer, newPassword) {
     return api('POST', '/auth/reset', { email: email, answer: answer, newPassword: newPassword });
   }
+  // v6.6 注销账号：删除云端账号与全部数据，并清除本机登录状态
+  function accountDelete() {
+    var t = getSession();
+    return api('POST', '/auth/delete').then(function (d) {
+      if (!d.ok) throw new Error(d.error || '注销失败');
+      clearSession();
+      return d;
+    }).catch(function (e) {
+      if (t) clearSession();
+      throw e;
+    });
+  }
 
   /* ---------- v5.8 用药记录 / 健康档案 / 公告 ---------- */
   function logsAdd(drug, dose, takenAt, note) {
@@ -380,6 +392,7 @@
     me: accountMe,
     changePassword: accountChangePassword,
     resetPassword: accountResetPassword,
+    deleteAccount: accountDelete,
     logsAdd: logsAdd,
     logsList: logsList,
     logsDelete: logsDelete,

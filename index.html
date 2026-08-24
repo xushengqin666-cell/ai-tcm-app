@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Family Pharmacist v6.5</title>
+<title>家庭药师 / Family Pharmacist v6.6</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v6.5</span>
+    <span id="version" style="font-size:10px;opacity:.7">v6.6</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -310,7 +310,7 @@ var COMPLIANCE_CONTENT = {
   about: {
     title: '关于家庭药师',
     body: '<p><strong>家庭药师</strong> — 家庭用药管理工具</p>' +
-          '<p>版本：v6.5（2026-08）</p>' +
+          '<p>版本：v6.6（2026-08）</p>' +
           '<p>功能：药品说明书查询 · 药物相互作用审查 · 用药指南 · 家庭药箱管理 · 服药提醒 · 中医辨证参考 · 用药咨询</p>' +
           '<p>技术：纯前端 Web 应用（PWA），数据本地存储，智能问答采用「服务端代理 + 用户自备密钥 + 本地知识库」多级通道。</p>' +
           '<p>本应用为健康管理工具，非医疗器械。</p>'
@@ -5047,7 +5047,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>家庭药师 v6.5 · 家庭用药管理工具</p>
+  <p>家庭药师 v6.6 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>
@@ -5278,7 +5278,11 @@ function renderAuthBody(){
       authLabel('原密码')+'<input type="password" id="pwOld" style="'+AUTH_FIELD+'" placeholder="输入当前密码">' +
       authLabel('新密码（6-64 位）')+'<input type="password" id="pwNew" style="'+AUTH_FIELD+'" placeholder="输入新密码">' +
       authBtn('修改密码','doChangePassword()',true) +
-      authBtn('退出登录','doLogout()',false);
+      authBtn('退出登录','doLogout()',false) +
+      '<div style="border-top:1px solid #eee;margin-top:14px;padding-top:12px">' +
+        '<div style="font-size:12px;color:#999;line-height:1.6;margin-bottom:8px">注销账号后，账号与云端数据将被立即删除且不可恢复；本机设备上的数据不会被删除。</div>' +
+        '<button onclick="doDeleteAccount()" style="width:100%;padding:10px;border:1px solid #c62828;border-radius:8px;background:#fff;color:#c62828;font-size:14px;font-weight:600;cursor:pointer">注销账号</button>' +
+      '</div>';
     return;
   }
 
@@ -5391,6 +5395,24 @@ function doLogout(){
     updateUserButton();
     try { refreshHealthViews(); } catch(e){}
     alert('已退出登录（本机数据保留，登录后继续同步）');
+  });
+}
+// v6.6 账号注销（PIPL 注销权 / 应用商店审核要求）
+function doDeleteAccount(){
+  var sync = window.PharmacySync;
+  if(!sync || !sync.isLoggedIn()) return;
+  if(!confirm('确定要注销账号吗？\n\n注销后：\n1. 账号与云端全部数据（药箱/成员/提醒/用药记录/健康档案）将被立即永久删除，无法恢复；\n2. 本机设备上的数据不会被删除。\n\n如需保留数据，请先用「数据备份」导出。')) return;
+  if(!confirm('再次确认：此操作不可恢复，确定继续注销？')) return;
+  authBusy(true);
+  sync.deleteAccount().then(function(){
+    authBusy(false);
+    closeAuthPanel();
+    updateUserButton();
+    try { refreshHealthViews(); } catch(e){}
+    showToast('账号已注销');
+  }).catch(function(e){
+    authBusy(false);
+    alert('注销失败：' + (e && e.message ? e.message : '网络错误，请稍后重试'));
   });
 }
 function afterLoginSync(){

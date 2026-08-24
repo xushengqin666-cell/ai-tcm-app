@@ -108,6 +108,7 @@ export default {
     if (path === '/auth/me') return handleMe(request, env);
     if (path === '/auth/change-password') return handleChangePassword(request, env);
     if (path === '/auth/reset') return handleResetPassword(request, env);
+    if (path === '/auth/delete') return handleDeleteAccount(request, env);
 
     // ===== 账号级数据同步（D1）=====
     if (path === '/sync/account/put') return accountSyncPut(request, env);
@@ -127,6 +128,7 @@ export default {
 
     // ===== 管理后台（需管理员）=====
     if (path === '/admin/users') return adminUsers(request, env);
+    if (path === '/admin/user-delete') return adminUserDelete(request, env);
     if (path === '/admin/stats') return adminStats(request, env);
     if (path === '/admin/announcement') return adminAnnouncement(request, env);
 
@@ -548,6 +550,26 @@ async function handleResetPassword(request, env) {
   return json({ ok: true }, 200);
 }
 
+// v6.6 账号注销：删除账号及全部云端数据（PIPL 注销权 / 商店审核硬性要求）
+async function handleDeleteAccount(request, env) {
+  if (!env.pharmacy_db) return json({ ok: false, error: 'database not bound' }, 501);
+  if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
+  let user;
+  try { user = await requireAuth(request, env); } catch (e) { return e instanceof Response ? e : json({ ok: false, error: 'unauthorized' }, 401); }
+  await deleteUserData(env, user.id);
+  return json({ ok: true }, 200);
+}
+
+async function deleteUserData(env, uid) {
+  await env.pharmacy_db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(uid).run();
+  await env.pharmacy_db.prepare('DELETE FROM sync_data WHERE user_id = ?').bind(uid).run();
+  await env.pharmacy_db.prepare('DELETE FROM med_logs WHERE user_id = ?').bind(uid).run();
+  await env.pharmacy_db.prepare('DELETE FROM health_records WHERE user_id = ?').bind(uid).run();
+  await env.pharmacy_db.prepare('DELETE FROM feedback WHERE user_id = ?').bind(uid).run();
+  await env.pharmacy_db.prepare('DELETE FROM ai_ratings WHERE user_id = ?').bind(uid).run();
+  await env.pharmacy_db.prepare('DELETE FROM users WHERE id = ?').bind(uid).run();
+}
+
 /* ===== 账号级同步（D1 sync_data 表） ===== */
 async function accountSyncPut(request, env) {
   const user = await requireAuth(request, env).catch(e => null);
@@ -690,6 +712,21 @@ async function adminUsers(request, env) {
   try { user = await requireAdmin(request, env); } catch (e) { return e instanceof Response ? e : json({ ok: false, error: 'admin required' }, 403); }
   const rows = await env.pharmacy_db.prepare('SELECT id, email, name, is_admin, status, created_at FROM users ORDER BY created_at DESC LIMIT 200').all();
   return json({ ok: true, users: rows.results || [] }, 200);
+}
+
+// v6.6 管理员删除用户（含全部云端数据）
+async function adminUserDelete(request, env) {
+  try { await requireAdmin(request, env); } catch (e) { return e instanceof Response ? e : json({ ok: false, error: 'admin required' }, 403); }
+  if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
+  const body = await readBody(request);
+  if (!body) return json({ ok: false, error: 'bad json' }, 400);
+  const id = String(body.id || '');
+  if (!id) return json({ ok: false, error: '缺少用户标识' }, 400);
+  const target = await env.pharmacy_db.prepare('SELECT id, is_admin FROM users WHERE id = ?').bind(id).first();
+  if (!target) return json({ ok: false, error: '用户不存在' }, 404);
+  if (target.is_admin) return json({ ok: false, error: '管理员账号不能通过此接口删除' }, 400);
+  await deleteUserData(env, id);
+  return json({ ok: true }, 200);
 }
 
 async function adminStats(request, env) {
