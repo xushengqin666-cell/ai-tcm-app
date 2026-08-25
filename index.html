@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Family Pharmacist v6.6.1</title>
+<title>家庭药师 / Family Pharmacist v6.7</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v6.6.1</span>
+    <span id="version" style="font-size:10px;opacity:.7">v6.7</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -268,6 +268,13 @@ header h1{font-size:18px;font-weight:700}
     </div>
 <!-- AI配置已内置，无需用户操作 -->
     <div id="chatWelcome" style="text-align:center;color:#999;padding:28px 10px;font-size:13px;line-height:2.1">您好，用药方面的问题可以直接问我。<br>例如药物相互作用、症状用药建议、药品说明书查询。<br>试试：「布洛芬能和感冒灵一起吃吗」</div>
+    <div id="chatQuick" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+      <button onclick="quickAsk('感冒吃什么药')" style="padding:5px 12px;border:1px solid #cfd8cf;border-radius:16px;background:#f4f7f4;color:#33691e;font-size:12px;cursor:pointer">感冒吃什么药</button>
+      <button onclick="quickAsk('布洛芬和对乙酰氨基酚能一起吃吗')" style="padding:5px 12px;border:1px solid #cfd8cf;border-radius:16px;background:#f4f7f4;color:#33691e;font-size:12px;cursor:pointer">两种退烧药能一起吃吗</button>
+      <button onclick="quickAsk('高血压日常用药注意什么')" style="padding:5px 12px;border:1px solid #cfd8cf;border-radius:16px;background:#f4f7f4;color:#33691e;font-size:12px;cursor:pointer">高血压用药注意</button>
+      <button onclick="quickAsk('儿童发烧怎么用药')" style="padding:5px 12px;border:1px solid #cfd8cf;border-radius:16px;background:#f4f7f4;color:#33691e;font-size:12px;cursor:pointer">儿童发烧用药</button>
+      <button onclick="quickAsk('吃头孢能喝酒吗')" style="padding:5px 12px;border:1px solid #cfd8cf;border-radius:16px;background:#f4f7f4;color:#33691e;font-size:12px;cursor:pointer">吃头孢能喝酒吗</button>
+    </div>
     <div id="chatMessages" style="min-height:200px"></div>
   </div>
 </div>
@@ -310,7 +317,7 @@ var COMPLIANCE_CONTENT = {
   about: {
     title: '关于家庭药师',
     body: '<p><strong>家庭药师</strong> — 家庭用药管理工具</p>' +
-          '<p>版本：v6.6.1（2026-08）</p>' +
+          '<p>版本：v6.7（2026-08）</p>' +
           '<p>功能：药品说明书查询 · 药物相互作用审查 · 用药指南 · 家庭药箱管理 · 服药提醒 · 中医辨证参考 · 用药咨询</p>' +
           '<p>技术：纯前端 Web 应用（PWA），数据本地存储，智能问答采用「服务端代理 + 用户自备密钥 + 本地知识库」多级通道。</p>' +
           '<p>本应用为健康管理工具，非医疗器械。</p>'
@@ -2060,6 +2067,12 @@ function doSearchAI(){
   var q = window.__lastSearchQ || searchInput.value.trim();
   if(!q) return;
   searchResult.innerHTML = '<div class="loading-dots">'+T[currentLang].searching+'</div>';
+  // v6.7 本地知识库秒答:有本地答案先立即展示
+  var local = null;
+  try { local = getLocalAnswer(q); } catch(e){ local = null; }
+  if(local){
+    searchResult.innerHTML = '<div class="msg msg-ai"><div class="bubble"><div style="font-size:10px;color:#aaa;margin-bottom:4px">本地知识库 · 秒答 · AI 正在补充完整回答...</div>'+formatText(local)+'</div></div>';
+  }
   callAI('请根据以下问题给出专业简洁的回答(药品相关问题请结合医学常识):'+q)
     .then(function(result){
       var ans = result.answer || result;
@@ -2067,8 +2080,8 @@ function doSearchAI(){
         '<div style="margin-top:6px;text-align:right;font-size:12px;color:#999">这个回答有帮助吗？ <button onclick="rateAiAnswer(\'' + q.replace(/'/g, '').slice(0, 40) + '\',1)" style="border:none;background:#e8f5e9;color:#2e7d32;border-radius:6px;padding:3px 10px;cursor:pointer">有帮助</button> <button onclick="rateAiAnswer(\'' + q.replace(/'/g, '').slice(0, 40) + '\',-1)" style="border:none;background:#fce8e8;color:#c62828;border-radius:6px;padding:3px 10px;cursor:pointer">没帮助</button></div>';
     })
     .catch(function(){
-      var local = getLocalAnswer(q);
-      if(local) searchResult.innerHTML = '<div class="msg msg-ai"><div class="bubble">'+formatText(local)+'</div></div><div class="fallback-hint">'+T[currentLang].fallbackHint+'</div>';
+      var local2 = getLocalAnswer(q);
+      if(local2) searchResult.innerHTML = '<div class="msg msg-ai"><div class="bubble"><div style="font-size:10px;color:#aaa;margin-bottom:4px">本地知识库 · 秒答</div>'+formatText(local2)+'</div></div><div class="fallback-hint">'+T[currentLang].fallbackHint+'</div>';
       else searchResult.innerHTML = '<div class="error">'+T[currentLang].searchFail+'</div>';
     });
 }
@@ -2272,7 +2285,7 @@ function callWorker(text, think){
   try { tk = localStorage.getItem('family_pharmacist_worker_token') || ''; } catch(e){}
   if(tk) body.token = tk;
   var ctrl = new AbortController();
-  var timer = setTimeout(function(){ ctrl.abort(); }, 15000);
+  var timer = setTimeout(function(){ ctrl.abort(); }, 45000);
   return fetch(getWorkerUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -2314,7 +2327,11 @@ function callSiliconFlow(text, think){
   });
 }
 
-// ===== 发送聊天 =====
+// ===== 发送聊天（v6.7:本地秒答 + AI 深化,失败保留本地答案） =====
+function quickAsk(q){
+  chatInput.value = q;
+  sendChat();
+}
 function sendChat(){
   var q = chatInput.value.trim();
   if(!q) return;
@@ -2329,6 +2346,15 @@ function sendChat(){
   if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Analyzing...':'分析中...';
   chatMessages.innerHTML += '<div class="msg msg-ai" id="'+loadId+'"><div class="bubble"><div class="loading-dots">'+T[currentLang].thinkingText+'</div></div></div>';
   chatMessages.scrollTop = chatMessages.scrollHeight;
+  // v6.7 本地知识库秒答:有本地答案先立即展示,AI 返回后再替换为完整回答
+  var localAns = null;
+  try { localAns = getLocalAnswer(q); } catch(e){ localAns = null; }
+  if(localAns){
+    var el0 = document.getElementById(loadId);
+    if(el0) el0.innerHTML = '<div class="bubble"><div style="font-size:10px;color:#aaa;margin-bottom:4px">本地知识库 · 秒答 · AI 正在补充完整回答...</div><div class="answer-text">'+formatText(localAns)+'</div></div>';
+    if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Local KB':'本地知识库';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
   callAI(q, thinkMode).then(function(result){
     var el = document.getElementById(loadId);
     if(!el) return;
@@ -2341,21 +2367,34 @@ function sendChat(){
     }
     html += '<div class="answer-text">'+formatText(result.answer)+'</div>';
     if(result.noMatch){
-      // 本地无匹配的特殊提示
+      // 本地无匹配且 AI 也无结果:保留已有的本地秒答(若有),否则提示
       if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Local KB':'本地知识库';
+      if(localAns){ el.innerHTML = '<div class="bubble"><div style="font-size:10px;color:#aaa;margin-bottom:4px">本地知识库 · 秒答</div><div class="answer-text">'+formatText(localAns)+'</div></div>'; }
+      else { el.innerHTML = '<div class="bubble">'+html+'</div>'; }
     } else if(result.fallback){
-      html += '<div class="fallback-hint">'+(currentLang==='en'?'Local rule engine reply (AI service unavailable)':'本地规则引擎回复（AI服务暂不可用）')+'</div>';
+      // AI 通道不可用:保留本地秒答,无本地答案时显示本地引擎兜底
+      if(localAns){
+        el.innerHTML = '<div class="bubble"><div style="font-size:10px;color:#aaa;margin-bottom:4px">本地知识库 · 秒答</div><div class="answer-text">'+formatText(localAns)+'</div></div>';
+      } else {
+        el.innerHTML = '<div class="bubble">'+html+'<div class="fallback-hint">'+(currentLang==='en'?'Local rule engine reply (AI service unavailable)':'本地规则引擎回复（AI服务暂不可用）')+'</div></div>';
+      }
       if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Local Engine':'本地引擎';
     } else {
+      el.innerHTML = '<div class="bubble">'+html+'</div>';
       if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Replied':'已回复';
     }
-    el.innerHTML = '<div class="bubble">'+html+'</div>';
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }).catch(function(e){
     var el = document.getElementById(loadId);
     if(!el) return;
-    el.innerHTML = '<div class="bubble error">'+(e.name==='AbortError'?(currentLang==='en'?'Request timeout, please try again':'请求超时，请稍后重试'):(currentLang==='en'?'Network error: ':'网络错误: ')+e.message)+'</div>';
-    if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Failed':'失败';
+    if(localAns){
+      // 出错时保留本地秒答,不清空
+      el.innerHTML = '<div class="bubble"><div style="font-size:10px;color:#aaa;margin-bottom:4px">本地知识库 · 秒答</div><div class="answer-text">'+formatText(localAns)+'</div></div>';
+      if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Local KB':'本地知识库';
+    } else {
+      el.innerHTML = '<div class="bubble error">'+(e.name==='AbortError'?(currentLang==='en'?'Request timeout, please try again':'请求超时，请稍后重试'):(currentLang==='en'?'Network error: ':'网络错误: ')+e.message)+'</div>';
+      if(aiStatusEl) aiStatusEl.textContent = currentLang==='en'?'Failed':'失败';
+    }
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 }
@@ -5047,7 +5086,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>家庭药师 v6.6.1 · 家庭用药管理工具</p>
+  <p>家庭药师 v6.7 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>

@@ -1,0 +1,14 @@
+# 家庭药师 · 本地开发配置（无 Workers AI binding，避免本机网络不通时 dev server 卡死）
+# 用法：npx wrangler dev --port 8787 --config wrangler.local.toml
+name = "ai-pharmacy"
+main = "ai-worker.js"
+compatibility_date = "2026-08-21"
+
+[[kv_namespaces]]
+binding = "PHARMACY_KV"
+id = "cb07f8e9df7a46e394b6142b1c571d45"
+
+[[d1_databases]]
+binding = "pharmacy_db"
+database_name = "pharmacy_db"
+database_id = "344db213-3308-4000-a946-6e3f7409af35"

@@ -20,3 +20,7 @@ id = "cb07f8e9df7a46e394b6142b1c571d45"
 binding = "pharmacy_db"
 database_name = "pharmacy_db"
 database_id = "344db213-3308-4000-a946-6e3f7409af35"
+
+# v6.7 Cloudflare Workers AI（免费每日额度）：无任何密钥时的稳定兜底通道
+[ai]
+binding = "AI"

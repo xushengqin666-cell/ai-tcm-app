@@ -93,6 +93,7 @@ export default {
         providers: {
           siliconflow: !!env.SILICONFLOW_KEY,
           dashscope: !!env.DASHSCOPE_KEY,
+          workersai: !!env.AI,
           pollinations: true
         },
         syncTypes: SYNC_TYPES
@@ -134,7 +135,7 @@ export default {
 
     // ===== v6.4 AI 系统中枢：反馈 / 埋点 / 自主数据更新 =====
     if (path === '/feedback/submit') return feedbackSubmit(request, env);
-    if (path === '/track/search') return trackSearch(request, env);
+    if (path === '/track/search') return trackSearch(request, env, ctx);
     if (path === '/track/ai-rating') return trackAiRating(request, env);
     if (path === '/drug/ai-entries') return aiDrugEntriesList(request, env);
     if (path === '/ops/overview') return opsOverview(request, env);
@@ -161,6 +162,7 @@ async function handleChat(request, env) {
   const attempts = [];
   if (env.SILICONFLOW_KEY) attempts.push(['siliconflow', () => callSiliconFlow(env, message, think)]);
   if (env.DASHSCOPE_KEY) attempts.push(['dashscope', () => callDashScope(env, message, think)]);
+  if (env.AI) attempts.push(['workers-ai', () => callWorkersAI(env, message, think)]);
   attempts.push(['pollinations', () => callPollinations(message, think)]);
 
   let lastErr = '';
@@ -214,6 +216,31 @@ async function callDashScope(env, message, think) {
   const data = await resp.json();
   if (data.error) throw new Error((data.error && data.error.message) || 'DashScope error');
   return data;
+}
+
+/* v6.7 Cloudflare Workers AI 免费通道：无需任何密钥，每日免费额度；按候选模型列表逐个尝试，单个模型 12 秒超时 */
+const WAI_MODELS = ['@cf/qwen/qwen3-30b-a3b-fp8', '@cf/qwen/qwen3.8-27b', '@cf/qwen/qwq-32b', '@cf/meta/llama-3.3-70b-instruct-fp8-fast'];
+async function callWorkersAI(env, message, think) {
+  if (!env.AI) throw new Error('Workers AI not bound');
+  let lastErr = null;
+  for (const model of WAI_MODELS) {
+    try {
+      const out = await Promise.race([
+        env.AI.run(model, {
+          messages: [{ role: 'system', content: SYS_PROMPT }, { role: 'user', content: message }],
+          max_tokens: 1500,
+          temperature: 0.3
+        }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout: ' + model)), 12000))
+      ]);
+      const content = (out && (out.response || (out.choices && out.choices[0] && out.choices[0].message && out.choices[0].message.content))) || '';
+      if (content) return { choices: [{ message: { content } }] };
+      throw new Error('empty response');
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw new Error('Workers AI failed: ' + (lastErr && lastErr.message));
 }
 
 /* 免密钥兜底通道（pollinations.ai，免费但速度与稳定性一般，仅作为最后兜底；429 时重试） */
@@ -774,7 +801,7 @@ async function feedbackSubmit(request, env) {
   return json({ ok: true, id }, 200);
 }
 
-async function trackSearch(request, env) {
+async function trackSearch(request, env, ctx) {
   if (!env.pharmacy_db) return json({ ok: false, error: 'database not bound' }, 501);
   if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
   const body = await readBody(request);
@@ -790,7 +817,42 @@ async function trackSearch(request, env) {
   await env.pharmacy_db.prepare(
     'INSERT INTO search_logs (id, query, hit, created_at) VALUES (?, ?, 0, ?)'
   ).bind(id, q, now()).run();
+  // v6.7 自主更新闭环：疑似药品名的未命中查询达到 3 次 → 自动 AI 起草（待管理员审核）
+  if (ctx && ctx.waitUntil) ctx.waitUntil(autoDraftIfNeeded(env, q));
   return json({ ok: true }, 200);
+}
+
+/* v6.7 自动起草：未命中≥3 次且形似药品名 → AI 起草数据入待审核队列（每日限 10 条，仍保留人工审核闸门） */
+async function autoDraftIfNeeded(env, q) {
+  try {
+    if (!env.pharmacy_db) return;
+    if (!env.AI && !env.SILICONFLOW_KEY && !env.DASHSCOPE_KEY) return; // 无任何 AI 通道则跳过
+    if (!/^[\u4e00-\u9fa5·]{2,12}$/.test(q)) return;
+    const STOP = ['怎么办', '什么', '可以', '能否', '多少', '如何', '哪种', '感冒', '发烧', '发热', '头痛', '咳嗽', '腹泻', '便秘', '失眠', '血压', '血糖', '胃', '皮肤', '眼睛', '耳朵', '鼻子', '嗓子', '牙', '过敏', '孩子', '宝宝', '孕妇', '老人', '吃', '喝', '哪'];
+    for (let i = 0; i < STOP.length; i++) { if (q.indexOf(STOP[i]) !== -1) return; }
+    const cnt = await env.pharmacy_db.prepare('SELECT COUNT(*) AS c FROM search_logs WHERE query = ?').bind(q).first();
+    if (!cnt || cnt.c < 3) return;
+    const exist = await env.pharmacy_db.prepare('SELECT id FROM ai_drug_entries WHERE name = ? LIMIT 1').bind(q).first();
+    if (exist) return;
+    const dayAgo = now() - 24 * 3600 * 1000;
+    const todays = await env.pharmacy_db.prepare("SELECT COUNT(*) AS c FROM ai_drug_entries WHERE source = 'auto' AND created_at > ?").bind(dayAgo).first();
+    if (todays && todays.c >= 10) return;
+    const prompt = '请为药品「' + q + '」生成一条药品数据（JSON 格式，严格按以下结构，不要任何多余文字）：' +
+      '{"indications":"主要适应症","ingredients":"主要成分","dosage":"常见用法用量范围（注明遵医嘱）","adverse":"常见不良反应","contraindications":"重要禁忌","storage":"贮藏条件","cat":"类别"}。' +
+      '要求：基于通用药理知识；不确定的信息写"以说明书为准"；所有字段为中文字符串；不要虚构精确剂量，只给常见范围。';
+    const content = await callBestProvider(env, prompt);
+    const m = content.match(/\{[\s\S]*\}/);
+    if (!m) return;
+    const obj = JSON.parse(m[0]);
+    if (!obj.indications) return;
+    const did = 'd-' + randomHex(16);
+    await env.pharmacy_db.prepare(
+      'INSERT INTO ai_drug_entries (id, name, data_json, source, status, created_at) VALUES (?, ?, ?, ?, 0, ?)'
+    ).bind(did, q, JSON.stringify(obj), 'auto', now()).run();
+    console.log('[auto-draft] drafted:', q);
+  } catch (e) {
+    console.error('[auto-draft] failed:', e && e.message);
+  }
 }
 
 async function trackAiRating(request, env) {
@@ -849,6 +911,7 @@ async function callBestProvider(env, message) {
   const attempts = [];
   if (env.SILICONFLOW_KEY) attempts.push(() => callSiliconFlow(env, message, false));
   if (env.DASHSCOPE_KEY) attempts.push(() => callDashScope(env, message, false));
+  if (env.AI) attempts.push(() => callWorkersAI(env, message, false));
   attempts.push(() => callPollinations(message, false));
   let lastErr = '';
   for (const fn of attempts) {
