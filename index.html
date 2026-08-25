@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Family Pharmacist v6.6</title>
+<title>家庭药师 / Family Pharmacist v6.6.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v6.6</span>
+    <span id="version" style="font-size:10px;opacity:.7">v6.6.1</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -310,7 +310,7 @@ var COMPLIANCE_CONTENT = {
   about: {
     title: '关于家庭药师',
     body: '<p><strong>家庭药师</strong> — 家庭用药管理工具</p>' +
-          '<p>版本：v6.6（2026-08）</p>' +
+          '<p>版本：v6.6.1（2026-08）</p>' +
           '<p>功能：药品说明书查询 · 药物相互作用审查 · 用药指南 · 家庭药箱管理 · 服药提醒 · 中医辨证参考 · 用药咨询</p>' +
           '<p>技术：纯前端 Web 应用（PWA），数据本地存储，智能问答采用「服务端代理 + 用户自备密钥 + 本地知识库」多级通道。</p>' +
           '<p>本应用为健康管理工具，非医疗器械。</p>'
@@ -1241,7 +1241,7 @@ var DRUG_GUIDE = {
   "胰岛素": {"time":"按医嘱定时注射(餐前15-30min或随餐)","timeEn":"As directed (15-30min before meals or with meals)","foodAvoid":["酒精"],"foodAvoidEn":["Alcohol"],"drugAvoid":["β受体阻滞剂","地塞米松","噻嗪类利尿剂"],"drugAvoidEn":["Beta-blockers","Dexamethasone","Thiazide diuretics"],"notes":"血糖监测是安全用药的关键;每次注射应更换部位;室温保存(未开封冷藏);运动量大时需调整剂量","notesEn":"Blood glucose monitoring is key; rotate injection sites; store at room temp (unopened: refrigerate); adjust dose with increased exercise","indications":"1型糖尿病（终身使用）；2型糖尿病口服药控制不佳或伴严重并发症；糖尿病酮症酸中毒；高血糖高渗状态；妊娠糖尿病（胰岛素为首选）；围手术期血糖控制","ingredients":"主要成分：人胰岛素/胰岛素类似物（速效：门冬/赖脯；短效：常规胰岛素；中效：低精蛋白锌胰岛素/NPH；长效：甘精/地特/德谷胰岛素）。规格：3mL/支（300单位）笔芯/瓶装","dosage":"个体化给药，需由医师根据血糖谱制定方案。常规起始：1型糖尿病0.5-1.0单位/kg/日；2型糖尿病0.3-0.8单位/kg/日。速效胰岛素餐前5-15分钟皮下注射；长效胰岛素每日固定时间注射。注射部位：腹部（吸收最快）、大腿、上臂、臀部轮换，避免同一部位反复注射。","adverse":"低血糖（最常见，表现为出汗、心悸、手抖、饥饿感，严重者意识障碍、抽搐、昏迷，需立即补充糖分）；注射部位局部反应（红肿、瘙痒、脂肪萎缩或增生）；体重增加；过敏反应（罕见，皮疹、血管神经性水肿）；胰岛素水肿（初期控制血糖后水钠潴留）；屈光改变（血糖快速下降致晶状体屈光度变化，视力模糊，数周内自行缓解）","contraindications":"低血糖发作期（需先纠正低血糖）；对胰岛素或制剂中任何成分过敏者；低血糖昏迷患者禁止注射胰岛素（应静脉推注葡萄糖）。糖尿病酮症酸中毒需静脉用短效胰岛素，不推荐皮下注射。","storage":"未开封：2-8℃冷藏（勿冷冻，冷冻后失效）。已开封：室温（<25-30℃）保存，使用中的笔芯可在室温下保存4周，超过4周废弃。避免受热或阳光直射。注射前检查溶液：普通胰岛素应无色澄清，若出现云雾状、变色或漂浮颗粒禁止使用。"},
   "氯吡格雷": {"time":"每日一次,空腹或随餐均可","timeEn":"Once daily, with or without food","foodAvoid":["西柚汁"],"foodAvoidEn":["Grapefruit juice"],"drugAvoid":["奥美拉唑","红霉素","克拉霉素","布洛芬","华法林"],"drugAvoidEn":["Omeprazole","Erythromycin","Clarithromycin","Ibuprofen","Warfarin"],"notes":"不可随意停药(尤其是心脏支架后);与PPI联用时优选泮托拉唑或H2受体拮抗剂","notesEn":"Do not stop abruptly (especially after cardiac stent); prefer pantoprazole or H2 blocker over omeprazole if PPI needed","indications":"动脉粥样硬化血栓形成事件预防：近期心肌梗死、近期卒中、确诊外周动脉疾病；急性冠脉综合征（ACS）与阿司匹林联用；冠状动脉支架术后（与阿司匹林双联抗血小板）","ingredients":"主要成分：硫酸氯吡格雷。常见规格：75mg/25mg（负荷剂量）","dosage":"维持剂量：一次75mg，一日1次。ACS/支架术后：负荷剂量300-600mg顿服（首剂），继以75mg/日维持。双联抗血小板疗程：药物支架至少12个月。","adverse":"出血风险（消化道出血、颅内出血、手术切口出血）；皮疹；腹泻；罕见血栓性血小板减少性紫癜（TTP）；CYP2C19慢代谢者疗效降低","contraindications":"活动性病理性出血（消化性溃疡、颅内出血）；严重肝功能损害；对本品过敏者；与强效CYP2C19抑制剂（奥美拉唑等）联用降低疗效","storage":"避光，密封，30℃以下保存。"},
   "氨氯地平": {"time":"每日一次,可在任意时间服用","timeEn":"Once daily, can be taken any time","foodAvoid":["西柚汁","酒精(过量)"],"foodAvoidEn":["Grapefruit juice","Excessive alcohol"],"drugAvoid":["辛伐他汀","西柚汁","地尔硫卓","维拉帕米"],"drugAvoidEn":["Simvastatin","Grapefruit juice","Diltiazem","Verapamil"],"notes":"辛伐他汀日剂量不超过20mg;用药期间避免突然站立以防体位性低血压;葡萄柚汁显著升高血药浓度","notesEn":"Simvastatin dose should not exceed 20mg/day; avoid sudden standing to prevent orthostatic hypotension; grapefruit juice markedly increases plasma level","indications":"原发性高血压；慢性稳定性心绞痛；血管痉挛性心绞痛（Prinzmetal心绞痛）","ingredients":"主要成分：苯磺酸氨氯地平。常见规格：5mg/片（以氨氯地平计）","dosage":"高血压：口服，一次5mg，一日1次。最大剂量一日10mg。老年人或肝功能不全者起始2.5mg。心绞痛：口服，一次5-10mg，一日1次。","adverse":"外周水肿（踝部水肿，与剂量相关）；头晕、头痛（血管扩张所致）；面部潮红；心悸；疲劳；恶心；极少数出现牙龈增生（长期用药）","contraindications":"对二氢吡啶类钙拮抗剂过敏者；严重低血压；休克状态；重度主动脉瓣狭窄；妊娠期（尤其孕早期）权衡利弊后使用","storage":"避光，密封，30℃以下保存。"},
-  "依那普利": {"time":"每日一次,空腹或随餐","timeEn":"Once daily, with or without food","foodAvoid":["富含钾食物(香蕉、橙子)过量摄入","低钠盐(代盐)"],"foodAvoidEn":["Excessive potassium-rich foods (bananas, oranges)","Salt substitutes"],"drugAvoid":["螺内酯","阿米洛利","NSAIDs","锂盐"],"drugAvoidEn":["Spironolactone","Amiloride","NSAIDs","Lithium"],"notes":"高钾血症风险,肾病患者慎用;干咳是常见副作用;首次服用宜睡前以防体位性低血压","notesEn":"Hyperkalemia risk, caution in kidney disease; dry cough is common; first dose at bedtime recommended to avoid orthostatic hypotension","indications":"用于治疗癫痫失神发作、全面性强直-阵挛发作、部分性发作，以及预防偏头痛和双相情感障碍的躁狂发作。","ingredients":"丙戊酸钠，常见剂型规格为500mg片剂、200mg/5ml口服溶液、500mg缓释片。","dosage":"成人初始剂量500mg/日，分2次服用，最大剂量不超过2000mg/日，餐后服用。","adverse":"常见不良反应包括恶心、呕吐、腹泻、嗜睡；严重不良反应有肝功能异常、胰腺炎、血液系统异常。","contraindications":"对丙戊酸过敏者禁用；与中枢抑制剂合用时需谨慎，避免加重镇静作用。","storage":"遮光，密封，在阴凉干燥处保存。","丙戊酸":"{","note":"定期监测肝功能"},
+  "依那普利": {"time":"每日一次,空腹或随餐","timeEn":"Once daily, with or without food","foodAvoid":["富含钾食物(香蕉、橙子)过量摄入","低钠盐(代盐)"],"foodAvoidEn":["Excessive potassium-rich foods (bananas, oranges)","Salt substitutes"],"drugAvoid":["螺内酯","阿米洛利","NSAIDs","锂盐"],"drugAvoidEn":["Spironolactone","Amiloride","NSAIDs","Lithium"],"notes":"高钾血症风险,肾病患者慎用;干咳是常见副作用;首次服用宜睡前以防体位性低血压","notesEn":"Hyperkalemia risk, caution in kidney disease; dry cough is common; first dose at bedtime recommended to avoid orthostatic hypotension","indications":"原发性高血压；心力衰竭（与利尿剂等联用）；无症状左室功能不全；糖尿病肾病（降低蛋白尿，延缓肾功能恶化）","ingredients":"主要成分：马来酸依那普利（血管紧张素转换酶抑制剂，ACEI）。常见规格：5mg/10mg/20mg 片剂","dosage":"高血压：口服，起始一次5mg，一日1次，维持10-20mg/日，最大40mg/日。心力衰竭：起始2.5mg，一日1次，逐渐加量至10-20mg/日。肾功能不全（eGFR<30）起始2.5mg。","adverse":"干咳（最常见，约10-20%患者出现，与缓激肽蓄积有关）；低血压（首剂低血压，容量不足者更常见）；高钾血症；肾功能恶化（双侧肾动脉狭窄者禁用）；血管神经性水肿（罕见但可致命，累及喉头需立即急诊）；皮疹、味觉异常","contraindications":"妊娠期（可致胎儿畸形，备孕或妊娠即停药换用其他降压药）；血管神经性水肿病史（含ACEI相关）；双侧肾动脉狭窄；高钾血症；与沙库巴曲缬沙坦合用；对ACEI类过敏者","storage":"避光，密封，30℃以下保存。"},
   "缬沙坦": {"time":"每日一次,固定时间服用","timeEn":"Once daily, same time each day","foodAvoid":["富含钾食物过量摄入","低钠盐"],"foodAvoidEn":["Excessive potassium-rich foods","Salt substitutes"],"drugAvoid":["螺内酯","阿米洛利","NSAIDs","锂盐"],"drugAvoidEn":["Spironolactone","Amiloride","NSAIDs","Lithium"],"notes":"ACEI/ARB类药物可导致胎儿畸形,妊娠禁用;用药期间监测血压和肾功能","notesEn":"ACEI/ARBs can cause fetal harm, contraindicated in pregnancy; monitor BP and kidney function during treatment","indications":"原发性高血压；心力衰竭（NYHA II-IV级，不能耐受ACEI者）；急性心肌梗死后左室收缩功能不全","ingredients":"主要成分：缬沙坦。常见规格：40mg/80mg/160mg","dosage":"高血压：口服，一次80mg，一日1次，可增至160mg/日。维持剂量80-320mg/日。心力衰竭：起始40mg，一日2次，逐渐滴定至靶剂量160mg，一日2次。","adverse":"头晕、低血压（尤其容量不足者）；高钾血症；咳嗽（较ACEI少见）；肾功能恶化；血管神经性水肿（罕见）；腹泻","contraindications":"对ARB类过敏者；妊娠期（孕中期及晚期）；严重肝功能不全（胆汁性肝硬化、胆汁淤积）；与阿利吉仑联用（糖尿病患者）","storage":"避光，密封，30℃以下保存。"},
   "美托洛尔": {"time":"空腹服用(进食增加生物利用度)","timeEn":"On empty stomach (food increases bioavailability)","foodAvoid":["酒精"],"foodAvoidEn":["Alcohol"],"drugAvoid":["维拉帕米","地尔硫卓","NSAIDs","胰岛素"],"drugAvoidEn":["Verapamil","Diltiazem","NSAIDs","Insulin"],"notes":"突然停药可致反跳性高血压/心绞痛,需逐步减量;可掩盖低血糖症状(心悸、出汗);哮喘/慢阻肺患者慎用","notesEn":"Abrupt discontinuation may cause rebound hypertension/angina, taper gradually; may mask hypoglycemia symptoms; caution in asthma/COPD","indications":"高血压；心绞痛；心肌梗死后二级预防；心力衰竭（NYHA II-III级，稳态后加用）；心律失常（窦性心动过速、房颤心室率控制）；甲状腺功能亢进辅助治疗","ingredients":"主要成分：酒石酸美托洛尔（平片）/ 琥珀酸美托洛尔（缓释片）。常见规格：25mg/50mg/100mg（平片）；47.5mg/95mg（缓释）","dosage":"高血压/心绞痛：平片一次25-50mg，一日2次，维持剂量100-200mg/日。缓释片：一次47.5-95mg，一日1次。心力衰竭：起始11.875-23.75mg，逐渐滴定。心率靶目标：静息55-60次/分。","adverse":"心动过缓；疲乏、头晕；肢端发冷；心力衰竭加重（滴定期间）；支气管痉挛（哮喘患者慎用）；失眠、恶梦；掩盖低血糖症状（糖尿病患者）","contraindications":"严重心动过缓（心率<50次/分）；病态窦房结综合征；二度及以上房室传导阻滞；心源性休克；严重心力衰竭急性期（NYHA IV级失代偿）；支气管哮喘","storage":"避光，密封，30℃以下保存。缓释片不可掰开或嚼碎。"},
   "氢氯噻嗪": {"time":"早晨服用(避免夜尿)","timeEn":"Morning (to avoid nighttime urination)","foodAvoid":[],"foodAvoidEn":[],"drugAvoid":["锂盐","地高辛","氨基糖苷类抗生素","袢利尿剂(低钾时)"],"drugAvoidEn":["Lithium","Digoxin","Aminoglycosides","Loop diuretics (when hypokalemic)"],"notes":"长期使用需监测电解质(钾镁钠);可升高血糖和尿酸;用药期间多喝白开水","notesEn":"Monitor electrolytes long-term (K/Mg/Na); may increase blood glucose and uric acid; drink plenty of water","indications":"原发性高血压（基础降压药，常与其他降压药组成复方）；水肿性疾病（心源性水肿、肾性水肿、肝性水肿——需针对病因治疗基础上辅助利尿）；中枢性或肾性尿崩症；肾结石（预防含钙肾结石复发）","ingredients":"主要成分：氢氯噻嗪。片剂6.25mg/12.5mg/25mg","dosage":"口服。高血压：12.5-25mg/日，每日1次（晨起）。水肿：25-100mg/日，分1-2次服。长期使用需监测电解质（K+/Na+）、尿酸、血糖。","adverse":"水电解质紊乱（低钾/低钠/低氯/低镁血症——最常见且重要）；高尿酸血症/痛风发作；高血糖（影响糖耐量）；血脂异常（TG↑/HDL↓）；过敏反应（皮疹、血小板减少性紫癜、坏死性脉管炎）；胰腺炎；黄疸/肝功能异常；系统性红斑狼疮活动","contraindications":"无尿者；严重肾功能不全；肝性脑病/严重肝功能损害；对本品及其他噻嗪类/磺胺类药物过敏者；低钾血症","storage":"遮光，密封保存"},
@@ -1648,7 +1648,7 @@ var DRUG_GUIDE = {
   "氯化钠注射液": {"indications":"补液、药物稀释","ingredients":"氯化钠（生理盐水）","dosage":"静脉输注：按需","adverse":"水肿（过量）","contraindications":"心衰","storage":"室温"},
   "葡萄糖注射液": {"indications":"低血糖、补液","ingredients":"葡萄糖","dosage":"静脉输注：按需","adverse":"高血糖","contraindications":"高血糖","storage":"室温"},
   "葡萄糖酸钙": {"indications":"低钙血症、过敏","ingredients":"葡萄糖酸钙","dosage":"静脉：1-2g缓慢注射","adverse":"高钙血症","contraindications":"高钙血症","storage":"室温"},
-  "氯化钾": {"indications":"低钾血症","ingredients":"氯化钾","dosage":"口服：1-2g每日3次或静脉","adverse":"高钾血症","contraindications":"高钾血症","storage":"室温"},
+  "氯化钾": {"time":"饭后服用(减轻胃肠刺激)","timeEn":"After meals (reduce GI irritation)","foodAvoid":[],"foodAvoidEn":[],"drugAvoid":["保钾利尿剂(螺内酯等)","ACEI/ARB(合用易高钾)"],"drugAvoidEn":["Potassium-sparing diuretics (spironolactone)","ACEI/ARB (hyperkalemia risk)"],"notes":"口服制剂需整片吞服;用药期间定期监测血钾;高钾血症比低钾更危险,出现麻木、心悸、无力立即就医","notesEn":"Swallow tablets whole; monitor serum potassium; hyperkalemia is more dangerous - seek care for numbness, palpitations or weakness","indications":"低钾血症的预防与治疗（长期使用排钾利尿剂、腹泻呕吐、进食不足等引起的低钾）；洋地黄中毒引起的心律失常辅助治疗","ingredients":"主要成分：氯化钾。常见规格：0.5g/片缓释片、0.25g/片；10%口服溶液","dosage":"口服：一次0.5-1g，一日2-3次，饭后服用；严重缺钾或不能口服者可静脉滴注（必须在医院进行，不可自行注射）。补钾期间需监测血钾与心电图。","adverse":"口服：恶心、呕吐、腹痛、腹泻（缓释片可减轻胃肠刺激）；过量：高钾血症（最危险——肢体麻木、肌无力、心悸、心律紊乱甚至心脏骤停，出现上述症状立即停药就医）；静脉过快：注射部位疼痛、静脉炎","contraindications":"高钾血症；无尿/严重肾功能不全（排钾障碍）；消化道梗阻、狭窄（缓释片滞留）；未经治疗的阿狄森病；与保钾利尿剂合用时禁用常规补钾","storage":"密封，干燥处保存。缓释片整片吞服，不可嚼碎。"},
   "碳酸钙D3": {"indications":"骨质疏松、补钙","ingredients":"碳酸钙+维生素D3","dosage":"口服：1片每日1-2次","adverse":"便秘、高钙血症","contraindications":"高钙血症","storage":"室温"},
   "葡萄糖酸锌": {"indications":"锌缺乏、食欲不振","ingredients":"葡萄糖酸锌","dosage":"口服：10-20mg每日2-3次","adverse":"胃肠道不适","contraindications":"对本品过敏","storage":"室温"},
   "右旋糖酐铁": {"indications":"缺铁性贫血","ingredients":"右旋糖酐铁（铁剂）","dosage":"口服：50-100mg每日3次","adverse":"胃肠道不适、黑便","contraindications":"血色病","storage":"室温"},
@@ -3257,8 +3257,8 @@ function getLocalAnswer(q) {
   q = (q || '').toLowerCase();
   if (!q) return null;
 
-  // 1. 精确药物查询
-  getLocalAnswer._DB = DRUG_GUIDE = {
+  // 1. 精确药物查询（v6.6.1 修复：本地答案库独立存放，绝不覆盖全局药品说明书库 DRUG_GUIDE）
+  getLocalAnswer._DB = {
     '布洛芬': { cat:'解热镇痛抗炎药(NSAIDs)', warn:['胃肠道不适、溃疡','阿司匹林过敏禁用','孕妇慎用','肾功能异常慎用'], food:['忌酒','避免辛辣刺激','饭后服用'], time:'饭后服用', note:'每日不超过3次(每次200-400mg),连续使用不超过5天' },
     '阿司匹林': { cat:'抗血小板药', warn:['出血风险(胃肠道/颅内)','胃肠道溃疡禁用','儿童慎用(瑞氏综合征)'], food:['忌酒','避免富含维生素K食物'], time:'饭后服用', note:'小剂量(75-100mg)用于心血管保护,大剂量用于解热镇痛' },
     '对乙酰氨基酚': { cat:'解热镇痛药', warn:['肝损伤风险(过量)','每日不超过4g','肝功能异常慎用'], food:['忌酒(加重肝毒性)','避免同时服用多个含此成分药品'], time:'饭后服用', note:'儿童首选退烧药,相对安全' },
@@ -3298,9 +3298,9 @@ function getLocalAnswer(q) {
     '连花清瘟': { cat:'中成药', warn:['脾胃虚寒者慎用'], food:['忌辛辣油腻'], time:'饭后服用', note:'用于新型冠状病毒肺炎轻症、风热感冒' }
   };
 
-  for (var name in DRUG_GUIDE) {
+  for (var name in getLocalAnswer._DB) {
     if (q.indexOf(name.toLowerCase()) !== -1) {
-      var d = DRUG_GUIDE[name];
+      var d = getLocalAnswer._DB[name];
       var t = T[currentLang];
       var drugLabelText = (currentLang==='en' && typeof drugLabel === 'function') ? drugLabel(name) : name;
       return '【' + drugLabelText + '】\n' + t.manualCat + d.cat + '\n' + t.manualNotes.replace('', '') + d.warn.join(';') + '\n' + t.manualFoodAvoid.replace('', '') + d.food.join(';') + '\n' + t.manualTime.replace('', '') + d.time + '\n' + t.manualRemark.replace('', '') + d.note;
@@ -5047,7 +5047,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>家庭药师 v6.6 · 家庭用药管理工具</p>
+  <p>家庭药师 v6.6.1 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>
