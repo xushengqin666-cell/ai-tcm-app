@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Family Pharmacist v6.7</title>
+<title>家庭药师 / Family Pharmacist v6.8</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v6.7</span>
+    <span id="version" style="font-size:10px;opacity:.7">v6.8</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -196,6 +196,25 @@ header h1{font-size:18px;font-weight:700}
     <div class="card-title">健康百科</div>
     <div id="wikiChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
     <div id="wikiDetail"></div>
+  </div>
+
+  <!-- v6.8 健康风险自测 -->
+  <div class="card">
+    <div class="card-title">健康风险自测</div>
+    <div id="v68QuizTabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+    <div id="v68QuizBody" style="font-size:13px;line-height:1.8;color:#444"></div>
+  </div>
+
+  <!-- v6.8 说明书朗读 -->
+  <div class="card">
+    <div class="card-title">说明书朗读</div>
+    <div style="font-size:12px;color:#888;line-height:1.6;margin-bottom:8px">适合视力不便或听读学习的使用者：输入药品名称，即可用语音朗读该药品的说明书要点。</div>
+    <div class="search-box" style="margin-bottom:8px">
+      <input id="v68SpeakInput" placeholder="输入药品名称，如：布洛芬" style="flex:1">
+      <button class="btn-primary" onclick="v68SpeakStart()" id="v68SpeakBtn">朗读</button>
+    </div>
+    <button onclick="v68SpeakStop()" id="v68SpeakStopBtn" style="display:none;width:100%;padding:8px;border:1px solid #c62828;border-radius:8px;background:#fff;color:#c62828;font-size:13px;cursor:pointer">停止朗读</button>
+    <div id="v68SpeakStatus" style="margin-top:6px;font-size:12px;color:#999"></div>
   </div>
 </div>
 
@@ -317,7 +336,7 @@ var COMPLIANCE_CONTENT = {
   about: {
     title: '关于家庭药师',
     body: '<p><strong>家庭药师</strong> — 家庭用药管理工具</p>' +
-          '<p>版本：v6.7（2026-08）</p>' +
+          '<p>版本：v6.8（2026-08）</p>' +
           '<p>功能：药品说明书查询 · 药物相互作用审查 · 用药指南 · 家庭药箱管理 · 服药提醒 · 中医辨证参考 · 用药咨询</p>' +
           '<p>技术：纯前端 Web 应用（PWA），数据本地存储，智能问答采用「服务端代理 + 用户自备密钥 + 本地知识库」多级通道。</p>' +
           '<p>本应用为健康管理工具，非医疗器械。</p>'
@@ -3808,6 +3827,22 @@ function runDrugOCR(imageDataUrl) {
       </div>
     </div>
   </div>
+
+  <!-- v6.8 用药日历（月视图计划） -->
+  <div class="card">
+    <div class="card-title">用药日历</div>
+    <div id="v68CalendarHead" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"></div>
+    <div id="v68Calendar" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px"></div>
+    <div id="v68CalendarLegend" style="display:flex;gap:12px;margin-top:8px;font-size:11px;color:#888"></div>
+  </div>
+
+  <!-- v6.8 用药周报（本周计划 + AI 总结） -->
+  <div class="card">
+    <div class="card-title">用药周报</div>
+    <div id="v68Weekly" style="font-size:13px;color:#555;line-height:1.8;margin-bottom:8px"></div>
+    <button onclick="v68WeeklyReport()" id="v68WeeklyBtn" style="width:100%;padding:10px;background:#2e7d32;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">生成本周用药报告</button>
+    <div id="v68WeeklyResult" style="margin-top:8px;font-size:13px;line-height:1.8"></div>
+  </div>
 </div>
 
 <script>
@@ -5086,7 +5121,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>家庭药师 v6.7 · 家庭用药管理工具</p>
+  <p>家庭药师 v6.8 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>
@@ -6046,6 +6081,263 @@ function submitFeedback(){
     if(st) st.textContent = '网络不可用，请稍后重试';
   });
 }
+</script>
+<script>
+// ===== v6.8 新功能(纯新增,不改动任何旧功能代码) =====
+// 1) 用药日历  2) 用药周报  3) 健康风险自测  4) 说明书朗读
+
+/* ---------- 通用 ---------- */
+function v68fmtDate(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function v68todayStr(){ return v68fmtDate(new Date()); }
+function v68loadReminders(){ try { return JSON.parse(localStorage.getItem('medication_reminders') || '[]'); } catch(e){ return []; } }
+function v68reminderActiveOn(r, date){ // date: Date
+  if(!r || !r.enabled && r.enabled === false) return false;
+  var f = r.frequency || 'daily';
+  var dow = date.getDay(); // 0=周日
+  if(f === 'weekday') return dow >= 1 && dow <= 5;
+  if(f === 'weekend') return dow === 0 || dow === 6;
+  if(f === 'once'){ return (r.date && r.date === v68fmtDate(date)) || (r.followDate && r.followDate === v68fmtDate(date)); }
+  return true; // daily/custom 按每天
+}
+
+/* ---------- 1. 用药日历 ---------- */
+var v68CalYm = { y: new Date().getFullYear(), m: new Date().getMonth() };
+function v68RenderCalendar(){
+  var head = document.getElementById('v68CalendarHead');
+  var grid = document.getElementById('v68Calendar');
+  var legend = document.getElementById('v68CalendarLegend');
+  if(!head || !grid) return;
+  var rems = v68loadReminders();
+  var today = v68todayStr();
+  var t = new Date();
+  head.innerHTML =
+    '<button onclick="v68CalShift(-1)" style="border:1px solid #cfd8cf;background:#f4f7f4;color:#33691e;border-radius:6px;padding:4px 12px;font-size:13px;cursor:pointer">上月</button>' +
+    '<div style="font-size:14px;font-weight:700;color:#2e7d32">' + v68CalYm.y + '年' + (v68CalYm.m+1) + '月</div>' +
+    '<button onclick="v68CalShift(1)" style="border:1px solid #cfd8cf;background:#f4f7f4;color:#33691e;border-radius:6px;padding:4px 12px;font-size:13px;cursor:pointer">下月</button>';
+  var first = new Date(v68CalYm.y, v68CalYm.m, 1);
+  var startDow = first.getDay(); // 0=周日
+  var daysInMonth = new Date(v68CalYm.y, v68CalYm.m+1, 0).getDate();
+  var html = '';
+  var weekTitles = ['日','一','二','三','四','五','六'];
+  for(var w = 0; w < 7; w++){ html += '<div style="text-align:center;color:#999;font-weight:600;padding:2px 0">' + weekTitles[w] + '</div>'; }
+  for(var i = 0; i < startDow; i++){ html += '<div></div>'; }
+  for(var d = 1; d <= daysInMonth; d++){
+    var ds = v68CalYm.y + '-' + String(v68CalYm.m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    var isToday = (ds === today);
+    var plan = 0;
+    for(var ri = 0; ri < rems.length; ri++){ if(v68reminderActiveOn(rems[ri], new Date(v68CalYm.y, v68CalYm.m, d))) plan++; }
+    var bg = plan > 0 ? '#e8f5e9' : '#fafafa';
+    var border = isToday ? '2px solid #2e7d32' : '1px solid #eee';
+    var extra = '';
+    if(isToday){
+      var a = v68adherence();
+      var due = a.due.length, taken = a.taken.length;
+      extra = '<div style="font-size:9px;color:' + (taken >= due && due > 0 ? '#2e7d32' : '#e65100') + '">' + taken + '/' + due + '</div>';
+    }
+    html += '<div style="background:' + bg + ';border:' + border + ';border-radius:6px;padding:3px;min-height:38px;text-align:center">' +
+      '<div style="font-weight:' + (isToday ? '700' : '400') + ';color:' + (isToday ? '#2e7d32' : '#555') + '">' + d + '</div>' +
+      (plan > 0 ? '<div style="font-size:9px;color:#2e7d32">' + plan + '种药</div>' : '') + extra + '</div>';
+  }
+  grid.innerHTML = html;
+  legend.innerHTML = '<span><i class="lg-dot" style="background:#e8f5e9;border:1px solid #2e7d32"></i> 有计划</span>' +
+    '<span><i class="lg-dot" style="background:#fafafa;border:1px solid #ddd"></i> 无计划</span>' +
+    '<span><i class="lg-dot" style="background:#2e7d32"></i> 今天</span>';
+}
+function v68CalShift(delta){
+  var m = v68CalYm.m + delta; var y = v68CalYm.y;
+  if(m < 0){ m = 11; y--; } if(m > 11){ m = 0; y++; }
+  v68CalYm = { y: y, m: m };
+  v68RenderCalendar();
+}
+function v68adherence(){
+  try {
+    var a = JSON.parse(localStorage.getItem('family_pharmacist_adherence') || '{}');
+    return { due: a.due || [], taken: a.taken || [] };
+  } catch(e){ return { due: [], taken: [] }; }
+}
+
+/* ---------- 2. 用药周报 ---------- */
+function v68renderWeekly(){
+  var el = document.getElementById('v68Weekly');
+  if(!el) return;
+  var rems = v68loadReminders();
+  var a = v68adherence();
+  var future = 0;
+  var t = new Date();
+  for(var d = 0; d < 7; d++){
+    var dd = new Date(t.getFullYear(), t.getMonth(), t.getDate() + d);
+    for(var i = 0; i < rems.length; i++){ if(v68reminderActiveOn(rems[i], dd)) future++; }
+  }
+  var pct = a.due.length ? Math.round(100 * a.taken.length / a.due.length) : 100;
+  el.innerHTML = '<b>本周概览</b><br>已设置提醒 ' + rems.length + ' 条 · 未来 7 天计划服药 ' + future + ' 次<br>今日依从性:已打卡 <b>' + a.taken.length + '</b> / 应服药 <b>' + a.due.length + '</b> 次(依从率 ' + pct + '%)' + (a.due.length === 0 ? '<br><span style="color:#999">今天暂无服药计划</span>' : '');
+}
+function v68WeeklyReport(){
+  var btn = document.getElementById('v68WeeklyBtn');
+  var res = document.getElementById('v68WeeklyResult');
+  if(!res) return;
+  if(btn) btn.disabled = true;
+  res.innerHTML = '<div style="color:#999;font-size:12px">正在生成周报,请稍候...</div>';
+  var rems = v68loadReminders();
+  var a = v68adherence();
+  var future = 0;
+  var t = new Date();
+  var names = [];
+  for(var i = 0; i < rems.length; i++){ if(names.indexOf(rems[i].drugName || '药品') === -1) names.push(rems[i].drugName || '药品'); }
+  for(var d = 0; d < 7; d++){
+    var dd = new Date(t.getFullYear(), t.getMonth(), t.getDate() + d);
+    for(var j = 0; j < rems.length; j++){ if(v68reminderActiveOn(rems[j], dd)) future++; }
+  }
+  var pct = a.due.length ? Math.round(100 * a.taken.length / a.due.length) : 100;
+  var data = '本周服药计划 ' + future + ' 次,涉及药品:' + names.join('、') + ';今日已打卡 ' + a.taken.length + '/' + a.due.length + ',依从率 ' + pct + '%。';
+  var local = '【本周用药周报】\n1. 本周计划服药 ' + future + ' 次,涉及药品:' + names.join('、') + '。\n2. 今日已打卡 ' + a.taken.length + '/' + a.due.length + ',依从率 ' + pct + '%。\n3. 建议:按时按量服药,漏服请勿双倍补服;出现不适请及时咨询医生或药师。';
+  try {
+    callAI('你是家庭药师。根据以下周报数据,用3-5句中文给出专业简洁的周报总结:先概括本周计划与今日依从情况,再给一条实用提醒;不用表情符号;结尾注明"以上内容仅供参考,请遵医嘱"。数据:' + data)
+      .then(function(r){
+        var ans = (r && r.answer) ? r.answer : '';
+        res.innerHTML = ans ? ('<div style="font-size:10px;color:#aaa;margin-bottom:4px">AI 生成内容 · 仅供参考</div><div style="background:#f8f9fa;border-radius:8px;padding:10px 12px">' + formatText(ans) + '</div>') : ('<div style="background:#f8f9fa;border-radius:8px;padding:10px 12px;white-space:pre-line">' + local + '</div>');
+        if(btn) btn.disabled = false;
+      })
+      .catch(function(){
+        res.innerHTML = '<div style="background:#f8f9fa;border-radius:8px;padding:10px 12px;white-space:pre-line">' + local + '</div><div class="fallback-hint">本地规则引擎生成（AI服务暂不可用）</div>';
+        if(btn) btn.disabled = false;
+      });
+  } catch(e){
+    res.innerHTML = '<div style="background:#f8f9fa;border-radius:8px;padding:10px 12px;white-space:pre-line">' + local + '</div>';
+    if(btn) btn.disabled = false;
+  }
+}
+
+/* ---------- 3. 健康风险自测 ---------- */
+var V68_QUIZZES = {
+  '高血压风险': { intro:'以下 10 个问题用于初步评估高血压风险,结果仅供健康参考,不构成诊断。', questions: [
+    ['您的年龄是?', [['40岁以下',0],['40-59岁',1],['60岁及以上',2]]],
+    ['直系亲属(父母/兄弟姐妹)中有高血压患者吗?', [['没有',0],['有,1位',1],['有,2位及以上',2]]],
+    ['您平时吃咸吗?(口味偏咸/常吃腌制品)', [['清淡',0],['一般',1],['偏咸',2]]],
+    ['您每周中等强度运动(快走等)多久?', [['每周3次以上,每次30分钟以上',0],['偶尔运动',1],['几乎不运动',2]]],
+    ['您吸烟吗?', [['不吸烟',0],['已戒烟',1],['吸烟',2]]],
+    ['您饮酒吗?', [['基本不喝',0],['偶尔少量',1],['经常或大量',2]]],
+    ['您的体重情况?(BMI=体重kg÷身高m的平方)', [['正常(18.5-23.9)',0],['超重(24-27.9)',1],['肥胖(≥28)',2]]],
+    ['您近一年量过血压吗?结果如何?', [['正常(<120/80)',0],['偏高(120-139/80-89)',1],['没量过或≥140/90',2]]],
+    ['您经常感到精神压力大或长期睡眠不足吗?', [['很少',0],['有时',1],['经常',2]]],
+    ['您有糖尿病或血脂异常吗?', [['都没有',0],['有一种',1],['都有',2]]]
+  ], advice:function(s){ if(s>=12)return ['较高风险','建议近期去医院测量血压,必要时做24小时动态血压监测;同时低盐饮食、规律运动、戒烟限酒。']; if(s>=6)return ['中等风险','建议每月测量血压1-2次,坚持低盐饮食与规律运动,控制体重。']; return ['较低风险','继续保持健康生活方式,每年至少测量一次血压。']; } },
+  '2型糖尿病风险': { intro:'以下 10 个问题用于初步评估 2 型糖尿病风险,结果仅供健康参考,不构成诊断。', questions: [
+    ['您的年龄是?', [['40岁以下',0],['40-49岁',1],['50岁及以上',2]]],
+    ['直系亲属中有糖尿病患者吗?', [['没有',0],['有,祖辈',1],['有,父母或兄弟姐妹',2]]],
+    ['您的腰围情况?(男≥90cm、女≥85cm为腹型肥胖)', [['正常',0],['接近标准',1],['腹型肥胖',2]]],
+    ['您每周运动情况?', [['规律运动',0],['偶尔运动',1],['几乎不运动',2]]],
+    ['您的饮食习惯?', [['少油少糖,多吃蔬菜',0],['一般',1],['常吃高糖高油食物/含糖饮料',2]]],
+    ['您近一年测过血糖吗?结果如何?', [['正常(<6.1)',0],['偏高(6.1-7.0)',1],['没测过或≥7.0',2]]],
+    ['(女性)您怀孕时有过妊娠糖尿病吗?', [['未怀孕过/没有',0],['有,产后恢复正常',2],['有,持续血糖偏高',2]]],
+    ['(女性)您有多囊卵巢综合征吗?', [['没有',0],['有',1],['不确定',1]]],
+    ['您有高血压吗?', [['没有',0],['有,控制良好',1],['有,控制不佳',2]]],
+    ['您有血脂异常(高甘油三酯/低HDL)吗?', [['没有',0],['有',1],['不清楚',1]]]
+  ], advice:function(s){ if(s>=12)return ['较高风险','建议尽快去医院测空腹血糖和糖化血红蛋白;控制饮食、增加运动、控制体重。']; if(s>=6)return ['中等风险','建议每半年测一次空腹血糖,保持健康饮食与规律运动。']; return ['较低风险','继续保持,每年体检关注血糖即可。']; } },
+  '脑卒中风险': { intro:'以下 10 个问题用于初步评估脑卒中(中风)风险,结果仅供健康参考,不构成诊断。', questions: [
+    ['您的年龄是?', [['40岁以下',0],['40-59岁',1],['60岁及以上',2]]],
+    ['您有高血压吗?', [['没有',0],['有,控制良好',1],['有,控制不佳或未治疗',2]]],
+    ['您有房颤(心律不齐)吗?', [['没有/不清楚',0],['有,在治疗',1],['有,未治疗',2]]],
+    ['您吸烟吗?', [['不吸烟',0],['已戒烟',1],['吸烟',2]]],
+    ['您有糖尿病吗?', [['没有',0],['有,控制良好',1],['有,控制不佳',2]]],
+    ['您有血脂异常吗?', [['没有',0],['有,在服药',1],['有,未治疗',2]]],
+    ['您每周运动情况?', [['规律运动',0],['偶尔运动',1],['几乎不运动',2]]],
+    ['您的体重情况?', [['正常',0],['超重',1],['肥胖',2]]],
+    ['您饮酒情况?', [['基本不喝',0],['偶尔少量',1],['经常大量',2]]],
+    ['您本人或直系亲属有过中风/心梗吗?', [['都没有',0],['亲属有过',1],['本人有过',2]]]
+  ], advice:function(s){ if(s>=12)return ['较高风险','建议尽快就医做血压、血脂、心电图(房颤筛查)与颈动脉检查;严格控制三高,戒烟限酒。']; if(s>=6)return ['中等风险','建议每年体检关注血压血脂血糖,保持健康生活方式;出现口角歪斜、单侧无力、言语不清请立即拨打120。']; return ['较低风险','继续保持,牢记中风120口诀:1看脸2查臂0听语言。']; } }
+};
+var v68QuizState = { name:'', idx:0, score:0 };
+function v68QuizTabsRender(){
+  var box = document.getElementById('v68QuizTabs');
+  if(!box) return;
+  var html = '';
+  for(var k in V68_QUIZZES){
+    html += '<button onclick="v68QuizStart(\'' + k + '\')" style="padding:6px 14px;border:1px solid #cfd8cf;border-radius:16px;background:#f4f7f4;color:#33691e;font-size:13px;cursor:pointer">' + k + '</button>';
+  }
+  box.innerHTML = html;
+  var body = document.getElementById('v68QuizBody');
+  if(body) body.innerHTML = '<div style="color:#999;font-size:12px">点击上方任一自测开始,每题选择后自动进入下一题,全部完成后显示风险等级与建议。结果仅供健康参考,不构成诊断;急症请及时就医。</div>';
+}
+function v68QuizStart(name){
+  v68QuizState = { name: name, idx: 0, score: 0 };
+  v68QuizRender();
+}
+function v68QuizRender(){
+  var body = document.getElementById('v68QuizBody');
+  var qz = V68_QUIZZES[v68QuizState.name];
+  if(!body || !qz) return;
+  var st = v68QuizState;
+  if(st.idx >= qz.questions.length){
+    var res = qz.advice(st.score);
+    body.innerHTML = '<div style="background:#f8f9fa;border-radius:10px;padding:14px">' +
+      '<div style="font-size:14px;font-weight:700;color:#2e7d32;margin-bottom:6px">「' + st.name + '」自测完成</div>' +
+      '<div style="font-size:13px;margin-bottom:8px">您的得分:' + st.score + '/20,风险等级:<b style="color:' + (st.score>=12?'#c62828':(st.score>=6?'#e65100':'#2e7d32')) + '">' + res[0] + '</b></div>' +
+      '<div style="font-size:13px;color:#444">' + res[1] + '</div>' +
+      '<div style="margin-top:10px;font-size:11px;color:#999">本自测结果仅供健康参考,不构成诊断或治疗建议;如有不适请及时就医。</div>' +
+      '<div style="margin-top:10px"><button onclick="v68QuizStart(\'' + st.name + '\')" style="padding:6px 16px;border:1px solid #2e7d32;border-radius:8px;background:#fff;color:#2e7d32;font-size:13px;cursor:pointer">重新自测</button></div></div>';
+    return;
+  }
+  var q = qz.questions[st.idx];
+  var html = '<div style="font-size:11px;color:#999;margin-bottom:4px">第 ' + (st.idx+1) + ' / ' + qz.questions.length + ' 题</div>' +
+    '<div style="font-size:14px;font-weight:600;color:#222;margin-bottom:10px">' + q[0] + '</div>';
+  for(var i = 0; i < q[1].length; i++){
+    var opt = q[1][i];
+    html += '<button onclick="v68QuizAnswer(' + opt[1] + ')" style="display:block;width:100%;text-align:left;margin-bottom:6px;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;background:#fff;font-size:13px;color:#333;cursor:pointer">' + opt[0] + '</button>';
+  }
+  html += '<button onclick="v68QuizTabsRender()" style="margin-top:6px;border:none;background:none;color:#999;font-size:12px;cursor:pointer">返回自测列表</button>';
+  body.innerHTML = html;
+}
+function v68QuizAnswer(score){
+  v68QuizState.score += score;
+  v68QuizState.idx++;
+  v68QuizRender();
+}
+
+/* ---------- 4. 说明书朗读 ---------- */
+var v68Speaking = false;
+function v68SpeakTextOfDrug(name){
+  var r = findDrugByName(name);
+  if(r.level === 3 || !r.data) return null;
+  var d = r.data;
+  var parts = [];
+  parts.push(r.name + '。');
+  if(d.cat) parts.push('类别,' + d.cat + '。');
+  if(d.indications) parts.push('适应症,' + String(d.indications).slice(0, 300) + '。');
+  if(d.dosage) parts.push('用法用量,' + String(d.dosage).slice(0, 300) + '。');
+  if(d.adverse) parts.push('不良反应,' + String(d.adverse).slice(0, 200) + '。');
+  if(d.contraindications) parts.push('禁忌,' + String(d.contraindications).slice(0, 200) + '。');
+  if(d.time) parts.push('服药时间,' + d.time + '。');
+  parts.push('以上内容仅供参考,请以药品说明书和医嘱为准。');
+  return parts.join('');
+}
+function v68SpeakStart(){
+  var inp = document.getElementById('v68SpeakInput');
+  var st = document.getElementById('v68SpeakStatus');
+  var q = (inp && inp.value || '').trim();
+  if(!q){ if(st) st.textContent = '请先输入药品名称'; return; }
+  if(!window.speechSynthesis){ if(st) st.textContent = '当前浏览器不支持语音朗读'; return; }
+  var text = v68SpeakTextOfDrug(q);
+  if(!text){ if(st) st.textContent = '未找到「' + q + '」的说明书数据'; return; }
+  try { window.speechSynthesis.cancel(); } catch(e){}
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.rate = 0.95;
+  u.onstart = function(){ v68Speaking = true; var b=document.getElementById('v68SpeakBtn'); if(b) b.disabled = true; var s=document.getElementById('v68SpeakStopBtn'); if(s) s.style.display='block'; if(st) st.textContent = '正在朗读「' + q + '」的说明书...'; };
+  u.onend = function(){ v68SpeakStop(); if(st) st.textContent = '朗读完成'; };
+  u.onerror = function(){ v68SpeakStop(); if(st) st.textContent = '朗读出错,请重试'; };
+  window.speechSynthesis.speak(u);
+}
+function v68SpeakStop(){
+  v68Speaking = false;
+  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(e){}
+  var b = document.getElementById('v68SpeakBtn'); if(b) b.disabled = false;
+  var s = document.getElementById('v68SpeakStopBtn'); if(s) s.style.display = 'none';
+}
+
+/* ---------- 初始化 ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  try { v68RenderCalendar(); v68renderWeekly(); v68QuizTabsRender(); } catch(e){}
+});
 </script>
 </body>
 </html>
