@@ -571,5 +571,117 @@ function init(){
 }
 init();
 </script>
+<script>
+// ===== v6.9 药箱智能提醒(纯新增:效期倒计时/使用人/数量与自定义提醒要求,不动任何旧代码) =====
+var V69_KEY = 'family_pharmacist_cabinet_alert';
+function v69getAlert(){ try { return JSON.parse(localStorage.getItem(V69_KEY) || '{}'); } catch(e){ return {}; } }
+function v69setAlert(a){ try { localStorage.setItem(V69_KEY, JSON.stringify(a)); } catch(e){} }
+function v69conf(){
+  var a = v69getAlert();
+  if(!a.global) a.global = { expDays: 60, qtyMin: 5 };
+  if(!a.items) a.items = {};
+  return a;
+}
+function v69itemConf(id){
+  var a = v69conf();
+  var g = a.global, it = a.items[id] || {};
+  return {
+    expDays: (it.expDays === null || it.expDays === undefined) ? g.expDays : it.expDays,
+    qtyMin: (it.qtyMin === null || it.qtyMin === undefined) ? g.qtyMin : it.qtyMin
+  };
+}
+function v69getCabinet(){ try { if(typeof getCabinet === 'function') return getCabinet(); } catch(e){} return []; }
+function v69daysTo(expiry){ try { if(typeof daysToExpiry === 'function') return daysToExpiry(expiry); } catch(e){} return 999; }
+function v69esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function v69check(){
+  var drugs = v69getCabinet();
+  var out = { expiring: [], expired: [], low: [] };
+  drugs.forEach(function(d){
+    var conf = v69itemConf(d.id);
+    var days = v69daysTo(d.expiry);
+    if(days < 0){ out.expired.push(d); }
+    else if(conf.expDays > 0 && days <= conf.expDays){ out.expiring.push(d); }
+    if(conf.qtyMin > 0 && (parseInt(d.qty) || 0) <= conf.qtyMin && days > 0){ out.low.push(d); }
+  });
+  return out;
+}
+function v69render(){
+  var host = document.querySelector('.main');
+  if(!host) return;
+  var card = document.getElementById('v69Card');
+  if(!card){
+    card = document.createElement('div');
+    card.id = 'v69Card';
+    card.className = 'card';
+    host.appendChild(card);
+  }
+  var a = v69conf();
+  var g = a.global;
+  var drugs = v69getCabinet();
+  var chk = v69check();
+  var html = '<div class="card-head"><div class="card-title">药箱智能提醒</div></div>';
+  if(chk.expired.length || chk.expiring.length || chk.low.length){
+    html += '<div style="background:#fff3e0;border:1px solid #ffcc80;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:#e65100;line-height:1.8">';
+    if(chk.expired.length) html += '已过期 ' + chk.expired.length + ' 种:' + chk.expired.map(function(d){ return d.name; }).join('、') + '——请尽快处理,过期药品请勿服用。<br>';
+    if(chk.expiring.length) html += '临期(≤' + g.expDays + ' 天)' + chk.expiring.length + ' 种:' + chk.expiring.map(function(d){ return d.name; }).join('、') + '。<br>';
+    if(chk.low.length) html += '余量不足(≤' + g.qtyMin + ')' + chk.low.length + ' 种:' + chk.low.map(function(d){ return d.name; }).join('、') + '——建议及时补充。';
+    html += '</div>';
+  } else {
+    html += '<div style="background:#e8f5e9;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:#2e7d32">当前药箱状态良好:共 ' + drugs.length + ' 种药品,暂无临期、过期或余量不足。' + (drugs.length === 0 ? '<br><span style="color:#999">先在「我的药箱」添加药品,这里会自动接管效期与余量提醒。</span>' : '') + '</div>';
+  }
+  html += '<div style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.7">提醒要求说明:每种药可单独设置「效期提前提醒天数」与「余量不足阈值」;留空=跟随全局设置,填 0=关闭该项提醒。打开本页面时自动检查并提示。</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;background:#f8f9fa;border-radius:10px;padding:10px 12px">' +
+    '<span style="font-size:13px;font-weight:600;color:#333">全局设置</span>' +
+    '<label style="font-size:12px;color:#666">临期提醒提前 <input id="v69GExp" type="number" min="0" max="365" value="' + g.expDays + '" style="width:60px;padding:4px 6px;border:1px solid #ddd;border-radius:6px"> 天</label>' +
+    '<label style="font-size:12px;color:#666">余量不足阈值 <input id="v69GQty" type="number" min="0" max="999" value="' + g.qtyMin + '" style="width:60px;padding:4px 6px;border:1px solid #ddd;border-radius:6px"> 单位</label>' +
+    '<button onclick="v69SaveGlobal()" style="padding:6px 14px;border:none;border-radius:8px;background:#2e7d32;color:#fff;font-size:13px;cursor:pointer">保存全局设置</button></div>';
+  if(drugs.length){
+    drugs.forEach(function(d){
+      var conf = v69itemConf(d.id);
+      var days = v69daysTo(d.expiry);
+      var expHtml;
+      if(!d.expiry) expHtml = '<span style="color:#999">未填效期</span>';
+      else if(days < 0) expHtml = '<span style="color:#e53935;font-weight:600">已过期 ' + (-days) + ' 天</span>';
+      else if(days === 0) expHtml = '<span style="color:#e65100;font-weight:600">今日到期</span>';
+      else if(conf.expDays > 0 && days <= conf.expDays) expHtml = '<span style="color:#e65100;font-weight:600">' + days + ' 天后到期</span>';
+      else expHtml = '<span style="color:#2e7d32">' + d.expiry + '</span>';
+      var lowHtml = (conf.qtyMin > 0 && (parseInt(d.qty)||0) <= conf.qtyMin) ? '<span style="color:#e65100;font-weight:600">余 ' + (d.qty || 0) + ' (不足)</span>' : '<span style="color:#555">余 ' + (d.qty || 0) + '</span>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid #eee;border-radius:10px;padding:10px 12px;margin-bottom:8px">' +
+        '<div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:600;color:#222">' + v69esc(d.name) + '</div>' +
+        '<div style="font-size:11px;color:#888">' + v69esc(d.spec || '') + (d.memberName ? ' · 使用人:' + v69esc(d.memberName) : '') + '</div>' +
+        '<div style="font-size:12px;margin-top:2px">' + expHtml + ' · ' + lowHtml + '</div></div>' +
+        '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">' +
+        '<label style="font-size:11px;color:#666">提前 <input id="v69Exp_' + d.id + '" type="number" min="0" max="365" value="' + conf.expDays + '" style="width:52px;padding:3px 5px;border:1px solid #ddd;border-radius:6px"> 天</label>' +
+        '<label style="font-size:11px;color:#666">余量 <input id="v69Qty_' + d.id + '" type="number" min="0" max="999" value="' + conf.qtyMin + '" style="width:52px;padding:3px 5px;border:1px solid #ddd;border-radius:6px"></label>' +
+        '<button onclick="v69SaveItem(\'' + d.id + '\')" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:8px;background:#fff;color:#2e7d32;font-size:12px;cursor:pointer">保存</button></div></div>';
+    });
+  }
+  card.innerHTML = html;
+}
+function v69SaveGlobal(){
+  var a = v69conf();
+  var e = parseInt(document.getElementById('v69GExp').value);
+  var q = parseInt(document.getElementById('v69GQty').value);
+  a.global.expDays = isNaN(e) ? 60 : Math.max(0, Math.min(365, e));
+  a.global.qtyMin = isNaN(q) ? 5 : Math.max(0, Math.min(999, q));
+  v69setAlert(a);
+  v69render();
+}
+function v69SaveItem(id){
+  var a = v69conf();
+  if(!a.items[id]) a.items[id] = {};
+  var e = document.getElementById('v69Exp_' + id).value;
+  var q = document.getElementById('v69Qty_' + id).value;
+  a.items[id].expDays = (e === '' || e === null) ? null : Math.max(0, Math.min(365, parseInt(e) || 0));
+  a.items[id].qtyMin = (q === '' || q === null) ? null : Math.max(0, Math.min(999, parseInt(q) || 0));
+  v69setAlert(a);
+  v69render();
+}
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){ try { v69render(); } catch(e){} }, 150);
+});
+// 旧页面保存药品后新卡片可能滞后,轻量轮询刷新(只读,不影响旧逻辑)
+setInterval(function(){ try { if(document.getElementById('v69Card')) v69render(); } catch(e){} }, 3000);
+</script>
 </body>
 </html>
