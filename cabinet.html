@@ -691,27 +691,47 @@ setInterval(function(){ try { if(document.getElementById('v69Card')) v69render()
     var css = document.createElement('style');
     css.id = 'xysTheme';
     css.textContent = [
-      'body.xys-theme{background:#f5efe3;color:#3a3630}',
-      'body.xys-theme .card{background:rgba(255,253,248,.9);border:1px solid #e4d9c4;box-shadow:0 2px 14px rgba(60,55,45,.07);border-radius:12px}',
-      'body.xys-theme .card-title{color:#2f3437}',
-      'body.xys-theme .btn-add,body.xys-theme .btn-primary{background:linear-gradient(135deg,#3f464b,#5a6368) !important;color:#fff !important;border:none}',
-      'body.xys-theme .btn-xs{color:#3f464b !important;border-color:#cfc4ae !important}',
+      'body.xys-theme{background:#f1e8d5;color:#37322a}',
+      'body.xys-theme .card{background:rgba(255,253,247,.92);border:1px solid #e2d5ba;box-shadow:0 3px 16px rgba(55,48,36,.10);border-radius:12px}',
+      'body.xys-theme .card-title{color:#23282b}',
+      'body.xys-theme .btn-add,body.xys-theme .btn-primary{background:linear-gradient(135deg,#2b3134,#4d565b) !important;color:#f1e8d5 !important;border:none}',
+      'body.xys-theme .btn-xs{color:#2b3134 !important;border-color:#d3c5a6 !important}',
       '.xys-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}',
-      '.xys-ink{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(47,52,55,.10) 0%,rgba(47,52,55,.05) 45%,transparent 70%);filter:blur(46px);animation:xysDrift 26s ease-in-out infinite alternate}',
-      '.xys-ink.i1{width:56vmax;height:56vmax;left:-18vmax;top:-20vmax}',
-      '.xys-ink.i2{width:44vmax;height:44vmax;right:-16vmax;top:8vmax;animation-duration:32s;animation-delay:-8s}',
-      '@keyframes xysDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(3vmax,-2vmax) scale(1.08)}100%{transform:translate(-2vmax,2vmax) scale(.96)}}',
-      '.xys-fog{position:absolute;height:14vmax;border-radius:50%;background:rgba(255,252,245,.55);filter:blur(34px);animation:xysFog 58s linear infinite}',
-      '.xys-fog.f1{width:72vmax;left:-30vmax;top:16vmax}',
-      '@keyframes xysFog{0%{transform:translateX(0)}100%{transform:translateX(24vmax)}}',
+      '.xys-ink{position:absolute;border-radius:50%;animation:xysDrift ease-in-out infinite alternate}',
+      '.xys-ink.i1{width:58vmax;height:58vmax;left:-20vmax;top:-22vmax;background:radial-gradient(circle,rgba(35,40,43,.20) 0%,rgba(35,40,43,.10) 40%,transparent 70%);animation-duration:11s}',
+      '.xys-ink.i2{width:46vmax;height:46vmax;right:-18vmax;top:4vmax;background:radial-gradient(circle,rgba(35,40,43,.16) 0%,rgba(35,40,43,.07) 42%,transparent 72%);animation-duration:14s;animation-delay:-5s}',
+      '.xys-ink.i3{width:40vmax;height:40vmax;left:18vmax;bottom:-18vmax;background:radial-gradient(circle,rgba(35,40,43,.14) 0%,rgba(35,40,43,.06) 45%,transparent 75%);animation-duration:16s;animation-delay:-9s}',
+      '.xys-ink.i4{width:34vmax;height:34vmax;left:52vmax;top:20vmax;background:radial-gradient(circle,rgba(173,64,45,.09) 0%,rgba(173,64,45,.04) 45%,transparent 70%);animation-duration:13s;animation-delay:-3s}',
+      '@keyframes xysDrift{0%{transform:translate(0,0) scale(1)}40%{transform:translate(4vmax,-3vmax) scale(1.18)}70%{transform:translate(-3vmax,2vmax) scale(1.05)}100%{transform:translate(1vmax,3vmax) scale(.92)}}',
+      '.xys-rip{position:absolute;border-radius:50%;border:2px solid rgba(35,40,43,.28);opacity:0;animation:xysRip linear infinite}',
+      '.xys-rip.r1{width:16vmax;height:16vmax;left:10vmax;top:34vmax;animation-duration:6s}',
+      '.xys-rip.r2{width:12vmax;height:12vmax;right:14vmax;top:56vmax;animation-duration:7.5s;animation-delay:-2.5s}',
+      '@keyframes xysRip{0%{transform:scale(.3);opacity:0}12%{opacity:.9}100%{transform:scale(2.4);opacity:0}}',
+      '.xys-fog{position:absolute;height:13vmax;border-radius:50%;background:rgba(255,250,240,.6);filter:blur(30px);animation:xysFog linear infinite}',
+      '.xys-fog.f1{width:76vmax;left:-32vmax;top:12vmax;animation-duration:22s}',
+      '.xys-fog.f2{width:66vmax;right:-30vmax;top:38vmax;animation-duration:28s;animation-delay:-11s}',
+      '@keyframes xysFog{0%{transform:translateX(0)}100%{transform:translateX(30vmax)}}',
       '.xys-mt{position:fixed;left:0;right:0;bottom:0;z-index:-1;pointer-events:none}',
-      '.xys-mt svg{display:block;width:100%;height:auto}'
+      '.xys-mt svg{display:block;width:102%;height:auto;margin-left:-1%}',
+      '.xys-mtl{position:absolute;left:0;bottom:0;width:102%;height:auto;animation:xysMt ease-in-out infinite alternate}',
+      '.xys-mtl.l1{animation-duration:10s}',
+      '.xys-mtl.l2{animation-duration:13s;animation-delay:-4s}',
+      '.xys-mtl.l3{animation-duration:16s;animation-delay:-8s}',
+      '.xys-mtl.l4{animation-duration:19s;animation-delay:-12s}',
+      '@keyframes xysMt{0%{transform:translateX(0)}100%{transform:translateX(1.2%)}}'
     ].join('\n');
     document.head.appendChild(css);
     var bg = document.createElement('div');
     bg.className = 'xys-bg';
-    bg.innerHTML = '<div class="xys-ink i1"></div><div class="xys-ink i2"></div><div class="xys-fog f1"></div>' +
-      '<div class="xys-mt"><svg viewBox="0 0 1200 220" preserveAspectRatio="none"><polygon points="0,220 0,120 160,60 320,130 480,40 640,110 800,70 960,140 1120,90 1200,130 1200,220" fill="rgba(47,52,55,0.10)"/><polygon points="0,220 0,170 220,120 430,180 640,130 850,190 1050,150 1200,180 1200,220" fill="rgba(47,52,55,0.06)"/></svg></div>';
+    bg.innerHTML = '<div class="xys-ink i1"></div><div class="xys-ink i2"></div><div class="xys-ink i3"></div><div class="xys-ink i4"></div>' +
+      '<div class="xys-rip r1"></div><div class="xys-rip r2"></div>' +
+      '<div class="xys-fog f1"></div><div class="xys-fog f2"></div>' +
+      '<div class="xys-mt">' +
+      '<svg class="xys-mtl l1" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,150 180,90 340,160 520,70 700,140 880,95 1040,160 1200,110 1200,240" fill="rgba(35,40,43,0.07)"/></svg>' +
+      '<svg class="xys-mtl l2" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,180 220,120 430,175 640,105 860,185 1060,140 1200,180 1200,240" fill="rgba(35,40,43,0.12)"/></svg>' +
+      '<svg class="xys-mtl l3" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,205 260,150 470,210 680,150 900,215 1100,170 1200,210 1200,240" fill="rgba(35,40,43,0.18)"/></svg>' +
+      '<svg class="xys-mtl l4" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,225 300,185 520,235 740,185 960,235 1200,220 1200,240" fill="rgba(35,40,43,0.25)"/></svg>' +
+      '</div>';
     document.body.appendChild(bg);
     document.body.classList.add('xys-theme');
   }

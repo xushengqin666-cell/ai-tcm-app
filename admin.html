@@ -294,5 +294,55 @@ function loadAiReport(){
   }).catch(function(e){ opsMsg(e.message || '报告生成失败'); });
 }
 </script>
+<script>
+// ===== v6.10.1 「云晓药」雾山五行风动态水墨主题(管理后台,纯新增覆盖层,不改动任何旧代码) =====
+(function(){
+  function inject(){
+    if(document.getElementById('xysTheme')) return;
+    var css = document.createElement('style');
+    css.id = 'xysTheme';
+    css.textContent = [
+      'body.xys-theme{background:#f1e8d5;color:#37322a}',
+      'body.xys-theme .card{background:rgba(255,253,247,.92);border:1px solid #e2d5ba;box-shadow:0 3px 16px rgba(55,48,36,.10);border-radius:12px}',
+      'body.xys-theme table{background:rgba(255,253,247,.9)}',
+      'body.xys-theme h1,body.xys-theme h2,body.xys-theme h3{color:#23282b}',
+      'body.xys-theme button.primary,body.xys-theme .btn-primary{background:linear-gradient(135deg,#2b3134,#4d565b) !important;color:#f1e8d5 !important;border:none}',
+      '.xys-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}',
+      '.xys-ink{position:absolute;border-radius:50%;animation:xysDrift ease-in-out infinite alternate}',
+      '.xys-ink.i1{width:58vmax;height:58vmax;left:-20vmax;top:-22vmax;background:radial-gradient(circle,rgba(35,40,43,.18) 0%,rgba(35,40,43,.09) 40%,transparent 70%);animation-duration:11s}',
+      '.xys-ink.i2{width:46vmax;height:46vmax;right:-18vmax;top:4vmax;background:radial-gradient(circle,rgba(35,40,43,.14) 0%,rgba(35,40,43,.06) 42%,transparent 72%);animation-duration:14s;animation-delay:-5s}',
+      '.xys-ink.i3{width:34vmax;height:34vmax;left:52vmax;top:20vmax;background:radial-gradient(circle,rgba(173,64,45,.08) 0%,rgba(173,64,45,.03) 45%,transparent 70%);animation-duration:13s;animation-delay:-3s}',
+      '@keyframes xysDrift{0%{transform:translate(0,0) scale(1)}40%{transform:translate(4vmax,-3vmax) scale(1.18)}70%{transform:translate(-3vmax,2vmax) scale(1.05)}100%{transform:translate(1vmax,3vmax) scale(.92)}}',
+      '.xys-fog{position:absolute;height:13vmax;border-radius:50%;background:rgba(255,250,240,.6);filter:blur(30px);animation:xysFog linear infinite}',
+      '.xys-fog.f1{width:76vmax;left:-32vmax;top:12vmax;animation-duration:22s}',
+      '.xys-fog.f2{width:66vmax;right:-30vmax;top:38vmax;animation-duration:28s;animation-delay:-11s}',
+      '@keyframes xysFog{0%{transform:translateX(0)}100%{transform:translateX(30vmax)}}',
+      '.xys-mt{position:fixed;left:0;right:0;bottom:0;z-index:-1;pointer-events:none}',
+      '.xys-mtl{position:absolute;left:0;bottom:0;width:102%;height:auto;animation:xysMt ease-in-out infinite alternate}',
+      '.xys-mtl.l1{animation-duration:10s}',
+      '.xys-mtl.l2{animation-duration:13s;animation-delay:-4s}',
+      '.xys-mtl.l3{animation-duration:16s;animation-delay:-8s}',
+      '.xys-mtl.l4{animation-duration:19s;animation-delay:-12s}',
+      '@keyframes xysMt{0%{transform:translateX(0)}100%{transform:translateX(1.2%)}}'
+    ].join('\n');
+    document.head.appendChild(css);
+    var bg = document.createElement('div');
+    bg.className = 'xys-bg';
+    bg.innerHTML = '<div class="xys-ink i1"></div><div class="xys-ink i2"></div><div class="xys-ink i3"></div>' +
+      '<div class="xys-fog f1"></div><div class="xys-fog f2"></div>' +
+      '<div class="xys-mt">' +
+      '<svg class="xys-mtl l1" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,150 180,90 340,160 520,70 700,140 880,95 1040,160 1200,110 1200,240" fill="rgba(35,40,43,0.07)"/></svg>' +
+      '<svg class="xys-mtl l2" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,180 220,120 430,175 640,105 860,185 1060,140 1200,180 1200,240" fill="rgba(35,40,43,0.12)"/></svg>' +
+      '<svg class="xys-mtl l3" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,205 260,150 470,210 680,150 900,215 1100,170 1200,210 1200,240" fill="rgba(35,40,43,0.18)"/></svg>' +
+      '<svg class="xys-mtl l4" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,225 300,185 520,235 740,185 960,235 1200,220 1200,240" fill="rgba(35,40,43,0.25)"/></svg>' +
+      '</div>';
+    document.body.appendChild(bg);
+    document.body.classList.add('xys-theme');
+    try { if(document.title.indexOf('云晓药') === -1) document.title = '云晓药家庭用药助手 · 管理后台'; } catch(e){}
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', inject); }
+  else { inject(); }
+})();
+</script>
 </body>
 </html>

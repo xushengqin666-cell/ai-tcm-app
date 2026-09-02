@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Family Pharmacist v6.10</title>
+<title>家庭药师 / Family Pharmacist v6.10.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v6.10</span>
+    <span id="version" style="font-size:10px;opacity:.7">v6.10.1</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -5121,7 +5121,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>云晓药 v6.10 · 家庭用药管理工具</p>
+  <p>云晓药 v6.10.1 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>
@@ -6347,41 +6347,60 @@ document.addEventListener('DOMContentLoaded', function(){
     var css = document.createElement('style');
     css.id = 'xysTheme';
     css.textContent = [
-      'body.xys-theme{background:#f5efe3;color:#3a3630}',
-      'body.xys-theme header{background:linear-gradient(135deg,#2f3437 0%,#4a5054 60%,#5a6368 100%) !important}',
-      'body.xys-theme header h1{color:#f5efe3 !important}',
-      'body.xys-theme .tab-bar{background:rgba(245,239,227,.96);border-bottom:1px solid #e0d6c2}',
-      'body.xys-theme .tab-btn{color:#6b6357}',
-      'body.xys-theme .tab-btn.active{color:#2f3437;border-bottom-color:#2f3437}',
-      'body.xys-theme .card{background:rgba(255,253,248,.9);border:1px solid #e4d9c4;box-shadow:0 2px 14px rgba(60,55,45,.07);border-radius:12px}',
-      'body.xys-theme .card-title{color:#2f3437}',
-      'body.xys-theme .btn-primary{background:linear-gradient(135deg,#3f464b,#5a6368) !important;color:#fff !important;border:none}',
-      'body.xys-theme .btn-primary:active{filter:brightness(.92)}',
-      'body.xys-theme .btn-secondary{color:#3f464b !important;border-color:#cfc4ae !important;background:rgba(255,253,248,.8) !important}',
-      'body.xys-theme .bottom-nav{background:rgba(245,239,227,.97);border-top:1px solid #e0d6c2}',
-      'body.xys-theme .bottom-nav a,.bottom-nav span{color:#6b6357}',
-      'body.xys-theme .bottom-nav .active,.bottom-nav a.active{color:#2f3437}',
-      'body.xys-theme .search-box input{border-color:#d8cbb2;background:#fffdf8}',
-      'body.xys-theme .search-box input:focus{border-color:#5a6368}',
+      'body.xys-theme{background:#f1e8d5;color:#37322a}',
+      'body.xys-theme header{background:linear-gradient(135deg,#23282b 0%,#3a4145 55%,#4d565b 100%) !important;box-shadow:0 2px 0 rgba(173,64,45,.85)}',
+      'body.xys-theme header h1{color:#f1e8d5 !important}',
+      'body.xys-theme .tab-bar{background:rgba(241,232,213,.96);border-bottom:1px solid #dfd2b8}',
+      'body.xys-theme .tab-btn{color:#6f6657}',
+      'body.xys-theme .tab-btn.active{color:#23282b;border-bottom-color:#ad402d}',
+      'body.xys-theme .card{background:rgba(255,253,247,.92);border:1px solid #e2d5ba;box-shadow:0 3px 16px rgba(55,48,36,.10);border-radius:12px}',
+      'body.xys-theme .card-title{color:#23282b}',
+      'body.xys-theme .btn-primary{background:linear-gradient(135deg,#2b3134,#4d565b) !important;color:#f1e8d5 !important;border:none}',
+      'body.xys-theme .btn-primary:active{filter:brightness(.9)}',
+      'body.xys-theme .btn-secondary{color:#2b3134 !important;border-color:#d3c5a6 !important;background:rgba(255,253,247,.85) !important}',
+      'body.xys-theme .bottom-nav{background:rgba(241,232,213,.97);border-top:1px solid #dfd2b8}',
+      'body.xys-theme .bottom-nav a,.bottom-nav span{color:#6f6657}',
+      'body.xys-theme .bottom-nav .active,.bottom-nav a.active{color:#ad402d}',
+      'body.xys-theme .search-box input{border-color:#d8c9a9;background:#fffdf7}',
+      'body.xys-theme .search-box input:focus{border-color:#4d565b}',
       '.xys-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}',
-      '.xys-ink{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(47,52,55,.10) 0%,rgba(47,52,55,.05) 45%,transparent 70%);filter:blur(46px);animation:xysDrift 26s ease-in-out infinite alternate}',
-      '.xys-ink.i1{width:56vmax;height:56vmax;left:-18vmax;top:-20vmax}',
-      '.xys-ink.i2{width:44vmax;height:44vmax;right:-16vmax;top:8vmax;animation-duration:32s;animation-delay:-8s}',
-      '.xys-ink.i3{width:38vmax;height:38vmax;left:22vmax;bottom:-16vmax;animation-duration:38s;animation-delay:-16s}',
-      '@keyframes xysDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(3vmax,-2vmax) scale(1.08)}100%{transform:translate(-2vmax,2vmax) scale(.96)}}',
-      '.xys-fog{position:absolute;height:14vmax;border-radius:50%;background:rgba(255,252,245,.55);filter:blur(34px);animation:xysFog 58s linear infinite}',
-      '.xys-fog.f1{width:72vmax;left:-30vmax;top:16vmax}',
-      '.xys-fog.f2{width:64vmax;right:-28vmax;top:42vmax;animation-delay:-29s;animation-duration:74s}',
-      '@keyframes xysFog{0%{transform:translateX(0)}100%{transform:translateX(24vmax)}}',
+      '.xys-ink{position:absolute;border-radius:50%;animation:xysDrift ease-in-out infinite alternate}',
+      '.xys-ink.i1{width:58vmax;height:58vmax;left:-20vmax;top:-22vmax;background:radial-gradient(circle,rgba(35,40,43,.20) 0%,rgba(35,40,43,.10) 40%,transparent 70%);animation-duration:11s}',
+      '.xys-ink.i2{width:46vmax;height:46vmax;right:-18vmax;top:4vmax;background:radial-gradient(circle,rgba(35,40,43,.16) 0%,rgba(35,40,43,.07) 42%,transparent 72%);animation-duration:14s;animation-delay:-5s}',
+      '.xys-ink.i3{width:40vmax;height:40vmax;left:18vmax;bottom:-18vmax;background:radial-gradient(circle,rgba(35,40,43,.14) 0%,rgba(35,40,43,.06) 45%,transparent 75%);animation-duration:16s;animation-delay:-9s}',
+      '.xys-ink.i4{width:34vmax;height:34vmax;left:52vmax;top:20vmax;background:radial-gradient(circle,rgba(173,64,45,.09) 0%,rgba(173,64,45,.04) 45%,transparent 70%);animation-duration:13s;animation-delay:-3s}',
+      '@keyframes xysDrift{0%{transform:translate(0,0) scale(1)}40%{transform:translate(4vmax,-3vmax) scale(1.18)}70%{transform:translate(-3vmax,2vmax) scale(1.05)}100%{transform:translate(1vmax,3vmax) scale(.92)}}',
+      '.xys-rip{position:absolute;border-radius:50%;border:2px solid rgba(35,40,43,.28);opacity:0;animation:xysRip linear infinite}',
+      '.xys-rip.r1{width:16vmax;height:16vmax;left:10vmax;top:34vmax;animation-duration:6s}',
+      '.xys-rip.r2{width:12vmax;height:12vmax;right:14vmax;top:56vmax;animation-duration:7.5s;animation-delay:-2.5s}',
+      '.xys-rip.r3{width:9vmax;height:9vmax;left:44vmax;top:12vmax;animation-duration:8.5s;animation-delay:-5s}',
+      '@keyframes xysRip{0%{transform:scale(.3);opacity:0}12%{opacity:.9}100%{transform:scale(2.4);opacity:0}}',
+      '.xys-fog{position:absolute;height:13vmax;border-radius:50%;background:rgba(255,250,240,.6);filter:blur(30px);animation:xysFog linear infinite}',
+      '.xys-fog.f1{width:76vmax;left:-32vmax;top:12vmax;animation-duration:22s}',
+      '.xys-fog.f2{width:66vmax;right:-30vmax;top:38vmax;animation-duration:28s;animation-delay:-11s}',
+      '.xys-fog.f3{width:58vmax;left:-24vmax;top:60vmax;animation-duration:34s;animation-delay:-18s}',
+      '@keyframes xysFog{0%{transform:translateX(0)}100%{transform:translateX(30vmax)}}',
       '.xys-mt{position:fixed;left:0;right:0;bottom:0;z-index:-1;pointer-events:none}',
-      '.xys-mt svg{display:block;width:100%;height:auto}'
+      '.xys-mt svg{display:block;width:102%;height:auto;margin-left:-1%}',
+      '.xys-mtl{position:absolute;left:0;bottom:0;width:102%;height:auto;animation:xysMt ease-in-out infinite alternate}',
+      '.xys-mtl.l1{animation-duration:10s}',
+      '.xys-mtl.l2{animation-duration:13s;animation-delay:-4s}',
+      '.xys-mtl.l3{animation-duration:16s;animation-delay:-8s}',
+      '.xys-mtl.l4{animation-duration:19s;animation-delay:-12s}',
+      '@keyframes xysMt{0%{transform:translateX(0)}100%{transform:translateX(1.2%)}}'
     ].join('\n');
     document.head.appendChild(css);
     var bg = document.createElement('div');
     bg.className = 'xys-bg';
-    bg.innerHTML = '<div class="xys-ink i1"></div><div class="xys-ink i2"></div><div class="xys-ink i3"></div>' +
-      '<div class="xys-fog f1"></div><div class="xys-fog f2"></div>' +
-      '<div class="xys-mt"><svg viewBox="0 0 1200 220" preserveAspectRatio="none"><polygon points="0,220 0,120 160,60 320,130 480,40 640,110 800,70 960,140 1120,90 1200,130 1200,220" fill="rgba(47,52,55,0.10)"/><polygon points="0,220 0,170 220,120 430,180 640,130 850,190 1050,150 1200,180 1200,220" fill="rgba(47,52,55,0.06)"/></svg></div>';
+    bg.innerHTML = '<div class="xys-ink i1"></div><div class="xys-ink i2"></div><div class="xys-ink i3"></div><div class="xys-ink i4"></div>' +
+      '<div class="xys-rip r1"></div><div class="xys-rip r2"></div><div class="xys-rip r3"></div>' +
+      '<div class="xys-fog f1"></div><div class="xys-fog f2"></div><div class="xys-fog f3"></div>' +
+      '<div class="xys-mt">' +
+      '<svg class="xys-mtl l1" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,150 180,90 340,160 520,70 700,140 880,95 1040,160 1200,110 1200,240" fill="rgba(35,40,43,0.07)"/></svg>' +
+      '<svg class="xys-mtl l2" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,180 220,120 430,175 640,105 860,185 1060,140 1200,180 1200,240" fill="rgba(35,40,43,0.12)"/></svg>' +
+      '<svg class="xys-mtl l3" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,205 260,150 470,210 680,150 900,215 1100,170 1200,210 1200,240" fill="rgba(35,40,43,0.18)"/></svg>' +
+      '<svg class="xys-mtl l4" viewBox="0 0 1200 240" preserveAspectRatio="none"><polygon points="0,240 0,225 300,185 520,235 740,185 960,235 1200,220 1200,240" fill="rgba(35,40,43,0.25)"/></svg>' +
+      '</div>';
     document.body.appendChild(bg);
     document.body.classList.add('xys-theme');
     brand();
