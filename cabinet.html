@@ -692,6 +692,12 @@ setInterval(function(){ try { if(document.getElementById('v69Card')) v69render()
     css.id = 'xysTheme';
     css.textContent = [
       'body.xys-theme{background:#f1e8d5;color:#37322a}',
+      'body.xys-theme header{background:linear-gradient(135deg,#23282b 0%,#3a4145 55%,#4d565b 100%) !important;box-shadow:0 2px 0 rgba(173,64,45,.85)}',
+      'body.xys-theme header h1{color:#f1e8d5 !important}',
+      'body.xys-theme header a{color:#f1e8d5 !important}',
+      'body.xys-theme .stat-card{background:rgba(255,253,247,.92);border:1px solid #e2d5ba;box-shadow:0 3px 16px rgba(55,48,36,.10)}',
+      'body.xys-theme .stat-card .label{color:#6f6657}',
+      'body.xys-theme .alert-banner{background:rgba(255,253,247,.92) !important;border-color:#e2d5ba !important}',
       'body.xys-theme .card{background:rgba(255,253,247,.92);border:1px solid #e2d5ba;box-shadow:0 3px 16px rgba(55,48,36,.10);border-radius:12px}',
       'body.xys-theme .card-title{color:#23282b}',
       'body.xys-theme .btn-add,body.xys-theme .btn-primary{background:linear-gradient(135deg,#2b3134,#4d565b) !important;color:#f1e8d5 !important;border:none}',
@@ -734,6 +740,11 @@ setInterval(function(){ try { if(document.getElementById('v69Card')) v69render()
       '</div>';
     document.body.appendChild(bg);
     document.body.classList.add('xys-theme');
+    try {
+      var h1 = document.querySelector('header h1');
+      if(h1) h1.textContent = '云晓药箱';
+      if(document.title.indexOf('云晓药') === -1) document.title = '云晓药箱 · 云晓药家庭用药助手';
+    } catch(e){}
   }
   if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', inject); }
   else { inject(); }
