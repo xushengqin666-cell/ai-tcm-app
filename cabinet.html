@@ -683,5 +683,41 @@ document.addEventListener('DOMContentLoaded', function(){
 // 旧页面保存药品后新卡片可能滞后,轻量轮询刷新(只读,不影响旧逻辑)
 setInterval(function(){ try { if(document.getElementById('v69Card')) v69render(); } catch(e){} }, 3000);
 </script>
+<script>
+// ===== v6.10 「云晓药」动态水墨风主题(药箱页,纯新增覆盖层,不改动任何旧代码) =====
+(function(){
+  function inject(){
+    if(document.getElementById('xysTheme')) return;
+    var css = document.createElement('style');
+    css.id = 'xysTheme';
+    css.textContent = [
+      'body.xys-theme{background:#f5efe3;color:#3a3630}',
+      'body.xys-theme .card{background:rgba(255,253,248,.9);border:1px solid #e4d9c4;box-shadow:0 2px 14px rgba(60,55,45,.07);border-radius:12px}',
+      'body.xys-theme .card-title{color:#2f3437}',
+      'body.xys-theme .btn-add,body.xys-theme .btn-primary{background:linear-gradient(135deg,#3f464b,#5a6368) !important;color:#fff !important;border:none}',
+      'body.xys-theme .btn-xs{color:#3f464b !important;border-color:#cfc4ae !important}',
+      '.xys-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}',
+      '.xys-ink{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(47,52,55,.10) 0%,rgba(47,52,55,.05) 45%,transparent 70%);filter:blur(46px);animation:xysDrift 26s ease-in-out infinite alternate}',
+      '.xys-ink.i1{width:56vmax;height:56vmax;left:-18vmax;top:-20vmax}',
+      '.xys-ink.i2{width:44vmax;height:44vmax;right:-16vmax;top:8vmax;animation-duration:32s;animation-delay:-8s}',
+      '@keyframes xysDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(3vmax,-2vmax) scale(1.08)}100%{transform:translate(-2vmax,2vmax) scale(.96)}}',
+      '.xys-fog{position:absolute;height:14vmax;border-radius:50%;background:rgba(255,252,245,.55);filter:blur(34px);animation:xysFog 58s linear infinite}',
+      '.xys-fog.f1{width:72vmax;left:-30vmax;top:16vmax}',
+      '@keyframes xysFog{0%{transform:translateX(0)}100%{transform:translateX(24vmax)}}',
+      '.xys-mt{position:fixed;left:0;right:0;bottom:0;z-index:-1;pointer-events:none}',
+      '.xys-mt svg{display:block;width:100%;height:auto}'
+    ].join('\n');
+    document.head.appendChild(css);
+    var bg = document.createElement('div');
+    bg.className = 'xys-bg';
+    bg.innerHTML = '<div class="xys-ink i1"></div><div class="xys-ink i2"></div><div class="xys-fog f1"></div>' +
+      '<div class="xys-mt"><svg viewBox="0 0 1200 220" preserveAspectRatio="none"><polygon points="0,220 0,120 160,60 320,130 480,40 640,110 800,70 960,140 1120,90 1200,130 1200,220" fill="rgba(47,52,55,0.10)"/><polygon points="0,220 0,170 220,120 430,180 640,130 850,190 1050,150 1200,180 1200,220" fill="rgba(47,52,55,0.06)"/></svg></div>';
+    document.body.appendChild(bg);
+    document.body.classList.add('xys-theme');
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', inject); }
+  else { inject(); }
+})();
+</script>
 </body>
 </html>
