@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>家庭药师 / Family Pharmacist v6.10.2</title>
+<title>云晓药 / 家庭用药助手 v7.0.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v6.10.2</span>
+    <span id="version" style="font-size:10px;opacity:.7">v7.0.0</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -5121,7 +5121,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>云晓药 v6.10.2 · 家庭用药管理工具</p>
+  <p>云晓药 v7.0.0 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>
@@ -6427,8 +6427,527 @@ document.addEventListener('DOMContentLoaded', function(){
   } else { inject(); setTimeout(brand, 1200); }
 })();
 </script>
+<script>
+// ===== v7.0 家庭用药安全操作系统(纯新增,不改动任何旧代码/旧函数) =====
+// 1)今日家庭用药总览 2)用药安全画像 3)家庭用药安全检查(相互作用+重复成分+过敏/疾病匹配)
+// 4)智能漏服链 5)药箱库存预测 6)药品对比 7)数据来源脚注 8)医生就诊报告
+var V70 = {
+  profKey: 'family_pharmacist_v70_profile',   // {memberId:{allergies,weight,preg,breast}}
+  missedKey: 'family_pharmacist_v70_missed', // {date:{reminderId:reason}}
+  doseKey: 'family_pharmacist_v70_dose'      // {drugName:每Unit} 每次用量
+};
+function v70ls(k, d){ try { if(d === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(d)); } catch(e){ return d === undefined ? null : undefined; } }
+function v70getProf(){ return v70ls(V70.profKey) || {}; }
+function v70setProf(p){ v70ls(V70.profKey, p); }
+function v70getMissed(){ return v70ls(V70.missedKey) || {}; }
+function v70getDose(){ return v70ls(V70.doseKey) || {}; }
+function v70esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function v70today(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function v70reminders(){ try { return JSON.parse(localStorage.getItem('medication_reminders') || '[]'); } catch(e){ return []; } }
+function v70cabinet(){ try { return JSON.parse(localStorage.getItem('family_pharmacist_cabinet') || '[]'); } catch(e){ return []; } }
+function v70members(){ try { return JSON.parse(localStorage.getItem('family_pharmacist_members') || '[]'); } catch(e){ return []; } }
+function v70adh(){ try { var a = JSON.parse(localStorage.getItem('family_pharmacist_adherence') || '{}'); return { due: a.due || [], taken: a.taken || [] }; } catch(e){ return { due: [], taken: [] }; } }
+function v70drugInfo(name){
+  try {
+    if (typeof findDrugByName === 'function') {
+      var r = findDrugByName(name);
+      if (r.level < 2 && r.data) return r.data;
+    }
+  } catch(e){}
+  return null;
+}
+var V70_COMMON_ING = ['对乙酰氨基酚','布洛芬','氯苯那敏','伪麻黄碱','右美沙芬','咖啡因','金刚烷胺','愈创甘油醚','氨溴索','萘普生','阿司匹林','双氯芬酸','氯雷他定','西替利嗪','麻黄碱','可待因','麻黄','对乙酰氨基酚','扑尔敏'];
+function v70ingredientsOf(name){
+  var d = v70drugInfo(name);
+  if(!d || !d.ingredients) return null;
+  var found = [];
+  var txt = String(d.ingredients);
+  for(var i = 0; i < V70_COMMON_ING.length; i++){
+    if(txt.indexOf(V70_COMMON_ING[i]) !== -1 && found.indexOf(V70_COMMON_ING[i]) === -1) found.push(V70_COMMON_ING[i]);
+  }
+  return found;
+}
+function v70drugList(){
+  // 聚合家庭当前用药清单:成员档案用药 + 提醒药品 + 药箱(去重)
+  var list = [], seen = {};
+  function add(n){ if(n && !seen[n]){ seen[n] = 1; list.push(n); } }
+  v70members().forEach(function(m){ String(m.medications || '').split(/[,，、\s]+/).forEach(add); });
+  v70reminders().forEach(function(r){ add(r.drugName); });
+  v70cabinet().forEach(function(c){ add(c.name); });
+  return list;
+}
+function v70safetyScan(){
+  var list = v70drugList();
+  var out = { inter: [], dup: [], allergy: [], disease: [] };
+  // 1) 两两相互作用(复用 INTERACT_DB)
+  for(var i = 0; i < list.length; i++){
+    for(var j = i + 1; j < list.length; j++){
+      var a = list[i], b = list[j];
+      var e1 = (window.INTERACT_DB && INTERACT_DB[a] && INTERACT_DB[a][b]) || (window.INTERACT_DB && INTERACT_DB[b] && INTERACT_DB[b][a]);
+      if(e1 && e1.type !== 'green'){
+        out.inter.push({ a: a, b: b, type: e1.type, text: e1.text });
+      }
+    }
+  }
+  // 2) 重复成分
+  var ingMap = {};
+  list.forEach(function(n){ var ig = v70ingredientsOf(n); if(ig && ig.length) ingMap[n] = ig; });
+  for(var i2 = 0; i2 < list.length; i2++){
+    for(var j2 = i2 + 1; j2 < list.length; j2++){
+      var A = ingMap[list[i2]], B = ingMap[list[j2]];
+      if(!A || !B) continue;
+      var common = A.filter(function(x){ return B.indexOf(x) !== -1; });
+      if(common.length) out.dup.push({ a: list[i2], b: list[j2], ing: common });
+    }
+  }
+  // 3) 过敏/疾病匹配(成员画像)
+  var prof = v70getProf();
+  v70members().forEach(function(m){
+    var p = prof[m.id] || {};
+    var drugs = String(m.medications || '').split(/[,，、\s]+/).filter(Boolean);
+    drugs.forEach(function(dn){
+      var d = v70drugInfo(dn);
+      if(!d) return;
+      var txt = (d.adverse || '') + (d.ingredients || '') + (d.contraindications || '');
+      (p.allergies || '').split(/[,，、\s]+/).filter(Boolean).forEach(function(al){
+        if(txt.indexOf(al) !== -1) out.allergy.push({ member: m.name, drug: dn, allergy: al });
+      });
+      var dis = String(m.health || '');
+      // 画像孕哺状态并入匹配(health 文本之外的第二来源)
+      if(p.preg === 'preg') dis += ' 妊娠';
+      if(p.preg === 'breast') dis += ' 哺乳';
+      // [疾病词, 禁忌命中词, 适应症治疗词(命中则视为对症用药不提示风险)]
+      [['哮喘','哮喘',['哮喘']],['糖尿病','血糖',['糖尿','血糖']],['高血压','血压',['高血压','血压']],['心脏病','心衰',['心力','心衰','心脏','心梗']],['肾','肾',['肾']],['肝','肝',['肝']],['溃疡','溃疡',['溃疡']],['痛风','尿酸',['痛风','尿酸']],['妊娠','妊娠',[]],['哺乳','哺乳',[]]].forEach(function(kv){
+        if(dis.indexOf(kv[0]) === -1 || (d.contraindications || '').indexOf(kv[1]) === -1) return;
+        // 适应症含治疗词 → 该药正在治疗此病,非风险(如降压药用于高血压)
+        var ind = String(d.indications || '');
+        var treating = false;
+        for(var ti = 0; ti < kv[2].length; ti++){ if(ind.indexOf(kv[2][ti]) !== -1){ treating = true; break; } }
+        if(treating) return;
+        out.disease.push({ member: m.name, drug: dn, health: kv[0], hint: '禁忌或注意事项中涉及「' + kv[1] + '」' });
+      });
+    });
+  });
+  return out;
+}
+
+/* ---------- 卡片注入容器 ---------- */
+function v70card(hostId, cardId, title, beforeFirst){
+  var host = document.getElementById(hostId);
+  if(!host) return null;
+  var card = document.getElementById(cardId);
+  if(!card){
+    card = document.createElement('div');
+    card.className = 'card';
+    card.id = cardId;
+    var head = document.createElement('div');
+    head.className = 'card-title';
+    head.textContent = title;
+    card.appendChild(head);
+    var body = document.createElement('div');
+    body.id = cardId + 'Body';
+    card.appendChild(body);
+    if(beforeFirst && host.firstChild){ host.insertBefore(card, host.firstChild); }
+    else { host.appendChild(card); }
+  }
+  return document.getElementById(cardId + 'Body');
+}
+
+/* ---------- 1) 今日家庭用药总览 ---------- */
+function v70renderToday(){
+  var body = v70card('tab-home', 'v70TodayCard', '今日家庭用药', true);
+  if(!body) return;
+  var adh = v70adh();
+  var rems = v70reminders();
+  var cab = v70cabinet();
+  var members = v70members();
+  var pct = adh.due.length ? Math.round(100 * adh.taken.length / adh.due.length) : 100;
+  var scan = v70safetyScan();
+  var issues = scan.inter.length + scan.dup.length + scan.allergy.length + scan.disease.length;
+  var soon = 0, low = 0;
+  cab.forEach(function(c){
+    var d = v70cabDays(c.expiry);
+    if(d < 0) return;
+    if(d <= 60) soon++;
+    var conf = (window.v69itemConf && v69itemConf(c.id)) || { qtyMin: 5 };
+    if(conf.qtyMin > 0 && (parseInt(c.qty) || 0) <= conf.qtyMin) low++;
+  });
+  var html = '<div style="font-size:13px;color:#4d565b;line-height:1.9">';
+  html += '今日服药:已打卡 <b style="color:#2b3134">' + adh.taken.length + '</b> / 应服药 <b>' + adh.due.length + '</b> 次(依从率 ' + pct + '%) · 设置提醒 ' + rems.length + ' 条<br>';
+  if(members.length){
+    html += '家庭成员用药:';
+    var parts = members.map(function(m){ var meds = String(m.medications || '').split(/[,，、\s]+/).filter(Boolean); return m.name + '(' + meds.length + '种)'; });
+    html += parts.join(' · ') + '<br>';
+  }
+  html += '药箱:' + cab.length + ' 种药品' + (soon ? ' · <span style="color:#e65100">' + soon + ' 种临期</span>' : '') + (low ? ' · <span style="color:#e65100">' + low + ' 种低余量</span>' : '') + '</div>';
+  if(issues){
+    html += '<div style="margin-top:8px;background:#fdf1ee;border:1px solid #e8b4a8;border-radius:10px;padding:10px 12px;font-size:13px;color:#ad402d;line-height:1.8">';
+    html += '<b>AI 安全提醒:发现 ' + issues + ' 个需要确认的用药问题</b><br>';
+    if(scan.inter.length) html += '· 相互作用提示 ' + scan.inter.length + ' 条<br>';
+    if(scan.dup.length) html += '· <b>重复成分风险 ' + scan.dup.length + ' 组</b><br>';
+    if(scan.allergy.length) html += '· 过敏风险 ' + scan.allergy.length + ' 条<br>';
+    if(scan.disease.length) html += '· 疾病相关注意事项 ' + scan.disease.length + ' 条<br>';
+    html += '<button onclick="v70openSafety()" style="margin-top:4px;padding:6px 14px;border:none;border-radius:8px;background:#ad402d;color:#fff;font-size:13px;cursor:pointer">查看详情</button></div>';
+  } else {
+    html += '<div style="margin-top:8px;background:#eef3ec;border-radius:10px;padding:10px 12px;font-size:13px;color:#2e7d32">当前家庭用药方案未发现明显风险。继续保持按时服药。</div>';
+  }
+  body.innerHTML = html;
+}
+function v70cabDays(expiry){
+  if(!expiry) return 999;
+  try { var p = expiry.split('-'); var d = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); return Math.ceil((d - new Date()) / 86400000); } catch(e){ return 999; }
+}
+
+/* ---------- 2) 用药安全画像 ---------- */
+function v70renderProfile(){
+  var body = v70card('tab-family', 'v70ProfileCard', '用药安全画像');
+  if(!body) return;
+  var members = v70members();
+  var prof = v70getProf();
+  if(!members.length){
+    body.innerHTML = '<div style="font-size:12px;color:#999">先在「家庭成员」中添加成员,这里会自动生成每人的用药安全画像。</div>';
+    return;
+  }
+  var html = '';
+  members.forEach(function(m){
+    var p = prof[m.id] || {};
+    var age = null;
+    try { if (typeof getAge === 'function' && m.birthYear) age = getAge(m.birthYear); } catch(e){}
+    var pregTxt = p.preg === 'preg' ? '妊娠期' : (p.preg === 'breast' ? '哺乳期' : (p.preg ? '妊娠/哺乳期' : '否'));
+    html += '<div style="border:1px solid #e2d5ba;border-radius:10px;padding:10px 12px;margin-bottom:8px;background:rgba(255,253,247,.9)">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:14px">' + v70esc(m.name) + '</b>' +
+      '<button onclick="v70editProfile(\'' + m.id + '\')" style="border:1px solid #d3c5a6;background:#fff;color:#4d565b;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">编辑画像</button></div>' +
+      '<div style="font-size:12px;color:#6f6657;line-height:1.8;margin-top:4px">' +
+      (age ? '年龄 ' + age + ' 岁 · ' : '') + (m.gender || '') +
+      '<br>健康问题:' + (m.health || '未登记') +
+      '<br><b style="color:#ad402d">过敏:</b>' + (p.allergies || '未登记(建议补充)') +
+      '<br>体重:' + (p.weight ? p.weight + 'kg' : '未登记') + ' · 孕哺状态:' + pregTxt +
+      '<br>当前用药:' + (m.medications || '未登记') +
+      '</div><div id="v70ProfEdit_' + m.id + '"></div></div>';
+  });
+  body.innerHTML = html + '<div style="font-size:11px;color:#999;line-height:1.6">画像用于新增药物时的个体化安全检查(过敏/疾病/孕哺/年龄匹配);数据仅存本机并随账号同步。AI 辅助不替代医生药师,急症请及时就医。</div>';
+}
+function v70editProfile(id){
+  var members = v70members();
+  var m = members.filter(function(x){ return x.id === id; })[0];
+  if(!m) return;
+  var prof = v70getProf();
+  var p = prof[id] || {};
+  var box = document.getElementById('v70ProfEdit_' + id);
+  if(!box) return;
+  var pregVal = (p.preg === 'preg' || p.preg === 'breast') ? p.preg : (p.preg ? 'preg' : 'no');
+  box.innerHTML =
+    '<div style="margin-top:8px;border-top:1px dashed #e2d5ba;padding-top:8px;font-size:12px;line-height:1.9">' +
+    '<div style="color:#4d565b;margin-bottom:4px">补充「' + v70esc(m.name) + '」的安全画像(用于过敏/疾病/孕哺匹配):</div>' +
+    '<label style="color:#6f6657">过敏信息(多个用逗号分隔,如:青霉素、磺胺)</label><br>' +
+    '<input id="v70Allergy_' + id + '" value="' + v70esc(p.allergies || '') + '" placeholder="如:青霉素、磺胺" style="width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px;margin:2px 0 6px">' +
+    '<label style="color:#6f6657">体重(kg)</label><br>' +
+    '<input id="v70Weight_' + id + '" type="number" min="1" max="300" step="0.5" value="' + (p.weight || '') + '" placeholder="如:65" style="width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px;margin:2px 0 6px">' +
+    '<label style="color:#6f6657">孕哺状态</label><br>' +
+    '<select id="v70Preg_' + id + '" style="width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px;margin:2px 0 8px">' +
+    '<option value="no"' + (pregVal === 'no' ? ' selected' : '') + '>否</option>' +
+    '<option value="preg"' + (pregVal === 'preg' ? ' selected' : '') + '>妊娠期</option>' +
+    '<option value="breast"' + (pregVal === 'breast' ? ' selected' : '') + '>哺乳期</option></select><br>' +
+    '<button onclick="v70saveProfile(\'' + id + '\')" style="padding:6px 18px;border:none;border-radius:8px;background:linear-gradient(135deg,#2b3134,#4d565b);color:#f1e8d5;font-size:13px;cursor:pointer">保存画像</button> ' +
+    '<button onclick="v70renderProfile()" style="padding:6px 14px;border:1px solid #d3c5a6;background:#fff;color:#4d565b;border-radius:8px;font-size:13px;cursor:pointer">取消</button>' +
+    '</div>';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function v70saveProfile(id){
+  var members = v70members();
+  var m = members.filter(function(x){ return x.id === id; })[0];
+  if(!m) return;
+  var prof = v70getProf();
+  var al = document.getElementById('v70Allergy_' + id);
+  var wt = document.getElementById('v70Weight_' + id);
+  var pg = document.getElementById('v70Preg_' + id);
+  var allergies = al ? al.value.trim() : '';
+  var weightStr = wt ? wt.value.trim() : '';
+  var weight = (weightStr && !isNaN(parseFloat(weightStr))) ? parseFloat(weightStr) : '';
+  var preg = pg ? pg.value : 'no';
+  if(preg === 'no') preg = false;
+  prof[id] = { allergies: allergies, weight: weight, preg: preg };
+  v70setProf(prof);
+  v70renderProfile();
+  v70renderToday();
+  v70renderSafety();
+}
+
+/* ---------- 3) 家庭用药安全检查 ---------- */
+function v70renderSafety(){
+  var body = v70card('tab-interact', 'v70SafetyCard', '家庭用药安全检查');
+  if(!body) return;
+  body.innerHTML = '<div style="font-size:12px;color:#6f6657;line-height:1.7;margin-bottom:8px">一键检查全家当前用药:两两相互作用、重复成分、过敏与疾病注意事项(基于成员画像)。</div>' +
+    '<button onclick="v70runSafety()" style="width:100%;padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#2b3134,#4d565b);color:#f1e8d5;font-size:14px;cursor:pointer">一键安全检查</button>' +
+    '<div id="v70SafetyResult" style="margin-top:8px;font-size:13px;line-height:1.9"></div>';
+}
+function v70runSafety(){
+  var el = document.getElementById('v70SafetyResult');
+  if(!el) return;
+  var scan = v70safetyScan();
+  var html = '';
+  if(!scan.inter.length && !scan.dup.length && !scan.allergy.length && !scan.disease.length){
+    el.innerHTML = '<div style="background:#eef3ec;border-radius:8px;padding:10px">未发现明显风险。建议补充成员过敏与健康信息后再检查一次。</div>';
+    return;
+  }
+  scan.inter.forEach(function(x){
+    html += '<div style="background:' + (x.type === 'danger' ? '#fdf1ee' : '#fdf6e8') + ';border-radius:8px;padding:8px 10px;margin-bottom:6px"><b style="color:' + (x.type === 'danger' ? '#ad402d' : '#b26a00') + '">' + v70esc(x.a) + ' + ' + v70esc(x.b) + '</b><br><span style="color:#555">' + v70esc(x.text) + '</span></div>';
+  });
+  scan.dup.forEach(function(x){
+    html += '<div style="background:#fdf1ee;border-radius:8px;padding:8px 10px;margin-bottom:6px"><b style="color:#ad402d">重复成分风险:' + v70esc(x.a) + ' 与 ' + v70esc(x.b) + '</b><br><span style="color:#555">共同成分:' + x.ing.join('、') + '——请核对说明书,避免重复使用导致过量。</span></div>';
+  });
+  scan.allergy.forEach(function(x){
+    html += '<div style="background:#fdf1ee;border-radius:8px;padding:8px 10px;margin-bottom:6px"><b style="color:#ad402d">过敏风险:' + v70esc(x.member) + ' 对「' + v70esc(x.allergy) + '」过敏,当前用药 ' + v70esc(x.drug) + ' 可能涉及</b><br><span style="color:#555">请核对药品成分并咨询医生/药师。</span></div>';
+  });
+  scan.disease.forEach(function(x){
+    html += '<div style="background:#fdf6e8;border-radius:8px;padding:8px 10px;margin-bottom:6px"><b style="color:#b26a00">' + v70esc(x.member) + '(' + v70esc(x.health) + '):' + v70esc(x.drug) + '</b><br><span style="color:#555">' + v70esc(x.hint) + '</span></div>';
+  });
+  html += '<div style="font-size:11px;color:#999">以上为信息提示,不构成诊断;处方药请遵医嘱。</div>';
+  el.innerHTML = html;
+}
+function v70openSafety(){
+  try { switchTab('interact'); } catch(e){}
+  v70renderSafety();
+  v70runSafety();
+  var card = document.getElementById('v70SafetyCard');
+  if(card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ---------- 4) 智能漏服链 ---------- */
+function v70renderMissed(){
+  var body = v70card('tab-reminder', 'v70MissCard', '漏服跟进');
+  if(!body) return;
+  var adh = v70adh();
+  var rems = v70reminders();
+  var today = v70today();
+  var missed = v70getMissed();
+  var todayMiss = missed[today] || {};
+  var pending = adh.due.filter(function(id){ return adh.taken.indexOf(id) === -1 && !todayMiss[id]; });
+  var done = adh.due.filter(function(id){ return todayMiss[id]; });
+  var html = '';
+  if(pending.length){
+    html += '<div style="font-size:12px;color:#6f6657;margin-bottom:6px">以下提醒尚未确认,请选择状态(记录漏服原因,便于分析依从性):</div>';
+    pending.forEach(function(id){
+      var r = rems.filter(function(x){ return x.id === id; })[0] || {};
+      html += '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid #e2d5ba;border-radius:8px;padding:8px 10px;margin-bottom:6px">' +
+        '<span style="flex:1;min-width:120px;font-size:13px"><b>' + v70esc(r.drugName || '药品') + '</b> · ' + v70esc(r.time || '') + '</span>' +
+        '<button onclick="v70missMark(\'' + id + '\',\'已服\')" style="border:1px solid #2e7d32;background:#eef3ec;color:#2e7d32;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">已服</button>' +
+        '<button onclick="v70missMark(\'' + id + '\',\'跳过\')" style="border:1px solid #b26a00;background:#fdf6e8;color:#b26a00;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">跳过</button>' +
+        '<button onclick="v70missMark(\'' + id + '\',\'忘记\')" style="border:1px solid #ad402d;background:#fdf1ee;color:#ad402d;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">忘记</button>' +
+        '<button onclick="v70missMark(\'' + id + '\',\'不适暂停\')" style="border:1px solid #6f6657;background:#f5f1e8;color:#6f6657;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">不适暂停</button></div>';
+    });
+    html += '<div style="font-size:12px;color:#ad402d;line-height:1.7;background:#fdf1ee;border-radius:8px;padding:8px 10px">若家中老人长期未确认服药,建议开启「家庭共享」(家庭页)或直接联系家人确认;AI 不会替代人工照护。</div>';
+  } else if(done.length){
+    html += '<div style="font-size:13px;color:#2e7d32;background:#eef3ec;border-radius:8px;padding:10px">今日漏服记录已全部确认:';
+    html += done.map(function(id){ var r = rems.filter(function(x){ return x.id === id; })[0] || {}; return (r.drugName || '药品') + '(' + todayMiss[id] + ')'; }).join('、');
+    html += '。</div>';
+  } else {
+    html += '<div style="font-size:12px;color:#999">今日暂无未确认的服药提醒。</div>';
+  }
+  body.innerHTML = html;
+}
+function v70missMark(id, reason){
+  var today = v70today();
+  var missed = v70getMissed();
+  if(!missed[today]) missed[today] = {};
+  missed[today][id] = reason;
+  v70ls(V70.missedKey, missed);
+  if(reason === '已服'){
+    try { if(typeof markReminderTaken === 'function') markReminderTaken(id); } catch(e){}
+    try { if(typeof renderAdherence === 'function') renderAdherence(); } catch(e){}
+  }
+  v70renderMissed();
+  v70renderToday();
+}
+
+/* ---------- 5) 药箱库存预测 ---------- */
+function v70renderStock(){
+  var body = v70card('tab-reminder', 'v70StockCard', '药箱库存预测');
+  if(!body) return;
+  var rems = v70reminders();
+  var cab = v70cabinet();
+  var dose = v70getDose();
+  var html = '<div style="font-size:12px;color:#6f6657;line-height:1.7;margin-bottom:8px">按服药计划估算每种药的剩余可用天数;效期与库存哪个先到,以更紧急者提示。</div>';
+  var rows = 0;
+  rems.forEach(function(r){
+    var name = r.drugName;
+    var item = cab.filter(function(c){ return c.name === name || (name && c.name && c.name.indexOf(name) !== -1); })[0];
+    if(!item) return;
+    rows++;
+    var per = parseFloat(dose[name]) || 1; // 每次用量(单位)
+    var times = 0;
+    var f = r.frequency || 'daily';
+    times = (f === 'weekday') ? 5 / 7 : (f === 'weekend') ? 2 / 7 : 1;
+    var perDay = times * per;
+    var daysLeft = perDay > 0 ? Math.floor((parseInt(item.qty) || 0) / perDay) : null;
+    var expDays = v70cabDays(item.expiry);
+    var urgent = (daysLeft !== null && expDays !== 999) ? Math.min(daysLeft, expDays) : (daysLeft !== null ? daysLeft : expDays);
+    var isExp = (expDays < 0), isLow = (daysLeft !== null && daysLeft <= 5);
+    html += '<div style="border:1px solid #e2d5ba;border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">' +
+      '<div style="flex:1;min-width:140px;font-size:13px"><b>' + v70esc(name) + '</b><br><span style="font-size:11px;color:#6f6657">库存 ' + (item.qty || 0) + ' 单位 · 效期 ' + (item.expiry || '未填') + '</span></div>' +
+      '<label style="font-size:11px;color:#6f6657">每次 <input id="v70Dose_' + v70esc(name).replace(/[^0-9a-zA-Z]/g,'') + '" type="number" min="0.1" step="0.1" value="' + per + '" style="width:52px;padding:3px 5px;border:1px solid #d3c5a6;border-radius:6px"> 单位</label>' +
+      '<button onclick="v70saveDose(\'' + v70esc(name).replace(/'/g,'') + '\', this)" style="border:1px solid #d3c5a6;background:#fff;color:#4d565b;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">保存</button>' +
+      '<span style="font-size:12px;font-weight:600;color:' + (isExp || isLow ? '#ad402d' : '#2e7d32') + '">' +
+      (isExp ? '已过期' : ('预计可用 ' + urgent + ' 天' + (daysLeft !== null && daysLeft <= 5 ? ' · 快补货' : ''))) + '</span></div>';
+  });
+  if(!rows){
+    html += '<div style="font-size:12px;color:#999">暂无匹配提醒与药箱的药品。在药箱登记药品、提醒里设置服药计划后,这里自动预测。</div>';
+  }
+  body.innerHTML = html;
+}
+function v70saveDose(name, btn){
+  var dose = v70getDose();
+  var input = btn.parentNode.querySelector('input[type=number]');
+  var v = parseFloat(input && input.value);
+  dose[name] = isNaN(v) ? 1 : v;
+  v70ls(V70.doseKey, dose);
+  v70renderStock();
+}
+
+/* ---------- 6) 药品对比 ---------- */
+function v70renderCompare(){
+  var body = v70card('tab-home', 'v70CompareCard', '药品对比');
+  if(!body) return;
+  body.innerHTML = '<div style="font-size:12px;color:#6f6657;margin-bottom:8px">选择两个药品对比成分、用途、用法与禁忌,并自动检测重复成分。仅作信息对比,不做用药决策。</div>' +
+    '<div style="display:flex;gap:6px;margin-bottom:8px">' +
+    '<input id="v70CmpA" placeholder="药品A,如:布洛芬" style="flex:1;padding:8px 10px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px">' +
+    '<input id="v70CmpB" placeholder="药品B,如:感冒灵颗粒" style="flex:1;padding:8px 10px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px">' +
+    '<button onclick="v70runCompare()" style="padding:8px 14px;border:none;border-radius:8px;background:linear-gradient(135deg,#2b3134,#4d565b);color:#f1e8d5;font-size:13px;cursor:pointer">对比</button></div>' +
+    '<div id="v70CmpResult"></div>';
+}
+function v70runCompare(){
+  var a = (document.getElementById('v70CmpA') || {}).value ? document.getElementById('v70CmpA').value.trim() : '';
+  var b = (document.getElementById('v70CmpB') || {}).value ? document.getElementById('v70CmpB').value.trim() : '';
+  var el = document.getElementById('v70CmpResult');
+  if(!el) return;
+  if(!a || !b){ el.innerHTML = '<div style="font-size:12px;color:#ad402d">请填写两个药品名称</div>'; return; }
+  var da = v70drugInfo(a), db = v70drugInfo(b);
+  function row(label, va, vb){
+    return '<tr><td style="border:1px solid #e2d5ba;padding:6px 8px;font-size:11px;color:#6f6657;white-space:nowrap">' + label + '</td>' +
+      '<td style="border:1px solid #e2d5ba;padding:6px 8px;font-size:12px">' + v70esc(va || '—') + '</td>' +
+      '<td style="border:1px solid #e2d5ba;padding:6px 8px;font-size:12px">' + v70esc(vb || '—') + '</td></tr>';
+  }
+  var ia = v70ingredientsOf(a), ib = v70ingredientsOf(b);
+  var common = (ia && ib) ? ia.filter(function(x){ return ib.indexOf(x) !== -1; }) : [];
+  var html = '<table style="width:100%;border-collapse:collapse">' +
+    '<tr><th style="border:1px solid #e2d5ba;padding:6px 8px;background:rgba(241,232,213,.6);font-size:12px;text-align:left">项目</th><th style="border:1px solid #e2d5ba;padding:6px 8px;background:rgba(241,232,213,.6);font-size:12px;text-align:left">' + v70esc(a) + '</th><th style="border:1px solid #e2d5ba;padding:6px 8px;background:rgba(241,232,213,.6);font-size:12px;text-align:left">' + v70esc(b) + '</th></tr>' +
+    row('主要成分', da ? (da.ingredients || '').slice(0, 60) : '未收录', db ? (db.ingredients || '').slice(0, 60) : '未收录') +
+    row('主要用途', da ? (da.indications || '').slice(0, 60) : '未收录', db ? (db.indications || '').slice(0, 60) : '未收录') +
+    row('用法用量', da ? (da.dosage || '').slice(0, 60) : '未收录', db ? (db.dosage || '').slice(0, 60) : '未收录') +
+    row('禁忌', da ? (da.contraindications || '').slice(0, 60) : '未收录', db ? (db.contraindications || '').slice(0, 60) : '未收录') +
+    '</table>';
+  if(!da && !db){
+    html += '<div style="margin-top:8px;background:#fdf6e8;border:1px solid #e8d8b0;border-radius:8px;padding:8px 10px;font-size:12px;color:#b26a00">两个药品均未被知识库收录,无法对比成分与用途。请核对药品名称(使用通用名,如「对乙酰氨基酚」而非商品名)。</div>';
+  } else if(common.length){
+    html += '<div style="margin-top:8px;background:#fdf1ee;border:1px solid #e8b4a8;border-radius:8px;padding:8px 10px;font-size:12px;color:#ad402d"><b>重复成分提醒:</b>两药均含 ' + common.join('、') + ',请避免重复使用,核对说明书或咨询医生/药师。</div>';
+  } else {
+    html += '<div style="margin-top:8px;font-size:11px;color:#6f6657">未检出常见重复成分(仅覆盖常用复方成分清单)。</div>';
+  }
+  html += '<div style="margin-top:6px;font-size:11px;color:#999">信息对比仅供参考,不构成用药建议。</div>';
+  el.innerHTML = html;
+}
+
+/* ---------- 7) 数据来源脚注 ---------- */
+function v70sourceFootnote(){
+  function addFootnote(box){
+    if(!box) return;
+    if(box.querySelector('.v70-source')) return;
+    var div = document.createElement('div');
+    div.className = 'v70-source';
+    div.style.cssText = 'font-size:10px;color:#a89f8f;border-top:1px dashed #e2d5ba;margin-top:8px;padding-top:6px;line-height:1.6';
+    div.textContent = '数据来源:公开药品资料整理 · 内部知识库(含国家药品批准名录) · 版本 V7.0 · 定期审核更新;AI 辅助整理内容已标注。发现信息问题?点击页脚「意见反馈」提交纠错。';
+    box.appendChild(div);
+  }
+  var mo = new MutationObserver(function(){
+    addFootnote(document.getElementById('searchResult'));
+    addFootnote(document.getElementById('drugManualResult'));
+    addFootnote(document.getElementById('pregResult'));
+  });
+  function start(){
+    ['searchResult', 'drugManualResult', 'pregResult'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) mo.observe(el, { childList: true, subtree: false });
+      addFootnote(el);
+    });
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', start); } else { start(); }
+}
+
+/* ---------- 8) 医生就诊报告 ---------- */
+function v70renderDocReport(){
+  var body = v70card('tab-health', 'v70DocReportCard', '就诊用药报告');
+  if(!body) return;
+  var members = v70members();
+  var opts = members.map(function(m){ return '<option value="' + m.id + '">' + v70esc(m.name) + '</option>'; }).join('');
+  body.innerHTML = '<div style="font-size:12px;color:#6f6657;line-height:1.7;margin-bottom:8px">生成适合就诊时出示给医生的专业用药报告:患者信息、当前用药、用药计划、漏服记录、健康指标。可复制全文。</div>' +
+    (members.length ? '<label style="font-size:12px;color:#6f6657">选择成员 <select id="v70RepMember" style="padding:4px 8px;border:1px solid #d3c5a6;border-radius:6px">' + opts + '</select></label>' +
+    '<button onclick="v70genDocReport()" style="margin-left:6px;padding:6px 14px;border:none;border-radius:8px;background:linear-gradient(135deg,#2b3134,#4d565b);color:#f1e8d5;font-size:13px;cursor:pointer">生成报告</button>' : '请先添加家庭成员。') +
+    '<div id="v70RepResult" style="margin-top:8px"></div>';
+}
+function v70genDocReport(){
+  var el = document.getElementById('v70RepResult');
+  if(!el) return;
+  var members = v70members();
+  var sel = document.getElementById('v70RepMember');
+  var m = members.filter(function(x){ return x.id === (sel ? sel.value : ''); })[0];
+  if(!m){ el.innerHTML = '<div style="font-size:12px;color:#ad402d">请选择成员</div>'; return; }
+  var prof = v70getProf();
+  var p = prof[m.id] || {};
+  var age = null;
+  try { if (typeof getAge === 'function' && m.birthYear) age = getAge(m.birthYear); } catch(e){}
+  var rems = v70reminders();
+  var missed = v70getMissed();
+  var missLines = [];
+  var dates = Object.keys(missed).sort().slice(-7);
+  dates.forEach(function(d){
+    Object.keys(missed[d]).forEach(function(id){
+      var r = rems.filter(function(x){ return x.id === id; })[0] || {};
+      missLines.push(d + ' ' + (r.drugName || '药品') + ': ' + missed[d][id]);
+    });
+  });
+  var txt = '就诊用药报告(云晓药家庭用药助手)\n生成时间:' + new Date().toLocaleString() + '\n\n' +
+    '一、患者信息\n姓名:' + (m.name || '') + '　性别:' + (m.gender || '') + '　年龄:' + (age || '未知') + '　体重:' + (p.weight || '未知') + 'kg\n' +
+    '健康问题:' + (m.health || '未登记') + '\n过敏史:' + (p.allergies || '未登记') + '\n孕哺状态:' + (p.preg === 'preg' ? '妊娠期' : (p.preg === 'breast' ? '哺乳期' : (p.preg ? '妊娠/哺乳期' : '否'))) + '\n\n' +
+    '二、当前用药清单\n' + (m.medications || '未登记') + '\n\n' +
+    '三、用药计划(提醒)\n' + (rems.length ? rems.map(function(r){ return r.drugName + ' ' + (r.time || '') + ' ' + (r.frequency || '') + (r.dosage ? '(' + r.dosage + ')' : ''); }).join('\n') : '未设置') + '\n\n' +
+    '四、近期漏服/跳过记录\n' + (missLines.length ? missLines.join('\n') : '无记录') + '\n\n' +
+    '五、备注\n\n' +
+    '——本报告由云晓药家庭用药助手生成,信息由用户自行录入,仅供就诊沟通参考。';
+  el.innerHTML = '<div style="background:rgba(255,253,247,.95);border:1px solid #e2d5ba;border-radius:10px;padding:12px;font-size:12px;line-height:1.8;white-space:pre-wrap">' + v70esc(txt) + '</div>' +
+    '<button onclick="v70copyReport()" style="margin-top:8px;padding:8px 16px;border:1px solid #4d565b;border-radius:8px;background:#fff;color:#4d565b;font-size:13px;cursor:pointer">复制全文</button>';
+  window.__v70report = txt;
+}
+function v70copyReport(){
+  var t = window.__v70report || '';
+  function done(ok){ try { if(typeof showToast === 'function') showToast(ok ? '报告已复制' : '复制失败,请手动选择'); } catch(e){} }
+  try {
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ v70legacyCopy(t, done); }); }
+    else v70legacyCopy(t, done);
+  } catch(e){ v70legacyCopy(t, done); }
+}
+function v70legacyCopy(text, done){
+  try { var ta = document.createElement('textarea'); ta.value = text || ''; ta.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(true); } catch(e){ done(false); }
+}
+
+/* ---------- 初始化 ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    v70renderToday();
+    v70renderSafety();
+    v70renderProfile();
+    v70renderMissed();
+    v70renderStock();
+    v70renderCompare();
+    v70renderDocReport();
+    v70sourceFootnote();
+    setInterval(function(){ try { v70renderMissed(); v70renderToday(); } catch(e){} }, 60000);
+  } catch(e){}
+});
+</script>
 </body>
 </html>
+
+
 
 
 

@@ -1,9 +1,9 @@
-// sw.js - PWA Service Worker (家庭药师 v5)
+﻿// sw.js - PWA Service Worker (家庭药师 v5)
 // 策略：
 //   - 页面导航（HTML）：网络优先，失败时回退缓存（保证始终拿到最新版）
 //   - 其它同源静态资源：缓存优先（离线可用）
 //   - OCR 的 wasm 内核与语言包由 fetch 处理器按需缓存
-const CACHE = 'caiyun-pharmacy-v6.10.2';
+const CACHE = 'caiyun-pharmacy-v7.0.0';
 const ASSETS = [
   './',
   './index.html',
@@ -74,3 +74,4 @@ self.addEventListener('fetch', e => {
     })
   );
 });
+
