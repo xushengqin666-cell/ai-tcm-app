@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate,max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>云晓药 / 家庭用药助手 v7.1.0</title>
+<title>云晓药 / 家庭用药助手 v7.1.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>药</text></svg>">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#2e7d32">
@@ -144,7 +144,7 @@ header h1{font-size:18px;font-weight:700}
     <span id="title">家庭药师</span>
   </h1>
   <div style="display:flex;align-items:center;gap:10px">
-    <span id="version" style="font-size:10px;opacity:.7">v7.1.0</span>
+    <span id="version" style="font-size:10px;opacity:.7">v7.1.1</span>
     <button class="lang-switch" id="userBtn" onclick="openAuthPanel()" title="登录 / 账号" aria-label="账号" style="display:flex;align-items:center;position:relative"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><i id="userDot" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ffd54f;border:1px solid #1a5c3a"></i></button>
     <button class="lang-switch" id="langBtn" onclick="toggleLang()">EN</button>
     <button class="lang-switch" id="aiConfigBtn" onclick="openAiConfig()" title="设置 / Settings" aria-label="设置" style="display:flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -5121,7 +5121,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <!-- ===== 页脚：合规信息（v5.3 新增；v6.2 增加协议/政策/备案入口） ===== -->
 <div style="text-align:center;padding:16px 16px 20px;font-size:12px;color:#999;line-height:2">
-  <p>云晓药 v7.1.0 · 家庭用药管理工具</p>
+  <p>云晓药 v7.1.1 · 家庭用药管理工具</p>
   <p>
     <a href="javascript:void(0)" onclick="openCompliance('disclaimer')" style="color:#1565c0;text-decoration:none">医疗免责声明</a>
     <span style="color:#ddd">·</span>
@@ -6855,7 +6855,7 @@ function v70sourceFootnote(){
     var div = document.createElement('div');
     div.className = 'v70-source';
     div.style.cssText = 'font-size:10px;color:#a89f8f;border-top:1px dashed #e2d5ba;margin-top:8px;padding-top:6px;line-height:1.6';
-    div.textContent = '数据来源:公开药品资料整理 · 内部知识库(含国家药品批准名录) · 版本 V7.1 · 定期审核更新;AI 辅助整理内容已标注。发现信息问题?点击页脚「意见反馈」提交纠错。';
+    div.textContent = '数据来源:公开药品资料整理 · 内部知识库(含国家药品批准名录) · 版本 V7.1.1 · 定期审核更新;AI 辅助整理内容已标注。发现信息问题?点击页脚「意见反馈」提交纠错。';
     box.appendChild(div);
   }
   var mo = new MutationObserver(function(){
@@ -6948,13 +6948,14 @@ document.addEventListener('DOMContentLoaded', function(){
 /* ===== v7.1 云晓药启动入场动画 v3(纯新增覆盖层,旧代码零改动) =====
    复刻《三角洲行动动态logo》烟雾成字:黑底,白烟如泼墨自下涌起翻卷,
    先呈一团雾,粒子逐批落定 → 「云晓药」自雾中凝出成清晰大字
-   仅首次进入播放(localStorage family_pharmacist_intro_shown_v71);点击跳过
-   调试: window.__xysIntro.now() 立即结束;删除 localStorage 键可重看 */
+   播放策略:大退(杀进程)后重新打开播放;同一会话内(刷新/切后台)不重复播
+   实现:sessionStorage family_pharmacist_intro_shown_v71(会话级,进程销毁即清空)
+   调试: window.__xysIntro.now() 立即结束;sessionStorage.removeItem 可强制重播 */
 (function(){
   try {
     if(document.getElementById('xysIntro')) return;
     var shownKey = 'family_pharmacist_intro_shown_v71';
-    try { if(localStorage.getItem(shownKey)) return; } catch(e){}
+    try { if(sessionStorage.getItem(shownKey)) return; } catch(e){}
     var INTRO_MS = 3000;
     var L = document.createElement('div');
     L.id = 'xysIntro';
@@ -7075,7 +7076,7 @@ document.addEventListener('DOMContentLoaded', function(){
       L.style.transition = 'opacity .5s ease';
       L.style.opacity = '0';
       setTimeout(function(){ try { if (L.parentNode) L.parentNode.removeChild(L); } catch(e){} }, 560);
-      try { localStorage.setItem(shownKey, String(Date.now())); } catch(e){}
+      try { sessionStorage.setItem(shownKey, String(Date.now())); } catch(e){}
       document.removeEventListener('pointerdown', onTap, true);
     }
     function onTap(){ finish(); }
@@ -7086,6 +7087,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 </body>
 </html>
+
 
 
 
