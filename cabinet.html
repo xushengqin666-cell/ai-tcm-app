@@ -150,7 +150,7 @@ header a{color:#fff;text-decoration:none;font-size:13px;opacity:.9}
       </div>
       <div class="form-group">
         <label>数量</label>
-        <input id="drugQty" type="number" min="1" placeholder="如：30">
+        <input id="drugQty" type="number" min="0" placeholder="如：30">
       </div>
     </div>
     <div class="form-row">
@@ -269,7 +269,11 @@ function daysToExpiry(expiry){
   if(!expiry) return 999;
   var parts = expiry.split('-');
   if(parts.length !== 3) return 999;
-  var exp = new Date(parts[0], parts[1]-1, parts[2]);
+  // v7.1.2 修复:非法/溢出效期(2026-13-45、2026-02-31)此前被 Date 静默滚动成另一个日期,排序与徽标随即失真
+  var y = parseInt(parts[0], 10), mo = parseInt(parts[1], 10), dy = parseInt(parts[2], 10);
+  if(isNaN(y) || isNaN(mo) || isNaN(dy) || mo < 1 || mo > 12 || dy < 1 || dy > 31) return 999;
+  var exp = new Date(y, mo-1, dy);
+  if(exp.getFullYear() !== y || exp.getMonth() !== mo-1 || exp.getDate() !== dy) return 999;
   var now = new Date();
   now.setHours(0,0,0,0);
   exp.setHours(0,0,0,0);
@@ -375,7 +379,7 @@ function renderDrugs(){
       '<div class="drug-icon">'+icon+'</div>'+
       '<div class="drug-info">'+
         '<div class="drug-name">'+escHtml(d.name)+'</div>'+
-        '<div class="drug-meta">'+(d.spec?'规格: '+escHtml(d.spec)+' · ':'')+'数量: '+d.qty+(d.dose?' · '+escHtml(d.dose):'')+memberLabel+'</div>'+
+        '<div class="drug-meta">'+(d.spec?'规格: '+escHtml(d.spec)+' · ':'')+'数量: '+(parseInt(d.qty,10)||0)+(d.dose?' · '+escHtml(d.dose):'')+memberLabel+'</div>'+
         '<div class="drug-meta" style="margin-top:2px">分类: '+escHtml(d.category||'其他')+' · 到期: '+expLabel+'</div>'+
       '</div>'+
       '<div class="drug-actions">'+
@@ -386,8 +390,13 @@ function renderDrugs(){
   });
   el.innerHTML = html;
 
-  // Low stock
-  var lowStock = drugs.filter(function(d){ return d.qty <= 3 && daysToExpiry(d.expiry) > 0; });
+  // Low stock(v7.1.2 修复:原硬编码 <=3,与 v6.9 可配置阈值(默认5)口径冲突,同页出现两套"余量不足"结论)
+  var lowStock = drugs.filter(function(d){
+    var thr = 3;
+    try { if(typeof v69itemConf === 'function') thr = v69itemConf(d.id).qtyMin; } catch(e){}
+    if(!(thr > 0)) return false;
+    return (parseInt(d.qty,10)||0) <= thr && daysToExpiry(d.expiry) > 0;
+  });
   var lsCard = document.getElementById('lowStockCard');
   var lsEl = document.getElementById('lowStockList');
   if(lowStock.length > 0){
@@ -396,7 +405,7 @@ function renderDrugs(){
     lowStock.forEach(function(d){
       lsHtml += '<div class="drug-item">'+
         '<div class="drug-icon">'+drugCatIcon(d.category)+'</div>'+
-        '<div class="drug-info"><div class="drug-name">'+escHtml(d.name)+'</div><div class="drug-meta">剩余 '+d.qty+' 单位</div></div>'+
+        '<div class="drug-info"><div class="drug-name">'+escHtml(d.name)+'</div><div class="drug-meta">剩余 '+(parseInt(d.qty,10)||0)+' 单位</div></div>'+
         '<button class="btn-xs" onclick="editDrug(\''+d.id+'\')" style="background:#fff3e0;color:#e65100;border:1px solid #ffcc80">补充</button>'+
       '</div>';
     });
@@ -470,7 +479,10 @@ function editDrug(id){
 function saveDrug(){
   var name = document.getElementById('drugName').value.trim();
   if(!name){ alert('请输入药品名称'); return; }
-  var qty = parseInt(document.getElementById('drugQty').value) || 1;
+  // v7.1.2 修复:原 parseInt(...)||1 会把录入的 0 悄悄改成 1,余量无法归零
+  var qtyRaw = document.getElementById('drugQty').value.trim();
+  var qtyParsed = parseInt(qtyRaw, 10);
+  var qty = (qtyRaw === '' || isNaN(qtyParsed)) ? 1 : Math.max(0, qtyParsed);
   var expiry = document.getElementById('drugExpiry').value;
   var member = document.getElementById('drugMember').value;
   var members = getMembers();
@@ -749,6 +761,490 @@ setInterval(function(){ try { if(document.getElementById('v69Card')) v69render()
   if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', inject); }
   else { inject(); }
 })();
+</script>
+<script>
+// ===== v7.1.2 药箱模块深化(纯新增块,不改动任何旧函数) =====
+// 对标国外同类产品:Medisafe 的「按剩余药量补货闭环」→ 服药打卡自动扣减库存;
+// MyTherapy/药事指南的「过期药安全处置」→ 处置指引卡; 药箱检索/成员管理/清单一键复制。
+var V712_DEDUCT = 'family_pharmacist_cabinet_deduct'; // {date, processed:[reminderId], log:[], undo:[]}
+var v712EditMemberId = null;
+var v712DelMemberId = null;
+var v712Obs = null;
+
+// ---------- 基础工具 ----------
+function v712ls(k,d){ try{ if(d===undefined) return JSON.parse(localStorage.getItem(k)||'null'); localStorage.setItem(k,JSON.stringify(d)); }catch(e){ return d===undefined?null:undefined; } }
+function v712esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function v712cab(){ try{ return JSON.parse(localStorage.getItem('family_pharmacist_cabinet')||'[]'); }catch(e){ return []; } }
+function v712members(){ try{ return JSON.parse(localStorage.getItem('family_pharmacist_members')||'[]'); }catch(e){ return []; } }
+function v712reminders(){ try{ return JSON.parse(localStorage.getItem('medication_reminders')||'[]'); }catch(e){ return []; } }
+function v712saveCab(arr){ try{ localStorage.setItem('family_pharmacist_cabinet',JSON.stringify(arr)); if(window.PharmacySync) window.PharmacySync.noteLocalChange('cabinet',JSON.stringify(arr)); }catch(e){} }
+function v712saveMem(arr){ try{ localStorage.setItem('family_pharmacist_members',JSON.stringify(arr)); if(window.PharmacySync) window.PharmacySync.noteLocalChange('members',JSON.stringify(arr)); }catch(e){} }
+function v712today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function v712days(exp){ try{ if(typeof daysToExpiry==='function') return daysToExpiry(exp); }catch(e){} return 999; }
+function v712norm(s){ return String(s==null?'':s).replace(/[\s（）()【】\[\]·、,，。.\-—_\/]/g,'').toLowerCase(); }
+function v712refreshOld(){
+  try{ renderStats(); }catch(e){}
+  try{ renderDrugs(); }catch(e){}
+  try{ renderMembers(); }catch(e){}
+  try{ if(typeof v69render==='function') v69render(); }catch(e){}
+}
+function v712legacyCopy(text){
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ ta.setSelectionRange(0, ta.value.length); }catch(e){}
+    var ok=document.execCommand('copy'); ta.remove(); return ok;
+  }catch(e){ return false; }
+}
+function v712copy(text, btn){
+  function done(ok){
+    if(!btn) return;
+    var old=btn.textContent;
+    btn.textContent = ok ? '已复制 ✓' : '复制失败';
+    setTimeout(function(){ try{ btn.textContent=old; }catch(e){} }, 1600);
+  }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(v712legacyCopy(text)); });
+    } else { done(v712legacyCopy(text)); }
+  }catch(e){ done(v712legacyCopy(text)); }
+}
+function v712toast(msg){
+  try{
+    var t=document.getElementById('v712Toast');
+    if(!t){
+      t=document.createElement('div'); t.id='v712Toast';
+      t.style.cssText='position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(35,40,43,.92);color:#f1e8d5;font-size:13px;padding:9px 16px;border-radius:20px;z-index:9999;box-shadow:0 4px 18px rgba(0,0,0,.25)';
+      document.body.appendChild(t);
+    }
+    t.textContent=msg; t.style.display='block';
+    clearTimeout(t.__timer);
+    t.__timer=setTimeout(function(){ t.style.display='none'; }, 2200);
+  }catch(e){}
+}
+
+// ---------- 药箱检索与筛选(纯 DOM 层,不改旧渲染) ----------
+function v712visibleDrugs(){
+  var all=v712cab();
+  var cur=(typeof CURRENT_MEMBER!=='undefined')?CURRENT_MEMBER:'';
+  var drugs=cur?all.filter(function(d){ return d.member===cur; }):all;
+  drugs.sort(function(a,b){ return v712days(a.expiry)-v712days(b.expiry); });
+  return drugs;
+}
+function v712Observe(){
+  try{
+    if(v712Obs) v712Obs.disconnect();
+    var host=document.getElementById('drugList');
+    if(!host || !window.MutationObserver) return;
+    v712Obs=new MutationObserver(function(){ v712ApplyFilter(); });
+    v712Obs.observe(host,{childList:true});
+  }catch(e){}
+}
+function v712syncCats(){
+  var sel=document.getElementById('v712Cat');
+  if(!sel) return;
+  var cats={}, order=[];
+  v712cab().forEach(function(d){ var c=d.category||'其他'; if(!cats[c]){ cats[c]=1; order.push(c); } });
+  order.sort();
+  var want=[''].concat(order).join('\u0001');
+  if(sel.getAttribute('data-v712cats')===want) return;
+  var keep=sel.value;
+  sel.innerHTML='<option value="">全部分类</option>'+order.map(function(c){ return '<option value="'+v712esc(c)+'">'+v712esc(c)+'</option>'; }).join('');
+  sel.setAttribute('data-v712cats', want);
+  if(keep && order.indexOf(keep)>=0) sel.value=keep;
+}
+function v712ApplyFilter(){
+  try{ if(v712Obs) v712Obs.disconnect(); }catch(e){}
+  v712syncCats();
+  var host=document.getElementById('drugList');
+  if(!host){ v712Observe(); return; }
+  Array.prototype.forEach.call(host.querySelectorAll('[data-v712grp]'),function(n){ try{ n.remove(); }catch(e){} });
+  var qEl=document.getElementById('v712Search'), cEl=document.getElementById('v712Cat'), gEl=document.getElementById('v712Group');
+  var q=(qEl&&qEl.value||'').trim().toLowerCase();
+  var cat=(cEl&&cEl.value)||'';
+  var grp=!!(gEl&&gEl.checked);
+  var items=host.querySelectorAll('.drug-item');
+  var drugs=v712visibleDrugs();
+  var matched=0, lastCat=null;
+  Array.prototype.forEach.call(items,function(it,i){
+    var d=drugs[i]||{};
+    var hay=((d.name||'')+' '+(d.spec||'')+' '+(d.dose||'')+' '+(d.note||'')+' '+(d.memberName||'')+' '+(d.category||'')).toLowerCase();
+    var ok=(!q || hay.indexOf(q)>=0) && (!cat || (d.category||'其他')===cat);
+    if(ok){
+      it.style.display='';
+      matched++;
+      if(grp){
+        var c=d.category||'其他';
+        if(c!==lastCat){
+          var h=document.createElement('div');
+          h.setAttribute('data-v712grp','1');
+          h.textContent=c;
+          h.style.cssText='font-size:12px;font-weight:600;color:#6f6657;margin:10px 0 4px;padding-left:8px;border-left:3px solid #ad402d;letter-spacing:1px';
+          host.insertBefore(h,it);
+          lastCat=c;
+        }
+      }
+    } else { it.style.display='none'; }
+  });
+  if(items.length && matched===0){
+    var e=document.createElement('div');
+    e.setAttribute('data-v712grp','1');
+    e.textContent='没有符合条件的药品（换个关键词，或清空筛选）';
+    e.style.cssText='font-size:13px;color:#999;text-align:center;padding:16px 8px';
+    host.appendChild(e);
+  }
+  var info=document.getElementById('v712FilterInfo');
+  if(info){
+    var total=items.length;
+    if(!q && !cat) info.textContent='共 ' + total + ' 种药品' + (grp?'（已按分类分组）':'');
+    else info.textContent='已筛选：' + matched + ' / ' + total + ' 种' + (q?(' · 关键词「'+v712esc(q)+'」'):'') + (cat?(' · 分类「'+v712esc(cat)+'」'):'');
+  }
+  v712Observe();
+}
+function v712clearFilter(){
+  var qEl=document.getElementById('v712Search'), cEl=document.getElementById('v712Cat'), gEl=document.getElementById('v712Group');
+  if(qEl) qEl.value=''; if(cEl) cEl.value=''; if(gEl) gEl.checked=false;
+  v712ApplyFilter();
+}
+function v712renderToolbar(){
+  var list=document.getElementById('drugList');
+  if(!list) return;
+  var host=list.closest?list.closest('.card'):null;
+  var card=document.getElementById('v712ToolCard');
+  if(!card){
+    card=document.createElement('div');
+    card.id='v712ToolCard';
+    card.className='card';
+    if(host && host.parentNode) host.parentNode.insertBefore(card,host);
+    else document.querySelector('.main').appendChild(card);
+  }
+  var cats={}, order=[];
+  v712cab().forEach(function(d){ var c=d.category||'其他'; if(!cats[c]){ cats[c]=1; order.push(c); } });
+  order.sort();
+  var html='<div class="card-head"><div class="card-title">药箱检索与清单</div>'+
+    '<button onclick="v712copyList(this)" style="border:1px solid #d3c5a6;background:rgba(255,253,247,.9);color:#4d565b;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer">复制药箱清单</button></div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
+    '<input id="v712Search" placeholder="搜索药名 / 规格 / 备注 / 使用人" oninput="v712ApplyFilter()" style="flex:1;min-width:150px;padding:8px 10px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px;background:rgba(255,255,255,.9)">'+
+    '<select id="v712Cat" onchange="v712ApplyFilter()" style="padding:8px 10px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px;background:rgba(255,255,255,.9)"><option value="">全部分类</option>'+
+    order.map(function(c){ return '<option value="'+v712esc(c)+'">'+v712esc(c)+'</option>'; }).join('')+'</select>'+
+    '<label style="font-size:12px;color:#6f6657;display:flex;align-items:center;gap:4px"><input id="v712Group" type="checkbox" onchange="v712ApplyFilter()">按分类分组</label>'+
+    '<button onclick="v712clearFilter()" style="border:1px solid #d3c5a6;background:rgba(255,253,247,.9);color:#6f6657;border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer">清空</button>'+
+    '</div><div id="v712FilterInfo" style="font-size:12px;color:#6f6657;margin-top:8px"></div>';
+  card.innerHTML=html;
+}
+function v712listText(){
+  var drugs=v712visibleDrugs();
+  var cur=(typeof CURRENT_MEMBER!=='undefined')?CURRENT_MEMBER:'';
+  var mname='';
+  if(cur){ var m=v712members().find(function(x){ return x.id===cur; }); mname=m?m.name:'成员'; }
+  var lines=[];
+  lines.push('云晓药 · 家庭药箱清单（' + v712today() + '）');
+  lines.push(mname ? ('使用人：' + mname) : '范围：全部成员');
+  lines.push('共 ' + drugs.length + ' 种药品');
+  lines.push('');
+  var byCat={}, order=[];
+  drugs.forEach(function(d){
+    var c=d.category||'其他';
+    if(!byCat[c]){ byCat[c]=[]; order.push(c); }
+    byCat[c].push(d);
+  });
+  order.sort();
+  order.forEach(function(c){
+    lines.push('【' + c + '】');
+    byCat[c].forEach(function(d){
+      var exp='';
+      if(!d.expiry) exp='效期未填';
+      else { var dd=v712days(d.expiry); exp = dd<0 ? ('已过期'+(-dd)+'天') : (d.expiry + (dd<=30?('（'+dd+'天后到期）'):'')); }
+      lines.push('  · ' + d.name + (d.spec?(' / '+d.spec):'') + ' | 余 ' + (parseInt(d.qty,10)||0) + ' | ' + exp + (d.memberName?(' | 使用人:'+d.memberName):'') + (d.dose?(' | '+d.dose):''));
+    });
+    lines.push('');
+  });
+  var expired=drugs.filter(function(d){ return v712days(d.expiry)<0; });
+  var noexp=drugs.filter(function(d){ return !d.expiry; });
+  var soon=drugs.filter(function(d){ var x=v712days(d.expiry); return x>=0 && x<=30; });
+  var low=drugs.filter(function(d){ return (parseInt(d.qty,10)||0)<=3 && v712days(d.expiry)>0; });
+  if(expired.length||soon.length||low.length||noexp.length){
+    lines.push('—— 提示 ——');
+    if(expired.length) lines.push('已过期：' + expired.map(function(d){ return d.name; }).join('、') + '（请勿服用，按安全处置指引处理）');
+    if(soon.length) lines.push('30 天内到期：' + soon.map(function(d){ return d.name; }).join('、'));
+    if(low.length) lines.push('余量不足：' + low.map(function(d){ return d.name; }).join('、') + '（建议补货）');
+    if(noexp.length) lines.push('未填效期：' + noexp.map(function(d){ return d.name; }).join('、'));
+  }
+  lines.push('');
+  lines.push('（本清单由云晓药生成，仅供家庭备药与就诊参考，不构成用药建议）');
+  return lines.join('\n');
+}
+function v712copyList(btn){ v712copy(v712listText(), btn || null); }
+
+// ---------- 服药打卡 → 自动扣减库存(串联「提醒」模块与 v7.0 每次用量) ----------
+function v712getDose(name){
+  try{
+    var d=JSON.parse(localStorage.getItem('family_pharmacist_v70_dose')||'{}');
+    var n=parseFloat(d[name]);
+    return (isNaN(n)||n<=0)?1:n;
+  }catch(e){ return 1; }
+}
+function v712adherenceTaken(){
+  try{
+    var a=JSON.parse(localStorage.getItem('family_pharmacist_adherence')||'{}');
+    if(a.date!==v712today()) return [];
+    return a.taken||[];
+  }catch(e){ return []; }
+}
+function v712findDrug(name){
+  var arr=v712cab(), n=v712norm(name);
+  if(!n) return null;
+  var hit=null;
+  arr.forEach(function(d){ if(!hit && v712norm(d.name)===n) hit=d; });
+  if(hit) return hit;
+  arr.forEach(function(d){ if(!hit){ var dn=v712norm(d.name); if(dn && (dn.indexOf(n)>=0 || n.indexOf(dn)>=0)) hit=d; } });
+  return hit;
+}
+function v712autoDeduct(){
+  var tk=v712today();
+  var st=v712ls(V712_DEDUCT)||{};
+  if(st.date!==tk) st={date:tk, processed:[], log:[], undo:[]};
+  if(!st.processed) st.processed=[];
+  if(!st.log) st.log=[];
+  if(!st.undo) st.undo=[];
+  var taken=v712adherenceTaken(), rems=v712reminders(), arr=v712cab();
+  var changed=0, names=[];
+  taken.forEach(function(rid){
+    if(st.processed.indexOf(rid)>=0) return;
+    st.processed.push(rid);
+    var rem=null;
+    rems.forEach(function(r){ if(String(r.id)===String(rid)) rem=r; });
+    if(!rem) return;
+    var d=v712findDrug(rem.drugName);
+    if(!d) return;
+    var per=v712getDose(d.name);
+    var before=parseInt(d.qty,10)||0;
+    var after=Math.max(0, before-per);
+    arr=arr.map(function(x){ return x.id===d.id ? Object.assign({},x,{qty:after, updated:new Date().toISOString()}) : x; });
+    st.log.unshift({ t:new Date().toISOString(), drug:d.name, qty:per, before:before, after:after });
+    st.undo.unshift({ id:d.id, drug:d.name, qty:per });
+    changed++;
+    names.push(d.name + ' -' + per);
+  });
+  st.log=st.log.slice(0,20);
+  st.undo=st.undo.slice(0,10);
+  v712ls(V712_DEDUCT, st);
+  if(changed){ v712saveCab(arr); v712refreshOld(); }
+  return { changed:changed, names:names };
+}
+function v712undoDeduct(){
+  var st=v712ls(V712_DEDUCT)||{};
+  if(!st.undo || !st.undo.length){ v712toast('暂无可撤销的扣减记录'); return; }
+  var u=st.undo.shift();
+  var arr=v712cab().map(function(d){
+    if(d.id===u.id) return Object.assign({},d,{qty:(parseInt(d.qty,10)||0)+u.qty, updated:new Date().toISOString()});
+    return d;
+  });
+  v712saveCab(arr);
+  v712ls(V712_DEDUCT, st);
+  v712refreshOld(); v712renderAuto();
+  v712toast('已撤销扣减：' + u.drug + ' +' + u.qty);
+}
+function v712syncNow(){
+  var r=v712autoDeduct();
+  v712renderAuto();
+  v712toast(r.changed ? ('已同步 ' + r.changed + ' 次服药扣减') : '暂无新的服药打卡');
+}
+function v712renderAuto(){
+  var main=document.querySelector('.main');
+  if(!main) return;
+  var card=document.getElementById('v712AutoCard');
+  if(!card){ card=document.createElement('div'); card.id='v712AutoCard'; card.className='card'; main.appendChild(card); }
+  var st=v712ls(V712_DEDUCT)||{};
+  var log=(st.date===v712today() && st.log) ? st.log : [];
+  var html='<div class="card-head"><div class="card-title">服药自动扣减</div><span class="badge badge-ok">已联动提醒打卡</span></div>'+
+    '<div style="font-size:12px;color:#6f6657;line-height:1.8;margin-bottom:8px">在「提醒」页点「已服」后，本页会按 v7.0 的「每次用量」自动从药箱余量中扣减并留痕，余量不足时与上面的提醒口径一致地提示补货。</div>';
+  if(log.length){
+    html += '<div style="border:1px solid #e2d5ba;border-radius:10px;overflow:hidden">';
+    log.slice(0,5).forEach(function(x,i){
+      var d=new Date(x.t);
+      var hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      html += '<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 10px;font-size:12px;'+(i?'border-top:1px solid #f0e8d8':'')+'">'+
+        '<span style="color:#37322a">'+v712esc(x.drug)+'</span>'+
+        '<span style="color:#6f6657">'+hm+' 扣 '+x.qty+'（'+x.before+'→'+x.after+'）</span></div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div style="font-size:12px;color:#999;padding:4px 0">今日暂无服药打卡记录。到「提醒」页点一次「已服」即会出现在这里。</div>';
+  }
+  html += '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'+
+    '<button onclick="v712syncNow()" style="padding:7px 14px;border:none;border-radius:8px;background:linear-gradient(135deg,#2b3134,#4d565b);color:#f1e8d5;font-size:13px;cursor:pointer">立即同步扣减</button>'+
+    '<button onclick="v712undoDeduct()" style="padding:7px 14px;border:1px solid #d3c5a6;background:rgba(255,253,247,.9);color:#4d565b;border-radius:8px;font-size:13px;cursor:pointer">撤销最近一次扣减</button>'+
+    '</div>';
+  card.innerHTML=html;
+}
+
+// ---------- 过期药安全处置指引 ----------
+function v712disposeAdvice(d){
+  var n=String(d.name||''), cat=String(d.category||'');
+  var special=/抗生素|抗菌|抗肿瘤|激素|免疫|生物|疫苗|麻醉|精神|镇静|抗病毒|抗真菌|降糖|胰岛素|心血管|降压|抗凝/;
+  var liquid=/口服液|糖浆|滴剂|喷雾|吸入|气雾|注射/;
+  if(special.test(n)||special.test(cat)) return '属特殊管理药品：请勿自行丢弃、冲入下水道或混入生活垃圾，交连锁药店/医院药房过期药回收点处理。';
+  if(liquid.test(n)||liquid.test(cat)) return '液体制剂/喷雾类：不要倒入下水道；将药液吸附在纸巾或密封袋内，连同包装交回收点。';
+  if(/中药|中成药|饮片|颗粒/.test(cat)||/丸|散|膏|饮片/.test(n)) return '中药类：密封原包装后投入有害垃圾，或交药店回收点，避免散落被儿童/宠物误食。';
+  return '普通固体制剂：取出药片并破坏包装（防止被误用），密封后投入有害垃圾，或交药店过期药回收点。';
+}
+function v712renderDispose(){
+  var main=document.querySelector('.main');
+  if(!main) return;
+  var drugs=v712cab();
+  var expired=drugs.filter(function(d){ return v712days(d.expiry)<0; });
+  var noexp=drugs.filter(function(d){ return !d.expiry; });
+  var card=document.getElementById('v712DisposeCard');
+  if(!expired.length && !noexp.length){
+    if(card) card.remove();
+    return;
+  }
+  if(!card){ card=document.createElement('div'); card.id='v712DisposeCard'; card.className='card'; main.appendChild(card); }
+  var html='<div class="card-head"><div class="card-title">过期药安全处置</div>'+
+    (expired.length?'<button onclick="v712copyDispose(this)" style="border:1px solid #d3c5a6;background:rgba(255,253,247,.9);color:#4d565b;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer">复制处置清单</button>':'')+'</div>';
+  if(expired.length){
+    html += '<div style="background:#fdf1ee;border:1px solid #e8c3ba;border-radius:10px;padding:10px 12px;font-size:12px;color:#ad402d;line-height:1.8;margin-bottom:8px">有 '+expired.length+' 种药品已过期，请勿继续服用；过期药不得随意丢弃或冲入下水道。</div>';
+    expired.forEach(function(d){
+      html += '<div style="border:1px solid #e2d5ba;border-radius:10px;padding:9px 11px;margin-bottom:7px">'+
+        '<div style="font-size:13px;font-weight:600;color:#37322a">'+v712esc(d.name)+(d.spec?(' <span style="font-weight:400;font-size:11px;color:#6f6657">'+v712esc(d.spec)+'</span>'):'')+'</div>'+
+        '<div style="font-size:11px;color:#ad402d;margin:2px 0 4px">已过期 '+(-v712days(d.expiry))+' 天 · 效期 '+v712esc(d.expiry)+'</div>'+
+        '<div style="font-size:12px;color:#4d565b;line-height:1.7">'+v712esc(v712disposeAdvice(d))+'</div></div>';
+    });
+    html += '<div style="font-size:11px;color:#6f6657;line-height:1.7">回收渠道：多数连锁药店设有「家庭过期药品回收箱」；也可通过当地市场监管/药监公众号查询回收点。处置前请撕毁或涂黑包装上的个人信息。</div>';
+  }
+  if(noexp.length){
+    html += '<div style="margin-top:8px;background:#fdf6e8;border:1px solid #e8d6b0;border-radius:10px;padding:9px 11px;font-size:12px;color:#b26a00;line-height:1.7">还有 '+noexp.length+' 种药品未填有效期（'+noexp.map(function(d){ return v712esc(d.name); }).join('、')+'），无法参与效期提醒，建议补全。</div>';
+  }
+  card.innerHTML=html;
+}
+function v712copyDispose(btn){
+  var expired=v712cab().filter(function(d){ return v712days(d.expiry)<0; });
+  var lines=['云晓药 · 过期药处置清单（'+v712today()+'）',''];
+  expired.forEach(function(d){
+    lines.push('· '+d.name+(d.spec?(' / '+d.spec):'')+'（过期 '+(-v712days(d.expiry))+' 天，效期 '+d.expiry+'）');
+    lines.push('  '+v712disposeAdvice(d));
+  });
+  lines.push('');
+  lines.push('提示：过期药请勿服用、勿冲入下水道；交药店/社区过期药回收点，或密封后按当地有害垃圾分类投放。');
+  v712copy(lines.join('\n'), btn);
+}
+
+// ---------- 成员管理闭环(编辑/删除,含名下药品处理) ----------
+var V712_INP='width:100%;padding:8px 10px;border:1px solid #d3c5a6;border-radius:8px;font-size:13px;background:rgba(255,255,255,.9);box-sizing:border-box';
+var V712_BTN1='padding:7px 16px;border:none;border-radius:8px;background:linear-gradient(135deg,#2b3134,#4d565b);color:#f1e8d5;font-size:13px;cursor:pointer';
+var V712_BTN2='padding:7px 14px;border:1px solid #d3c5a6;background:rgba(255,253,247,.9);color:#4d565b;border-radius:8px;font-size:13px;cursor:pointer';
+var V712_BTN3='padding:7px 14px;border:1px solid #e0b3a9;background:#fdf1ee;color:#ad402d;border-radius:8px;font-size:13px;cursor:pointer';
+function v712renderMemberAdmin(){
+  var main=document.querySelector('.main');
+  if(!main) return;
+  var card=document.getElementById('v712MemberCard');
+  if(!card){
+    card=document.createElement('div'); card.id='v712MemberCard'; card.className='card';
+    var memberCard=document.getElementById('memberCard');
+    if(memberCard && memberCard.parentNode) memberCard.parentNode.insertBefore(card, memberCard.nextSibling);
+    else main.appendChild(card);
+  }
+  var members=v712members(), cab=v712cab();
+  var html='<div class="card-head"><div class="card-title">成员管理</div></div>';
+  if(!members.length){
+    html += '<div style="font-size:13px;color:#999">暂无成员。可先在上方「家庭成员」中添加。</div>';
+  } else {
+    members.forEach(function(m){
+      var mine=cab.filter(function(d){ return d.member===m.id; });
+      if(v712EditMemberId===m.id){
+        html += '<div style="border:1px solid #d3c5a6;border-radius:10px;padding:10px;margin-bottom:8px;background:rgba(255,253,247,.95)">'+
+          '<div style="font-size:12px;color:#6f6657;margin-bottom:6px">编辑成员信息（保存后名下药品的使用人同步更新）</div>'+
+          '<input id="v712MemName" value="'+v712esc(m.name)+'" placeholder="姓名/昵称" style="'+V712_INP+'">'+
+          '<div style="display:flex;gap:8px;margin:8px 0">'+
+          '<select id="v712MemGender" style="'+V712_INP+'">'+
+            ['','男','女'].map(function(g){ return '<option value="'+g+'"'+(String(m.gender||'')===g?' selected':'')+'>'+(g||'未知')+'</option>'; }).join('')+
+          '</select>'+
+          '<input id="v712MemAge" value="'+v712esc(m.age||'')+'" placeholder="年龄/出生年月" style="'+V712_INP+'"></div>'+
+          '<input id="v712MemCond" value="'+v712esc(m.condition||'')+'" placeholder="慢性病史（可选）" style="'+V712_INP+'">'+
+          '<div style="display:flex;gap:8px;margin-top:8px"><button onclick="v712saveMember(\''+m.id+'\')" style="'+V712_BTN1+'">保存</button>'+
+          '<button onclick="v712cancelMember()" style="'+V712_BTN2+'">取消</button></div></div>';
+      } else if(v712DelMemberId===m.id){
+        html += '<div style="border:1px solid #e8c3ba;border-radius:10px;padding:10px;margin-bottom:8px;background:#fdf1ee">'+
+          '<div style="font-size:13px;color:#ad402d;font-weight:600;margin-bottom:4px">删除「'+v712esc(m.name)+'」？</div>'+
+          '<div style="font-size:12px;color:#7a4a3e;line-height:1.7;margin-bottom:8px">该成员名下有 <b>'+mine.length+'</b> 盒药。请选择处理方式：</div>'+
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+          '<button onclick="v712deleteMember(\''+m.id+'\',\'move\')" style="'+V712_BTN1+'">药品转为通用/共享</button>'+
+          '<button onclick="v712deleteMember(\''+m.id+'\',\'delete\')" style="'+V712_BTN3+'">连同药品一起删除</button>'+
+          '<button onclick="v712cancelMember()" style="'+V712_BTN2+'">取消</button></div></div>';
+      } else {
+        html += '<div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0e8d8;padding:8px 0">'+
+          '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:14px;font-weight:600;color:#37322a">'+v712esc(m.name)+'</div>'+
+          '<div style="font-size:11px;color:#6f6657">'+(m.gender?v712esc(m.gender)+' · ':'')+(m.age?v712esc(m.age)+' · ':'')+'名下 '+mine.length+' 盒药'+(m.condition?(' · '+v712esc(m.condition)):'')+'</div></div>'+
+          '<button onclick="v712editMember(\''+m.id+'\')" style="'+V712_BTN2+'">编辑</button>'+
+          '<button onclick="v712askDeleteMember(\''+m.id+'\')" style="'+V712_BTN3+'">删除</button></div>';
+      }
+    });
+  }
+  card.innerHTML=html;
+}
+function v712editMember(id){ v712EditMemberId=id; v712DelMemberId=null; v712renderMemberAdmin(); }
+function v712askDeleteMember(id){ v712DelMemberId=id; v712EditMemberId=null; v712renderMemberAdmin(); }
+function v712cancelMember(){ v712EditMemberId=null; v712DelMemberId=null; v712renderMemberAdmin(); }
+function v712saveMember(id){
+  var name=(document.getElementById('v712MemName').value||'').trim();
+  if(!name){ v712toast('请输入成员姓名'); return; }
+  var gender=document.getElementById('v712MemGender').value;
+  var age=(document.getElementById('v712MemAge').value||'').trim();
+  var cond=(document.getElementById('v712MemCond').value||'').trim();
+  var members=v712members().map(function(m){
+    if(m.id===id) return Object.assign({},m,{name:name,gender:gender,age:age,condition:cond});
+    return m;
+  });
+  v712saveMem(members);
+  var cab=v712cab().map(function(d){
+    if(d.member===id) return Object.assign({},d,{memberName:name,updated:new Date().toISOString()});
+    return d;
+  });
+  v712saveCab(cab);
+  v712EditMemberId=null;
+  v712refreshOld(); v712renderMemberAdmin(); v712renderToolbar(); v712ApplyFilter(); v712renderDispose();
+  v712toast('已保存成员信息');
+}
+function v712deleteMember(id, mode){
+  var members=v712members().filter(function(m){ return m.id!==id; });
+  var cab=v712cab();
+  if(mode==='delete') cab=cab.filter(function(d){ return d.member!==id; });
+  else cab=cab.map(function(d){ return d.member===id ? Object.assign({},d,{member:'',memberName:'',updated:new Date().toISOString()}) : d; });
+  v712saveMem(members); v712saveCab(cab);
+  if(typeof CURRENT_MEMBER!=='undefined' && CURRENT_MEMBER===id) CURRENT_MEMBER='';
+  v712DelMemberId=null;
+  v712refreshOld(); v712renderMemberAdmin(); v712renderToolbar(); v712ApplyFilter(); v712renderDispose();
+  v712toast(mode==='delete' ? '已删除成员及其名下药品' : '已删除成员，药品转为通用/共享');
+}
+
+// ---------- 初始化 ----------
+function v712boot(){
+  try{ v712renderToolbar(); }catch(e){}
+  try{ v712renderMemberAdmin(); }catch(e){}
+  try{
+    var r=v712autoDeduct();
+    if(r.changed) v712toast('已自动扣减库存：' + r.names.join('、'));
+  }catch(e){}
+  try{ v712renderAuto(); }catch(e){}
+  try{ v712renderDispose(); }catch(e){}
+  try{ v712ApplyFilter(); }catch(e){}
+}
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){ v712boot(); }, 300);
+});
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden){ try{ var r=v712autoDeduct(); v712renderAuto(); if(r.changed) v712renderDispose(); }catch(e){} }
+});
+// 只读轮询:提醒页打卡后(同源跨页)自动扣减,不影响旧渲染
+setInterval(function(){
+  try{
+    var r=v712autoDeduct();
+    if(r.changed){ v712renderAuto(); v712renderDispose(); v712toast('已按服药打卡扣减库存：' + r.names.join('、')); }
+  }catch(e){}
+}, 15000);
 </script>
 </body>
 </html>
