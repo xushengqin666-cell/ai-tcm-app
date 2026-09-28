@@ -3,11 +3,12 @@
 //   - 页面导航（HTML）：网络优先，失败时回退缓存（保证始终拿到最新版）
 //   - 其它同源静态资源：缓存优先（离线可用）
 //   - OCR 的 wasm 内核与语言包由 fetch 处理器按需缓存
-const CACHE = 'caiyun-pharmacy-v7.1.2';
+const CACHE = 'caiyun-pharmacy-v7.2.0';
 const ASSETS = [
   './',
   './index.html',
   './cabinet.html',
+  './xys-design-system.css',
   './tcmengine.js',
   './syncengine.js',
   './drugnames.js',

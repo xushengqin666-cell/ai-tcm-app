@@ -1,0 +1,282 @@
+/* ============================================================================
+   云晓药 · 设计系统运行时层  xys-design-system.css
+   ----------------------------------------------------------------------------
+   唯一来源: 项目根 DESIGN.md（Google Labs DESIGN.md 格式, version alpha）
+   本文件由 DESIGN.md 的 token 导出转换而来, 转换命令:
+     npx -p @google/design.md designmd export --format css-tailwind DESIGN.md
+   （导出为 Tailwind v4 @theme 语法, 浏览器不识别, 故在此转写为 :root 自定义属性;
+     取值与 DESIGN.md 完全一致, 改设计请改 DESIGN.md 后重新导出, 不要手改本文件。）
+
+   定位: 纯新增覆盖层。只做三件事——
+     1) 提供 token 变量（供新代码使用, 也是后续新模块的唯一取值来源）
+     2) 补齐实测缺失的成熟度基线: 可见焦点环、减少动效、触控热区 ≥44px、等宽数字
+     3) 收敛离散的圆角/阴影/状态色对比度（不改任何 DOM 结构与 JS 行为）
+   不改动既有 .card / .btn-* 等类名语义, 不替换既有主题层（xys-theme）。
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  /* ---- 颜色（DESIGN.md → colors） ---- */
+  --xys-color-primary: #23282b;
+  --xys-color-primary-container: #4d565b;
+  --xys-color-secondary: #6f6657;
+  --xys-color-tertiary: #ad402d;
+  --xys-color-neutral: #f1e8d5;
+  --xys-color-surface: #fffdf7;
+  --xys-color-on-surface: #37322a;
+  --xys-color-border: #e2d5ba;
+  --xys-color-success: #2e7d32;
+  --xys-color-success-container: #e8f5e9;
+  --xys-color-warning-strong: #8a5200;
+  --xys-color-warning-container: #fdf6e8;
+  --xys-color-error: #ad402d;
+  --xys-color-error-container: #fdf1ee;
+
+  /* ---- 圆角（DESIGN.md → rounded） ---- */
+  --xys-radius-none: 0px;
+  --xys-radius-sm: 8px;
+  --xys-radius-md: 12px;
+  --xys-radius-lg: 16px;
+  --xys-radius-pill: 999px;
+
+  /* ---- 间距（DESIGN.md → spacing, 4px 基础栅格） ---- */
+  --xys-space-base: 4px;
+  --xys-space-xs: 4px;
+  --xys-space-sm: 8px;
+  --xys-space-md: 16px;
+  --xys-space-lg: 24px;
+  --xys-space-xl: 32px;
+  --xys-space-gutter: 12px;
+  --xys-space-page-margin: 14px;
+
+  /* ---- 字号 / 字重 / 行高（DESIGN.md → typography） ---- */
+  --xys-text-display: 28px;
+  --xys-text-headline-lg: 18px;
+  --xys-text-headline-md: 15px;
+  --xys-text-body-lg: 15px;
+  --xys-text-body-md: 14px;
+  --xys-text-body-sm: 13px;
+  --xys-text-label-md: 12px;
+  --xys-text-label-sm: 11px;
+  --xys-leading-display: 1.2;
+  --xys-leading-headline: 1.4;
+  --xys-leading-body-lg: 1.7;
+  --xys-leading-body: 1.6;
+  --xys-leading-label: 1.5;
+  --xys-weight-bold: 700;
+  --xys-weight-semibold: 600;
+  --xys-weight-regular: 400;
+  --xys-tracking-label: 0.02em;
+
+  /* ---- 高度层级（DESIGN.md → Elevation & Depth, 以描边代替阴影） ---- */
+  --xys-elevation-1: 0 3px 16px rgba(55, 48, 36, 0.10);
+  --xys-elevation-2: 0 8px 40px rgba(0, 0, 0, 0.25);
+  --xys-hairline: 1px solid var(--xys-color-border);
+
+  /* ---- 交互与动效（motion tokens, 非 DESIGN.md 字段, 属实现细节） ---- */
+  --xys-motion-fast: 120ms;
+  --xys-motion-base: 200ms;
+  --xys-motion-slow: 320ms;
+  --xys-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== 1. 可见焦点环（实测修复: 全站此前 0 条 focus-visible 规则） ===== */
+:where(a, button, input, select, textarea, [tabindex], [role="button"]):focus-visible {
+  outline: 2px solid var(--xys-color-tertiary);
+  outline-offset: 2px;
+}
+/* 鼠标点击不显示焦点环, 键盘导航必须显示 */
+:where(a, button, input, select, textarea, [tabindex], [role="button"]):focus:not(:focus-visible) {
+  outline: none;
+}
+/* 深色页头内的控件改用米色焦点环, 保证可见 */
+header :where(a, button):focus-visible {
+  outline-color: var(--xys-color-neutral);
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--xys-color-primary);
+}
+
+/* ===== 2. 减少动效（实测修复: 全站此前 0 条 prefers-reduced-motion 规则） ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* 水墨背景层与启动入场动画整体停用（含 canvas 入场层）, 系统声明减少动效时不再播放 */
+  .xys-ink,
+  .xys-rip,
+  .xys-fog,
+  .xys-mtl {
+    animation: none !important;
+  }
+  #xysIntro {
+    display: none !important;
+  }
+}
+
+/* ===== 3. 触控热区 ≥44px（实测修复: 首页 53 个控件 <40px） ===== */
+/* 主控件直接抬到 44px 视觉高度 */
+@media (max-width: 820px), (pointer: coarse) {
+  .tab-bar .tab-btn,
+  .tab-bar a,
+  .btn-add,
+  .btn-primary,
+  .btn-secondary {
+    min-height: 44px;
+  }
+  /* 密集区域内的小控件不改变视觉尺寸, 用透明热区扩大可点范围 */
+  .btn-xs,
+  .lang-switch,
+  #chatQuick > button,
+  .member-chip,
+  .badge-action {
+    position: relative;
+  }
+  .btn-xs::after,
+  .lang-switch::after,
+  #chatQuick > button::after,
+  .member-chip::after,
+  .badge-action::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 100%;
+    min-height: 44px;
+    transform: translateY(-50%);
+  }
+}
+/* 表单控件在移动端统一到 44px 高 */
+@media (max-width: 820px), (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    min-height: 44px;
+  }
+}
+
+/* ===== 4. 圆角收敛（实测: 首页 8 种、药箱页 7 种离散圆角） ===== */
+/* 可操作件 → 8px；容器 → 12px；大容器 → 16px；标签/徽标 → pill */
+button:not(.lang-switch):not(.member-chip),
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea,
+.btn-xs {
+  border-radius: var(--xys-radius-sm) !important;
+}
+.card,
+.stat-card,
+.panel {
+  border-radius: var(--xys-radius-md) !important;
+}
+.modal,
+.modal > div {
+  border-radius: var(--xys-radius-lg) !important;
+}
+.lang-switch,
+.member-chip,
+.badge,
+.tag,
+.pill {
+  border-radius: var(--xys-radius-pill) !important;
+}
+
+/* ===== 5. 阴影收敛为单一纸感投影（以描边代替阴影） ===== */
+.card,
+.stat-card {
+  box-shadow: var(--xys-elevation-1) !important;
+}
+
+/* ===== 5b. 表外取值吸附 =====
+   运行时由 JS 拼接的 HTML（v70/v712 卡片、弹层等）大量使用内联样式,
+   类选择器覆盖不到, 故用属性选择器把表外取值吸回 token 刻度:
+     6px → sm(8px)   10px → md(12px)   20px → pill
+   注: 仅在 style 属性中出现这些值时生效, 不触碰类规则与 .card 等既有语义。 */
+[style*="border-radius:6px"],
+[style*="border-radius: 6px"] {
+  border-radius: var(--xys-radius-sm) !important;
+}
+[style*="border-radius:10px"],
+[style*="border-radius: 10px"] {
+  border-radius: var(--xys-radius-md) !important;
+}
+[style*="border-radius:20px"],
+[style*="border-radius: 20px"] {
+  border-radius: var(--xys-radius-pill) !important;
+}
+/* 模态与浮层的内联投影统一到 elevation-2 */
+[style*="0 8px 40px"] {
+  box-shadow: var(--xys-elevation-2) !important;
+}
+
+/* ===== 5c. 类规则里的表外圆角一并纳入刻度 =====
+   小容器/列表行/提示条 → sm(8px)；面板类容器 → md(12px)。 */
+.chat-messages,
+.net-graph-area,
+.union-detail-popup,
+.net-detail-card,
+.net-list-header,
+.stat {
+  border-radius: var(--xys-radius-md) !important;
+}
+.alert-banner,
+.drug-icon,
+.union-result-item,
+.net-item-card,
+.net-type-label,
+.union-result-summary,
+.union-btn-add,
+.union-btn-check,
+.error,
+.think-block,
+.dc-badge {
+  border-radius: var(--xys-radius-sm) !important;
+}
+
+/* ===== 6. 状态色对比度（实测: 警示文字 3.45:1 未达 WCAG AA） ===== */
+.badge-warn,
+.alert-banner.warn {
+  color: var(--xys-color-warning-strong) !important;
+}
+.badge-danger,
+.alert-banner.danger {
+  color: var(--xys-color-error) !important;
+}
+.badge-ok {
+  color: var(--xys-color-success) !important;
+}
+
+/* ===== 7. 数字等宽（剂量/效期/统计值不跳动） ===== */
+.stat-card .num,
+.num,
+.badge,
+.drug-meta,
+td,
+th {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ===== 8. 细节打磨 ===== */
+* {
+  -webkit-tap-highlight-color: rgba(173, 64, 45, 0.12);
+}
+::selection {
+  background: rgba(173, 64, 45, 0.18);
+  color: var(--xys-color-primary);
+}
+.card-title,
+.section-title {
+  letter-spacing: var(--xys-tracking-label);
+}
